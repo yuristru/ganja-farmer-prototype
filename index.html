@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V35 Shared Core Bud Renderer</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V36 Shared Seed Cards</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -786,6 +786,34 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   image-rendering:auto!important;
 }
 </style>
+
+<style id="v36SharedSeedCards">
+/* Collection deliberately reuses .seed-card from the Vault. No second visual component. */
+.mobile-game-ui .collection-seeds{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:6px!important;
+}
+.mobile-game-ui .collection-seeds>.seed-card{
+  width:100%!important;
+  min-width:0!important;
+  min-height:116px!important;
+  padding:8px!important;
+  margin:0!important;
+}
+.mobile-game-ui .collection-seeds>.seed-card.active-grow{
+  grid-column:1/-1!important;
+  border-color:#a9ff67!important;
+  box-shadow:0 3px 0 #183f23,0 0 18px rgba(169,255,103,.18)!important;
+}
+.mobile-game-ui .collection-seeds>.seed-card.active-grow.rare{border-color:#55a8ff!important;box-shadow:0 3px 0 #12395a,0 0 20px rgba(73,162,255,.24)!important}
+.mobile-game-ui .collection-seeds>.seed-card.active-grow.epic{border-color:#ba73ff!important;box-shadow:0 3px 0 #3e1b58,0 0 22px rgba(190,92,255,.26)!important}
+.mobile-game-ui .collection-seeds>.seed-card.active-grow.legendary{border-color:#ffd45d!important;box-shadow:0 3px 0 #523b0d,0 0 22px rgba(255,206,67,.24)!important}
+.mobile-game-ui .collection-seeds>.seed-card .seed-bud-thumb{
+  width:42px!important;height:42px!important;flex:0 0 42px!important
+}
+.mobile-game-ui .collection-seeds>.seed-card .seed-unknown b{color:#bfff83!important}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
@@ -1433,10 +1461,22 @@ function openSeedVault(dropId=null){
   lastSeedDropId=dropId||lastSeedDropId;const v=document.getElementById('seedVault');v.classList.add('open');v.setAttribute('aria-hidden','false');selectedVaultSeedId=gameState.seedVault.inventory[0]?.id||null;renderSeedVault();
 }
 function closeSeedVault(){const v=document.getElementById('seedVault');v.classList.remove('open');v.setAttribute('aria-hidden','true');lastSeedDropId=null;}
+function seedCardHTML(seed,{selected=false,active=false,interactive=true}={}){
+  const g=GENETICS[seed.genetics]||GENETICS.dream;
+  const known=(seed.known||[]).map(k=>'<i>'+seedTraitLabel(k)+'<b>'+((seed.traits[k]||0)>=0?'+':'')+(seed.traits[k]||0)+'%</b></i>').join('');
+  const attrs=interactive?' data-vault-seed="'+seed.id+'"':'';
+  return '<'+(interactive?'button type="button"':'div')+' class="seed-card '+seed.rarity+' '+(selected?'selected ':'')+(active?'active-grow':'')+'"'+attrs+'>'+
+    '<div class="seed-card-top"><canvas class="seed-bud-thumb" data-seed-bud="'+seed.id+'" data-w="42" data-h="42"></canvas>'+
+    '<span class="seed-card-name"><strong>'+g.name+' #'+String(seed.seed).slice(-5)+'</strong><small>'+g.code+'</small></span>'+
+    '<span class="rarity-chip">'+SEED_RARITY[seed.rarity].label+'</span></div>'+
+    '<div class="seed-known">'+known+'</div>'+
+    '<div class="seed-unknown">'+(active?'<b>AKTIVER GROW</b> · ':'')+'PHÄNOTYP '+(seed.revealed?seed.phenotype.toUpperCase():'???')+'</div>'+
+  '</'+(interactive?'button':'div')+'>';
+}
 function renderSeedVault(){
   const inv=gameState.seedVault.inventory||[],coins=document.getElementById('seedVaultCoins');if(coins)coins.textContent='◉ '+Math.round(gameState.coins);document.getElementById('seedCount').textContent=inv.length+' '+(inv.length===1?'Seed':'Seeds');
   const drop=lastSeedDropId?inv.find(x=>x.id===lastSeedDropId):null,hero=document.getElementById('seedDropHero');if(drop){const g=GENETICS[drop.genetics];hero.className='seed-drop-hero show';hero.innerHTML='<div class="seed-drop-orb">'+g.icon+'</div><div class="seed-drop-copy"><small>NEUER SEED AUS DEINER ERNTE</small><strong>'+g.name+' #'+String(drop.seed).slice(-5)+'</strong><span>'+SEED_RARITY[drop.rarity].label+' · PHÄNOTYP ???</span></div>';}else{hero.className='seed-drop-hero';hero.innerHTML='';}
-  const list=document.getElementById('seedInventory');list.innerHTML=inv.length?inv.map(seed=>{const g=GENETICS[seed.genetics],known=(seed.known||[]).map(k=>'<i>'+seedTraitLabel(k)+'<b>'+((seed.traits[k]||0)>=0?'+':'')+(seed.traits[k]||0)+'%</b></i>').join('');return '<button type="button" class="seed-card '+seed.rarity+' '+(seed.id===selectedVaultSeedId?'selected':'')+'" data-vault-seed="'+seed.id+'"><div class="seed-card-top"><canvas class="seed-bud-thumb" data-seed-bud="'+seed.id+'" data-w="42" data-h="42"></canvas><span class="seed-card-name"><strong>'+g.name+' #'+String(seed.seed).slice(-5)+'</strong><small>'+g.code+'</small></span><span class="rarity-chip">'+SEED_RARITY[seed.rarity].label+'</span></div><div class="seed-known">'+known+'</div><div class="seed-unknown">PHÄNOTYP '+(seed.revealed?seed.phenotype.toUpperCase():'???')+'</div></button>'}).join(''):'<div class="seed-detail-empty" style="grid-column:1/-1">Vault leer. Öffne ein Seed Pack.</div>';renderSeedBudPreviews(list);
+  const list=document.getElementById('seedInventory');list.innerHTML=inv.length?inv.map(seed=>seedCardHTML(seed,{selected:seed.id===selectedVaultSeedId})).join(''):'<div class="seed-detail-empty" style="grid-column:1/-1">Vault leer. Öffne ein Seed Pack.</div>';renderSeedBudPreviews(list);
   list.querySelectorAll('[data-vault-seed]').forEach(b=>b.addEventListener('click',()=>{selectedVaultSeedId=b.dataset.vaultSeed;lastSeedDropId=null;renderSeedVault();}));
   const seed=inv.find(x=>x.id===selectedVaultSeedId),detail=document.getElementById('seedDetail');if(!seed){detail.className='seed-detail';detail.innerHTML='<div class="seed-detail-empty">Seed auswählen oder ein Pack öffnen.</div>';return;}const g=GENETICS[seed.genetics],traits=Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,4).map(([k,v])=>'<span>'+seedTraitText(k,v)+'</span>').join('');detail.className='seed-detail '+seed.rarity;detail.innerHTML='<div class="seed-detail-preview"><canvas data-seed-bud="'+seed.id+'" data-w="104" data-h="92"></canvas><span class="seed-preview-label">BUD PREVIEW</span></div><div class="seed-detail-copy"><div class="seed-detail-head"><span class="seed-mini">'+g.icon+'</span><div><strong>'+g.name+' #'+String(seed.seed).slice(-5)+'</strong><small>'+SEED_RARITY[seed.rarity].label+' · '+(seed.revealed?seed.phenotype:'Phänotyp noch unbekannt')+'</small></div></div><div class="seed-traits">'+traits+'</div><div class="seed-preview-note">Genetische Vorschau · Farbe, Dichte, Form und Frost aus Seed-Parametern</div></div><button type="button" class="plant-seed-btn" id="plantVaultSeed">DIESEN SEED PFLANZEN</button>';renderSeedBudPreviews(detail);document.getElementById('plantVaultSeed').addEventListener('click',()=>plantSeedFromVault(seed.id));
 }
@@ -1470,7 +1510,7 @@ function renderMetaPanels(){
   const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Dieser Seed bestimmt den gesamten Grow. Neue Genetik wählst du nach der Ernte im Seed Vault.</div>'; }
   const cc=document.getElementById('collectionContent');if(cc){
     const ready=gameState.plant.day>=84&&!gameState.plant.harvested,scores=harvestScores(),recent=gameState.collection||[],active=activeSeed(),vault=gameState.seedVault?.inventory||[];
-    const seedTile=(seed,state='vault')=>{const g=GENETICS[seed.genetics]||GENETICS.dream,previewId=registerBudPreview(seed,'collection-seed-'+seed.id);return '<div class="collection-seed '+seed.rarity+' '+state+'"><canvas class="collection-seed-bud" data-seed-bud="'+previewId+'" data-w="48" data-h="52"></canvas><div><b>'+g.name+'</b><small>#'+String(seed.seed).slice(-5)+' · '+SEED_RARITY[seed.rarity].label+'</small><em>'+(state==='active'?'AKTIVER GROW':seed.revealed?seed.phenotype:'PHÄNOTYP ???')+'</em></div></div>'};
+    const seedTile=(seed,state='vault')=>seedCardHTML(seed,{active:state==='active',interactive:false});
     const demoJars=[
       {id:'demo-lime',name:'Lime Comet #73104',genetics:'comet',seed:73104,rarity:'rare',traits:{growth:5,density:6,potency:4,aroma:7,resilience:1,style:5},score:91,grams:76,phenotype:'Citrus Compact',rating:'EXZELLENT',demo:true,tone:'lime'},
       {id:'demo-violet',name:'Violet Circuit #20867',genetics:'violet',seed:20867,rarity:'epic',traits:{growth:2,density:7,potency:8,aroma:5,resilience:4,style:8},score:86,grams:64,phenotype:'Purple Dense',rating:'SEHR GUT',demo:true,tone:'violet'},
