@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V44 Hi-Res Bud Previews</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V44 Hanging Grow Light</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1023,15 +1023,143 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .tool-rail{top:calc(var(--safe-top) + 215px)!important}
 }
 </style>
+
+<style id="v44HeaderAndGrowLight">
+/* Temporary brand treatment: text only, integrated into the top HUD. */
+.mobile-game-ui .ganjarium-wordmark{
+  position:absolute;
+  z-index:14;
+  left:12px;
+  top:calc(var(--safe-top) + 13px);
+  color:#b7ff68;
+  font:1000 24px/.9 "Arial Rounded MT Bold",-apple-system,BlinkMacSystemFont,"SF Pro Rounded",system-ui,sans-serif;
+  font-style:italic;
+  letter-spacing:-1.5px;
+  text-shadow:
+    0 0 3px #d9ff9d,
+    0 0 8px rgba(132,255,73,.95),
+    0 0 18px rgba(54,255,82,.66),
+    0 2px 0 #0b3b22,
+    0 4px 7px rgba(0,0,0,.72);
+  transform:rotate(-2deg);
+  pointer-events:none;
+}
+
+/* Week/day header is back at the very top. */
+.mobile-game-ui .day-console{
+  z-index:16!important;
+  top:calc(var(--safe-top) + 7px)!important;
+}
+
+/* Current grow light physically hangs from the centered header. */
+.mobile-game-ui .grow-light-fixture{
+  --lamp-width:44px;
+  --lamp-power:.28;
+  position:absolute;
+  z-index:5;
+  top:calc(var(--safe-top) + 58px);
+  left:50%;
+  width:var(--lamp-width);
+  height:62px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  transition:width .2s ease,opacity .2s ease;
+}
+.mobile-game-ui .grow-light-fixture.no-lamp{display:none}
+.mobile-game-ui .grow-light-cord{
+  position:absolute;
+  top:-1px;
+  width:1px;
+  height:23px;
+  background:linear-gradient(#233b42,#82969a);
+  box-shadow:1px 0 0 rgba(0,0,0,.55);
+}
+.mobile-game-ui .grow-light-cord.cord-left{left:28%}
+.mobile-game-ui .grow-light-cord.cord-right{right:28%}
+.mobile-game-ui .grow-light-body{
+  position:absolute;
+  left:0;
+  right:0;
+  top:20px;
+  height:15px;
+  border:1px solid #263a3f;
+  border-radius:4px 4px 7px 7px;
+  background:linear-gradient(180deg,#66777a 0,#303e41 43%,#151f21 100%);
+  box-shadow:0 3px 5px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.mobile-game-ui .grow-light-diode-row{
+  position:absolute;
+  left:7px;
+  right:7px;
+  bottom:1px;
+  height:3px;
+  border-radius:4px;
+  background:repeating-linear-gradient(90deg,#fff6c2 0 4px,#b9ff9b 4px 6px,#fff6c2 6px 10px);
+  box-shadow:0 1px 5px rgba(225,255,183,.9);
+  opacity:calc(.55 + var(--lamp-power) * .45);
+}
+.mobile-game-ui .grow-light-glow{
+  position:absolute;
+  left:50%;
+  top:31px;
+  width:calc(var(--lamp-width) * 1.55);
+  height:48px;
+  transform:translateX(-50%);
+  clip-path:polygon(27% 0,73% 0,100% 100%,0 100%);
+  background:linear-gradient(180deg,rgba(224,255,185,calc(var(--lamp-power) * .22)),rgba(183,255,142,0));
+  filter:blur(2px);
+}
+
+/* Higher light upgrades visibly become wider, cleaner grow panels. */
+.mobile-game-ui .grow-light-fixture[data-level="2"] .grow-light-body{
+  border-radius:7px;
+  background:linear-gradient(180deg,#788487,#374448 48%,#182326);
+}
+.mobile-game-ui .grow-light-fixture[data-level="2"] .cord-right{display:none}
+.mobile-game-ui .grow-light-fixture[data-level="2"] .cord-left{left:50%;height:24px}
+.mobile-game-ui .grow-light-fixture[data-level="2"] .grow-light-body{transform:rotate(-2deg)}
+.mobile-game-ui .grow-light-fixture[data-level="2"] .grow-light-diode-row{left:6px;right:6px}
+
+/* Return character controls to their compact positions now that the header is top-mounted. */
+.mobile-game-ui .mascot{top:calc(var(--safe-top) + 96px)!important}
+.mobile-game-ui .speech{top:calc(var(--safe-top) + 100px)!important}
+.mobile-game-ui .tool-rail{top:calc(var(--safe-top) + 195px)!important}
+
+/* Light remains colorful/passive. Only its frame communicates that it is not clickable. */
+.mobile-game-ui .need-card.passive-card{
+  filter:none!important;
+  opacity:1!important;
+  background:linear-gradient(180deg,rgba(13,48,57,.90),rgba(8,33,39,.95))!important;
+  border-color:#66757a!important;
+  box-shadow:0 3px 0 #202a2d,0 6px 10px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+.mobile-game-ui .need-card.passive-card .ni{filter:none!important;opacity:1!important}
+.mobile-game-ui .need-card.passive-card .nn,
+.mobile-game-ui .need-card.passive-card .np{color:#e8f6ee!important}
+.mobile-game-ui .need-card.passive-card .status{color:#9db2aa!important}
+.mobile-game-ui .need-card.passive-card .bar{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.08)!important}
+.mobile-game-ui .need-card.passive-card .fill{box-shadow:0 0 7px rgba(116,255,83,.28)!important}
+
+@media(max-width:370px){
+  .mobile-game-ui .ganjarium-wordmark{left:8px;top:calc(var(--safe-top) + 14px);font-size:21px}
+  .mobile-game-ui .day-console{top:calc(var(--safe-top) + 7px)!important}
+  .mobile-game-ui .grow-light-fixture{top:calc(var(--safe-top) + 58px)}
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
-  <div class="ganjarium-logo" aria-label="Ganjarium"><img src="assets/ganjarium-logo.svg" alt="Ganjarium"></div>
+  <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
   <div class="top-coin-badge" id="topCoinBadge" data-coin-display aria-label="Coins">◉ 0</div>
   <div class="day-console">
     <button class="arrow" id="dayPrev" aria-label="Vorheriger Tag">‹</button>
     <div class="day-mid"><b id="mobileDay">WOCHE 1</b><span id="mobilePhase">KEIMUNG</span><div class="day-dots" id="turnDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small class="turn-dot-label" id="weekProgressLabel">TAG 1 / 7</small></div>
     <button class="arrow" id="dayNext" aria-label="Nächster Tag">›</button>
+  </div>
+  <div class="grow-light-fixture" id="growLightFixture" aria-hidden="true">
+    <i class="grow-light-cord cord-left"></i><i class="grow-light-cord cord-right"></i>
+    <div class="grow-light-body"><span class="grow-light-diode-row"></span></div>
+    <div class="grow-light-glow"></div>
   </div>
   <div class="mascot" aria-hidden="true"><svg viewBox="0 0 100 100" role="img"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c9ff67"/><stop offset="1" stop-color="#35a83d"/></linearGradient></defs><path d="M50 8 59 30 77 17 72 38 94 35 76 52 91 64 68 65 71 89 53 73 42 94 37 72 16 86 24 63 4 56 27 48 11 30 34 35Z" fill="url(#mg)" stroke="#173f25" stroke-width="5" stroke-linejoin="round"/><path d="M24 43c8-7 18-8 26-2v15c-12 4-21 0-26-8Zm52 0c-8-7-18-8-26-2v15c12 4 21 0 26-8Z" fill="#071014" stroke="#dfffe0" stroke-width="2"/><path d="M42 67q8 8 16 0" fill="none" stroke="#173f25" stroke-width="4" stroke-linecap="round"/></svg></div><div class="speech" id="mascotSpeech">Deine Pflanze sieht großartig aus! 💚</div>
   <div class="tool-rail">
@@ -1347,7 +1475,7 @@ function rollHarvestSeed(result){const R=rng(seedHash(result.seed,result.scores.
 const UPGRADE_CATEGORIES={
   pot:{id:'pot',name:'Topf',icon:'◉',need:'Wasser',accent:'water',baseCost:55,names:['Startertopf 7 L','Fabric Pot 9 L','Air Pot 11 L','Air Pot 13 L','Root Pot 15 L','Root Pot 17 L','Pro Air 19 L','Pro Air 21 L','Smart Pot 23 L','Smart Pot 25 L']},
   substrate:{id:'substrate',name:'Substrat',icon:'▰',need:'Wasser + Dünger',accent:'dual',baseCost:60,names:['Basiserde','Erde + Perlit','Light Mix','Bio Mix','Living Mix I','Living Mix II','Living Mix III','Living Soil','Living Soil Pro','Living Soil Ultra']},
-  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Fensterlicht','Clip LED','LED 40 W','LED 80 W','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
+  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Sonnenlicht','Clip LED','LED 40 W','LED 80 W','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
   vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Mini Fan','Clip Fan','Circulation Fan','Dual Fan','Inline Fan','Airflow Pro','Climate Fan','Smart Air','Climate Core']},
   irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Feuchtigkeitsstab','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
   nutrients:{id:'nutrients',name:'Nährstoffe',icon:'◆',need:'Dünger',accent:'feed',baseCost:70,names:['Basisdünger','Grow Feed','Grow + Bloom','Mineral Duo','Bio Feed','Precision Feed','Dose Kit','Smart Dose','Nutrient Lab','Nutrient Core']},
@@ -1356,7 +1484,7 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{dateKey:localDayKey(),turnsToday:0,lastTurnAt:0},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);levels.light=2;return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{dateKey:localDayKey(),turnsToday:0,lastTurnAt:0},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeLevel(st,id){return Math.max(1,Math.min(10,Number(st?.progression?.levels?.[id]||1)));}
 function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(1.31,level-2)/5)*5;}
 function categoryBenefits(id,level){const n=Math.max(1,Math.min(10,level)),step=n-1;
@@ -1383,7 +1511,7 @@ function ensureResourceState(st){
   st.setup=st.setup||{};
   st.setup.pot=st.setup.pot||{id:'starter-7l',name:'Startertopf',liters:7,waterUse:1,drainage:.10};
   st.setup.substrate=st.setup.substrate||{id:'soil-basic',name:'Erde',waterHolding:1,nutrientBuffer:1};
-  st.progression=st.progression||{owned:[],equipped:{},levels:{}};st.progression.owned=st.progression.owned||[];st.progression.equipped=st.progression.equipped||{};st.progression.levels=st.progression.levels||{};UPGRADE_CATEGORY_ORDER.forEach(id=>{if(!Number.isFinite(st.progression.levels[id]))st.progression.levels[id]=1;st.progression.levels[id]=Math.max(1,Math.min(10,st.progression.levels[id]));});if(st.progression.owned.includes('pot12'))st.progression.levels.pot=Math.max(st.progression.levels.pot,3);if(st.progression.owned.includes('substrate'))st.progression.levels.substrate=Math.max(st.progression.levels.substrate,5);if(st.progression.owned.includes('light1'))st.progression.levels.light=Math.max(st.progression.levels.light,5);if(st.progression.owned.includes('fan1'))st.progression.levels.vent=Math.max(st.progression.levels.vent,4);if(st.progression.owned.includes('autoWater'))st.progression.levels.irrigation=Math.max(st.progression.levels.irrigation,8);if(st.progression.owned.includes('sensor'))st.progression.levels.sensor=Math.max(st.progression.levels.sensor,5);
+  st.progression=st.progression||{owned:[],equipped:{},levels:{}};st.progression.owned=st.progression.owned||[];st.progression.equipped=st.progression.equipped||{};st.progression.levels=st.progression.levels||{};UPGRADE_CATEGORY_ORDER.forEach(id=>{if(!Number.isFinite(st.progression.levels[id]))st.progression.levels[id]=1;st.progression.levels[id]=Math.max(1,Math.min(10,st.progression.levels[id]));});st.uiMigrations=st.uiMigrations||{};if(!st.uiMigrations.starterLampV44){if(st.progression.levels.light===1)st.progression.levels.light=2;st.uiMigrations.starterLampV44=true;}if(st.progression.owned.includes('pot12'))st.progression.levels.pot=Math.max(st.progression.levels.pot,3);if(st.progression.owned.includes('substrate'))st.progression.levels.substrate=Math.max(st.progression.levels.substrate,5);if(st.progression.owned.includes('light1'))st.progression.levels.light=Math.max(st.progression.levels.light,5);if(st.progression.owned.includes('fan1'))st.progression.levels.vent=Math.max(st.progression.levels.vent,4);if(st.progression.owned.includes('autoWater'))st.progression.levels.irrigation=Math.max(st.progression.levels.irrigation,8);if(st.progression.owned.includes('sensor'))st.progression.levels.sensor=Math.max(st.progression.levels.sensor,5);
   st.genetics=st.genetics||{active:'dream',phenotypeSeed:st.plant?.seed||PLANT_SEED};if(!st.genetics.currentSeed)st.genetics.currentSeed=makeSeed(st.genetics.active||'dream',st.genetics.phenotypeSeed||st.plant?.seed||PLANT_SEED,'common','Legacy Grow');
   st.seedVault=st.seedVault||starterSeedVault();st.seedVault.inventory=Array.isArray(st.seedVault.inventory)?st.seedVault.inventory:[];st.seedVault.discovered=st.seedVault.discovered||{};st.seedVault.packsOpened=Number(st.seedVault.packsOpened||0);
   st.collection=Array.isArray(st.collection)?st.collection:[];ensureBiography(st);
@@ -1594,6 +1722,15 @@ function updateGameHUD(){
   const waterCard=$('waterCard'),feedCard=$('feedCard'),ventCard=$('ventCard');
   const actionMeta={water:{card:waterCard,level:snap.levels.water,recommended:snap.levels.water<.58,status:'waterStatus'},feed:{card:feedCard,level:snap.levels.nutrients,recommended:snap.levels.nutrients<.55,status:'nutrientsStatus'},vent:{card:ventCard,level:snap.levels.ventilation,recommended:snap.levels.ventilation<.58,status:'climateStatus'}};
   if($('setupChip'))$('setupChip').textContent=(gameState.setup?.pot?.liters||7)+' L · '+(gameState.setup?.substrate?.name||'Erde');
+  const lightFixture=$('growLightFixture');
+  if(lightFixture){
+    const lightLevel=upgradeLevel(gameState,'light'),lightName=UPGRADE_CATEGORIES.light.names[lightLevel-1];
+    lightFixture.classList.toggle('no-lamp',lightLevel<=1);
+    lightFixture.dataset.level=String(lightLevel);
+    lightFixture.title=lightLevel<=1?'Sonnenlicht':lightName;
+    lightFixture.style.setProperty('--lamp-width',Math.min(126,44+(lightLevel-2)*10)+'px');
+    lightFixture.style.setProperty('--lamp-power',String(Math.min(1,.28+(lightLevel-2)*.085)));
+  }
   const harvestReady=currentDay>=84;const carePanel=document.querySelector('[data-game-panel="care"]');if(carePanel)carePanel.classList.toggle('harvest-mode',harvestReady);const harvestBox=$('harvestReadyBox');if(harvestBox){harvestBox.style.display=harvestReady?'grid':'none';harvestBox.disabled=!!gameState.plant.harvested;harvestBox.querySelector('strong').textContent=gameState.plant.harvested?'ERNTE EINGELAGERT':'ERNTEN';harvestBox.querySelector('em').textContent=gameState.plant.harvested?'In deiner Sammlung gespeichert':'Deine Blüten sind bereit';}
   for(const [action,m] of Object.entries(actionMeta)){
     if(!m.card)continue;const av=careActionAvailability(action),ready=av.ok;
