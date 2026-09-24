@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V39 Collection Tile Repair</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V40 Harvest Fill Jars</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1172,22 +1172,36 @@ function drawJarBudPile(canvas,seed){
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
   const salt=Number(canvas.dataset.jarSalt||0),R=rng(seedHash((Number(seed.seed)||58317)^salt,0x6a6172));
-  const count=Math.max(5,Number(canvas.dataset.jarCount||10));
-  const pieces=[];
+  // Every jar looks genuinely packed. Harvest quality only controls how high the pile reaches.
+  const fill=clamp(Number(canvas.dataset.jarFill||.82),.70,.98);
+  const count=Math.max(16,Number(canvas.dataset.jarCount||22));
+  const left=cssW*.13,right=cssW*.87,bottom=cssH*.91;
+  const pileTop=bottom-cssH*(.70*fill);
+  const usableH=Math.max(20,bottom-pileTop),pieces=[];
   for(let i=0;i<count;i++){
-    const depth=R(),scale=(.20+R()*.13)*(cssW/86)*(1-depth*.10);
-    const w=master.width*scale,h=master.height*scale*(.84+R()*.20);
-    const x=cssW*(.15+R()*.70),y=cssH*(.27+R()*.58);
-    const rot=(R()-.5)*1.35;
+    const depth=R();
+    // Layered packing: lower rows are wider, upper rows form an irregular natural surface.
+    const rowT=(i+R()*.72)/count;
+    const y=bottom-rowT*usableH;
+    const topness=(bottom-y)/usableH;
+    const sideInset=cssW*(.02+topness*.035);
+    const x=(left+sideInset)+R()*Math.max(4,(right-left)-sideInset*2);
+    const baseScale=(.125+R()*.055)*(cssW/86)*(1-depth*.07);
+    const w=master.width*baseScale,h=master.height*baseScale*(.78+R()*.18);
+    const rot=(R()-.5)*1.55;
     pieces.push({depth,w,h,x,y,rot});
   }
   pieces.sort((a,b)=>a.depth-b.depth);
+  c.save();
+  // Keep all flowers inside the visible body of the jar.
+  c.beginPath();c.roundRect(cssW*.10,cssH*.12,cssW*.80,cssH*.80,cssW*.12);c.clip();
   for(const p of pieces){
     c.save();c.translate(p.x,p.y);c.rotate(p.rot);
-    c.globalAlpha=.88+p.depth*.12;
+    c.globalAlpha=.91+p.depth*.09;
     c.drawImage(master,-p.w/2,-p.h/2,p.w,p.h);
     c.restore();
   }
+  c.restore();
 }
 function renderSeedBudPreviews(root=document){
   root.querySelectorAll('canvas[data-seed-bud]').forEach(canvas=>{
@@ -1577,8 +1591,9 @@ function populateHarvestResult(result){
   const jb=document.getElementById('jarBuds');
   const jarSeed=activeSeed()||makeSeed(result.g.id||'dream',Number(result.seed)||58317,'common','Harvest');
   const jarPreviewId=registerBudPreview(jarSeed,'harvest-jar-'+result.seed);
-  const jarCount=Math.max(10,Math.min(20,Math.round((result.grams||50)/6)));
-  jb.innerHTML='<canvas class="jar-bud-pile" data-jar-buds="'+jarPreviewId+'" data-jar-salt="'+result.seed+'" data-jar-count="'+jarCount+'" data-w="168" data-h="158"></canvas>';
+  const harvestFill=clamp(.70+(result.scores?.total||70)/100*.18+Math.min(1,(result.grams||50)/100)*.10,.72,.98);
+  const jarCount=Math.round(24+harvestFill*14);
+  jb.innerHTML='<canvas class="jar-bud-pile" data-jar-buds="'+jarPreviewId+'" data-jar-salt="'+result.seed+'" data-jar-count="'+jarCount+'" data-jar-fill="'+harvestFill.toFixed(3)+'" data-w="168" data-h="158"></canvas>';
   renderSeedBudPreviews(jb);drawHarvestBud(result);
 }
 function openHarvestResults(){
@@ -1671,7 +1686,7 @@ function renderMetaPanels(){
       ...((active&&!gameState.plant.harvested)?[seedEntry(active,'active')]:[]),
       ...recent.map(jarEntry)
     ].sort((a,b)=>b.sortAt-a.sortAt);
-    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed)),budCount=Math.max(6,Math.min(12,Math.round((j.grams||60)/8)));return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-jar-buds="'+previewId+'" data-jar-salt="'+(j.seed||0)+'" data-jar-count="'+budCount+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
+    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed)),fill=clamp(.70+(Number(j.score)||70)/100*.18+Math.min(1,(Number(j.grams)||60)/100)*.10,.72,.98),budCount=Math.round(18+fill*12);return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-jar-buds="'+previewId+'" data-jar-salt="'+(j.seed||0)+'" data-jar-count="'+budCount+'" data-jar-fill="'+fill.toFixed(3)+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
     const seedTile=(seed,state)=>'<div class="collection-item-card seed '+seed.rarity+' '+state+'" data-collection-seed="'+seed.id+'">'+seedCardHTML(seed,{active:state==='active',interactive:false})+(state==='seed'?'<button type="button" class="collection-plant-seed" data-plant-seed="'+seed.id+'">PFLANZEN</button>':'<span class="collection-active-grow">WÄCHST GERADE</span>')+'</div>';
     const ownedHTML=entries.length?entries.map(e=>e.kind==='jar'?jarTile(e.jar):seedTile(e.seed,e.kind)).join(''):'<div class="collection-empty">Noch keine Seeds. Öffne oben dein erstes Pack.</div>';
     const demos=recent.length===0?'<div class="collection-section-head archive"><b>BEISPIEL-GROWS</b><span>Demo</span></div><div class="collection-unified demo-grid">'+demoJars.map(jarTile).join('')+'</div>':'';
