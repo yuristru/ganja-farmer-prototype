@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V41 Brand Migration</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V42 Macro Bud Previews</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -935,6 +935,43 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .ganjarium-logo{width:94px;height:94px;left:5px}
 }
 </style>
+
+<style id="v42MacroBudPreviews">
+/* Bud previews are intentionally macro-cropped. The flower fills the visual field
+   and is clipped by the canvas/card instead of floating as a tiny whole bud. */
+.mobile-game-ui .pack-seed{
+  overflow:hidden!important;
+  padding:8px 4px 10px!important;
+}
+.mobile-game-ui .pack-bud-preview{
+  display:block!important;
+  width:calc(100% + 8px)!important;
+  height:88px!important;
+  margin:-8px -4px 4px!important;
+  border-radius:12px 12px 7px 7px!important;
+  background:radial-gradient(circle at 50% 52%,rgba(125,195,105,.16),rgba(1,10,11,.38) 76%)!important;
+  filter:none!important;
+}
+.mobile-game-ui .pack-seed.rare .pack-bud-preview{background:radial-gradient(circle at 50% 52%,rgba(67,158,255,.20),rgba(4,18,31,.48) 78%)!important}
+.mobile-game-ui .pack-seed.epic .pack-bud-preview{background:radial-gradient(circle at 50% 52%,rgba(190,83,255,.22),rgba(28,9,40,.50) 78%)!important}
+.mobile-game-ui .pack-seed.legendary .pack-bud-preview{background:radial-gradient(circle at 50% 52%,rgba(255,207,66,.20),rgba(34,25,4,.48) 78%)!important}
+
+.mobile-game-ui .collection-item-card.seed .seed-card-top{
+  overflow:hidden!important;
+}
+.mobile-game-ui .collection-item-card.seed .seed-bud-thumb{
+  width:56px!important;
+  height:56px!important;
+  flex:0 0 56px!important;
+  margin:-5px 1px -5px -5px!important;
+  border-radius:12px!important;
+  background:radial-gradient(circle at 50% 52%,rgba(125,195,105,.16),rgba(1,10,11,.38) 76%)!important;
+  filter:none!important;
+}
+.mobile-game-ui .collection-item-card.seed .seed-card.rare .seed-bud-thumb{background:radial-gradient(circle at 50% 52%,rgba(67,158,255,.20),rgba(4,18,31,.48) 78%)!important}
+.mobile-game-ui .collection-item-card.seed .seed-card.epic .seed-bud-thumb{background:radial-gradient(circle at 50% 52%,rgba(190,83,255,.22),rgba(28,9,40,.50) 78%)!important}
+.mobile-game-ui .collection-item-card.seed .seed-card.legendary .seed-bud-thumb{background:radial-gradient(circle at 50% 52%,rgba(255,207,66,.20),rgba(34,25,4,.48) 78%)!important}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="ganjarium-logo" aria-label="Ganjarium"><img src="assets/ganjarium-logo.svg" alt="Ganjarium"></div>
@@ -1184,9 +1221,14 @@ function drawSeedBudPreview(canvas,seed){
   const cssW=Number(canvas.dataset.w||canvas.clientWidth||92),cssH=Number(canvas.dataset.h||canvas.clientHeight||82);
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
-  const scale=Math.min(cssW/master.width,cssH/master.height)*1.16;
+  // Pack reveal and collection cards are macro crops: the flower deliberately
+  // exceeds the preview viewport so the card itself becomes the crop mask.
+  const macro=canvas.classList.contains('pack-bud-preview')||canvas.classList.contains('seed-bud-thumb');
+  const zoom=macro?2.72:1.16;
+  const scale=Math.max(cssW/master.width,cssH/master.height)*zoom;
   const w=master.width*scale,h=master.height*scale;
-  c.drawImage(master,(cssW-w)/2,(cssH-h)/2,w,h);
+  const focusY=macro?.54:.50;
+  c.drawImage(master,(cssW-w)/2,cssH*focusY-h*.50,w,h);
 }
 function drawJarBudPile(canvas,seed){
   if(!canvas||!seed)return;
