@@ -412,6 +412,70 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 /* Cut subcontrols are icon buttons only. */
 .mobile-game-ui .rail-prune-sub .rail-subbtn{width:28px!important;height:27px!important;font-size:15px!important;line-height:23px!important}
 </style>
+
+<style id="v29TargetNavigation">
+/* Target navigation: one continuous capsule, horizontal icon + label, subtle separators, active underline. */
+.mobile-game-ui .tabs{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  height:58px!important;margin:0 7px -5px!important;padding:0 7px!important;gap:0!important;
+  border:2px solid #2e7594!important;border-radius:22px 22px 12px 12px!important;
+  background:
+    linear-gradient(180deg,rgba(13,55,70,.98),rgba(4,31,43,.995))!important;
+  box-shadow:
+    0 -3px 0 rgba(2,17,25,.88),
+    0 -9px 24px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(128,224,236,.16),
+    inset 0 -1px 0 rgba(23,123,142,.30)!important;
+  overflow:visible!important
+}
+.mobile-game-ui .tab{
+  position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;min-width:0!important;height:54px!important;margin:0!important;padding:0 4px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;color:#a8cce2!important;
+  box-shadow:none!important;text-shadow:0 1px 1px #001018!important;
+  font:1000 7.5px/1 system-ui,sans-serif!important;letter-spacing:.05px!important;transform:none!important
+}
+.mobile-game-ui .tab+.tab:before{
+  content:"";position:absolute;left:0;top:15px;width:1px;height:25px;
+  background:linear-gradient(180deg,transparent,rgba(76,146,169,.62),transparent)
+}
+.mobile-game-ui .tab .ico{
+  display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 25px!important;
+  width:25px!important;height:25px!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;color:#b8ddf4!important;box-shadow:none!important
+}
+.mobile-game-ui .tab .ico svg{width:24px;height:24px;overflow:visible}
+.mobile-game-ui .tab .ico svg path{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.mobile-game-ui .tab[data-ui-tab="upgrades"] .ico svg path{fill:currentColor;stroke:none}
+.mobile-game-ui .tab-label{display:block;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.mobile-game-ui .tab.active{
+  color:#9cff52!important;background:radial-gradient(ellipse at 50% 100%,rgba(82,255,68,.14),transparent 70%)!important;
+  border:0!important;box-shadow:none!important;text-shadow:0 0 10px rgba(126,255,77,.34)!important
+}
+.mobile-game-ui .tab.active .ico{
+  color:#9cff52!important;background:transparent!important;border:0!important;box-shadow:none!important
+}
+.mobile-game-ui .tab.active:after{
+  content:"";position:absolute;left:10px;right:10px;bottom:-2px;height:4px;border-radius:5px;
+  background:linear-gradient(90deg,#63e83e,#b6ff50);
+  box-shadow:0 0 8px rgba(137,255,73,.92),0 0 15px rgba(81,255,63,.48)
+}
+.mobile-game-ui .tab.alert:after{
+  content:""!important;position:absolute!important;left:auto!important;right:5px!important;top:7px!important;bottom:auto!important;
+  width:7px!important;height:7px!important;border:1px solid #ffd6ca!important;border-radius:50%!important;
+  background:#ff5d4d!important;box-shadow:0 0 7px rgba(255,77,64,.7)!important
+}
+/* active upgrade uses the underline, not the notification dot */
+.mobile-game-ui .tab.alert.active:after{
+  left:10px!important;right:10px!important;top:auto!important;bottom:-2px!important;width:auto!important;height:4px!important;
+  border:0!important;border-radius:5px!important;background:linear-gradient(90deg,#63e83e,#b6ff50)!important;
+  box-shadow:0 0 8px rgba(137,255,73,.92),0 0 15px rgba(81,255,63,.48)!important
+}
+.mobile-game-ui .bottom-wrap.meta-open .tabs{
+  flex:0 0 58px!important;height:58px!important;margin:0 2px 8px!important;border-radius:22px!important;
+  box-shadow:0 4px 0 #031722,0 9px 24px rgba(0,0,0,.34),inset 0 1px 0 rgba(128,224,236,.16)!important
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
@@ -431,7 +495,12 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   <div class="training-note" id="trainingNote">Schneiden: Knoten oder Blatt antippen.</div>
   <div class="equipment-badge" id="equipmentBadge">STARTER SETUP</div>
   <div class="bottom-wrap">
-    <div class="tabs"><button class="tab active" data-ui-tab="care"><span class="ico">♣</span>PFLEGE</button><button class="tab" data-ui-tab="genetics"><span class="ico">⌬</span>GENETIK</button><button class="tab alert" data-ui-tab="upgrades"><span class="ico">▥</span>UPGRADES</button><button class="tab" data-ui-tab="collection"><span class="ico">♛</span>SAMMLUNG</button></div>
+    <div class="tabs">
+      <button class="tab active" data-ui-tab="care"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9m0 4c-4.8 0-7-2.4-7-6.4C9.2 6.3 11.4 8 12 11m0 4c4.8 0 7-2.4 7-6.4-4.2-.3-6.4 1.4-7 4.4M8.5 21h7"/></svg></span><span class="tab-label">PFLEGE</span></button>
+      <button class="tab" data-ui-tab="genetics"><span class="ico dna-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3c0 6 10 12 10 18M17 3C17 9 7 15 7 21M8.2 6h7.6M9.6 10h4.8M9.6 14h4.8M8.2 18h7.6"/></svg></span><span class="tab-label">GENETIK</span></button>
+      <button class="tab alert" data-ui-tab="upgrades"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V14h3v6H4Zm6 0V9h4v11h-4Zm7 0V4h3v16h-3Z"/></svg></span><span class="tab-label">UPGRADES</span></button>
+      <button class="tab" data-ui-tab="collection"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 4 4 4-7 4 7 4-4-2 12H6L4 7Zm2.5 12h11"/></svg></span><span class="tab-label">SAMMLUNG</span></button>
+    </div>
     <section class="needs-panel game-panel active" data-game-panel="care">
       <div class="needs-head"><h2>PFLANZENBEDÜRFNISSE <span class="setup-chip" id="setupChip">7 L · Erde</span></h2><div class="vitality" id="mobileVigor">Vitalität <strong>100%</strong><span class="info-dot">i</span></div></div>
       <div class="demo-shortcuts" aria-label="Demo-Steuerung"><button class="admin-skip" id="adminSkip" title="Alle Pflege-Timer überspringen">skip</button><button class="admin-day-skip" id="adminDaySkip" title="Pflanzentag sofort vorspulen" aria-label="Pflanzentag sofort vorspulen">⏩</button></div>
