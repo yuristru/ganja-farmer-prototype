@@ -737,6 +737,34 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .seed-preview-note{margin-top:6px;color:#6f9188;font:750 5.5px/1.2 system-ui}
 .mobile-game-ui .seed-detail .plant-seed-btn{grid-column:1/-1;margin-top:0!important}
 </style>
+
+<style id="v34ThreeBudArchive">
+.mobile-game-ui .collection-jar-art{
+  position:relative!important;width:88px!important;height:94px!important;margin:0 auto 6px!important;
+  border-radius:8px 8px 20px 20px!important;
+  border:2px solid rgba(190,229,222,.40)!important;
+  border-top:0!important;
+  background:linear-gradient(90deg,rgba(184,234,224,.06),rgba(255,255,255,.12) 18%,rgba(108,167,153,.04) 54%,rgba(215,255,244,.10))!important;
+  box-shadow:inset 0 0 18px rgba(194,255,221,.08),0 5px 10px rgba(0,0,0,.20)!important;
+  overflow:visible!important
+}
+.mobile-game-ui .collection-jar-art:before{
+  content:""!important;position:absolute!important;z-index:3!important;left:-4px!important;right:-4px!important;top:-7px!important;height:15px!important;
+  border-radius:6px 6px 3px 3px!important;border:1px solid #7b9092!important;
+  background:linear-gradient(#718286,#263438 45%,#172529)!important;box-shadow:0 2px 3px rgba(0,0,0,.45)!important
+}
+.mobile-game-ui .collection-jar-art:after{
+  content:""!important;position:absolute!important;z-index:2!important;inset:8px 7px 7px!important;pointer-events:none!important;
+  border-radius:4px 4px 14px 14px!important;background:linear-gradient(100deg,rgba(255,255,255,.12),transparent 22%,transparent 72%,rgba(218,255,245,.09))!important;
+  box-shadow:inset 0 0 8px rgba(255,255,255,.05)!important
+}
+.mobile-game-ui .collection-jar-art canvas{position:absolute;z-index:1;left:0;top:4px;width:86px!important;height:86px!important;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
+.mobile-game-ui .collection-jar-art i{position:absolute;z-index:4;left:22px;right:22px;bottom:7px;height:8px;border-radius:5px;background:rgba(11,29,25,.72);border:1px solid rgba(184,222,205,.16)}
+.mobile-game-ui .collection-jar-art span{display:none!important}
+.mobile-game-ui .collection-jar.violet .collection-jar-art:after,.mobile-game-ui .collection-jar.gold .collection-jar-art:after{filter:none!important}
+.mobile-game-ui .collection-jar{min-height:170px!important}
+.mobile-game-ui .seed-detail-preview canvas,.mobile-game-ui .pack-bud-preview,.mobile-game-ui .seed-bud-thumb{image-rendering:auto}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
@@ -821,7 +849,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 </div>
 <div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devBypass">Wartezeit umgehen</button><button id="devGood">35 Tage perfekt</button><button id="devStress">35 Tage mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
-</div><script>
+</div><script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script><script>
 (()=>{
 const CFG={"stemSway":13.5,"stemFine":4.9,"stemWidth":8.0,"branchLen":1.02,"branchSpread":1.04,"branchUp":0.42,"branchIrreg":0.34,"leafLen":68,"leafWidth":6.4,"leafUp":0.79,"leafScale":1.04,"lowerBoost":1.26,"nodeBulge":1.28,"branchTaper":0.61,"petiole":13.6,"internodeVar":0.18,"sec":0.68};
 const LEAF={"length":82,"width":5.4,"youngSpread":0.15,"matureSpread":1.4,"youngLift":1.21,"matureLift":0.46,"serration":0.103,"sideProjection":0.83,"individualTwist":0.18,"tipCurl":3.6};
@@ -891,7 +919,7 @@ function seedBudVisualProfile(seed){
   const pistilHue=g.id==='comet'?34:(g.id==='violet'?24:30);
   return{gp,g,t,ph,height,width,density,frost,expression,hue,sat,light,pistilHue};
 }
-function drawSeedBudPreview(canvas,seed){
+function drawSeedBudPreview2D(canvas,seed){
   if(!canvas||!seed)return;
   const dpr=Math.min(2,window.devicePixelRatio||1),cssW=Number(canvas.dataset.w||canvas.clientWidth||92),cssH=Number(canvas.dataset.h||canvas.clientHeight||82);
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
@@ -946,11 +974,115 @@ function drawSeedBudPreview(canvas,seed){
   // compact highlight to make the thumbnail read as a bud, not a generic blob
   c.strokeStyle='rgba(221,255,211,.16)';c.lineWidth=.7;c.beginPath();c.moveTo(cx,baseY-H*.92);c.quadraticCurveTo(cx-W*.28,baseY-H*.58,cx-W*.12,baseY-H*.18);c.stroke();
 }
+
+const budPreviewRegistry=new Map(),budThreeCache=new Map();
+let budThreeRenderer=null,budThreeScene=null,budThreeCamera=null;
+function registerBudPreview(seed,key=null){if(!seed)return'';const id=key||seed.id||('bud-'+seed.seed+'-'+seed.genetics);budPreviewRegistry.set(id,{...seed,id});return id}
+function resolveBudPreview(id){
+  return budPreviewRegistry.get(id)||(gameState?.seedVault?.inventory||[]).find(x=>x.id===id)||(activeSeed()?.id===id?activeSeed():null);
+}
+function jarBudSeed(j){
+  const base=makeSeed(j.genetics||'dream',Number(j.seed)||58317,j.rarity||'common','Grow Archiv');
+  base.phenotype=j.phenotype||base.phenotype;base.revealed=true;
+  if(j.traits)base.traits={...base.traits,...j.traits};
+  return base;
+}
+function initBudThree(){
+  if(budThreeRenderer||!window.THREE)return !!budThreeRenderer;
+  try{
+    budThreeRenderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+    budThreeRenderer.setPixelRatio(1);budThreeRenderer.setSize(220,220,false);budThreeRenderer.setClearColor(0x000000,0);
+    budThreeRenderer.outputEncoding=THREE.sRGBEncoding;
+    budThreeScene=new THREE.Scene();
+    budThreeCamera=new THREE.PerspectiveCamera(31,1,.1,100);budThreeCamera.position.set(0,1.0,8.1);budThreeCamera.lookAt(0,.25,0);
+    budThreeScene.add(new THREE.HemisphereLight(0xdfffe6,0x152018,1.55));
+    const key=new THREE.DirectionalLight(0xffffff,2.05);key.position.set(-3,5,5);budThreeScene.add(key);
+    const rim=new THREE.DirectionalLight(0xb7d7ff,1.15);rim.position.set(4,1,-3);budThreeScene.add(rim);
+    const low=new THREE.PointLight(0x8dff78,.75,10);low.position.set(-2,-2,3);budThreeScene.add(low);
+    return true;
+  }catch(e){budThreeRenderer=null;return false}
+}
+function threeColorHSL(h,s,l){const c=new THREE.Color();c.setHSL(((h%360)+360)%360/360,clamp(s/100,0,1),clamp(l/100,0,1));return c}
+function buildThreeBud(seed){
+  const p=seedBudVisualProfile(seed),R=rng(seedHash(seed.seed,0x3b3d5eed)),group=new THREE.Group();
+  group.rotation.y=(R()-.5)*.34;group.rotation.z=(R()-.5)*.08;
+  const bodyMat=new THREE.MeshStandardMaterial({color:threeColorHSL(p.hue,p.sat,p.light),roughness:.69,metalness:0});
+  const hiMat=new THREE.MeshStandardMaterial({color:threeColorHSL(p.hue+5,Math.min(88,p.sat+8),Math.min(58,p.light+9)),roughness:.62,metalness:0});
+  const darkMat=new THREE.MeshStandardMaterial({color:threeColorHSL(p.hue-10,Math.max(28,p.sat-14),Math.max(22,p.light-12)),roughness:.78,metalness:0});
+  const calyxGeo=new THREE.IcosahedronGeometry(.36,2);
+  const H=3.25*p.height,W=1.22*p.width,rows=Math.round(8+p.density*4);
+  for(let row=0;row<rows;row++){
+    const t=row/Math.max(1,rows-1),y=-1.45+H*(.06+.88*t),profile=Math.pow(Math.sin(Math.PI*(.07+.86*t)),.60)*(1-.18*t)+.12;
+    const count=Math.max(2,Math.round((3+p.density*3.3)*profile));
+    for(let j=0;j<count;j++){
+      const a=(j/count)*Math.PI*2+(row%2)*.71+(R()-.5)*.36;
+      const radial=W*profile*(.28+.28*R()),x=Math.cos(a)*radial,z=Math.sin(a)*radial*.78;
+      const mesh=new THREE.Mesh(calyxGeo,[bodyMat,hiMat,darkMat][(row+j)%3]);
+      mesh.position.set(x+(R()-.5)*.12,y+(R()-.5)*.12,z+(R()-.5)*.10);
+      const sc=.56+.28*R();mesh.scale.set(sc*(.92+.22*profile),sc*(.74+.18*R()),sc*(.88+.18*R()));
+      mesh.rotation.set(R()*Math.PI,R()*Math.PI,R()*Math.PI);group.add(mesh);
+    }
+  }
+  // pointed terminal cluster
+  for(let i=0;i<5;i++){
+    const mesh=new THREE.Mesh(calyxGeo,i%2?hiMat:bodyMat),a=i/5*Math.PI*2;
+    mesh.position.set(Math.cos(a)*.18,1.60*p.height+(R()-.5)*.08,Math.sin(a)*.14);
+    mesh.scale.set(.42,.58,.42);group.add(mesh);
+  }
+  // sugar leaves: actual 3D shape geometry, partially embedded in the flower mass
+  const leafShape=new THREE.Shape();leafShape.moveTo(0,0);leafShape.quadraticCurveTo(.24,.18,1.05,0);leafShape.quadraticCurveTo(.24,-.18,0,0);
+  const leafGeo=new THREE.ShapeGeometry(leafShape,10);
+  const leafMat=new THREE.MeshStandardMaterial({color:threeColorHSL(p.hue-12,Math.max(30,p.sat-20),Math.max(24,p.light-9)),side:THREE.DoubleSide,roughness:.76});
+  const leafN=4+Math.round(p.density*3);
+  for(let i=0;i<leafN;i++){
+    const leaf=new THREE.Mesh(leafGeo,leafMat),side=i%2?-1:1,yy=-.95+R()*2.35*p.height,a=(i/leafN)*Math.PI*2+(R()-.5)*.55;
+    leaf.position.set(Math.cos(a)*W*.30,yy,Math.sin(a)*W*.23);leaf.scale.set(.68+.34*R(),.72+.22*R(),1);
+    leaf.rotation.set(-.25+(R()-.5)*.28,a-Math.PI/2,side*(.22+.20*R()));group.add(leaf);
+  }
+  // pistils as real curved tubes
+  const pistilMat=new THREE.MeshStandardMaterial({color:threeColorHSL(p.pistilHue,66,72),roughness:.48,emissive:threeColorHSL(p.pistilHue,60,18),emissiveIntensity:.25});
+  const hairN=10+Math.round(p.density*8);
+  for(let i=0;i<hairN;i++){
+    const t=.12+.72*R(),y=-1.25+H*t,profile=Math.sin(Math.PI*t),a=R()*Math.PI*2,rad=W*profile*(.28+.28*R());
+    const start=new THREE.Vector3(Math.cos(a)*rad,y,Math.sin(a)*rad*.72),out=.48+.35*R();
+    const mid=start.clone().add(new THREE.Vector3(Math.cos(a)*out*.55,.10+.15*R(),Math.sin(a)*out*.55));
+    const end=start.clone().add(new THREE.Vector3(Math.cos(a)*out,.18+(R()-.5)*.20,Math.sin(a)*out));
+    const curve=new THREE.CatmullRomCurve3([start,mid,end]),geo=new THREE.TubeGeometry(curve,5,.012,3,false),hair=new THREE.Mesh(geo,pistilMat);group.add(hair);
+  }
+  // trichome/frost field as 3D particles around the outer flower surface
+  const frostN=Math.round(45+p.frost*150),pos=new Float32Array(frostN*3);
+  for(let i=0;i<frostN;i++){
+    const t=.10+.78*R(),y=-1.34+H*t,profile=Math.sin(Math.PI*t),a=R()*Math.PI*2,rad=W*profile*(.34+.30*R());
+    pos[i*3]=Math.cos(a)*rad;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*rad*.78;
+  }
+  const frostGeo=new THREE.BufferGeometry();frostGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const frostMat=new THREE.PointsMaterial({color:0xeaffee,size:.038+.035*p.frost,transparent:true,opacity:.48+.40*p.frost,sizeAttenuation:true});
+  group.add(new THREE.Points(frostGeo,frostMat));
+  group.userData.dispose=()=>{calyxGeo.dispose();leafGeo.dispose();frostGeo.dispose();bodyMat.dispose();hiMat.dispose();darkMat.dispose();leafMat.dispose();pistilMat.dispose();frostMat.dispose();group.traverse(o=>{if(o.geometry&&o.geometry!==calyxGeo&&o.geometry!==leafGeo&&o.geometry!==frostGeo)o.geometry.dispose?.()})};
+  return group;
+}
+function renderThreeBudMaster(seed){
+  const key=[seed.seed,seed.genetics,seed.phenotype,seed.rarity,JSON.stringify(seed.traits||{})].join('|');
+  if(budThreeCache.has(key))return budThreeCache.get(key);
+  if(!initBudThree())return null;
+  const group=buildThreeBud(seed);budThreeScene.add(group);
+  budThreeRenderer.render(budThreeScene,budThreeCamera);
+  const master=document.createElement('canvas');master.width=220;master.height=220;
+  master.getContext('2d').drawImage(budThreeRenderer.domElement,0,0,220,220);
+  budThreeScene.remove(group);group.userData.dispose?.();
+  budThreeCache.set(key,master);if(budThreeCache.size>36)budThreeCache.delete(budThreeCache.keys().next().value);
+  return master;
+}
+function drawSeedBudPreview(canvas,seed){
+  const master=renderThreeBudMaster(seed);
+  if(!master){drawSeedBudPreview2D(canvas,seed);return}
+  const dpr=Math.min(2,window.devicePixelRatio||1),cssW=Number(canvas.dataset.w||canvas.clientWidth||92),cssH=Number(canvas.dataset.h||canvas.clientHeight||82);
+  canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
+  const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
+  const size=Math.min(cssW,cssH),x=(cssW-size)/2,y=(cssH-size)/2;c.drawImage(master,x,y,size,size);
+}
 function renderSeedBudPreviews(root=document){
-  root.querySelectorAll('canvas[data-seed-bud]').forEach(canvas=>{
-    const id=canvas.dataset.seedBud,seed=(gameState?.seedVault?.inventory||[]).find(x=>x.id===id)||activeSeed();
-    if(seed&&seed.id===id)drawSeedBudPreview(canvas,seed);
-  });
+  root.querySelectorAll('canvas[data-seed-bud]').forEach(canvas=>{const seed=resolveBudPreview(canvas.dataset.seedBud);if(seed)drawSeedBudPreview(canvas,seed)});
 }
 
 function phaseKeyForDay(day){return day<15?'seedling':day<36?'veg':day<57?'stretch':'flower'}
@@ -1320,7 +1452,7 @@ function openHarvestResults(){
 }
 function commitHarvestResult(){
   if(!pendingHarvestResult||pendingHarvestResult.committed)return;const r=pendingHarvestResult;
-  const jar={id:'jar-'+Date.now(),name:r.g.name+' #'+String(r.seed).slice(-5),genetics:r.g.id,seed:r.seed,score:r.scores.total,scores:r.scores,reward:r.reward,grams:r.grams,rating:r.rating.label,day:gameState.plant.day,phenotype:r.phenotype,signature:r.signature||[],biography:r.biography||biographySummary(),geneticProfile:r.geneticProfile||activeGeneticProfile(),createdAt:Date.now()};
+  const jar={id:'jar-'+Date.now(),name:r.g.name+' #'+String(r.seed).slice(-5),genetics:r.g.id,seed:r.seed,score:r.scores.total,scores:r.scores,reward:r.reward,grams:r.grams,rating:r.rating.label,day:gameState.plant.day,phenotype:r.phenotype,rarity:gameState.genetics.currentSeed?.rarity||'common',traits:{...(gameState.genetics.currentSeed?.traits||{})},signature:r.signature||[],biography:r.biography||biographySummary(),geneticProfile:r.geneticProfile||activeGeneticProfile(),createdAt:Date.now()};
   gameState.collection.unshift(jar);gameState.collection=gameState.collection.slice(0,30);gameState.coins+=r.reward;gameState.plant.harvested=true;if(gameState.genetics.currentSeed){gameState.genetics.currentSeed.revealed=true;gameState.seedVault.discovered[gameState.genetics.currentSeed.phenotype]=true;}if(!r.seedDrop){r.seedDrop=rollHarvestSeed(r);gameState.seedVault.inventory.unshift(r.seedDrop);lastSeedDropId=r.seedDrop.id;}r.committed=true;saveGameState();renderMetaPanels();updateGameHUD();
 }
 function harvestCurrentGrow(){openHarvestResults();}
@@ -1367,14 +1499,14 @@ function renderMetaPanels(){
     const ready=gameState.plant.day>=84&&!gameState.plant.harvested,scores=harvestScores(),recent=gameState.collection||[],active=activeSeed(),vault=gameState.seedVault?.inventory||[];
     const seedTile=(seed,state='vault')=>{const g=GENETICS[seed.genetics]||GENETICS.dream;return '<div class="collection-seed '+seed.rarity+' '+state+'"><span class="collection-seed-orb">'+g.icon+'</span><div><b>'+g.name+'</b><small>#'+String(seed.seed).slice(-5)+' · '+SEED_RARITY[seed.rarity].label+'</small><em>'+(state==='active'?'AKTIVER GROW':seed.revealed?seed.phenotype:'PHÄNOTYP ???')+'</em></div></div>'};
     const demoJars=[
-      {name:'Lime Comet #73104',score:91,grams:76,phenotype:'Citrus Compact',rating:'EXZELLENT',demo:true,tone:'lime'},
-      {name:'Violet Circuit #20867',score:86,grams:64,phenotype:'Purple Dense',rating:'SEHR GUT',demo:true,tone:'violet'},
-      {name:'Garden Dream #59412',score:79,grams:82,phenotype:'Wide Canopy',rating:'GUT',demo:true,tone:'gold'}
+      {id:'demo-lime',name:'Lime Comet #73104',genetics:'comet',seed:73104,rarity:'rare',traits:{growth:5,density:6,potency:4,aroma:7,resilience:1,style:5},score:91,grams:76,phenotype:'Citrus Compact',rating:'EXZELLENT',demo:true,tone:'lime'},
+      {id:'demo-violet',name:'Violet Circuit #20867',genetics:'violet',seed:20867,rarity:'epic',traits:{growth:2,density:7,potency:8,aroma:5,resilience:4,style:8},score:86,grams:64,phenotype:'Purple Dense',rating:'SEHR GUT',demo:true,tone:'violet'},
+      {id:'demo-dream',name:'Garden Dream #59412',genetics:'dream',seed:59412,rarity:'common',traits:{growth:4,density:3,potency:2,aroma:4,resilience:6,style:3},score:79,grams:82,phenotype:'Wide Canopy',rating:'GUT',demo:true,tone:'gold'}
     ];
     const jars=recent.length?recent.slice(0,8):demoJars;
-    const jarTile=j=>'<div class="collection-jar '+(j.demo?'demo ':'')+(j.tone||'')+'"><div class="collection-jar-art"><i></i><span>✦</span></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>';
+    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed));return '<div class="collection-jar '+(j.demo?'demo ':'')+(j.tone||'')+'"><div class="collection-jar-art"><canvas data-seed-bud="'+previewId+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
     cc.innerHTML='<div class="collection-scroll"><div class="collection-section-head"><b>DEINE SEEDS</b><span>'+(vault.length+(active?1:0))+' Exemplare</span></div><div class="collection-seeds">'+(active?seedTile(active,'active'):'')+vault.slice(0,5).map(x=>seedTile(x)).join('')+'</div><button type="button" class="vault-link" id="collectionVaultButton">SEED VAULT ÖFFNEN <b>›</b></button><div class="collection-section-head archive"><b>GROW ARCHIV</b><span>'+recent.length+' gespielt</span></div><div class="collection-jars">'+jars.map(jarTile).join('')+'</div>'+(recent.length===0?'<div class="demo-note">Beispielgläser für die Demo. Dein erster abgeschlossener Grow ersetzt diese Ansicht.</div>':'')+'</div>';
-    document.getElementById('collectionVaultButton')?.addEventListener('click',()=>openSeedVault());
+    document.getElementById('collectionVaultButton')?.addEventListener('click',()=>openSeedVault());renderSeedBudPreviews(cc);
   }
   const upTab=document.querySelector('[data-ui-tab="upgrades"]');if(upTab)upTab.classList.toggle('has-new',UPGRADE_CATEGORY_ORDER.some(id=>{const lv=upgradeLevel(gameState,id);return lv<10&&gameState.coins>=upgradePrice(id,lv+1);}));
 }
