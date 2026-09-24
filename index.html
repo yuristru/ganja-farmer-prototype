@@ -518,6 +518,81 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   margin:0 2px 8px!important;border-radius:18px!important
 }
 </style>
+
+<style id="v31BottomNavigation">
+/* V31: main navigation is the permanent bottom dock. Content always opens above it. */
+.mobile-game-ui .bottom-wrap{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  height:auto!important;
+  min-height:0!important;
+}
+.mobile-game-ui .bottom-wrap>.tabs{
+  order:20!important;
+  flex:0 0 40px!important;
+  width:auto!important;
+  height:40px!important;
+  margin:6px 8px 0!important;
+  border-radius:18px!important;
+  z-index:12!important;
+}
+.mobile-game-ui .bottom-wrap>.game-panel{
+  order:10!important;
+}
+.mobile-game-ui .bottom-wrap>.game-panel.active{
+  order:10!important;
+}
+
+/* Pflege stays compact above the dock. */
+.mobile-game-ui .bottom-wrap:not(.meta-open)>.needs-panel.game-panel.active{
+  margin:0!important;
+  flex:0 0 auto!important;
+}
+
+/* Genetik, Upgrades and Sammlung occupy the screen above the permanent dock. */
+.mobile-game-ui .bottom-wrap.meta-open{
+  top:calc(var(--safe-top) + 5px)!important;
+  bottom:calc(var(--safe-bottom) + 4px)!important;
+  left:5px!important;
+  right:5px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  z-index:57!important;
+}
+.mobile-game-ui .bottom-wrap.meta-open:before{
+  inset:-8px -5px -5px!important;
+}
+.mobile-game-ui .bottom-wrap.meta-open>.game-panel.active:not(.needs-panel){
+  order:10!important;
+  flex:1 1 0!important;
+  height:0!important;
+  min-height:0!important;
+  margin:0!important;
+  overflow:auto!important;
+}
+.mobile-game-ui .bottom-wrap.meta-open>.tabs{
+  order:20!important;
+  flex:0 0 40px!important;
+  height:40px!important;
+  margin:8px 2px 0!important;
+  border-radius:18px!important;
+  box-shadow:0 -3px 0 #031722,0 -8px 22px rgba(0,0,0,.34),inset 0 1px 0 rgba(128,224,236,.16)!important;
+}
+
+/* The dock is visually anchored to the bottom edge. */
+.mobile-game-ui .bottom-wrap>.tabs:after{
+  content:"";
+  position:absolute;
+  left:26%;
+  right:26%;
+  bottom:-8px;
+  height:3px;
+  border-radius:3px;
+  background:rgba(183,218,226,.16);
+  pointer-events:none;
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
