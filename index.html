@@ -333,6 +333,85 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .rail-subbtn.active{border-color:#bfff83;background:linear-gradient(#7ee44f,#2b9e38);color:#071d0d;box-shadow:0 2px 0 #176526,0 0 9px rgba(137,255,83,.35)}
 .rail-subicon:active,.rail-subbtn:active{transform:translateY(1px);box-shadow:0 1px 0 #041725}
 </style>
+
+<style id="v28NavigationAndPanels">
+/* V28: game dock and near-fullscreen meta panels */
+.mobile-game-ui .bottom-wrap{transition:top .22s ease,bottom .22s ease,left .22s ease,right .22s ease!important}
+.mobile-game-ui .tabs{
+  height:54px!important;margin:0 5px -5px!important;padding:4px!important;gap:4px!important;
+  border:2px solid #376f91!important;border-radius:19px 19px 9px 9px!important;
+  background:linear-gradient(180deg,rgba(16,55,84,.98),rgba(6,31,50,.99))!important;
+  box-shadow:0 -4px 0 rgba(2,18,30,.9),0 -10px 26px rgba(0,0,0,.34),inset 0 1px 0 rgba(180,225,255,.14)!important;
+  overflow:visible!important
+}
+.mobile-game-ui .tab{
+  min-width:0!important;margin:0!important;padding:3px 1px 4px!important;border:1px solid rgba(103,166,207,.20)!important;border-radius:12px!important;
+  background:linear-gradient(180deg,rgba(24,66,96,.72),rgba(9,38,60,.76))!important;
+  color:#a9c7db!important;font:1000 6.8px/1 system-ui,sans-serif!important;letter-spacing:.15px!important;text-shadow:0 1px 0 #020b12!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important
+}
+.mobile-game-ui .tab .ico{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:25px!important;height:25px!important;margin:0 auto 3px!important;border-radius:9px!important;
+  border:1px solid rgba(122,193,234,.22)!important;background:#0b2b42!important;
+  color:#c9eaff!important;font-size:14px!important;line-height:25px!important;
+  box-shadow:0 2px 0 #041722!important
+}
+.mobile-game-ui .tab.active{
+  transform:translateY(-4px)!important;border-color:#c7ff83!important;
+  background:linear-gradient(180deg,#b8ff72,#62e94c)!important;color:#08210d!important;
+  box-shadow:0 4px 0 #167a2e,0 0 18px rgba(111,255,69,.48),inset 0 2px 0 rgba(255,255,255,.55)!important;
+  text-shadow:none!important
+}
+.mobile-game-ui .tab.active .ico{border-color:#1d7d31!important;background:#113d23!important;color:#baff76!important;box-shadow:0 2px 0 #0a2817!important}
+.mobile-game-ui .tab.alert:after{top:-5px!important;right:3px!important;width:15px!important;height:15px!important;line-height:15px!important;font-size:9px!important;border-width:1px!important}
+
+/* Large sections become a game screen while the plant renderer stays mounted behind it. */
+.mobile-game-ui .bottom-wrap.meta-open{
+  top:calc(var(--safe-top) + 5px)!important;bottom:calc(var(--safe-bottom) + 4px)!important;left:5px!important;right:5px!important;
+  z-index:57!important;display:flex!important;flex-direction:column!important
+}
+.mobile-game-ui .bottom-wrap.meta-open:before{
+  content:"";position:absolute;inset:-8px -5px -5px;z-index:-2;
+  background:linear-gradient(180deg,rgba(3,16,25,.93),rgba(3,21,25,.985) 38%,rgba(2,14,19,.995));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
+}
+.mobile-game-ui .bottom-wrap.meta-open .tabs{flex:0 0 54px!important;margin:0 2px 7px!important;border-radius:19px!important;box-shadow:0 4px 0 #031722,0 9px 24px rgba(0,0,0,.34)!important}
+.mobile-game-ui .bottom-wrap.meta-open .game-panel.active:not(.needs-panel){
+  display:block!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;
+  border:2px solid #2d7c65!important;border-radius:22px!important;padding:13px 11px 12px!important;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(96,255,104,.10),transparent 31%),
+    linear-gradient(180deg,rgba(8,52,54,.995),rgba(4,31,38,.995) 50%,rgba(3,22,29,.998))!important;
+  box-shadow:0 5px 0 #05281f,0 15px 34px rgba(0,0,0,.42),inset 0 1px 0 rgba(173,255,196,.11)!important;
+  overflow:auto!important;scrollbar-width:none
+}
+.mobile-game-ui .bottom-wrap.meta-open .game-panel.active:not(.needs-panel)::-webkit-scrollbar{display:none}
+.mobile-game-ui .bottom-wrap.meta-open .panel-head{position:sticky!important;top:0!important;z-index:4!important;min-height:40px!important;margin:-2px 0 10px!important;padding:2px 0 7px!important;background:linear-gradient(180deg,#083638 72%,rgba(8,54,56,0))!important}
+.mobile-game-ui .bottom-wrap.meta-open .panel-head h2{font-size:18px!important;letter-spacing:-.7px!important}
+.mobile-game-ui .bottom-wrap.meta-open .coin-pill{margin-left:auto!important}
+.mobile-game-ui .panel-close{
+  display:flex;width:34px;height:34px;flex:0 0 34px;align-items:center;justify-content:center;padding:0;
+  border:2px solid #557b8f;border-radius:12px;background:linear-gradient(#173f55,#0a2939);color:#e7f7ff;
+  box-shadow:0 3px 0 #031722;font:1000 23px/28px system-ui
+}
+.mobile-game-ui .panel-close:active{transform:translateY(2px);box-shadow:0 1px 0 #031722}
+.mobile-game-ui .bottom-wrap:not(.meta-open) .panel-close{display:none}
+
+/* Let existing content use the new tall screens. */
+.mobile-game-ui .bottom-wrap.meta-open .upgrade-category-grid,
+.mobile-game-ui .bottom-wrap.meta-open .upgrade-level-list,
+.mobile-game-ui .bottom-wrap.meta-open .jar-list{height:auto!important;max-height:none!important;overflow:visible!important}
+.mobile-game-ui .bottom-wrap.meta-open .upgrade-category{min-height:66px!important}
+.mobile-game-ui .bottom-wrap.meta-open .upgrade-level-row{min-height:68px!important}
+.mobile-game-ui .bottom-wrap.meta-open .genetics-hero{margin-top:4px!important}
+.mobile-game-ui .bottom-wrap.meta-open .gen-choice-row{margin-top:12px!important;gap:7px!important}
+.mobile-game-ui .bottom-wrap.meta-open .gen-choice{height:66px!important}
+.mobile-game-ui .bottom-wrap.meta-open [data-game-panel="collection"] .harvest-card{margin-top:3px!important}
+
+/* Cut subcontrols are icon buttons only. */
+.mobile-game-ui .rail-prune-sub .rail-subbtn{width:28px!important;height:27px!important;font-size:15px!important;line-height:23px!important}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
@@ -346,7 +425,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   <div class="mascot" aria-hidden="true"><svg viewBox="0 0 100 100" role="img"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c9ff67"/><stop offset="1" stop-color="#35a83d"/></linearGradient></defs><path d="M50 8 59 30 77 17 72 38 94 35 76 52 91 64 68 65 71 89 53 73 42 94 37 72 16 86 24 63 4 56 27 48 11 30 34 35Z" fill="url(#mg)" stroke="#173f25" stroke-width="5" stroke-linejoin="round"/><path d="M24 43c8-7 18-8 26-2v15c-12 4-21 0-26-8Zm52 0c-8-7-18-8-26-2v15c12 4 21 0 26-8Z" fill="#071014" stroke="#dfffe0" stroke-width="2"/><path d="M42 67q8 8 16 0" fill="none" stroke="#173f25" stroke-width="4" stroke-linecap="round"/></svg></div><div class="speech" id="mascotSpeech">Deine Pflanze sieht großartig aus! 💚</div>
   <div class="tool-rail">
     <div class="rail-tool-group" data-tool-group="orbit"><button class="rail-btn active" data-mobile-tool="orbit"><span class="ico">↻</span>Kamera</button><div class="rail-subcontrols show" id="cameraSubcontrols"><button class="rail-subicon" id="cameraResetMini" type="button" aria-label="Kamera zurücksetzen" title="Kamera zurücksetzen">↺</button></div></div>
-    <div class="rail-tool-group" data-tool-group="prune"><button class="rail-btn" data-mobile-tool="prune"><span class="ico">✂</span>Schneiden</button><div class="rail-subcontrols rail-prune-sub" id="pruneSubcontrols"><button class="rail-subbtn active" type="button" data-prune-target="leaf">Blatt</button><button class="rail-subbtn" type="button" data-prune-target="shoot">Triebe</button></div></div>
+    <div class="rail-tool-group" data-tool-group="prune"><button class="rail-btn" data-mobile-tool="prune"><span class="ico">✂</span>Schneiden</button><div class="rail-subcontrols rail-prune-sub" id="pruneSubcontrols"><button class="rail-subbtn active" type="button" data-prune-target="leaf" aria-label="Blatt schneiden" title="Blatt">♣</button><button class="rail-subbtn" type="button" data-prune-target="shoot" aria-label="Trieb schneiden" title="Triebe">⑂</button></div></div>
     <div class="rail-tool-group" data-tool-group="bend"><button class="rail-btn" data-mobile-tool="bend"><span class="ico">⌁</span>Biegen</button></div>
   </div>
   <div class="training-note" id="trainingNote">Schneiden: Knoten oder Blatt antippen.</div>
@@ -365,16 +444,16 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
       <button type="button" class="harvest-ready-box" id="harvestReadyBox" aria-label="Pflanze ernten"><span class="harvest-ready-icon">✂</span><span><small>TAG 84 · GROW ABGESCHLOSSEN</small><strong>ERNTEN</strong><em>Deine Blüten sind bereit</em></span><b>›</b></button>
     </section>
     <section class="game-panel" data-game-panel="genetics">
-      <div class="panel-head"><h2>GENETIK & PHÄNOTYP</h2><span class="coin-pill" data-coin-display>◉ 0</span></div>
+      <div class="panel-head"><h2>GENETIK & PHÄNOTYP</h2><span class="coin-pill" data-coin-display>◉ 0</span><button class="panel-close" type="button" data-panel-close aria-label="Genetik schließen">×</button></div>
       <div id="geneticsContent"></div>
     </section>
     <section class="game-panel upgrade-panel" data-game-panel="upgrades">
-      <div class="panel-head upgrade-panel-head"><button type="button" class="upgrade-back" id="upgradeBack" aria-label="Zurück zu Kategorien">‹</button><h2 id="upgradePanelTitle">GROW ROOM</h2><span class="coin-pill" data-coin-display>◉ 0</span></div>
+      <div class="panel-head upgrade-panel-head"><button type="button" class="upgrade-back" id="upgradeBack" aria-label="Zurück zu Kategorien">‹</button><h2 id="upgradePanelTitle">GROW ROOM</h2><span class="coin-pill" data-coin-display>◉ 0</span><button class="panel-close" type="button" data-panel-close aria-label="Upgrades schließen">×</button></div>
       <div class="panel-sub" id="upgradePanelSub">Wähle eine Kategorie. Jede Kategorie startet auf Stufe 1 und kann bis Stufe 10 ausgebaut werden.</div>
       <div id="upgradeGrid"></div>
     </section>
     <section class="game-panel" data-game-panel="collection">
-      <div class="panel-head"><h2>SAMMLUNG</h2><span class="coin-pill" data-coin-display>◉ 0</span></div>
+      <div class="panel-head"><h2>SAMMLUNG</h2><span class="coin-pill" data-coin-display>◉ 0</span><button class="panel-close" type="button" data-panel-close aria-label="Sammlung schließen">×</button></div>
       <div id="collectionContent"></div>
     </section>
   </div>
@@ -2308,7 +2387,9 @@ document.getElementById('careClose')?.addEventListener('click',()=>careDrawer?.c
 document.getElementById('dayPrev')?.addEventListener('click',()=>{ if(gameState?.settings?.debugBypass) setDay(Math.max(1,currentDay-1)); else showGameToast('Vergangene Tage bleiben in deiner Grow-Historie'); });
 document.getElementById('dayNext')?.addEventListener('click',()=>{const a=plantDayAvailability();showGameToast(a.ok?'Nächster Pflanzentag ist bereit':a.label);});
 document.getElementById('cameraButton')?.addEventListener('click',()=>showGameToast('Foto-Modus folgt'));
-document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-ui-tab]').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('[data-game-panel]').forEach(p=>p.classList.toggle('active',p.dataset.gamePanel===btn.dataset.uiTab));renderMetaPanels();}));
+function setMainPanel(name){const wrap=document.querySelector('.bottom-wrap');document.querySelectorAll('[data-ui-tab]').forEach(b=>b.classList.toggle('active',b.dataset.uiTab===name));document.querySelectorAll('[data-game-panel]').forEach(p=>p.classList.toggle('active',p.dataset.gamePanel===name));if(wrap)wrap.classList.toggle('meta-open',name!=='care');renderMetaPanels();requestRender();}
+document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>setMainPanel(btn.dataset.uiTab)));
+document.querySelectorAll('[data-panel-close]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();setMainPanel('care');}));
 function syncToolSubcontrols(mode){const cameraSub=document.getElementById('cameraSubcontrols'),pruneSub=document.getElementById('pruneSubcontrols');if(cameraSub)cameraSub.classList.toggle('show',mode==='orbit');if(pruneSub)pruneSub.classList.toggle('show',mode==='prune');}
 document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Schneiden · Blatt: Blatt antippen.':'Schneiden · Triebe: Schnittpunkt am Trieb antippen.'):btn.dataset.mobileTool==='bend'?'Biegen: Trieb ziehen und nach unten formen.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
 document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();pruneTarget=btn.dataset.pruneTarget;document.querySelectorAll('[data-prune-target]').forEach(b=>b.classList.toggle('active',b===btn));const n=document.getElementById('trainingNote');if(n){n.textContent=pruneTarget==='leaf'?'Schneiden · Blatt: Blatt antippen.':'Schneiden · Triebe: Schnittpunkt am Trieb antippen.';n.classList.add('show')}requestRender();}));
