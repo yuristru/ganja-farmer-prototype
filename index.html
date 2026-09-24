@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V37 Collection Loop</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganja Farmer V38 Persistent Stalks & Multi Bud Jars</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -845,6 +845,14 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .collection-pack-reveal-card h3{margin:0 0 12px;text-align:center;font:1000 italic 18px/1 "Arial Black",system-ui}
 .mobile-game-ui .collection-pack-close{width:100%;height:39px;margin-top:12px;border:2px solid #dfff8d;border-radius:13px;background:linear-gradient(#dfff8d,#72e74e);color:#08240d;font:1000 9px/1 system-ui}
 </style>
+
+<style id="v38PersistentStalksMultiBudJars">
+.mobile-game-ui .jar-buds{display:block!important}
+.mobile-game-ui .jar-bud-pile{display:block;width:100%!important;height:100%!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.28))}
+.mobile-game-ui .collection-jar-art canvas[data-jar-buds]{position:absolute;z-index:1;left:0;top:8px;width:100%!important;height:70px!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.mobile-game-ui .collection-jar-art:before{z-index:4}
+.mobile-game-ui .collection-jar-art:after{z-index:2;background:linear-gradient(90deg,rgba(230,255,247,.08),rgba(127,209,171,.05) 48%,rgba(255,255,255,.03))!important;pointer-events:none}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI">
   <div class="gf-logo" aria-label="Garden Dream"><div class="gf-logo-main">GARDEN<span>DREAM</span></div><div class="gf-logo-sub">#48291</div></div>
@@ -1098,10 +1106,38 @@ function drawSeedBudPreview(canvas,seed){
   const w=master.width*scale,h=master.height*scale;
   c.drawImage(master,(cssW-w)/2,(cssH-h)/2,w,h);
 }
+function drawJarBudPile(canvas,seed){
+  if(!canvas||!seed)return;
+  const master=renderCoreBudMaster(seed),dpr=Math.min(2,window.devicePixelRatio||1);
+  const cssW=Number(canvas.dataset.w||canvas.clientWidth||92),cssH=Number(canvas.dataset.h||canvas.clientHeight||82);
+  canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
+  const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
+  const salt=Number(canvas.dataset.jarSalt||0),R=rng(seedHash((Number(seed.seed)||58317)^salt,0x6a6172));
+  const count=Math.max(5,Number(canvas.dataset.jarCount||10));
+  const pieces=[];
+  for(let i=0;i<count;i++){
+    const depth=R(),scale=(.20+R()*.13)*(cssW/86)*(1-depth*.10);
+    const w=master.width*scale,h=master.height*scale*(.84+R()*.20);
+    const x=cssW*(.15+R()*.70),y=cssH*(.27+R()*.58);
+    const rot=(R()-.5)*1.35;
+    pieces.push({depth,w,h,x,y,rot});
+  }
+  pieces.sort((a,b)=>a.depth-b.depth);
+  for(const p of pieces){
+    c.save();c.translate(p.x,p.y);c.rotate(p.rot);
+    c.globalAlpha=.88+p.depth*.12;
+    c.drawImage(master,-p.w/2,-p.h/2,p.w,p.h);
+    c.restore();
+  }
+}
 function renderSeedBudPreviews(root=document){
   root.querySelectorAll('canvas[data-seed-bud]').forEach(canvas=>{
     const seed=resolveBudPreview(canvas.dataset.seedBud);
     if(seed)drawSeedBudPreview(canvas,seed);
+  });
+  root.querySelectorAll('canvas[data-jar-buds]').forEach(canvas=>{
+    const seed=resolveBudPreview(canvas.dataset.jarBuds);
+    if(seed)drawJarBudPile(canvas,seed);
   });
 }
 function phaseKeyForDay(day){return day<15?'seedling':day<36?'veg':day<57?'stretch':'flower'}
@@ -1479,7 +1515,12 @@ function populateHarvestResult(result){
   document.getElementById('harvestTotalScore').textContent=result.scores.total;document.getElementById('jarAmount').textContent=result.grams+' g';document.getElementById('harvestReward').textContent='+'+result.reward+' COINS';
   for(const id of ['harvestRatingBadge','harvestFinalRating']){const el=document.getElementById(id);el.textContent=result.rating.label;el.className=(id==='harvestRatingBadge'?'rating-badge ':'')+'rating-'+result.rating.cls;}
   const labels={size:'GRÖSSE',density:'DICHTE',potency:'POTENZ',aroma:'AROMA',style:'STYLE'};document.getElementById('harvestMetrics').innerHTML=Object.entries(labels).map(([k,l])=>'<div><span>'+l+'</span><b>'+result.scores[k]+'</b><i><em style="width:'+result.scores[k]+'%"></em></i></div>').join('');const sig=document.getElementById('harvestSignature');if(sig)sig.innerHTML=(result.signature||[]).map(x=>'<span class="'+(x.warn?'warn':x.rare?'rare':'')+'">'+x.label+'</span>').join('');
-  const jb=document.getElementById('jarBuds');jb.innerHTML=Array.from({length:18},(_,i)=>'<i style="--x:'+((i*37)%82+5)+'%;--y:'+((i*53)%64+24)+'%;--s:'+(7+(i*11)%10)+'px;--r:'+((i*29)%70-35)+'deg"></i>').join('');drawHarvestBud(result);
+  const jb=document.getElementById('jarBuds');
+  const jarSeed=activeSeed()||makeSeed(result.g.id||'dream',Number(result.seed)||58317,'common','Harvest');
+  const jarPreviewId=registerBudPreview(jarSeed,'harvest-jar-'+result.seed);
+  const jarCount=Math.max(10,Math.min(20,Math.round((result.grams||50)/6)));
+  jb.innerHTML='<canvas class="jar-bud-pile" data-jar-buds="'+jarPreviewId+'" data-jar-salt="'+result.seed+'" data-jar-count="'+jarCount+'" data-w="168" data-h="158"></canvas>';
+  renderSeedBudPreviews(jb);drawHarvestBud(result);
 }
 function openHarvestResults(){
   if(gameState.plant.day<84){showGameToast('Grow noch nicht abgeschlossen');return;}if(gameState.plant.harvested){const last=gameState.collection?.[0];if(!last){showGameToast('Bereits geerntet');return;}pendingHarvestResult={scores:last.scores,g:GENETICS[last.genetics]||activeGenetics(),reward:last.reward,grams:last.grams||Math.max(12,Math.round(14+last.scores.size*.46+last.scores.density*.27+last.scores.potency*.05)),rating:harvestRating(last.score),seed:last.seed,signature:last.signature||[],biography:last.biography||biographySummary(),geneticProfile:last.geneticProfile||activeGeneticProfile(),phenotype:last.phenotype||'Unknown',committed:true};}else pendingHarvestResult=buildHarvestResult();
@@ -1571,7 +1612,7 @@ function renderMetaPanels(){
       ...((active&&!gameState.plant.harvested)?[seedEntry(active,'active')]:[]),
       ...recent.map(jarEntry)
     ].sort((a,b)=>b.sortAt-a.sortAt);
-    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed));return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-seed-bud="'+previewId+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
+    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed)),budCount=Math.max(6,Math.min(12,Math.round((j.grams||60)/8)));return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-jar-buds="'+previewId+'" data-jar-salt="'+(j.seed||0)+'" data-jar-count="'+budCount+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
     const seedTile=(seed,state)=>'<div class="collection-item-card seed '+seed.rarity+' '+state+'" data-collection-seed="'+seed.id+'">'+seedCardHTML(seed,{active:state==='active',interactive:false})+(state==='seed'?'<button type="button" class="collection-plant-seed" data-plant-seed="'+seed.id+'">PFLANZEN</button>':'<span class="collection-active-grow">WÄCHST GERADE</span>')+'</div>';
     const ownedHTML=entries.length?entries.map(e=>e.kind==='jar'?jarTile(e.jar):seedTile(e.seed,e.kind)).join(''):'<div class="collection-empty">Noch keine Seeds. Öffne oben dein erstes Pack.</div>';
     const demos=recent.length===0?'<div class="collection-section-head archive"><b>BEISPIEL-GROWS</b><span>Demo</span></div><div class="collection-unified demo-grid">'+demoJars.map(jarTile).join('')+'</div>':'';
@@ -2273,7 +2314,9 @@ function drawLeaf(o){
     return add(o.p,add(mul(localX,px),add(mul(fanForward,py),mul(localZ,pz))));
   }
 
-  if(!low){
+  // Petioles are structural geometry and must never disappear during camera interaction.
+  // Interaction LOD may simplify leaflet veins/fingers, but the stalk remains visible.
+  {
     const palmWorld=mapLocal(v(0,0,0));
     const pp0=proj(o.p),pp1=proj(palmWorld),petZ=(pp0.z+pp1.z)/2;
     queue.push({z:petZ,draw(){
