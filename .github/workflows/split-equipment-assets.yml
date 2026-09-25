@@ -1,0 +1,38 @@
+name: Build equipment assets
+
+on:
+  push:
+    paths:
+      - "assets/equipment/equipment_master_v57.png"
+      - ".github/workflows/split-equipment-assets.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ImageMagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
+      - name: Split master sprite into category strips
+        run: |
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+0 +repage assets/equipment/light.png
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+256 +repage assets/equipment/vent.png
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+512 +repage assets/equipment/irrigation.png
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+768 +repage assets/equipment/nutrients.png
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+1024 +repage assets/equipment/sensor.png
+          convert assets/equipment/equipment_master_v57.png -crop 2560x256+0+1280 +repage assets/equipment/substrate.png
+      - name: Commit generated equipment files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/equipment/light.png assets/equipment/vent.png assets/equipment/irrigation.png assets/equipment/nutrients.png assets/equipment/sensor.png assets/equipment/substrate.png
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "V57 rebuild high resolution equipment sprites"
+            git push
+          fi
