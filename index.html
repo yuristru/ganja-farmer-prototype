@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V57 High Resolution Equipment</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V57 Clean Grow Room</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1569,6 +1569,11 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .level-mini .eq2d-sprite[data-eq2d]{
   transform:scale(1.04)!important;
 }
+</style><style id="v57CleanGrowRoom">
+.mobile-game-ui .mascot,
+.mobile-game-ui .speech{
+  display:none!important;
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -1584,7 +1589,6 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     <div class="grow-light-body"><span class="grow-light-diode-row"></span></div>
     <div class="grow-light-glow"></div>
   </div>
-  <div class="mascot" aria-hidden="true"><svg viewBox="0 0 100 100" role="img"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c9ff67"/><stop offset="1" stop-color="#35a83d"/></linearGradient></defs><path d="M50 8 59 30 77 17 72 38 94 35 76 52 91 64 68 65 71 89 53 73 42 94 37 72 16 86 24 63 4 56 27 48 11 30 34 35Z" fill="url(#mg)" stroke="#173f25" stroke-width="5" stroke-linejoin="round"/><path d="M24 43c8-7 18-8 26-2v15c-12 4-21 0-26-8Zm52 0c-8-7-18-8-26-2v15c12 4 21 0 26-8Z" fill="#071014" stroke="#dfffe0" stroke-width="2"/><path d="M42 67q8 8 16 0" fill="none" stroke="#173f25" stroke-width="4" stroke-linecap="round"/></svg></div><div class="speech" id="mascotSpeech">Deine Pflanze sieht großartig aus! 💚</div>
   <div class="tool-rail">
     <div class="rail-tool-group" data-tool-group="orbit"><button class="rail-btn active" data-mobile-tool="orbit"><span class="ico">↻</span>Kamera</button><div class="rail-subcontrols show" id="cameraSubcontrols"><button class="rail-subicon" id="cameraResetMini" type="button" aria-label="Kamera zurücksetzen" title="Kamera zurücksetzen">↺</button></div></div>
     <div class="rail-tool-group" data-tool-group="prune"><button class="rail-btn" data-mobile-tool="prune"><span class="ico">✂</span>Schneiden</button><div class="rail-subcontrols rail-prune-sub" id="pruneSubcontrols"><button class="rail-subbtn active" type="button" data-prune-target="leaf" aria-label="Blatt schneiden" title="Blatt">♣</button><button class="rail-subbtn" type="button" data-prune-target="shoot" aria-label="Trieb schneiden" title="Triebe">⑂</button></div></div>
@@ -2127,16 +2131,7 @@ function updateGameHUD(){
   $('mobilePhase').textContent=phaseForDay(currentDay).toUpperCase();
   const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const da=plantDayAvailability();const time=gameState.plant.day>=84?'ERNTE':da.wait>0?formatCountdown(da.wait):'JETZT';weekProgressLabel.textContent='TAG '+dayInWeek+'/7 · '+time;weekProgressLabel.title=da.wait>0?'Automatischer Tageswechsel in '+formatCountdown(da.wait):'Der nächste Pflanzentag beginnt automatisch';}
   $('mobileVigor').innerHTML='Vitalität <strong>'+Math.round(vigor*100)+'%</strong><span class="info-dot">i</span>';
-  const ms=$('mascotSpeech'),careStress=recentCareState();
-  if(ms){
-    if(snap.levels.water<.30)ms.textContent='Zu trocken! Wachstum stoppt und Blätter hängen.';
-    else if(snap.levels.water>.92)ms.textContent='Zu nass! Wurzeln bekommen zu wenig Luft.';
-    else if(snap.levels.nutrients>.92)ms.textContent='Zu viel Dünger! Blattspitzen beginnen zu verbrennen.';
-    else if(snap.levels.nutrients<.30)ms.textContent='Nährstoffmangel! Ältere Blätter vergilben.';
-    else if(careStress.waterStreak>=2)ms.textContent='Wassermangel seit '+careStress.waterStreak+' Tagen. Jetzt gießen!';
-    else if(careStress.nutrientStreak>=2)ms.textContent='Düngermangel seit '+careStress.nutrientStreak+' Tagen.';
-    else ms.textContent=vigor>.9?'Deine Pflanze sieht großartig aus! 💚':vigor>.72?'Sie braucht heute etwas Liebe. 🌱':'Achtung, die Pflanze steht unter Stress!';
-  }
+  const careStress=recentCareState();
   for(const name of ['water','light','nutrients','climate']){
     const level=snap.levels[name],score=snap.scores[name];
     $(name+'Pct').textContent=Math.round(level*100)+'%';
@@ -3772,13 +3767,8 @@ function buildWorldBackground(){
   if((roomLevels.sensor||1)>1){g.fillStyle='rgba(9,34,42,.95)';roundedRectPath(g,W*.73,H*.53,46,29,5);g.fill();g.strokeStyle='rgba(113,255,151,.45)';g.stroke();g.fillStyle='#9dff75';g.font='800 7px system-ui';g.textAlign='center';g.fillText('HUB',W*.73+23,H*.53+18);}
   // right ventilation duct
   g.save();g.translate(W*.90,-10);g.rotate(.09);g.fillStyle='#0b1616';g.fillRect(0,0,27,H*.27);g.strokeStyle='rgba(123,158,153,.28)';g.lineWidth=3;for(let y=4;y<H*.27;y+=11){g.beginPath();g.moveTo(0,y);g.lineTo(27,y);g.stroke()}g.restore();
-  // posters behind plant
-  function poster(x,y,w,h,title,accent){g.save();g.translate(x,y);g.rotate(x<W/2?-.035:.028);roundedRectPath(g,0,0,w,h,3);g.fillStyle='rgba(9,18,24,.86)';g.fill();g.strokeStyle='rgba(95,137,137,.22)';g.stroke();g.fillStyle=accent;g.font='900 '+Math.max(9,w*.13)+'px system-ui';g.textAlign='center';g.textBaseline='middle';const lines=title.split('|');lines.forEach((t,i)=>g.fillText(t,w/2,h*.30+i*h*.18));g.restore()}
-  poster(W*.70,H*.18,W*.24,H*.16,'GOOD PLANTS|HAPPIER|PEOPLE','#a8c7a1');
-  poster(W*.72,H*.39,W*.22,H*.20,'HIGHER|GROWTH|BRIGHTER|TOMORROW','#8f9eb6');
-  // crates and small set dressing
-  g.fillStyle='rgba(38,45,33,.92)';roundedRectPath(g,W*.05,H*.58,W*.20,H*.15,5);g.fill();g.strokeStyle='rgba(130,145,96,.25)';g.stroke();g.fillStyle='#9fa36c';g.font='900 11px system-ui';g.textAlign='center';g.fillText('GROW',W*.15,H*.625);g.fillText('GOOD',W*.15,H*.650);g.fillText('VIBES',W*.15,H*.675);
-  // soft background foliage on both sides
+// crates and small set dressing
+// soft background foliage on both sides
   g.save();g.filter='blur(1.2px)';for(let i=0;i<7;i++){drawWorldLeaf(g,-3+i*7,H*(.22+i*.085),40+i*3,-.45+i*.10,.22);drawWorldLeaf(g,W+2-i*5,H*(.14+i*.09),42+i*2,.45-i*.08,.20)}g.restore();
   // table / floor plane
   let floor=g.createLinearGradient(0,H*.67,0,H);floor.addColorStop(0,'rgba(34,54,43,.20)');floor.addColorStop(1,'rgba(3,8,7,.76)');g.fillStyle=floor;g.beginPath();g.moveTo(0,H*.69);g.lineTo(W,H*.69);g.lineTo(W,H);g.lineTo(0,H);g.closePath();g.fill();
