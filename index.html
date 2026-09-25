@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V57 Clean Grow Room</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V58 Modular Grow Light</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1574,6 +1574,71 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .speech{
   display:none!important;
 }
+</style><style id="v58ModularGrowLight">
+/* Background stays neutral. The equipped lamp and its illumination are separate scene layers. */
+.mobile-game-ui .grow-light-fixture{display:none!important}
+
+.mobile-game-ui .equipment2d-layer{
+  isolation:isolate;
+}
+.mobile-game-ui .room-light-cone{
+  position:absolute;
+  z-index:0;
+  left:50%;
+  top:calc(var(--safe-top) + 108px);
+  width:var(--cone-width,190px);
+  height:var(--cone-height,340px);
+  transform:translateX(-50%);
+  transform-origin:50% 0;
+  pointer-events:none;
+  opacity:1;
+  clip-path:polygon(34% 0,66% 0,100% 100%,0 100%);
+  background:
+    radial-gradient(ellipse at 50% 4%,
+      rgba(245,255,221,calc(var(--cone-alpha,.18) * 1.38)) 0,
+      rgba(211,255,180,calc(var(--cone-alpha,.18) * .82)) 23%,
+      rgba(154,255,126,calc(var(--cone-alpha,.18) * .34)) 58%,
+      rgba(124,255,106,0) 100%);
+  filter:blur(7px);
+  mix-blend-mode:screen;
+}
+.mobile-game-ui .room-light-cone:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  clip-path:polygon(43% 0,57% 0,82% 100%,18% 100%);
+  background:linear-gradient(180deg,
+    rgba(255,255,232,calc(var(--cone-alpha,.18) * .68)),
+    rgba(197,255,166,calc(var(--cone-alpha,.18) * .19)) 55%,
+    rgba(170,255,145,0));
+  filter:blur(3px);
+}
+.mobile-game-ui .room-light{
+  z-index:2!important;
+  left:50%!important;
+  top:calc(var(--safe-top) + 58px)!important;
+  width:190px!important;
+  height:94px!important;
+  transform:translateX(-50%) scale(var(--eq-scale,1))!important;
+  transform-origin:50% 18%!important;
+  filter:
+    drop-shadow(0 7px 8px rgba(0,0,0,.52))
+    drop-shadow(0 8px 16px rgba(202,255,163,.20))!important;
+}
+.mobile-game-ui .room-light[data-eq-level="2"]{width:140px!important}
+.mobile-game-ui .room-light[data-eq-level="3"]{width:154px!important}
+.mobile-game-ui .room-light[data-eq-level="4"]{width:166px!important}
+.mobile-game-ui .room-light[data-eq-level="5"]{width:178px!important}
+.mobile-game-ui .room-light[data-eq-level="6"]{width:190px!important}
+.mobile-game-ui .room-light[data-eq-level="7"]{width:202px!important}
+.mobile-game-ui .room-light[data-eq-level="8"]{width:214px!important}
+.mobile-game-ui .room-light[data-eq-level="9"]{width:226px!important}
+.mobile-game-ui .room-light[data-eq-level="10"]{width:238px!important}
+
+@media(max-width:370px){
+  .mobile-game-ui .room-light{top:calc(var(--safe-top) + 57px)!important}
+  .mobile-game-ui .room-light-cone{top:calc(var(--safe-top) + 105px)}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -1583,11 +1648,6 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     <button class="arrow" id="dayPrev" aria-label="Vorheriger Tag">‹</button>
     <div class="day-mid"><b id="mobileDay">WOCHE 1</b><span id="mobilePhase">KEIMUNG</span><div class="day-dots" id="turnDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small class="turn-dot-label" id="weekProgressLabel">TAG 1 / 7</small></div>
     <button class="arrow" id="dayNext" aria-label="Nächster Tag">›</button>
-  </div>
-  <div class="grow-light-fixture" id="growLightFixture" aria-hidden="true">
-    <i class="grow-light-cord cord-left"></i><i class="grow-light-cord cord-right"></i>
-    <div class="grow-light-body"><span class="grow-light-diode-row"></span></div>
-    <div class="grow-light-glow"></div>
   </div>
   <div class="tool-rail">
     <div class="rail-tool-group" data-tool-group="orbit"><button class="rail-btn active" data-mobile-tool="orbit"><span class="ico">↻</span>Kamera</button><div class="rail-subcontrols show" id="cameraSubcontrols"><button class="rail-subicon" id="cameraResetMini" type="button" aria-label="Kamera zurücksetzen" title="Kamera zurücksetzen">↺</button></div></div>
@@ -2143,15 +2203,6 @@ function updateGameHUD(){
   const waterCard=$('waterCard'),feedCard=$('feedCard'),ventCard=$('ventCard');
   const actionMeta={water:{card:waterCard,level:snap.levels.water,recommended:snap.levels.water<.58,status:'waterStatus'},feed:{card:feedCard,level:snap.levels.nutrients,recommended:snap.levels.nutrients<.55,status:'nutrientsStatus'},vent:{card:ventCard,level:snap.levels.ventilation,recommended:snap.levels.ventilation<.58,status:'climateStatus'}};
   if($('setupChip'))$('setupChip').textContent=(gameState.setup?.pot?.liters||7)+' L · '+(gameState.setup?.substrate?.name||'Erde');
-  const lightFixture=$('growLightFixture');
-  if(lightFixture){
-    const lightLevel=upgradeLevel(gameState,'light'),lightName=UPGRADE_CATEGORIES.light.names[lightLevel-1];
-    lightFixture.classList.toggle('no-lamp',lightLevel<=1);
-    lightFixture.dataset.level=String(lightLevel);
-    lightFixture.title=lightLevel<=1?'Sonnenlicht':lightName;
-    lightFixture.style.setProperty('--lamp-width',Math.min(126,44+(lightLevel-2)*10)+'px');
-    lightFixture.style.setProperty('--lamp-power',String(Math.min(1,.28+(lightLevel-2)*.085)));
-  }
   const harvestReady=currentDay>=84;const carePanel=document.querySelector('[data-game-panel="care"]');if(carePanel)carePanel.classList.toggle('harvest-mode',harvestReady);const harvestBox=$('harvestReadyBox');if(harvestBox){harvestBox.style.display=harvestReady?'grid':'none';harvestBox.disabled=!!gameState.plant.harvested;harvestBox.querySelector('strong').textContent=gameState.plant.harvested?'ERNTE EINGELAGERT':'ERNTEN';harvestBox.querySelector('em').textContent=gameState.plant.harvested?'In deiner Sammlung gespeichert':'Deine Blüten sind bereit';}
   for(const [action,m] of Object.entries(actionMeta)){
     if(!m.card)continue;const av=careActionAvailability(action),ready=av.ok;
@@ -2347,8 +2398,14 @@ function syncEquipment2D(){
     const level=Math.max(1,Number(lv[id]||1));
     return '<span class="room-equipment '+cls+' eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'" title="'+UPGRADE_CATEGORIES[id].names[level-1]+'"></span>';
   };
+  const lightLevel=Math.max(1,Number(lv.light||1));
+  const hasLamp=lightLevel>1;
+  const lightCone=hasLamp
+    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-level:'+lightLevel+';--cone-alpha:'+(.12+lightLevel*.018).toFixed(3)+';--cone-width:'+(150+lightLevel*15)+'px;--cone-height:'+(300+lightLevel*15)+'px"></span>'
+    : '';
   layer.innerHTML=[
-    sprite('light','room-light',(lv.light||1)>1),
+    lightCone,
+    sprite('light','room-light',hasLamp),
     sprite('vent','room-vent',(lv.vent||1)>1),
     sprite('sensor','room-sensor',(lv.sensor||1)>1),
     sprite('irrigation','room-irrigation',(lv.irrigation||1)>1),
@@ -3743,8 +3800,8 @@ function buildWorldBackground(){
   const g=c.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
   // deep room
   let bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#17332c');bg.addColorStop(.42,'#102823');bg.addColorStop(1,'#071511');g.fillStyle=bg;g.fillRect(0,0,W,H);
-  // center bloom behind the live 3D plant
-  let halo=g.createRadialGradient(W*.51,H*.38,10,W*.51,H*.43,H*.58);halo.addColorStop(0,'rgba(98,151,98,.26)');halo.addColorStop(.45,'rgba(27,74,55,.16)');halo.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=halo;g.fillRect(0,0,W,H);
+  // Neutral room only. No baked-in lamp, light cone, implied light source or fan.
+  // Active hardware is rendered later as independent equipment layers.
   // wall panels
   g.strokeStyle='rgba(124,183,156,.075)';g.lineWidth=1;
   for(let x=-20;x<W+40;x+=54){g.beginPath();g.moveTo(x,0);g.lineTo(x+18,H*.72);g.stroke()}
@@ -3753,20 +3810,11 @@ function buildWorldBackground(){
     let rg=g.createLinearGradient(x-7,0,x+7,0);rg.addColorStop(0,'#07100f');rg.addColorStop(.45,'#27483f');rg.addColorStop(.62,'#0a1514');rg.addColorStop(1,'#020706');g.fillStyle=rg;g.fillRect(x-6,0,12,H*.76);
     g.fillStyle='rgba(139,203,161,.20)';for(let y=72;y<H*.70;y+=46)g.fillRect(x-4,y,3,2);
   }
-  // overhead LED grow light, visible behind top HUD
-  const lx=W*.29,ly=2,lw=W*.43,lh=52;roundedRectPath(g,lx,ly,lw,lh,9);g.fillStyle='rgba(17,24,22,.94)';g.fill();g.strokeStyle='rgba(113,147,128,.35)';g.lineWidth=2;g.stroke();
-  const strips=5, gap=6, sw=(lw-28-(strips-1)*gap)/strips;
-  for(let i=0;i<strips;i++){const x=lx+14+i*(sw+gap);g.shadowColor='rgba(255,232,158,.80)';g.shadowBlur=14;roundedRectPath(g,x,ly+12,sw,23,4);g.fillStyle='#ffe8a3';g.fill();g.shadowBlur=0;g.fillStyle='rgba(255,255,230,.75)';g.fillRect(x+2,ly+14,Math.max(1,sw-4),2)}
-  // warm spill from the lamp
-  let lamp=g.createLinearGradient(0,35,0,H*.50);lamp.addColorStop(0,'rgba(255,224,142,.13)');lamp.addColorStop(1,'rgba(255,224,142,0)');g.fillStyle=lamp;g.beginPath();g.moveTo(lx+10,42);g.lineTo(lx+lw-10,42);g.lineTo(W*.82,H*.58);g.lineTo(W*.18,H*.58);g.closePath();g.fill();
-  // Equipped hardware becomes part of the room itself.
+  // Non-light equipment that is part of the current setup can still add subtle room detail.
+  // Lighting and ventilation are deliberately excluded here to avoid duplicate hardware.
   const roomLevels=gameState?.progression?.levels||{};
-  if((roomLevels.light||1)>1){g.shadowColor='rgba(181,255,207,.45)';g.shadowBlur=18;g.strokeStyle='rgba(169,255,199,.78)';g.lineWidth=2;g.strokeRect(lx+8,ly+7,lw-16,34);g.shadowBlur=0;}
-  if((roomLevels.vent||1)>1){const fx=W*.82,fy=H*.31,fr=24;g.fillStyle='rgba(10,22,25,.92)';g.beginPath();g.arc(fx,fy,fr,0,Math.PI*2);g.fill();g.strokeStyle='rgba(121,196,202,.45)';g.stroke();for(let i=0;i<4;i++){g.save();g.translate(fx,fy);g.rotate(i*Math.PI/2+.35);g.fillStyle='rgba(112,166,163,.58)';g.beginPath();g.ellipse(8,0,13,5,.35,0,Math.PI*2);g.fill();g.restore();}}
   if((roomLevels.irrigation||1)>2){g.strokeStyle='rgba(89,194,221,.58)';g.lineWidth=3;g.beginPath();g.moveTo(W*.12,H*.50);g.lineTo(W*.26,H*.63);g.lineTo(W*.42,H*.69);g.stroke();g.fillStyle='rgba(47,118,139,.82)';roundedRectPath(g,W*.08,H*.47,28,42,5);g.fill();}
   if((roomLevels.sensor||1)>1){g.fillStyle='rgba(9,34,42,.95)';roundedRectPath(g,W*.73,H*.53,46,29,5);g.fill();g.strokeStyle='rgba(113,255,151,.45)';g.stroke();g.fillStyle='#9dff75';g.font='800 7px system-ui';g.textAlign='center';g.fillText('HUB',W*.73+23,H*.53+18);}
-  // right ventilation duct
-  g.save();g.translate(W*.90,-10);g.rotate(.09);g.fillStyle='#0b1616';g.fillRect(0,0,27,H*.27);g.strokeStyle='rgba(123,158,153,.28)';g.lineWidth=3;for(let y=4;y<H*.27;y+=11){g.beginPath();g.moveTo(0,y);g.lineTo(27,y);g.stroke()}g.restore();
 // crates and small set dressing
 // soft background foliage on both sides
   g.save();g.filter='blur(1.2px)';for(let i=0;i<7;i++){drawWorldLeaf(g,-3+i*7,H*(.22+i*.085),40+i*3,-.45+i*.10,.22);drawWorldLeaf(g,W+2-i*5,H*(.14+i*.09),42+i*2,.45-i*.08,.20)}g.restore();
