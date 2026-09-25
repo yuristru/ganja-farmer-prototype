@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V45 Three.js Equipment Catalog</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V46 Hybrid Equipment Assets</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1217,8 +1217,111 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 }
 .mobile-game-ui .upgrade-level.locked .upgrade-eq-preview{filter:grayscale(.72) brightness(.58)!important;opacity:.72}
 </style>
+
+<style id="v46HybridEquipmentAssets">
+/* V46: only pots use Three.js. All other equipment is a transparent PNG atlas.
+   The same visual asset is reused in shop and gameplay. */
+.mobile-game-ui .equipment3d-layer{z-index:4!important}
+.mobile-game-ui .equipment2d-layer{
+  position:absolute!important;
+  inset:0!important;
+  z-index:5!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+.mobile-game-ui.hybrid-equipment-ready .grow-light-fixture{display:none!important}
+
+.mobile-game-ui .eq2d-sprite{
+  display:block;
+  background-image:url("assets/equipment_atlas.png");
+  background-repeat:no-repeat;
+  background-size:300% 600%;
+  background-position-x:0%;
+  background-position-y:0%;
+  transform:scale(var(--eq-scale,1));
+  transform-origin:center;
+}
+.mobile-game-ui .eq2d-sprite[data-eq-tier="1"]{background-position-x:0%}
+.mobile-game-ui .eq2d-sprite[data-eq-tier="2"]{background-position-x:50%}
+.mobile-game-ui .eq2d-sprite[data-eq-tier="3"]{background-position-x:100%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-position-y:0%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-position-y:20%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-position-y:40%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="sensor"]{background-position-y:60%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="substrate"]{background-position-y:80%}
+.mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-position-y:100%}
+
+/* Shop previews */
+.mobile-game-ui .upgrade-eq-preview.eq2d-sprite{
+  width:100%!important;
+  height:100%!important;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.40));
+}
+.mobile-game-ui .upgrade-category.current .upgrade-eq-preview.eq2d-sprite,
+.mobile-game-ui .upgrade-level.current .upgrade-eq-preview.eq2d-sprite{
+  filter:drop-shadow(0 5px 8px rgba(0,0,0,.40)) drop-shadow(0 0 8px rgba(128,255,86,.20));
+}
+.mobile-game-ui .upgrade-level.locked .upgrade-eq-preview.eq2d-sprite{
+  filter:grayscale(.72) brightness(.55)!important;
+  opacity:.68!important;
+}
+
+/* Gameplay sprites. They sit at fixed physical places in the grow room rather than
+   behaving like HUD icons. Peripheral placement keeps the interactive plant unobstructed. */
+.mobile-game-ui .room-equipment{
+  position:absolute!important;
+  filter:drop-shadow(0 7px 8px rgba(0,0,0,.48));
+  opacity:.98;
+}
+.mobile-game-ui .room-light{
+  left:50%;top:calc(var(--safe-top) + 74px);
+  width:176px;height:92px;
+  transform:translateX(-50%) scale(var(--eq-scale,1))!important;
+  transform-origin:50% 0;
+  filter:drop-shadow(0 7px 7px rgba(0,0,0,.42)) drop-shadow(0 10px 18px rgba(205,255,115,.16));
+}
+.mobile-game-ui .room-vent{
+  right:-5px;top:31%;
+  width:92px;height:92px;
+}
+.mobile-game-ui .room-sensor{
+  right:4px;top:43%;
+  width:82px;height:82px;
+}
+.mobile-game-ui .room-irrigation{
+  right:-3px;top:56%;
+  width:103px;height:103px;
+}
+.mobile-game-ui .room-nutrients{
+  left:-2px;top:57%;
+  width:92px;height:92px;
+}
+.mobile-game-ui .room-substrate{
+  left:7px;top:46%;
+  width:84px;height:84px;
+  opacity:.90;
+}
+
+/* Keep HUD controls decisively above scene equipment. */
+.mobile-game-ui .day-console,
+.mobile-game-ui .top-actions,
+.mobile-game-ui .top-coin-badge,
+.mobile-game-ui .mascot,
+.mobile-game-ui .speech,
+.mobile-game-ui .tool-rail,
+.mobile-game-ui .bottom-wrap{z-index:12!important}
+
+@media(max-width:370px){
+  .mobile-game-ui .room-light{width:158px;height:84px;top:calc(var(--safe-top) + 72px)}
+  .mobile-game-ui .room-vent{width:82px;height:82px}
+  .mobile-game-ui .room-sensor{width:74px;height:74px}
+  .mobile-game-ui .room-irrigation{width:92px;height:92px}
+  .mobile-game-ui .room-nutrients{width:82px;height:82px}
+  .mobile-game-ui .room-substrate{width:76px;height:76px}
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
-<div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas>
+<div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
   <div class="top-coin-badge" id="topCoinBadge" data-coin-display aria-label="Coins">◉ 0</div>
@@ -1881,7 +1984,7 @@ function buyUpgradeLevel(categoryId,targetLevel){
   const cat=UPGRADE_CATEGORIES[categoryId];if(!cat)return;const current=upgradeLevel(gameState,categoryId);targetLevel=Number(targetLevel);
   if(targetLevel!==current+1||targetLevel>10){showGameToast(targetLevel<=current?'Stufe bereits freigeschaltet':'Erst die vorherige Stufe freischalten');return;}
   const price=upgradePrice(categoryId,targetLevel);if(gameState.coins<price){showGameToast('Nicht genug Coins · '+price+' benötigt');return;}
-  gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;saveGameState();updateGameHUD();syncEquipment3D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
+  gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;saveGameState();updateGameHUD();syncEquipment3D();syncEquipment2D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
 }
 function chooseGenetics(id){
   if(!GENETICS[id])return;
@@ -1981,6 +2084,31 @@ function openSeedPack(type){
   reveal.querySelector('.collection-pack-close')?.addEventListener('click',()=>{reveal.remove();renderMetaPanels();});
 }
 
+function equipmentTier(level){level=Math.max(1,Math.min(10,Number(level)||1));return level<=3?1:level<=6?2:3;}
+function equipmentVisualScale(level){const n=Math.max(1,Math.min(10,Number(level)||1)),within=(n-1)%3;return (1+within*.035+(n>=10?.04:0)).toFixed(3);}
+function equipmentVisualHTML(id,level,context='level'){
+  if(id==='pot')return '<canvas class="upgrade-eq-preview '+context+'-preview" data-eq3d="pot" data-eq-level="'+level+'" data-eq-width="'+(context==='category'?106:78)+'" data-eq-height="'+(context==='category'?74:58)+'"></canvas>';
+  return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-tier="'+equipmentTier(level)+'" style="--eq-scale:'+equipmentVisualScale(level)+'"></span>';
+}
+function syncEquipment2D(){
+  const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
+  if(!layer||!gameState)return false;
+  const lv=gameState.progression?.levels||{},sprite=(id,cls,show=true)=>{
+    if(!show)return '';
+    const level=Math.max(1,Number(lv[id]||1));
+    return '<span class="room-equipment '+cls+' eq2d-sprite" data-eq2d="'+id+'" data-eq-tier="'+equipmentTier(level)+'" style="--eq-scale:'+equipmentVisualScale(level)+'" title="'+UPGRADE_CATEGORIES[id].names[level-1]+'"></span>';
+  };
+  layer.innerHTML=[
+    sprite('light','room-light',(lv.light||1)>1),
+    sprite('vent','room-vent',(lv.vent||1)>1),
+    sprite('sensor','room-sensor',(lv.sensor||1)>1),
+    sprite('irrigation','room-irrigation',(lv.irrigation||1)>1),
+    sprite('nutrients','room-nutrients',(lv.nutrients||1)>1),
+    sprite('substrate','room-substrate',(lv.substrate||1)>1)
+  ].join('');
+  ui?.classList.add('hybrid-equipment-ready');
+  return true;
+}
 function syncEquipment3D(){
   const api=window.GanjariumEquipment3D,canvas=document.getElementById('equipment3dCanvas');
   if(!api||!canvas||!gameState)return false;
@@ -1998,17 +2126,18 @@ function renderMetaPanels(){
     if(!selectedUpgradeCategory){
       if(title)title.textContent='GROW ROOM';if(sub)sub.textContent='Kategorie wählen · Stufe 1 ist dein Starter-Setup · Ausbau bis Stufe 10';if(back)back.classList.remove('show');
       grid.className='upgrade-category-grid';
-      grid.innerHTML=UPGRADE_CATEGORY_ORDER.map(id=>{const c=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),next=lv<10?upgradePrice(id,lv+1):0,benefits=categoryBenefits(id,lv);return '<button type="button" class="upgrade-category '+c.accent+'" data-upgrade-category="'+id+'"><span class="upgrade-cat-mini"><canvas class="upgrade-eq-preview category-preview" data-eq3d="'+id+'" data-eq-level="'+lv+'" data-eq-width="106" data-eq-height="74"></canvas><i>LV '+lv+'</i></span><span class="upgrade-cat-main"><strong>'+c.name+'</strong><small>'+c.names[lv-1]+'</small><span class="need-impact">'+c.need+'</span></span><span class="upgrade-cat-side"><b>'+lv+'<small>/10</small></b><span>'+(lv<10?'NÄCHSTE<br><em>◉ '+next+'</em>':'MAX')+'</span></span></button>'}).join('');
+      grid.innerHTML=UPGRADE_CATEGORY_ORDER.map(id=>{const c=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),next=lv<10?upgradePrice(id,lv+1):0,benefits=categoryBenefits(id,lv);return '<button type="button" class="upgrade-category '+c.accent+'" data-upgrade-category="'+id+'"><span class="upgrade-cat-mini">'+equipmentVisualHTML(id,lv,'category')+'<i>LV '+lv+'</i></span><span class="upgrade-cat-main"><strong>'+c.name+'</strong><small>'+c.names[lv-1]+'</small><span class="need-impact">'+c.need+'</span></span><span class="upgrade-cat-side"><b>'+lv+'<small>/10</small></b><span>'+(lv<10?'NÄCHSTE<br><em>◉ '+next+'</em>':'MAX')+'</span></span></button>'}).join('');
       grid.querySelectorAll('[data-upgrade-category]').forEach(b=>b.addEventListener('click',()=>{selectedUpgradeCategory=b.dataset.upgradeCategory;renderMetaPanels();}));
     }else{
       const id=selectedUpgradeCategory,c=UPGRADE_CATEGORIES[id],current=upgradeLevel(gameState,id);if(!c){selectedUpgradeCategory=null;renderMetaPanels();return;}
       if(title)title.textContent=c.icon+' '+c.name.toUpperCase();if(sub)sub.textContent='Aktuell Stufe '+current+' · '+c.names[current-1]+' · wirkt auf '+c.need;if(back)back.classList.add('show');grid.className='upgrade-level-list';
-      grid.innerHTML=Array.from({length:10},(_,i)=>i+1).map(lv=>{const done=lv<current,active=lv===current,next=lv===current+1,locked=lv>current+1,price=upgradePrice(id,lv),benefits=categoryBenefits(id,lv),canBuy=next&&gameState.coins>=price;return '<div class="upgrade-level '+(active?'current ':'')+(done?'done ':'')+(locked?'locked ':'')+(next?'next ':'')+'"><div class="level-mini '+c.accent+'"><canvas class="upgrade-eq-preview level-preview" data-eq3d="'+id+'" data-eq-level="'+lv+'" data-eq-width="78" data-eq-height="58"></canvas><b>'+lv+'</b></div><div class="level-copy"><div class="level-title"><strong>STUFE '+lv+'</strong><span>'+c.names[lv-1]+'</span></div><div class="level-benefits">'+benefits.map(x=>'<i>'+x+'</i>').join('')+'</div></div><div class="level-action">'+(active?'<b class="state-current">AKTIV</b>':done?'<b class="state-owned">✓</b>':next?'<button type="button" data-buy-level="'+lv+'" '+(canBuy?'':'class="poor"')+'><small>UPGRADE</small><strong>◉ '+price+'</strong></button>':'<b class="state-lock">🔒</b>')+'</div></div>'}).join('');
+      grid.innerHTML=Array.from({length:10},(_,i)=>i+1).map(lv=>{const done=lv<current,active=lv===current,next=lv===current+1,locked=lv>current+1,price=upgradePrice(id,lv),benefits=categoryBenefits(id,lv),canBuy=next&&gameState.coins>=price;return '<div class="upgrade-level '+(active?'current ':'')+(done?'done ':'')+(locked?'locked ':'')+(next?'next ':'')+'"><div class="level-mini '+c.accent+'">'+equipmentVisualHTML(id,lv,'level')+'<b>'+lv+'</b></div><div class="level-copy"><div class="level-title"><strong>STUFE '+lv+'</strong><span>'+c.names[lv-1]+'</span></div><div class="level-benefits">'+benefits.map(x=>'<i>'+x+'</i>').join('')+'</div></div><div class="level-action">'+(active?'<b class="state-current">AKTIV</b>':done?'<b class="state-owned">✓</b>':next?'<button type="button" data-buy-level="'+lv+'" '+(canBuy?'':'class="poor"')+'><small>UPGRADE</small><strong>◉ '+price+'</strong></button>':'<b class="state-lock">🔒</b>')+'</div></div>'}).join('');
       grid.querySelectorAll('[data-buy-level]').forEach(b=>b.addEventListener('click',()=>buyUpgradeLevel(id,Number(b.dataset.buyLevel))));
     }
     window.GanjariumEquipment3D?.renderPreviews(grid);
   }
   syncEquipment3D();
+  syncEquipment2D();
   const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Dieser Seed bestimmt den gesamten Grow. Deinen nächsten Seed wählst du nach der Ernte direkt in der Sammlung.</div>'; }
   const cc=document.getElementById('collectionContent');if(cc){
     const recent=gameState.collection||[],active=activeSeed(),inventory=gameState.seedVault?.inventory||[];
@@ -3488,6 +3617,7 @@ document.getElementById('harvestFinish')?.addEventListener('click',()=>{commitHa
 document.getElementById('harvestResultClose')?.addEventListener('click',()=>{document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');});
 
 syncEquipment3D();
+syncEquipment2D();
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
 document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
 renderMetaPanels();
