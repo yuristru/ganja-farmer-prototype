@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V58 Modular Grow Light</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V59 Focused Grow Room</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1639,6 +1639,410 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-light{top:calc(var(--safe-top) + 57px)!important}
   .mobile-game-ui .room-light-cone{top:calc(var(--safe-top) + 105px)}
 }
+</style><style id="v59FocusedGrowRoom">
+/* ---------- clean room and scene hierarchy ---------- */
+.mobile-game-ui .equipment3d-layer{display:none!important}
+.mobile-game-ui .equipment-badge{display:none!important}
+.mobile-game-ui .room-sensor,
+.mobile-game-ui .room-irrigation,
+.mobile-game-ui .room-nutrients,
+.mobile-game-ui .room-substrate{display:none!important}
+
+/* Header: one compact hierarchy, no fourth camera button fighting with the tool rail. */
+.mobile-game-ui .photo-top-btn{display:none!important}
+.mobile-game-ui .ganjarium-wordmark{
+  left:14px!important;
+  top:calc(var(--safe-top) + 17px)!important;
+  z-index:45!important;
+  font-size:22px!important;
+  letter-spacing:-1.4px!important;
+  transform:rotate(-2deg)!important;
+}
+.mobile-game-ui .top-actions{
+  right:12px!important;
+  top:calc(var(--safe-top) + 12px)!important;
+  z-index:47!important;
+  gap:8px!important;
+}
+.mobile-game-ui .top-actions .reload-top-btn,
+.mobile-game-ui .top-actions .gear-btn{
+  width:36px!important;
+  height:36px!important;
+  border-radius:11px!important;
+  font-size:18px!important;
+}
+.mobile-game-ui .day-console{
+  left:50%!important;
+  top:calc(var(--safe-top) + 11px)!important;
+  width:176px!important;
+  height:64px!important;
+  padding:6px 7px 7px!important;
+  transform:translateX(-50%)!important;
+  border-radius:24px!important;
+  z-index:44!important;
+  box-shadow:0 4px 0 #031722,0 10px 22px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.09)!important;
+}
+.mobile-game-ui .day-console .arrow{
+  width:30px!important;
+  height:30px!important;
+  font-size:22px!important;
+}
+.mobile-game-ui .day-mid{min-width:96px!important}
+.mobile-game-ui .day-mid b{font-size:15px!important;line-height:1!important}
+.mobile-game-ui .day-mid span{font-size:7.5px!important;margin-top:2px!important}
+.mobile-game-ui .day-dots{gap:4px!important;margin-top:5px!important}
+.mobile-game-ui .day-dots i{
+  width:8px!important;
+  height:8px!important;
+  border-width:1px!important;
+  opacity:1!important;
+}
+.mobile-game-ui .turn-dot-label{
+  margin-top:4px!important;
+  color:#b6cddd!important;
+  font-size:7.2px!important;
+  letter-spacing:.03em!important;
+}
+.mobile-game-ui .top-coin-badge{
+  right:13px!important;
+  top:calc(var(--safe-top) + 57px)!important;
+  min-width:70px!important;
+  height:29px!important;
+  padding:0 9px!important;
+  border-radius:13px!important;
+  font-size:11px!important;
+  z-index:46!important;
+}
+
+/* Mounted lamp. It is a scene object, not a HUD thumbnail. */
+.mobile-game-ui .room-lamp{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:calc(var(--safe-top) + 87px);
+  width:174px;
+  height:62px;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.mobile-game-ui .lamp-chain{
+  position:absolute;
+  top:-18px;
+  width:2px;
+  height:31px;
+  background:repeating-linear-gradient(180deg,#758185 0 4px,#242d30 4px 8px);
+  box-shadow:1px 0 0 rgba(0,0,0,.6);
+}
+.mobile-game-ui .lamp-chain-left{left:24%}
+.mobile-game-ui .lamp-chain-right{right:24%}
+.mobile-game-ui .lamp-housing{
+  position:absolute;
+  left:0;
+  right:0;
+  top:8px;
+  height:34px;
+  border:2px solid #758285;
+  border-radius:8px 8px 12px 12px;
+  background:linear-gradient(180deg,#48565a 0,#242f32 32%,#111a1c 100%);
+  box-shadow:0 7px 10px rgba(0,0,0,.58),inset 0 2px 0 rgba(255,255,255,.20);
+}
+.mobile-game-ui .lamp-housing:before{
+  content:"";
+  position:absolute;
+  left:9px;right:9px;bottom:5px;height:17px;
+  border-radius:5px;
+  background:
+    repeating-linear-gradient(90deg,#fff0b0 0 9px,#ffc76e 9px 13px,#fff0b0 13px 22px);
+  box-shadow:0 0 11px rgba(255,221,139,.92),0 7px 20px rgba(255,205,110,.35);
+}
+.mobile-game-ui .lamp-led-row{display:none}
+.mobile-game-ui .room-lamp[data-light-level="2"]{width:126px}
+.mobile-game-ui .room-lamp[data-light-level="3"]{width:140px}
+.mobile-game-ui .room-lamp[data-light-level="4"]{width:154px}
+.mobile-game-ui .room-lamp[data-light-level="5"]{width:170px}
+.mobile-game-ui .room-lamp[data-light-level="6"]{width:184px}
+.mobile-game-ui .room-lamp[data-light-level="7"]{width:196px}
+.mobile-game-ui .room-lamp[data-light-level="8"]{width:208px}
+.mobile-game-ui .room-lamp[data-light-level="9"]{width:220px}
+.mobile-game-ui .room-lamp[data-light-level="10"]{width:232px}
+
+/* Light starts exactly at the panel, stays soft, and reaches the plant/pot. */
+.mobile-game-ui .room-light-cone{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  top:calc(var(--safe-top) + 128px);
+  width:var(--cone-width,230px);
+  height:560px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  clip-path:polygon(36% 0,64% 0,96% 100%,4% 100%);
+  background:
+    radial-gradient(ellipse at 50% 0,
+      rgba(255,244,198,calc(var(--cone-alpha,.17) * 1.55)) 0,
+      rgba(250,229,168,calc(var(--cone-alpha,.17) * .96)) 18%,
+      rgba(223,211,145,calc(var(--cone-alpha,.17) * .48)) 48%,
+      rgba(184,199,125,calc(var(--cone-alpha,.17) * .17)) 76%,
+      rgba(164,190,118,0) 100%);
+  filter:blur(13px);
+  mix-blend-mode:screen;
+}
+.mobile-game-ui .room-light-cone:after{
+  content:"";
+  position:absolute;
+  inset:-3% 17% 0;
+  clip-path:polygon(43% 0,57% 0,82% 100%,18% 100%);
+  background:linear-gradient(180deg,
+    rgba(255,246,208,.19),
+    rgba(231,221,163,.10) 46%,
+    rgba(194,205,138,.035) 82%,
+    rgba(194,205,138,0));
+  filter:blur(7px);
+}
+
+/* Ventilation is intentionally mounted to the right wall, never floating or clipped. */
+.mobile-game-ui .room-vent-rig{
+  position:absolute;
+  z-index:3;
+  right:13px;
+  top:calc(var(--safe-top) + 215px);
+  width:78px;
+  height:126px;
+  pointer-events:none;
+}
+.mobile-game-ui .room-vent-rig:before{
+  content:"";
+  position:absolute;
+  right:4px;top:21px;
+  width:72px;height:79px;
+  border:2px solid rgba(105,126,129,.72);
+  border-radius:12px;
+  background:linear-gradient(145deg,rgba(27,39,42,.96),rgba(7,14,16,.98));
+  box-shadow:0 8px 14px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.mobile-game-ui .vent-duct{
+  position:absolute;
+  right:15px;top:-58px;
+  width:37px;height:88px;
+  border-radius:18px 18px 5px 5px;
+  background:repeating-linear-gradient(180deg,#172326 0 7px,#405055 7px 10px,#121b1e 10px 16px);
+  box-shadow:inset 5px 0 7px rgba(255,255,255,.05),0 5px 9px rgba(0,0,0,.44);
+}
+.mobile-game-ui .vent-backplate{display:none}
+.mobile-game-ui .room-vent{
+  position:absolute!important;
+  z-index:2!important;
+  left:5px!important;
+  right:auto!important;
+  top:26px!important;
+  width:68px!important;
+  height:68px!important;
+  transform:scale(1.12)!important;
+  transform-origin:center!important;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.5))!important;
+}
+
+/* Tool rail: equal hierarchy, narrower footprint, reset becomes a corner affordance. */
+.mobile-game-ui .tool-rail{
+  left:9px!important;
+  top:calc(var(--safe-top) + 215px)!important;
+  gap:9px!important;
+  width:54px!important;
+}
+.mobile-game-ui .rail-tool-group{position:relative!important;width:54px!important}
+.mobile-game-ui .rail-btn{
+  width:54px!important;
+  height:57px!important;
+  padding:5px 2px!important;
+  border-radius:15px!important;
+  font-size:8px!important;
+  border-width:2px!important;
+}
+.mobile-game-ui .rail-btn .ico{font-size:20px!important;margin-bottom:4px!important}
+.mobile-game-ui .rail-btn.active{
+  border-color:#9dff63!important;
+  background:linear-gradient(#3bc54a,#178a31)!important;
+  box-shadow:0 3px 0 #0b5621,0 0 12px rgba(105,255,72,.30),inset 0 1px 0 rgba(255,255,255,.24)!important;
+}
+.mobile-game-ui .rail-subcontrols.show{
+  display:flex!important;
+  position:absolute!important;
+  z-index:3!important;
+  right:-3px!important;
+  top:-5px!important;
+  width:20px!important;
+  height:20px!important;
+}
+.mobile-game-ui .rail-subcontrols.show .rail-subicon{
+  width:20px!important;
+  height:20px!important;
+  min-width:20px!important;
+  border-radius:7px!important;
+  font-size:12px!important;
+  line-height:16px!important;
+  border-width:1px!important;
+}
+.mobile-game-ui .rail-prune-sub{display:none!important}
+
+/* Needs panel: readable status block rather than four tiny gauges. */
+.mobile-game-ui .needs-panel{
+  padding:11px 10px 10px!important;
+  border:2px solid #2fb867!important;
+  border-radius:20px!important;
+  background:linear-gradient(180deg,rgba(7,47,49,.98),rgba(3,25,30,.99))!important;
+  box-shadow:0 -7px 22px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+.mobile-game-ui .needs-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin-bottom:9px!important;
+}
+.mobile-game-ui .needs-head h2{
+  min-width:0!important;
+  font-size:13.5px!important;
+  line-height:1!important;
+  letter-spacing:-.45px!important;
+  white-space:nowrap!important;
+}
+.mobile-game-ui .setup-chip{
+  margin-left:5px!important;
+  padding:3px 7px!important;
+  border:1px solid #2d7280!important;
+  border-radius:10px!important;
+  color:#cae8e2!important;
+  background:#0a3440!important;
+  font-size:6.8px!important;
+  vertical-align:2px!important;
+}
+.mobile-game-ui .vitality{
+  position:static!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  font-size:8px!important;
+  white-space:nowrap!important;
+  color:#b6d1cc!important;
+}
+.mobile-game-ui .vitality strong{font-size:13px!important;color:#8fff55!important}
+.mobile-game-ui .info-dot{width:18px!important;height:18px!important;font-size:10px!important}
+.mobile-game-ui .demo-shortcuts{
+  position:absolute!important;
+  right:10px!important;
+  bottom:calc(100% + 6px)!important;
+  margin:0!important;
+  opacity:.78!important;
+}
+.mobile-game-ui .needs-grid-new{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:7px!important;
+  grid-auto-rows:76px!important;
+}
+.mobile-game-ui .need-card{
+  height:76px!important;
+  min-height:76px!important;
+  max-height:76px!important;
+  padding:7px 7px 8px!important;
+  border-radius:13px!important;
+  border:1px solid #245b69!important;
+  background:linear-gradient(180deg,#0f4050,#082a35)!important;
+  box-shadow:0 2px 0 #031820,inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+.mobile-game-ui .need-card .top{
+  display:grid!important;
+  grid-template-columns:22px minmax(0,1fr) auto!important;
+  gap:4px!important;
+  align-items:center!important;
+}
+.mobile-game-ui .need-card .ni{
+  width:20px!important;height:20px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:0!important;
+}
+.mobile-game-ui .need-card .ni svg{
+  width:19px!important;height:19px!important;
+  fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+.mobile-game-ui #lightCard .ni{color:#ffd94f}
+.mobile-game-ui #waterCard .ni{color:#58c9ff}
+.mobile-game-ui #feedCard .ni{color:#7eea58}
+.mobile-game-ui #ventCard .ni{color:#a9dbef}
+.mobile-game-ui .need-card .nn{font-size:8px!important;font-weight:900!important}
+.mobile-game-ui .need-card .np{font-size:9px!important;font-weight:1000!important}
+.mobile-game-ui .need-card .bar{
+  height:7px!important;
+  margin-top:9px!important;
+  border:0!important;
+  background:#29434c!important;
+}
+.mobile-game-ui .need-card .status{display:none!important}
+.mobile-game-ui .passive-card{
+  filter:none!important;
+  opacity:1!important;
+  pointer-events:none!important;
+}
+.mobile-game-ui .need-action-card.cooldown{
+  filter:none!important;
+  opacity:.78!important;
+}
+.mobile-game-ui .need-action-card.cooldown .top,
+.mobile-game-ui .need-action-card.cooldown .bar{
+  filter:saturate(.7) brightness(.78)!important;
+  opacity:1!important;
+}
+
+/* Dock: clearer labels, simpler active state, clear separation from needs panel. */
+.mobile-game-ui .bottom-wrap{left:7px!important;right:7px!important;bottom:calc(var(--safe-bottom) + 5px)!important}
+.mobile-game-ui .bottom-wrap>.tabs{
+  height:48px!important;
+  margin:8px 5px 0!important;
+  padding:3px 5px!important;
+  gap:3px!important;
+  border-radius:18px!important;
+  border:2px solid #2d7090!important;
+  background:linear-gradient(#0e3b59,#07263d)!important;
+  box-shadow:0 4px 0 #031724,0 8px 17px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+.mobile-game-ui .tab{
+  position:relative!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  color:#b9d1df!important;
+  font-size:7.3px!important;
+  letter-spacing:.05em!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+.mobile-game-ui .tab .ico{
+  width:23px!important;height:21px!important;margin:0 auto 2px!important;
+  border:0!important;background:transparent!important;
+}
+.mobile-game-ui .tab.active{
+  color:#9dff5e!important;
+  background:rgba(113,255,70,.055)!important;
+  box-shadow:none!important;
+}
+.mobile-game-ui .tab.active:after{
+  content:"";
+  position:absolute;
+  left:17%;right:17%;bottom:-2px;
+  height:3px;border-radius:3px;
+  background:#8cff50;
+  box-shadow:0 0 9px rgba(118,255,75,.70);
+}
+
+/* Mobile safety */
+@media(max-width:370px){
+  .mobile-game-ui .ganjarium-wordmark{font-size:19px!important;left:10px!important}
+  .mobile-game-ui .day-console{width:164px!important}
+  .mobile-game-ui .room-lamp{top:calc(var(--safe-top) + 88px)}
+  .mobile-game-ui .room-vent-rig{right:9px!important;width:70px!important}
+  .mobile-game-ui .tool-rail{left:7px!important}
+  .mobile-game-ui .needs-grid-new{gap:5px!important}
+  .mobile-game-ui .need-card{padding-left:5px!important;padding-right:5px!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -1667,10 +2071,10 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
       <div class="needs-head"><h2>PFLANZENBEDÜRFNISSE <span class="setup-chip" id="setupChip">7 L · Erde</span></h2><div class="vitality" id="mobileVigor">Vitalität <strong>100%</strong><span class="info-dot">i</span></div></div>
       <div class="demo-shortcuts" aria-label="Demo-Steuerung"><button class="admin-skip" id="adminSkip" title="Alle Pflege-Timer überspringen">skip</button><button class="admin-day-skip" id="adminDaySkip" title="Pflanzentag sofort vorspulen" aria-label="Pflanzentag sofort vorspulen">⏩</button></div>
       <div class="needs-grid-new">
-        <div class="need-card passive-card" id="lightCard" aria-label="Lichtstatus, keine Aktion"><div class="top"><span class="ni">☀️</span><span class="nn">Licht</span><span class="np" id="lightPct">93%</span></div><div class="bar"><div class="fill" id="lightFill" style="width:93%"></div></div><div class="status" id="lightStatus">passiv</div></div>
-        <button type="button" class="need-card need-action-card" id="waterCard" aria-label="Wasser: Gießen"><div class="top"><span class="ni">💧</span><span class="nn">Wasser</span><span class="np" id="waterPct">70%</span></div><div class="bar"><div class="fill" id="waterFill" style="width:70%"></div></div><div class="status" id="waterStatus">optimal</div></button>
-        <button type="button" class="need-card need-action-card" id="feedCard" aria-label="Dünger: Düngen"><div class="top"><span class="ni">🌱</span><span class="nn">Dünger</span><span class="np" id="nutrientsPct">68%</span></div><div class="bar"><div class="fill" id="nutrientsFill" style="width:68%"></div></div><div class="status" id="nutrientsStatus">stabil</div></button>
-        <button type="button" class="need-card need-action-card" id="ventCard" aria-label="Luft: Lüften"><div class="top"><span class="ni">✣</span><span class="nn">Lüften</span><span class="np" id="climatePct">72%</span></div><div class="bar"><div class="fill" id="climateFill" style="width:72%"></div></div><div class="status" id="climateStatus">lüften</div></button>
+        <div class="need-card passive-card" id="lightCard" aria-label="Lichtstatus, keine Aktion"><div class="top"><span class="ni"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></span><span class="nn">Licht</span><span class="np" id="lightPct">93%</span></div><div class="bar"><div class="fill" id="lightFill" style="width:93%"></div></div><div class="status" id="lightStatus">passiv</div></div>
+        <button type="button" class="need-card need-action-card" id="waterCard" aria-label="Wasser: Gießen"><div class="top"><span class="ni"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C9 7 5.8 10.7 5.8 15a6.2 6.2 0 0 0 12.4 0C18.2 10.7 15 7 12 2Z"/></svg></span><span class="nn">Wasser</span><span class="np" id="waterPct">70%</span></div><div class="bar"><div class="fill" id="waterFill" style="width:70%"></div></div><div class="status" id="waterStatus">optimal</div></button>
+        <button type="button" class="need-card need-action-card" id="feedCard" aria-label="Dünger: Düngen"><div class="top"><span class="ni"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 13C7 13 5 10.5 5 6c4.6 0 7 2.2 7 6M12 15c5 0 7-2.5 7-7-4.6 0-7 2.2-7 6"/></svg></span><span class="nn">Dünger</span><span class="np" id="nutrientsPct">68%</span></div><div class="bar"><div class="fill" id="nutrientsFill" style="width:68%"></div></div><div class="status" id="nutrientsStatus">stabil</div></button>
+        <button type="button" class="need-card need-action-card" id="ventCard" aria-label="Luft: Lüften"><div class="top"><span class="ni"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 10C9 7 9.2 4.8 11 3.5c2.7-2 5.3 1 3.7 4.7L13 11M14 12c4-1.2 5.8.2 5.8 2.5 0 3.4-4 4-6.5 1.1L12 14M11 14c-1 4-3 5-5 3.8-3-1.8-1.6-5.6 2.3-6.2L11 12"/></svg></span><span class="nn">Lüften</span><span class="np" id="climatePct">72%</span></div><div class="bar"><div class="fill" id="climateFill" style="width:72%"></div></div><div class="status" id="climateStatus">lüften</div></button>
       </div>
       <button type="button" class="harvest-ready-box" id="harvestReadyBox" aria-label="Pflanze ernten"><span class="harvest-ready-icon">✂</span><span><small>TAG 84 · GROW ABGESCHLOSSEN</small><strong>ERNTEN</strong><em>Deine Blüten sind bereit</em></span><b>›</b></button>
     </section>
@@ -2393,36 +2797,25 @@ function equipmentVisualHTML(id,level,context='level'){
 function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
-  const lv=gameState.progression?.levels||{},sprite=(id,cls,show=true)=>{
-    if(!show)return '';
-    const level=Math.max(1,Number(lv[id]||1));
-    return '<span class="room-equipment '+cls+' eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'" title="'+UPGRADE_CATEGORIES[id].names[level-1]+'"></span>';
-  };
-  const lightLevel=Math.max(1,Number(lv.light||1));
-  const hasLamp=lightLevel>1;
+  const lv=gameState.progression?.levels||{};
+  const lightLevel=Math.max(1,Number(lv.light||1)),ventLevel=Math.max(1,Number(lv.vent||1));
+  const hasLamp=lightLevel>1,hasVent=ventLevel>1;
   const lightCone=hasLamp
-    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-level:'+lightLevel+';--cone-alpha:'+(.12+lightLevel*.018).toFixed(3)+';--cone-width:'+(150+lightLevel*15)+'px;--cone-height:'+(300+lightLevel*15)+'px"></span>'
+    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-alpha:'+(.105+lightLevel*.016).toFixed(3)+';--cone-width:'+(185+lightLevel*13)+'px"></span>'
     : '';
-  layer.innerHTML=[
-    lightCone,
-    sprite('light','room-light',hasLamp),
-    sprite('vent','room-vent',(lv.vent||1)>1),
-    sprite('sensor','room-sensor',(lv.sensor||1)>1),
-    sprite('irrigation','room-irrigation',(lv.irrigation||1)>1),
-    sprite('nutrients','room-nutrients',(lv.nutrients||1)>1),
-    sprite('substrate','room-substrate',(lv.substrate||1)>1)
-  ].join('');
+  const lamp=hasLamp
+    ? '<span class="room-lamp" data-light-level="'+lightLevel+'" title="'+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'"><i class="lamp-chain lamp-chain-left"></i><i class="lamp-chain lamp-chain-right"></i><i class="lamp-housing"><b class="lamp-led-row"></b></i></span>'
+    : '';
+  const vent=hasVent
+    ? '<span class="room-vent-rig" data-vent-level="'+ventLevel+'" title="'+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'"><i class="vent-duct"></i><i class="vent-backplate"></i><span class="room-vent eq2d-sprite" data-eq2d="vent" data-eq-level="'+ventLevel+'" style="'+equipmentAssetStyle('vent',ventLevel)+'"></span></span>'
+    : '';
+  layer.innerHTML=[lightCone,lamp,vent].join('');
   ui?.classList.add('hybrid-equipment-ready');
   return true;
 }
 function syncEquipment3D(){
-  const api=window.GanjariumEquipment3D,canvas=document.getElementById('equipment3dCanvas');
-  if(!api||!canvas||!gameState)return false;
-  if(api.mountRoom(canvas)){
-    document.getElementById('mobileGameUI')?.classList.add('three-equipment-ready');
-    api.syncRoom(gameState.progression?.levels||{});
-    return true;
-  }
+  const canvas=document.getElementById('equipment3dCanvas');
+  if(canvas)canvas.style.display='none';
   return false;
 }
 function renderMetaPanels(){
@@ -2615,7 +3008,7 @@ function rotY(p){return v(p.x*yawC+p.z*yawS,p.y,-p.x*yawS+p.z*yawC)}
 function rotX(p){return v(p.x,p.y*pitchC-p.z*pitchS,p.y*pitchS+p.z*pitchC)}
 const OBJECT_PIVOT=v(0,-54,0);
 function viewPoint(p){const local=sub(p,OBJECT_PIVOT);return add(rotX(rotY(local)),OBJECT_PIVOT)}
-let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(88,(dayRect?dayRect.bottom-appRect.top:82)+10);/* V23: Panels overlay the plant. Opening Genetics, Upgrades or Collection must never reframe or move it. Use the compact care navigation as a fixed camera boundary. */const bottomLimit=Math.min(H-120,H-184);const worldSpan=Math.max(280,(maxY+62)-minY);plantAutoScale=clamp((bottomLimit-topLimit)/worldSpan,.46,1.12);plantAutoCy=bottomLimit+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
+let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(96,(dayRect?dayRect.bottom-appRect.top:82)+72);/* V59: reserve a clear visual stage below the mounted lamp and keep the plant centered between lamp and care panel. */const bottomLimit=Math.min(H-136,H-196);const worldSpan=Math.max(280,(maxY+62)-minY);const earlyBoost=currentDay<=7?1.20:currentDay<=14?1.11:currentDay<=24?1.05:1;plantAutoScale=clamp(((bottomLimit-topLimit)/worldSpan)*earlyBoost,.50,1.18);plantAutoCy=bottomLimit+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
 function rng(seed){let s=seed|0;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return((s>>>0)%100000)/100000}}
 function axisDir(pts,i){const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];return norm(sub(b,a))}
 function leafPoly(L,Wd,maturity=1,serration=.085){
@@ -3611,7 +4004,7 @@ function pointerDistance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function pointerMid(a,b){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
 function updatePinchState(){const pts=[...activePointers.values()]; if(pts.length<2) return; const a=pts[0],b=pts[1]; const dist=pointerDistance(a,b); if(!pinchStartDist){ pinchStartDist=dist; pinchStartZoom=zoom; pinchStartPanX=panX; pinchStartPanY=panY; pinchStartMid=pointerMid(a,b); return; } zoom=clamp(pinchStartZoom*(dist/Math.max(1,pinchStartDist)),.65,2.8); const mid=pointerMid(a,b); panX=pinchStartPanX+(mid.x-pinchStartMid.x); panY=pinchStartPanY+(mid.y-pinchStartMid.y); sync(); requestRender(); }
 function queuePot3D(){
-  const segs=32, topY=-8, bottomY=-112, topR=72, bottomR=55, soilR=61;
+  const segs=32, topY=-6, bottomY=-96, topR=62, bottomR=48, soilR=53;
   const top=[],bottom=[],soil=[];
   for(let i=0;i<segs;i++){
     const a=i/segs*Math.PI*2;
@@ -3816,16 +4209,15 @@ function buildWorldBackground(){
   if((roomLevels.irrigation||1)>2){g.strokeStyle='rgba(89,194,221,.58)';g.lineWidth=3;g.beginPath();g.moveTo(W*.12,H*.50);g.lineTo(W*.26,H*.63);g.lineTo(W*.42,H*.69);g.stroke();g.fillStyle='rgba(47,118,139,.82)';roundedRectPath(g,W*.08,H*.47,28,42,5);g.fill();}
   if((roomLevels.sensor||1)>1){g.fillStyle='rgba(9,34,42,.95)';roundedRectPath(g,W*.73,H*.53,46,29,5);g.fill();g.strokeStyle='rgba(113,255,151,.45)';g.stroke();g.fillStyle='#9dff75';g.font='800 7px system-ui';g.textAlign='center';g.fillText('HUB',W*.73+23,H*.53+18);}
 // crates and small set dressing
-// soft background foliage on both sides
-  g.save();g.filter='blur(1.2px)';for(let i=0;i<7;i++){drawWorldLeaf(g,-3+i*7,H*(.22+i*.085),40+i*3,-.45+i*.10,.22);drawWorldLeaf(g,W+2-i*5,H*(.14+i*.09),42+i*2,.45-i*.08,.20)}g.restore();
-  // table / floor plane
-  let floor=g.createLinearGradient(0,H*.67,0,H);floor.addColorStop(0,'rgba(34,54,43,.20)');floor.addColorStop(1,'rgba(3,8,7,.76)');g.fillStyle=floor;g.beginPath();g.moveTo(0,H*.69);g.lineTo(W,H*.69);g.lineTo(W,H);g.lineTo(0,H);g.closePath();g.fill();
-  g.strokeStyle='rgba(115,169,129,.10)';for(let y=H*.72;y<H;y+=38){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
-  // illuminated circular pedestal under the plant
-  const py=Math.min(H*.79,H-155),pr=Math.min(W*.29,112);g.save();g.translate(W*.5,py);
-  g.fillStyle='rgba(3,10,10,.82)';g.beginPath();g.ellipse(0,16,pr,pr*.22,0,0,Math.PI*2);g.fill();
-  g.shadowColor='rgba(74,255,94,.72)';g.shadowBlur=18;g.strokeStyle='rgba(101,255,111,.78)';g.lineWidth=3;g.beginPath();g.ellipse(0,4,pr,pr*.20,0,0,Math.PI*2);g.stroke();g.shadowBlur=0;
-  g.strokeStyle='rgba(164,255,166,.20)';g.lineWidth=1;g.beginPath();g.ellipse(0,4,pr*.80,pr*.15,0,0,Math.PI*2);g.stroke();g.restore();
+// clean grow-tent wall: no decorative foliage or fake equipment silhouettes
+  g.fillStyle='rgba(74,113,94,.055)';
+  for(let x=W*.17;x<W*.90;x+=W*.18)g.fillRect(x,0,1,H*.70);
+  // dark floor plane with a soft neutral pot shadow
+  let floor=g.createLinearGradient(0,H*.67,0,H);floor.addColorStop(0,'rgba(25,42,34,.12)');floor.addColorStop(1,'rgba(2,7,6,.84)');g.fillStyle=floor;g.beginPath();g.moveTo(0,H*.69);g.lineTo(W,H*.69);g.lineTo(W,H);g.lineTo(0,H);g.closePath();g.fill();
+  g.strokeStyle='rgba(105,138,118,.07)';for(let y=H*.72;y<H;y+=42){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
+  const py=Math.min(H*.80,H-150),pr=Math.min(W*.23,92);g.save();g.translate(W*.5,py);
+  g.fillStyle='rgba(0,0,0,.34)';g.beginPath();g.ellipse(0,15,pr,pr*.18,0,0,Math.PI*2);g.fill();
+  g.strokeStyle='rgba(146,182,154,.08)';g.lineWidth=1;g.beginPath();g.ellipse(0,11,pr*.82,pr*.13,0,0,Math.PI*2);g.stroke();g.restore();
   // vignette for UI readability
   let vig=g.createRadialGradient(W*.5,H*.43,H*.18,W*.5,H*.45,H*.72);vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(.65,'rgba(0,0,0,.05)');vig.addColorStop(1,'rgba(0,0,0,.48)');g.fillStyle=vig;g.fillRect(0,0,W,H);
   worldBgCanvas=c;worldBgW=W;worldBgH=H;
