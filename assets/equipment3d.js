@@ -159,14 +159,17 @@ function clearRoom(){if(!roomRoot)return;while(roomRoot.children.length){const o
 function addRoomModel(category,level,pos,scale,rot=[0,0,0]){if(level<=0)return null;const o=buildModel(category,level);o.position.set(...pos);o.scale.setScalar(scale);o.rotation.set(...rot);roomRoot.add(o);return o;}
 API.mountRoom=function(canvas){return initRoom(canvas)};
 API.syncRoom=function(levels={}){
-  if(!roomRenderer||!roomRoot)return;const sig=['pot','substrate','light','vent','irrigation','nutrients','sensor'].map(k=>k+':'+(levels[k]||1)).join('|');if(sig===roomSignature)return;roomSignature=sig;clearRoom();
+  // V46 hybrid renderer: only the pot remains real Three.js geometry.
+  // Every other upgrade is a high-detail transparent PNG sprite in the HUD scene.
+  if(!roomRenderer||!roomRoot)return;
+  const sig='pot:'+(levels.pot||1)+'|substrate:'+(levels.substrate||1);
+  if(sig===roomSignature)return;roomSignature=sig;clearRoom();
   const pot=addRoomModel('pot',levels.pot||1,[0,-3.65,0],.82,[0,.15,0]);
-  if(pot){const soilTone=Math.max(1,levels.substrate||1);const soil=pot.children.find(x=>x.material&&x.material.color&&x.position.y>.35);if(soil&&soil.material?.color)soil.material.color.offsetHSL(0,Math.min(.12,soilTone*.008),Math.min(.10,soilTone*.004));}
-  if((levels.light||1)>1)addRoomModel('light',levels.light||1,[0,3.42,0],.76,[0,.05,0]);
-  if((levels.vent||1)>1)addRoomModel('vent',levels.vent||1,[-3.15,.65,0],.55,[0,.25,0]);
-  if((levels.irrigation||1)>1)addRoomModel('irrigation',levels.irrigation||1,[2.95,-2.05,0],.53,[0,-.35,0]);
-  if((levels.nutrients||1)>1)addRoomModel('nutrients',levels.nutrients||1,[-3.0,-2.55,0],.48,[0,.28,0]);
-  if((levels.sensor||1)>1)addRoomModel('sensor',levels.sensor||1,[3.0,.35,0],.50,[0,-.35,0]);
+  if(pot){
+    const soilTone=Math.max(1,levels.substrate||1);
+    const soil=pot.children.find(x=>x.material&&x.material.color&&x.position.y>.35);
+    if(soil&&soil.material?.color)soil.material.color.offsetHSL(0,Math.min(.12,soilTone*.008),Math.min(.10,soilTone*.004));
+  }
 };
 function animateRoom(){
   raf=requestAnimationFrame(animateRoom);if(!roomRenderer||!roomScene)return;
