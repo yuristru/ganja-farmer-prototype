@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V54 Verified Equipment Rows</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V55 Macro Collection Buds</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1464,6 +1464,56 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .upgrade-level.locked .eq2d-sprite{
   opacity:.78!important;
 }
+</style><style id="v55MacroCollectionBuds">
+/* Collection is a showcase. Buds are intentionally large enough that color,
+   density and flower structure can be read at phone size. */
+.mobile-game-ui .collection-unified{
+  grid-auto-rows:174px!important;
+}
+.mobile-game-ui .collection-item-card{
+  height:174px!important;
+  min-height:174px!important;
+  max-height:174px!important;
+}
+.mobile-game-ui .collection-item-card.seed>.seed-card{
+  height:174px!important;
+  min-height:174px!important;
+  max-height:174px!important;
+}
+.mobile-game-ui .collection-item-card.jar{
+  height:174px!important;
+  min-height:174px!important;
+  max-height:174px!important;
+  padding-top:5px!important;
+}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art{
+  width:104px!important;
+  height:105px!important;
+  margin:-2px auto 1px!important;
+  overflow:hidden!important;
+}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art canvas,
+.mobile-game-ui .collection-jar-art canvas[data-jar-buds]{
+  left:0!important;
+  top:4px!important;
+  width:102px!important;
+  height:100px!important;
+}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art i{
+  left:27px!important;
+  right:27px!important;
+  bottom:7px!important;
+}
+.mobile-game-ui .collection-item-card.seed .seed-bud-thumb{
+  width:76px!important;
+  height:72px!important;
+  flex:0 0 76px!important;
+  margin:-8px 2px -6px -7px!important;
+}
+.mobile-game-ui .collection-item-card.seed .seed-card-top{
+  min-height:72px!important;
+  align-items:center!important;
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -1736,11 +1786,14 @@ function drawJarBudPile(canvas,seed){
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
   const salt=Number(canvas.dataset.jarSalt||0),R=rng(seedHash((Number(seed.seed)||58317)^salt,0x6a6172));
+  const inCollection=!!canvas.closest?.('.collection-item-card.jar');
   // Every jar looks genuinely packed. Harvest quality only controls how high the pile reaches.
+  // Collection jars use fewer, much larger flowers so the actual bud morphology is readable on mobile.
   const fill=clamp(Number(canvas.dataset.jarFill||.82),.70,.98);
-  const count=Math.max(16,Number(canvas.dataset.jarCount||22));
-  const left=cssW*.13,right=cssW*.87,bottom=cssH*.91;
-  const pileTop=bottom-cssH*(.70*fill);
+  const requestedCount=Math.max(16,Number(canvas.dataset.jarCount||22));
+  const count=inCollection?Math.min(15,Math.max(11,Math.round(requestedCount*.48))):requestedCount;
+  const left=cssW*.11,right=cssW*.89,bottom=cssH*.92;
+  const pileTop=bottom-cssH*(.72*fill);
   const usableH=Math.max(20,bottom-pileTop),pieces=[];
   for(let i=0;i<count;i++){
     const depth=R();
@@ -1748,11 +1801,11 @@ function drawJarBudPile(canvas,seed){
     const rowT=(i+R()*.72)/count;
     const y=bottom-rowT*usableH;
     const topness=(bottom-y)/usableH;
-    const sideInset=cssW*(.02+topness*.035);
+    const sideInset=cssW*(.01+topness*.025);
     const x=(left+sideInset)+R()*Math.max(4,(right-left)-sideInset*2);
-    const baseScale=(.125+R()*.055)*(cssW/86)*(1-depth*.07);
-    const w=master.width*baseScale,h=master.height*baseScale*(.78+R()*.18);
-    const rot=(R()-.5)*1.55;
+    const baseScale=(inCollection?(.235+R()*.075):(.125+R()*.055))*(cssW/86)*(1-depth*.06);
+    const w=master.width*baseScale,h=master.height*baseScale*(.80+R()*.17);
+    const rot=(R()-.5)*1.45;
     pieces.push({depth,w,h,x,y,rot});
   }
   pieces.sort((a,b)=>a.depth-b.depth);
