@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V72 Grow Room Visual Cleanup</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V73 Equipment Visual System</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2494,7 +2494,64 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 @media(max-width:370px){
   .mobile-game-ui .equipment2d-layer{inset:0!important}
 }
-</style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
+
+<style id="v73EquipmentVisualSystem">
+/* V73: progression hardware is part of the room, not a row of HUD thumbnails. */
+.mobile-game-ui .equipment2d-layer{
+  display:block!important;
+  z-index:5!important;
+}
+.mobile-game-ui .room-equipment-overlay{
+  position:absolute!important;
+  display:block!important;
+  width:96px;
+  height:96px;
+  pointer-events:none!important;
+  opacity:.96;
+  filter:drop-shadow(0 7px 8px rgba(0,0,0,.54)) drop-shadow(0 2px 2px rgba(0,0,0,.30));
+  transform-origin:50% 80%;
+}
+.mobile-game-ui .room-eq-substrate{
+  left:-10px;
+  bottom:calc(var(--safe-bottom) + 270px);
+  width:88px;
+  height:88px;
+  transform:rotate(-4deg);
+}
+.mobile-game-ui .room-eq-nutrients{
+  left:-8px;
+  bottom:calc(var(--safe-bottom) + 174px);
+  width:92px;
+  height:92px;
+  transform:rotate(3deg);
+}
+.mobile-game-ui .room-eq-sensor{
+  right:3px;
+  top:43%;
+  width:76px;
+  height:76px;
+  transform:rotate(2deg);
+}
+.mobile-game-ui .room-eq-irrigation{
+  right:-10px;
+  bottom:calc(var(--safe-bottom) + 178px);
+  width:106px;
+  height:106px;
+  transform:rotate(-2deg);
+}
+.mobile-game-ui .room-equipment-overlay[data-room-level="1"]{opacity:.86}
+.mobile-game-ui .room-equipment-overlay[data-room-level="8"],
+.mobile-game-ui .room-equipment-overlay[data-room-level="9"],
+.mobile-game-ui .room-equipment-overlay[data-room-level="10"]{
+  filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
+}
+@media(max-width:370px){
+  .mobile-game-ui .room-eq-substrate{left:-15px;width:80px;height:80px}
+  .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px;height:84px}
+  .mobile-game-ui .room-eq-sensor{right:-2px;width:70px;height:70px}
+  .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px;height:96px}
+}
+</style></style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><a class="reload-top-btn" id="reloadPageButton" href="./" aria-label="Seite neu laden" title="Seite neu laden">↻</a><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
@@ -3480,7 +3537,17 @@ function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
   ensureGrowRoomBackgroundImage();
-  if(layer.childNodes.length)layer.replaceChildren();
+  const sceneEquipment=[
+    ['substrate','room-eq-substrate'],
+    ['nutrients','room-eq-nutrients'],
+    ['sensor','room-eq-sensor'],
+    ['irrigation','room-eq-irrigation']
+  ];
+  layer.innerHTML=sceneEquipment.map(([id,cls])=>{
+    const level=upgradeLevel(gameState,id);
+    return '<canvas class="room-equipment-overlay '+cls+'" data-eq-strip="'+id+'" data-eq-level="'+level+'" data-room-level="'+level+'" aria-hidden="true"></canvas>';
+  }).join('');
+  renderRoomEquipmentCanvases(layer);
   ui?.classList.add('baked-growroom-ready');
   ui?.classList.remove('hybrid-equipment-ready');
   return true;
@@ -4671,8 +4738,19 @@ function getPotCenter(){const pc=proj(v(0,-55,0));return{x:pc.x,y:pc.y,r:92*plan
 function pointerDistance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function pointerMid(a,b){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
 function updatePinchState(){const pts=[...activePointers.values()]; if(pts.length<2) return; const a=pts[0],b=pts[1]; const dist=pointerDistance(a,b); if(!pinchStartDist){ pinchStartDist=dist; pinchStartZoom=zoom; pinchStartPanX=panX; pinchStartPanY=panY; pinchStartMid=pointerMid(a,b); return; } zoom=clamp(pinchStartZoom*(dist/Math.max(1,pinchStartDist)),.65,2.8); const mid=pointerMid(a,b); panX=pinchStartPanX+(mid.x-pinchStartMid.x); panY=pinchStartPanY+(mid.y-pinchStartMid.y); sync(); requestRender(); }
+function potVisualProfile(level){
+  const lv=Math.max(1,Math.min(10,Number(level)||1));
+  if(lv===1)return{wall:['#b8734c','#91583a','#603927'],bottom:['#7f4a31','#5e3525','#3d231a'],rim:'#cf8255',detail:'rgba(255,205,163,.08)',bottomStroke:'rgba(198,116,76,.62)',radiusExtra:0,heightExtra:0,air:false,fabric:false,smart:false};
+  if(lv===2)return{wall:['#4e5755','#303a38','#171e1d'],bottom:['#303937','#1b2321','#0c1110'],rim:'#697572',detail:'rgba(196,218,207,.11)',bottomStroke:'rgba(104,126,118,.64)',radiusExtra:2,heightExtra:2,air:false,fabric:true,smart:false};
+  if(lv<=4)return{wall:['#31423d','#1b2a26','#0c1513'],bottom:['#1c2925','#101916','#060b0a'],rim:'#59776d',detail:'rgba(125,170,153,.13)',bottomStroke:'rgba(84,121,108,.68)',radiusExtra:4+(lv-3)*2,heightExtra:4+(lv-3)*2,air:true,fabric:false,smart:false};
+  if(lv<=6)return{wall:['#39443a','#242f27','#121912'],bottom:['#242c25','#151b16','#090d09'],rim:'#69765d',detail:'rgba(162,179,129,.11)',bottomStroke:'rgba(112,125,91,.66)',radiusExtra:7+(lv-5)*2,heightExtra:7+(lv-5)*2,air:false,fabric:false,smart:false};
+  if(lv<=8)return{wall:['#303b43','#1b252b','#0c1216'],bottom:['#1c252b','#10171b','#060a0d'],rim:'#637985',detail:'rgba(132,176,198,.13)',bottomStroke:'rgba(93,126,143,.70)',radiusExtra:10+(lv-7)*2,heightExtra:10+(lv-7)*2,air:true,fabric:false,smart:false};
+  return{wall:['#33424b','#17252c','#081116'],bottom:['#17242a','#0c171c','#04090c'],rim:'#6f98a8',detail:'rgba(125,220,239,.16)',bottomStroke:'rgba(89,151,172,.74)',radiusExtra:14+(lv-9)*2,heightExtra:14+(lv-9)*2,air:true,fabric:false,smart:true};
+}
+
 function queuePot3D(){
-  const segs=32, topY=-6, bottomY=-96, topR=62, bottomR=48, soilR=53;
+  const potLevel=upgradeLevel(gameState,'pot'),potProfile=potVisualProfile(potLevel);
+  const segs=32, topY=-6, bottomY=-96-potProfile.heightExtra, topR=62+potProfile.radiusExtra, bottomR=48+potProfile.radiusExtra*.72, soilR=53+potProfile.radiusExtra*.84;
   const top=[],bottom=[],soil=[];
   for(let i=0;i<segs;i++){
     const a=i/segs*Math.PI*2;
@@ -4686,27 +4764,34 @@ function queuePot3D(){
     const j=(i+1)%segs,p0=proj(top[i]),p1=proj(top[j]),p2=proj(bottom[j]),p3=proj(bottom[i]);
     const z=(p0.z+p1.z+p2.z+p3.z)/4;
     queue.push({z:z-.35,draw(){
-      const air=gameState?.setup?.pot?.id==='air-12l';
       const g=ctx.createLinearGradient(p0.x,p0.y,p2.x,p2.y);
-      if(air){g.addColorStop(0,'#263532');g.addColorStop(.55,'#182421');g.addColorStop(1,'#0b1211')}
-      else{g.addColorStop(0,'#b8734c');g.addColorStop(.48,'#91583a');g.addColorStop(1,'#603927')}
+      g.addColorStop(0,potProfile.wall[0]);g.addColorStop(.52,potProfile.wall[1]);g.addColorStop(1,potProfile.wall[2]);
       ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.lineTo(p3.x,p3.y);ctx.closePath();ctx.fill();
-      // Subtle vertical material variation keeps the pot from looking perfectly flat.
-      ctx.strokeStyle=air?'rgba(118,155,143,.09)':'rgba(255,205,163,.07)';ctx.lineWidth=Math.max(.6,1.15*p0.scale);ctx.beginPath();ctx.moveTo(p0.x,p0.y+2);ctx.lineTo(p3.x,p3.y-2);ctx.stroke();
+      // Material cues change with the purchased pot family.
+      ctx.strokeStyle=potProfile.detail;ctx.lineWidth=Math.max(.6,1.15*p0.scale);ctx.beginPath();ctx.moveTo(p0.x,p0.y+2);ctx.lineTo(p3.x,p3.y-2);ctx.stroke();
+      if(potProfile.fabric&&i%2===0){
+        ctx.strokeStyle='rgba(218,229,224,.075)';ctx.lineWidth=Math.max(.5,.8*p0.scale);ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(p0.x,p0.y+4);ctx.lineTo(p3.x,p3.y-4);ctx.stroke();ctx.setLineDash([]);
+      }
+      if(potProfile.air&&i%2===0){
+        const mx=(p0.x+p1.x+p2.x+p3.x)/4,my=(p0.y+p1.y+p2.y+p3.y)/4;
+        ctx.fillStyle=potProfile.smart?'rgba(87,166,190,.48)':'rgba(2,8,7,.52)';ctx.beginPath();ctx.arc(mx,my,Math.max(1.1,2.0*p0.scale),0,Math.PI*2);ctx.fill();
+      }
+      if(potProfile.smart&&i%4===0){
+        const mx=(p0.x+p1.x)/2,my=(p0.y+p1.y)/2+5*p0.scale;
+        ctx.fillStyle='rgba(103,224,241,.70)';ctx.fillRect(mx-1.5*p0.scale,my-1*p0.scale,3*p0.scale,2*p0.scale);
+      }
     }});
   }
 
   // Actual closed bottom/base instead of an open truncated cone.
   const bottom2=bottom.map(proj),bottomZ=bottom2.reduce((sum,p)=>sum+p.z,0)/bottom2.length;
   queue.push({z:bottomZ-.5,draw(){
-    const air=gameState?.setup?.pot?.id==='air-12l';
     const xs=bottom2.map(p=>p.x),ys=bottom2.map(p=>p.y);
     const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
     const g=ctx.createLinearGradient(minX,minY,maxX,maxY);
-    if(air){g.addColorStop(0,'#18231f');g.addColorStop(.55,'#0d1513');g.addColorStop(1,'#060a09')}
-    else{g.addColorStop(0,'#7f4a31');g.addColorStop(.55,'#5e3525');g.addColorStop(1,'#3d231a')}
+    g.addColorStop(0,potProfile.bottom[0]);g.addColorStop(.55,potProfile.bottom[1]);g.addColorStop(1,potProfile.bottom[2]);
     ctx.fillStyle=g;ctx.beginPath();bottom2.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();
-    ctx.strokeStyle=air?'rgba(93,130,118,.55)':'rgba(198,116,76,.62)';ctx.lineWidth=Math.max(1.2,2.4*(bottom2[0]?.scale||1));ctx.stroke();
+    ctx.strokeStyle=potProfile.bottomStroke;ctx.lineWidth=Math.max(1.2,2.4*(bottom2[0]?.scale||1));ctx.stroke();
     // Small foot/shadow line makes the base visually read as a solid object.
     ctx.strokeStyle='rgba(0,0,0,.30)';ctx.lineWidth=Math.max(2,4*(bottom2[0]?.scale||1));ctx.beginPath();
     const low=bottom2.slice().sort((a,b)=>b.y-a.y).slice(0,8).sort((a,b)=>a.x-b.x);
@@ -4719,17 +4804,18 @@ function queuePot3D(){
     const xs=soil2.map(p=>p.x),ys=soil2.map(p=>p.y);
     const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
     const cx=(minX+maxX)/2,cy=(minY+maxY)/2,rx=(maxX-minX)/2,ry=(maxY-minY)/2;
-    const living=gameState?.setup?.substrate?.id==='living-mix';
+    const substrateLevel=upgradeLevel(gameState,'substrate'),living=substrateLevel>=5,soilRich=substrateLevel>=8;
     ctx.save();
     ctx.beginPath();soil2.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.clip();
 
     const base=ctx.createRadialGradient(cx-rx*.18,cy-ry*.28,Math.max(2,rx*.06),cx,cy,Math.max(rx,ry));
-    if(living){base.addColorStop(0,'#4a3827');base.addColorStop(.55,'#30251b');base.addColorStop(1,'#1e1712')}
+    if(soilRich){base.addColorStop(0,'#51412d');base.addColorStop(.55,'#332a1d');base.addColorStop(1,'#17130e')}
+    else if(living){base.addColorStop(0,'#4a3827');base.addColorStop(.55,'#30251b');base.addColorStop(1,'#1e1712')}
     else{base.addColorStop(0,'#4b3528');base.addColorStop(.52,'#35261e');base.addColorStop(1,'#211813')}
     ctx.fillStyle=base;ctx.fillRect(minX-2,minY-2,maxX-minX+4,maxY-minY+4);
 
     // Deterministic pseudo random generator based on plant + substrate, so texture does not shimmer between frames.
-    let seed=((gameState?.plant?.seed||PLANT_SEED) ^ (living?0x51f15e:0x2f6e2b))>>>0;
+    let seed=((gameState?.plant?.seed||PLANT_SEED) ^ Math.imul(substrateLevel,0x45d9f3b) ^ (living?0x51f15e:0x2f6e2b))>>>0;
     const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
     const count=92;
     for(let i=0;i<count;i++){
@@ -4737,16 +4823,16 @@ function queuePot3D(){
       const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*.94;
       const x=cx+Math.cos(a)*rx*r,y=cy+Math.sin(a)*ry*r;
       const kind=rnd();
-      if(kind<.17){
+      if(kind<(.10+substrateLevel*.015)){
         // Perlite / pale mineral fragments.
         const rr=(.7+rnd()*1.45)*Math.max(.75,soil2[0]?.scale||1);
         ctx.fillStyle=living?'rgba(210,202,172,.76)':'rgba(194,185,164,.64)';
         ctx.beginPath();ctx.ellipse(x,y,rr,rr*(.48+.35*rnd()),rnd()*Math.PI,0,Math.PI*2);ctx.fill();
         ctx.fillStyle='rgba(255,255,235,.16)';ctx.beginPath();ctx.arc(x-rr*.2,y-rr*.18,rr*.28,0,Math.PI*2);ctx.fill();
-      }else if(kind<.34){
+      }else if(kind<(.24+substrateLevel*.018)){
         // Bark / organic particles.
         const w=1.4+rnd()*3.3,h=.65+rnd()*1.2;
-        ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*1.5);ctx.fillStyle=living?'rgba(113,76,45,.78)':'rgba(92,61,42,.64)';ctx.fillRect(-w/2,-h/2,w,h);ctx.restore();
+        ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*1.5);ctx.fillStyle=soilRich?'rgba(134,91,48,.82)':living?'rgba(113,76,45,.78)':'rgba(92,61,42,.64)';ctx.fillRect(-w/2,-h/2,w,h);ctx.restore();
       }else{
         // Fine dark soil granules.
         const rr=.35+rnd()*1.05;
@@ -4771,7 +4857,7 @@ function queuePot3D(){
   // Pot lip.
   for(let i=0;i<segs;i++){
     const j=(i+1)%segs,a=proj(top[i]),b=proj(top[j]);const z=(a.z+b.z)/2;
-    queue.push({z:z+.06,draw(){ctx.strokeStyle=gameState?.setup?.pot?.id==='air-12l'?'#4d6d63':'#cf8255';ctx.lineWidth=Math.max(2.5,6*a.scale);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}});
+    queue.push({z:z+.06,draw(){ctx.strokeStyle=potProfile.rim;ctx.lineWidth=Math.max(2.5,6*a.scale);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}});
   }
 } 
 function pointSegDistance(px,py,ax,ay,bx,by){
@@ -4871,11 +4957,7 @@ function buildWorldBackgroundFallback(){
     let rg=g.createLinearGradient(x-7,0,x+7,0);rg.addColorStop(0,'#07100f');rg.addColorStop(.45,'#27483f');rg.addColorStop(.62,'#0a1514');rg.addColorStop(1,'#020706');g.fillStyle=rg;g.fillRect(x-6,0,12,H*.76);
     g.fillStyle='rgba(139,203,161,.20)';for(let y=72;y<H*.70;y+=46)g.fillRect(x-4,y,3,2);
   }
-  // Non-light equipment that is part of the current setup can still add subtle room detail.
-  // Lighting and ventilation are deliberately excluded here to avoid duplicate hardware.
-  const roomLevels=gameState?.progression?.levels||{};
-  if((roomLevels.irrigation||1)>2){g.strokeStyle='rgba(89,194,221,.58)';g.lineWidth=3;g.beginPath();g.moveTo(W*.12,H*.50);g.lineTo(W*.26,H*.63);g.lineTo(W*.42,H*.69);g.stroke();g.fillStyle='rgba(47,118,139,.82)';roundedRectPath(g,W*.08,H*.47,28,42,5);g.fill();}
-  if((roomLevels.sensor||1)>1){g.fillStyle='rgba(9,34,42,.95)';roundedRectPath(g,W*.73,H*.53,46,29,5);g.fill();g.strokeStyle='rgba(113,255,151,.45)';g.stroke();g.fillStyle='#9dff75';g.font='800 7px system-ui';g.textAlign='center';g.fillText('HUB',W*.73+23,H*.53+18);}
+  // V73 equipment overlays own all non-baked hardware, including fallback mode.
 // crates and small set dressing
 // clean grow-tent wall: no decorative foliage or fake equipment silhouettes
   g.fillStyle='rgba(74,113,94,.055)';
