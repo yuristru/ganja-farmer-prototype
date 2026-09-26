@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V60 Real Lamp Assets</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V61 Sprite Safe Room Equipment</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2137,6 +2137,83 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-lamp{transform:translateX(-50%) scale(.92)!important;transform-origin:50% 0!important}
   .mobile-game-ui .room-light-cone{width:calc(var(--cone-width,220px) * .92)!important}
 }
+</style><style id="v61SpriteSafeRoomEquipment">
+/* V61: room assets are extracted from the transparent strips at runtime.
+   This prevents wide lamp and fan artwork from being chopped at nominal 256px sprite boundaries. */
+.mobile-game-ui .room-lamp{
+  position:absolute!important;
+  z-index:5!important;
+  left:50%!important;
+  top:calc(var(--safe-top) + var(--lamp-top,80px))!important;
+  width:var(--lamp-size,140px)!important;
+  height:var(--lamp-size,140px)!important;
+  transform:translateX(-50%)!important;
+  pointer-events:none!important;
+}
+.mobile-game-ui .room-equipment-canvas{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  opacity:0;
+  transition:opacity .12s ease;
+}
+.mobile-game-ui .room-equipment-canvas.ready{opacity:1}
+.mobile-game-ui .room-light-canvas{
+  filter:drop-shadow(0 7px 8px rgba(0,0,0,.48)) drop-shadow(0 8px 15px rgba(239,219,153,.16));
+}
+
+/* Source lamp art already contains its real clamp, arms or chains. Never draw a second mount. */
+.mobile-game-ui .lamp-mount,
+.mobile-game-ui .lamp-chain,
+.mobile-game-ui .lamp-housing,
+.mobile-game-ui .lamp-led-row,
+.mobile-game-ui .room-light-asset{display:none!important}
+
+.mobile-game-ui .room-light-cone{
+  top:calc(var(--safe-top) + var(--cone-top,156px))!important;
+  width:var(--cone-width,210px)!important;
+  height:555px!important;
+}
+
+/* The wall fan is also extracted as one complete level asset instead of a clipped sprite cell. */
+.mobile-game-ui .room-vent-rig{
+  right:20px!important;
+  top:calc(var(--safe-top) + 222px)!important;
+  width:72px!important;
+  height:112px!important;
+}
+.mobile-game-ui .room-vent-rig:before{
+  right:0!important;
+  top:20px!important;
+  width:70px!important;
+  height:74px!important;
+}
+.mobile-game-ui .vent-duct{
+  right:17px!important;
+  top:-48px!important;
+  width:34px!important;
+  height:73px!important;
+}
+.mobile-game-ui .room-vent-canvas{
+  position:absolute!important;
+  z-index:2!important;
+  left:4px!important;
+  top:23px!important;
+  width:64px!important;
+  height:64px!important;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.50))!important;
+}
+
+/* Old background-sprite room placement is disabled. Shop sprites stay untouched. */
+.mobile-game-ui .room-vent.eq2d-sprite,
+.mobile-game-ui .room-light.eq2d-sprite{display:none!important}
+
+@media(max-width:370px){
+  .mobile-game-ui .room-lamp{transform:translateX(-50%) scale(.94)!important;transform-origin:50% 0!important}
+  .mobile-game-ui .room-vent-rig{right:14px!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -2888,6 +2965,95 @@ function equipmentVisualHTML(id,level,context='level'){
   if(id==='pot')return '<canvas class="upgrade-eq-preview '+context+'-preview" data-eq3d="pot" data-eq-level="'+level+'" data-eq-width="'+(context==='category'?106:78)+'" data-eq-height="'+(context==='category'?74:58)+'"></canvas>';
   return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
 }
+const roomEquipmentStripCache=new Map();
+function roomEquipmentStrip(id){
+  if(roomEquipmentStripCache.has(id))return roomEquipmentStripCache.get(id);
+  const promise=new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{
+      try{
+        const scan=document.createElement('canvas');
+        scan.width=img.naturalWidth;scan.height=img.naturalHeight;
+        const sx=scan.getContext('2d',{willReadFrequently:true});
+        sx.clearRect(0,0,scan.width,scan.height);sx.drawImage(img,0,0);
+        const px=sx.getImageData(0,0,scan.width,scan.height).data,w=scan.width,h=scan.height;
+        const occupied=new Uint8Array(w);
+        for(let x=0;x<w;x++){
+          let hits=0;
+          for(let y=0;y<h;y++){
+            if(px[(y*w+x)*4+3]>=42&&++hits>=3){occupied[x]=1;break;}
+          }
+        }
+        // Ignore small transparent holes inside one object.
+        let gapStart=-1;
+        for(let x=0;x<=w;x++){
+          if(x<w&&!occupied[x]){
+            if(gapStart<0)gapStart=x;
+          }else if(gapStart>=0){
+            const len=x-gapStart;
+            if(gapStart>0&&x<w&&len<=7)for(let q=gapStart;q<x;q++)occupied[q]=1;
+            gapStart=-1;
+          }
+        }
+        let runs=[],start=-1;
+        for(let x=0;x<=w;x++){
+          if(x<w&&occupied[x]&&start<0)start=x;
+          if((x===w||!occupied[x])&&start>=0){
+            if(x-start>=22)runs.push([start,x-1]);
+            start=-1;
+          }
+        }
+        // If glow or tiny gaps produced extra pieces, merge the closest neighbours until 10 remain.
+        while(runs.length>10){
+          let best=0,bestGap=Infinity;
+          for(let i=0;i<runs.length-1;i++){
+            const g=runs[i+1][0]-runs[i][1]-1;
+            if(g<bestGap){bestGap=g;best=i;}
+          }
+          runs.splice(best,2,[runs[best][0],runs[best+1][1]]);
+        }
+        let segments=[];
+        if(runs.length===10){
+          segments=runs.map(([x0,x1])=>{
+            let y0=h,y1=-1;
+            for(let y=0;y<h;y++)for(let x=x0;x<=x1;x++){
+              if(px[(y*w+x)*4+3]>=24){if(y<y0)y0=y;if(y>y1)y1=y;}
+            }
+            if(y1<y0){y0=0;y1=h-1;}
+            const pad=4;
+            return {x:Math.max(0,x0-pad),y:Math.max(0,y0-pad),w:Math.min(w,x1+pad+1)-Math.max(0,x0-pad),h:Math.min(h,y1+pad+1)-Math.max(0,y0-pad)};
+          });
+        }else{
+          // Safe fallback: nominal cells. It keeps the UI functional if browser decoding differs.
+          const cw=w/10;
+          segments=Array.from({length:10},(_,i)=>({x:Math.round(i*cw),y:0,w:Math.round(cw),h}));
+        }
+        resolve({img,segments});
+      }catch(err){reject(err);}
+    };
+    img.onerror=reject;
+    img.src='assets/equipment/'+id+'.png?v=61';
+  });
+  roomEquipmentStripCache.set(id,promise);
+  return promise;
+}
+function renderRoomEquipmentCanvas(canvas){
+  const id=canvas?.dataset.eqStrip,level=Math.max(1,Math.min(10,Number(canvas?.dataset.eqLevel)||1));
+  if(!id||!canvas)return;
+  roomEquipmentStrip(id).then(({img,segments})=>{
+    const seg=segments[level-1];if(!seg)return;
+    const size=512,ctx=canvas.getContext('2d');
+    canvas.width=size;canvas.height=size;ctx.clearRect(0,0,size,size);
+    const margin=id==='light'?22:34;
+    const scale=Math.min((size-margin*2)/seg.w,(size-margin*2)/seg.h);
+    const dw=seg.w*scale,dh=seg.h*scale,dx=(size-dw)/2,dy=(size-dh)/2;
+    ctx.drawImage(img,seg.x,seg.y,seg.w,seg.h,dx,dy,dw,dh);
+    canvas.classList.add('ready');
+  }).catch(()=>canvas.classList.add('failed'));
+}
+function renderRoomEquipmentCanvases(root=document){
+  root.querySelectorAll('canvas[data-eq-strip]').forEach(renderRoomEquipmentCanvas);
+}
 function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
@@ -2895,18 +3061,16 @@ function syncEquipment2D(){
   const lightLevel=Math.max(1,Number(lv.light||1)),ventLevel=Math.max(1,Number(lv.vent||1));
   const hasLamp=lightLevel>1,hasVent=ventLevel>1;
 
-  // V60: the room uses the exact same level-specific lamp artwork as the upgrade shop.
-  // Keep the source cell square so the 256x256 lamp art is never stretched.
   const lampScene={
-    2:{size:112,top:92,coneTop:163,coneWidth:170,coneAlpha:.135,mount:'clip'},
-    3:{size:126,top:88,coneTop:163,coneWidth:185,coneAlpha:.145,mount:'bar'},
-    4:{size:138,top:85,coneTop:162,coneWidth:200,coneAlpha:.155,mount:'bar'},
-    5:{size:152,top:81,coneTop:159,coneWidth:215,coneAlpha:.165,mount:'panel'},
-    6:{size:164,top:79,coneTop:159,coneWidth:230,coneAlpha:.175,mount:'panel'},
-    7:{size:176,top:77,coneTop:158,coneWidth:245,coneAlpha:.185,mount:'panel'},
-    8:{size:188,top:75,coneTop:157,coneWidth:260,coneAlpha:.200,mount:'panel'},
-    9:{size:200,top:73,coneTop:156,coneWidth:275,coneAlpha:.215,mount:'panel'},
-    10:{size:212,top:71,coneTop:155,coneWidth:290,coneAlpha:.230,mount:'panel'}
+    2:{size:94,top:91,coneTop:158,coneWidth:155,coneAlpha:.125},
+    3:{size:108,top:87,coneTop:158,coneWidth:170,coneAlpha:.138},
+    4:{size:118,top:84,coneTop:158,coneWidth:184,coneAlpha:.150},
+    5:{size:132,top:80,coneTop:156,coneWidth:202,coneAlpha:.162},
+    6:{size:142,top:78,coneTop:155,coneWidth:216,coneAlpha:.174},
+    7:{size:150,top:76,coneTop:154,coneWidth:230,coneAlpha:.186},
+    8:{size:158,top:74,coneTop:153,coneWidth:244,coneAlpha:.198},
+    9:{size:166,top:72,coneTop:152,coneWidth:258,coneAlpha:.210},
+    10:{size:178,top:70,coneTop:151,coneWidth:274,coneAlpha:.224}
   };
   const lc=lampScene[lightLevel]||lampScene[2];
 
@@ -2914,12 +3078,14 @@ function syncEquipment2D(){
     ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-top:'+lc.coneTop+'px;--cone-alpha:'+lc.coneAlpha+';--cone-width:'+lc.coneWidth+'px"></span>'
     : '';
   const lamp=hasLamp
-    ? '<span class="room-lamp room-lamp-'+lc.mount+'" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px" title="'+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'"><i class="lamp-mount lamp-mount-left"></i><i class="lamp-mount lamp-mount-right"></i><span class="room-light-asset eq2d-sprite" data-eq2d="light" data-eq-level="'+lightLevel+'" style="'+equipmentAssetStyle('light',lightLevel)+'"></span></span>'
+    ? '<span class="room-lamp" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px" title="'+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></span>'
     : '';
   const vent=hasVent
-    ? '<span class="room-vent-rig" data-vent-level="'+ventLevel+'" title="'+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'"><i class="vent-duct"></i><i class="vent-backplate"></i><span class="room-vent eq2d-sprite" data-eq2d="vent" data-eq-level="'+ventLevel+'" style="'+equipmentAssetStyle('vent',ventLevel)+'"></span></span>'
+    ? '<span class="room-vent-rig" data-vent-level="'+ventLevel+'" title="'+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'"><i class="vent-duct"></i><i class="vent-backplate"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></span>'
     : '';
+
   layer.innerHTML=[lightCone,lamp,vent].join('');
+  renderRoomEquipmentCanvases(layer);
   ui?.classList.add('hybrid-equipment-ready');
   return true;
 }
