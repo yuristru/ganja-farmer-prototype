@@ -2513,6 +2513,16 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 7px 8px rgba(0,0,0,.54)) drop-shadow(0 2px 2px rgba(0,0,0,.30));
   transform-origin:50% 80%;
 }
+.mobile-game-ui .room-eq-substrate{
+  left:4px;
+  bottom:calc(var(--safe-bottom) + 116px);
+  width:74px!important;
+  height:58px!important;
+  opacity:.78!important;
+  transform:rotate(-3deg) scale(.92);
+  transform-origin:50% 100%;
+  filter:drop-shadow(0 9px 6px rgba(0,0,0,.26)) drop-shadow(0 1px 1px rgba(0,0,0,.20))!important;
+}
 .mobile-game-ui .room-eq-nutrients{
   left:-8px;
   bottom:calc(var(--safe-bottom) + 174px);
@@ -2541,6 +2551,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
 }
 @media(max-width:370px){
+  .mobile-game-ui .room-eq-substrate{left:2px;bottom:calc(var(--safe-bottom) + 110px);width:68px!important;height:54px!important}
   .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px!important;height:84px!important}
   .mobile-game-ui .room-eq-sensor{right:-2px;width:70px!important;height:70px!important}
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
@@ -4147,6 +4158,7 @@ function syncEquipment2D(){
   if(!layer||!gameState)return false;
   ensureGrowRoomBackgroundImage();
   const sceneEquipment=[
+    ['substrate','room-eq-substrate'],
     ['nutrients','room-eq-nutrients'],
     ['sensor','room-eq-sensor'],
     ['irrigation','room-eq-irrigation']
@@ -4377,7 +4389,8 @@ function rotY(p){return v(p.x*yawC+p.z*yawS,p.y,-p.x*yawS+p.z*yawC)}
 function rotX(p){return v(p.x,p.y*pitchC-p.z*pitchS,p.y*pitchS+p.z*pitchC)}
 const OBJECT_PIVOT=v(0,-54,0);
 function viewPoint(p){const local=sub(p,OBJECT_PIVOT);return add(rotX(rotY(local)),OBJECT_PIVOT)}
-let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(96,(dayRect?dayRect.bottom-appRect.top:82)+72);/* V59: reserve a clear visual stage below the mounted lamp and keep the plant centered between lamp and care panel. */const bottomLimit=Math.min(H-136,H-196);const worldSpan=Math.max(280,(maxY+62)-minY);const earlyBoost=currentDay<=7?1.20:currentDay<=14?1.11:currentDay<=24?1.05:1;plantAutoScale=clamp(((bottomLimit-topLimit)/worldSpan)*earlyBoost,.50,1.18);plantAutoCy=bottomLimit+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
+const ROOM_PLANT_FLOOR_SHIFT=14;
+let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(96,(dayRect?dayRect.bottom-appRect.top:82)+72);/* V81: keep the full pot/plant assembly slightly lower so it sits on the grow-room floor in perspective. */const bottomLimit=Math.min(H-136,H-196);const worldSpan=Math.max(280,(maxY+62)-minY);const earlyBoost=currentDay<=7?1.20:currentDay<=14?1.11:currentDay<=24?1.05:1;plantAutoScale=clamp(((bottomLimit-topLimit)/worldSpan)*earlyBoost,.50,1.18);plantAutoCy=bottomLimit+ROOM_PLANT_FLOOR_SHIFT+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
 function rng(seed){let s=seed|0;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return((s>>>0)%100000)/100000}}
 function axisDir(pts,i){const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];return norm(sub(b,a))}
 function leafPoly(L,Wd,maturity=1,serration=.085){
