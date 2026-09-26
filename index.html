@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V81 Playable Vertical Slice</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V82 Upgrade Visual Demo</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1244,7 +1244,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-image:url("assets/equipment/irrigation.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-image:url("assets/equipment/nutrients.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="sensor"]{background-image:url("assets/equipment/sensor.png?v=57")}
-.mobile-game-ui .eq2d-sprite[data-eq2d="substrate"]{background-image:url("assets/equipment/substrate.png?v=57")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="substrate"]{background-image:url("assets/equipment/substrate-v2.svg?v=82")}
 
 /* Shop previews */
 .mobile-game-ui .upgrade-eq-preview.eq2d-sprite{
@@ -2514,15 +2514,15 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform-origin:50% 80%;
 }
 .mobile-game-ui .room-eq-substrate{
-  left:66px;
-  bottom:calc(var(--safe-bottom) + 190px);
-  width:76px!important;
-  height:52px!important;
-  z-index:1!important;
-  opacity:.84!important;
-  transform:rotate(-2deg) scaleX(1.08) scaleY(.84);
+  left:70px;
+  bottom:calc(var(--safe-bottom) + 165px);
+  width:118px!important;
+  height:82px!important;
+  z-index:4!important;
+  opacity:.98!important;
+  transform:rotate(-2deg) scaleX(1.06) scaleY(.94);
   transform-origin:50% 100%;
-  filter:drop-shadow(0 8px 5px rgba(0,0,0,.24)) drop-shadow(0 1px 1px rgba(0,0,0,.18))!important;
+  filter:drop-shadow(0 10px 7px rgba(0,0,0,.30)) drop-shadow(0 2px 2px rgba(0,0,0,.20))!important;
 }
 .mobile-game-ui .room-eq-nutrients{
   left:-8px;
@@ -2553,7 +2553,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
 }
 @media(max-width:370px){
-  .mobile-game-ui .room-eq-substrate{left:54px;bottom:calc(var(--safe-bottom) + 184px);width:70px!important;height:48px!important}
+  .mobile-game-ui .room-eq-substrate{left:58px;bottom:calc(var(--safe-bottom) + 158px);width:108px!important;height:76px!important}
   .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px!important;height:84px!important}
   .mobile-game-ui .room-eq-sensor{right:-2px;width:70px!important;height:70px!important}
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
@@ -2956,11 +2956,67 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   max-width:none!important;
   max-height:none!important;
 }
+</style><style id="v82UpgradeVisualDemo">
+.mobile-game-ui .upgrade-demo-controls{
+  display:none;
+  position:absolute;
+  right:13px;
+  top:calc(var(--safe-top) + 91px);
+  z-index:48;
+  gap:5px;
+  pointer-events:auto;
+}
+.mobile-game-ui.upgrade-demo-active .upgrade-demo-controls{display:flex}
+.mobile-game-ui .upgrade-demo-controls button{
+  width:31px;
+  height:23px;
+  padding:0;
+  border:1px solid #3c7d91;
+  border-radius:8px;
+  background:linear-gradient(180deg,#164e68,#0a3145);
+  color:#dff9ff;
+  font:1000 8px/1 system-ui;
+  box-shadow:0 2px 0 #031721,inset 0 1px 0 rgba(255,255,255,.10);
+}
+.mobile-game-ui .upgrade-demo-controls button:active{transform:translateY(1px)}
+.mobile-game-ui.upgrade-demo-active .room-equipment-overlay{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+}
+.mobile-game-ui.upgrade-demo-active .room-equipment-overlay:hover,
+.mobile-game-ui.upgrade-demo-active .room-equipment-overlay:active{
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.40)) drop-shadow(0 0 8px rgba(132,255,91,.52))!important;
+}
+.mobile-game-ui .room-demo-pot-hotspot{
+  position:absolute;
+  z-index:8;
+  left:50%;
+  bottom:calc(var(--safe-bottom) + 164px);
+  width:170px;
+  height:142px;
+  transform:translateX(-50%);
+  border:1px dashed rgba(157,255,97,.36);
+  border-radius:48% 48% 18% 18%;
+  background:rgba(92,255,75,.015);
+  pointer-events:auto;
+}
+.mobile-game-ui .room-demo-pot-hotspot:active{
+  background:rgba(114,255,89,.08);
+  border-color:rgba(177,255,122,.72);
+}
+@media(max-width:370px){
+  .mobile-game-ui .upgrade-demo-controls{right:10px}
+  .mobile-game-ui .room-demo-pot-hotspot{width:154px;height:132px;bottom:calc(var(--safe-bottom) + 158px)}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><a class="reload-top-btn" id="reloadPageButton" href="./" aria-label="Seite neu laden" title="Seite neu laden">↻</a><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
   <div class="top-coin-badge" id="topCoinBadge" data-coin-display aria-label="Coins">◉ 0</div>
+  <div class="upgrade-demo-controls" id="upgradeDemoControls" aria-label="Upgrade Demo">
+    <button type="button" data-demo-upgrade="light" aria-label="Licht Demo weiterschalten">L1</button>
+    <button type="button" data-demo-upgrade="vent" aria-label="Lüftung Demo weiterschalten">V1</button>
+  </div>
   <div class="day-console">
     <div class="day-mid"><b id="mobileDay">WOCHE 1</b><span id="mobilePhase">KEIMUNG</span><div class="day-dots" id="turnDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small class="turn-dot-label" id="weekProgressLabel">TAG 1 · 0/7 · JETZT</small></div>
   </div>
@@ -3021,7 +3077,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
-<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
+<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script>
 (()=>{
@@ -3296,6 +3352,39 @@ function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+
 function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
+const demoVisualState={enabled:false,levels:{}};
+function visualUpgradeLevel(id){
+  if(demoVisualState.enabled&&Number.isFinite(Number(demoVisualState.levels[id])))return Math.max(1,Math.min(upgradeMaxLevel(id),Number(demoVisualState.levels[id])));
+  return upgradeLevel(gameState,id);
+}
+function updateUpgradeDemoUI(){
+  const ui=document.getElementById('mobileGameUI'),toggle=document.getElementById('devUpgradeDemo');
+  ui?.classList.toggle('upgrade-demo-active',demoVisualState.enabled);
+  toggle?.classList.toggle('on',demoVisualState.enabled);
+  if(toggle)toggle.textContent=demoVisualState.enabled?'Upgrade-Demo AN':'Upgrade-Demo';
+  document.querySelectorAll('[data-demo-upgrade]').forEach(btn=>{
+    const id=btn.dataset.demoUpgrade;if(!id)return;
+    const level=visualUpgradeLevel(id),prefix=id==='light'?'L':id==='vent'?'V':'';
+    if(prefix)btn.textContent=prefix+level;
+    btn.title=(UPGRADE_CATEGORIES[id]?.name||id)+' Demo · Stufe '+level+'/'+upgradeMaxLevel(id);
+  });
+}
+function setUpgradeDemo(enabled){
+  demoVisualState.enabled=!!enabled;
+  demoVisualState.levels={};
+  if(demoVisualState.enabled)UPGRADE_CATEGORY_ORDER.forEach(id=>demoVisualState.levels[id]=upgradeLevel(gameState,id));
+  worldBgCanvas=null;roomEquipmentStripCache.clear();updateUpgradeDemoUI();syncEquipment2D();invalidatePlant();requestRender();
+  showGameToast(demoVisualState.enabled?'Upgrade-Demo aktiv · Objekte antippen':'Upgrade-Demo beendet');
+}
+function cycleDemoVisual(id){
+  if(!demoVisualState.enabled||!UPGRADE_CATEGORIES[id])return;
+  const max=upgradeMaxLevel(id),current=visualUpgradeLevel(id),next=current>=max?1:current+1;
+  demoVisualState.levels[id]=next;
+  worldBgCanvas=null;
+  if(id==='pot'||id==='substrate')invalidatePlant();
+  updateUpgradeDemoUI();syncEquipment2D();requestRender();
+  showGameToast((UPGRADE_CATEGORIES[id]?.name||id)+' Demo · '+next+'/'+max);
+}
 function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(1.31,level-2)/5)*5;}
 function categoryBenefits(id,level){const n=Math.max(1,Math.min(upgradeMaxLevel(id),level)),step=(id==='light'||id==='vent')?(n-1)*(9/4):n-1;
   if(id==='pot')return ['Wasserverbrauch -'+Math.round(step*2.2)+'%','Puffer +'+Math.round(step*4)+'%','Drainage +'+Math.round(step*1.5)+'%'];
@@ -3972,10 +4061,9 @@ function growRoomVisualTier(level){
   return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Number(level)||1));
 }
 function growRoomBackgroundLevels(){
-  const lv=gameState?.progression?.levels||{};
   return {
-    light:growRoomVisualTier(lv.light||1),
-    vent:growRoomVisualTier(lv.vent||1)
+    light:growRoomVisualTier(visualUpgradeLevel('light')),
+    vent:growRoomVisualTier(visualUpgradeLevel('vent'))
   };
 }
 function growRoomBackgroundPath(){
@@ -4028,6 +4116,10 @@ function roomEquipmentStrip(id){
     const img=new Image();
     img.onload=()=>{
       try{
+        if(id==='substrate'){
+          const segments=Array.from({length:10},(_,i)=>({x:i*256,y:0,w:256,h:256}));
+          resolve({img,segments});return;
+        }
         const scan=document.createElement('canvas');
         scan.width=img.naturalWidth;scan.height=img.naturalHeight;
         const sx=scan.getContext('2d',{willReadFrequently:true});
@@ -4132,7 +4224,7 @@ function roomEquipmentStrip(id){
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src='assets/equipment/'+id+'.png?v=64';
+    img.src=id==='substrate'?'assets/equipment/substrate-v2.svg?v=82':'assets/equipment/'+id+'.png?v=64';
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
@@ -4145,7 +4237,7 @@ function renderRoomEquipmentCanvas(canvas){
     const seg=segments[sourceLevel-1];if(!seg)return;
     const size=512,ctx=canvas.getContext('2d');
     canvas.width=size;canvas.height=size;ctx.clearRect(0,0,size,size);
-    const margin=id==='light'?22:34;
+    const margin=id==='substrate'?8:id==='light'?22:34;
     const scale=Math.min((size-margin*2)/seg.w,(size-margin*2)/seg.h);
     const dw=seg.w*scale,dh=seg.h*scale,dx=(size-dw)/2,dy=(size-dh)/2;
     ctx.drawImage(img,seg.x,seg.y,seg.w,seg.h,dx,dy,dw,dh);
@@ -4166,12 +4258,14 @@ function syncEquipment2D(){
     ['irrigation','room-eq-irrigation']
   ];
   layer.innerHTML=sceneEquipment.map(([id,cls])=>{
-    const level=upgradeLevel(gameState,id);
-    return '<canvas class="room-equipment-overlay '+cls+'" data-eq-strip="'+id+'" data-eq-level="'+level+'" data-room-level="'+level+'" aria-hidden="true"></canvas>';
-  }).join('');
+    const level=visualUpgradeLevel(id);
+    return '<canvas class="room-equipment-overlay '+cls+'" data-eq-strip="'+id+'" data-eq-level="'+level+'" data-room-level="'+level+'" data-demo-upgrade="'+id+'" aria-label="'+UPGRADE_CATEGORIES[id].name+' Demo"></canvas>';
+  }).join('')+(demoVisualState.enabled?'<button type="button" class="room-demo-pot-hotspot" data-demo-upgrade="pot" aria-label="Topf Demo"></button>':'');
   renderRoomEquipmentCanvases(layer);
+  if(demoVisualState.enabled)layer.querySelectorAll('[data-demo-upgrade]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();cycleDemoVisual(el.dataset.demoUpgrade);}));
   ui?.classList.add('baked-growroom-ready');
   ui?.classList.remove('hybrid-equipment-ready');
+  updateUpgradeDemoUI();
   return true;
 }
 function syncEquipment3D(){return false;}
@@ -5441,7 +5535,7 @@ function potVisualProfile(level){
 }
 
 function queuePot3D(){
-  const potLevel=upgradeLevel(gameState,'pot'),potProfile=potVisualProfile(potLevel);
+  const potLevel=visualUpgradeLevel('pot'),potProfile=potVisualProfile(potLevel);
   const segs=32, topY=-6, bottomY=-96-potProfile.heightExtra, topR=62+potProfile.radiusExtra, bottomR=48+potProfile.radiusExtra*.72, soilR=53+potProfile.radiusExtra*.84;
   const top=[],bottom=[],soil=[];
   for(let i=0;i<segs;i++){
@@ -5496,7 +5590,7 @@ function queuePot3D(){
     const xs=soil2.map(p=>p.x),ys=soil2.map(p=>p.y);
     const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
     const cx=(minX+maxX)/2,cy=(minY+maxY)/2,rx=(maxX-minX)/2,ry=(maxY-minY)/2;
-    const substrateLevel=upgradeLevel(gameState,'substrate'),living=substrateLevel>=5,soilRich=substrateLevel>=8;
+    const substrateLevel=visualUpgradeLevel('substrate'),living=substrateLevel>=5,soilRich=substrateLevel>=8;
     ctx.save();
     ctx.beginPath();soil2.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.clip();
 
@@ -5809,6 +5903,8 @@ document.getElementById('harvestResultClose')?.addEventListener('click',()=>{doc
 
 syncEquipment3D();
 syncEquipment2D();
+document.getElementById('devUpgradeDemo')?.addEventListener('click',()=>setUpgradeDemo(!demoVisualState.enabled));
+document.querySelectorAll('#upgradeDemoControls [data-demo-upgrade]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();cycleDemoVisual(btn.dataset.demoUpgrade);}));
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
 document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
 function announceOfflineReturn(){
