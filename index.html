@@ -3437,6 +3437,32 @@ function roomEquipmentStrip(id){
         const sx=scan.getContext('2d',{willReadFrequently:true});
         sx.clearRect(0,0,scan.width,scan.height);sx.drawImage(img,0,0);
         const imageData=sx.getImageData(0,0,scan.width,scan.height),px=imageData.data,w=scan.width,h=scan.height;
+
+        // Source atlases contain small product-name captions above some items.
+        // Remove only alpha components that live completely in the caption band.
+        // Hardware that starts high but continues into the scene is preserved.
+        const topH=Math.min(h,72),keepFromY=Math.min(topH-1,64);
+        const topSeen=new Uint8Array(w*topH),stack=[],component=[];
+        for(let y=0;y<topH;y++)for(let x=0;x<w;x++){
+          const seed=y*w+x;
+          if(topSeen[seed]||px[seed*4+3]<24)continue;
+          stack.length=0;component.length=0;stack.push(seed);topSeen[seed]=1;
+          let touchesHardware=false;
+          while(stack.length){
+            const p=stack.pop(),py=Math.floor(p/w),pX=p-py*w;
+            component.push(p);if(py>=keepFromY)touchesHardware=true;
+            for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+              if(!dx&&!dy)continue;
+              const nx=pX+dx,ny=py+dy;
+              if(nx<0||nx>=w||ny<0||ny>=topH)continue;
+              const np=ny*w+nx;
+              if(topSeen[np]||px[np*4+3]<24)continue;
+              topSeen[np]=1;stack.push(np);
+            }
+          }
+          if(!touchesHardware)for(const p of component)px[p*4+3]=0;
+        }
+
         const occupied=new Uint8Array(w),separator=new Uint8Array(w);
         // Some source strips still contain narrow dark divider remnants between items.
         // Detect columns that are dark and opaque for most of the strip height and erase them
