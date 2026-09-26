@@ -2888,15 +2888,16 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .day-dots i.pending{
   opacity:.42!important;
 }
+</style><style id="v78SharpBackgroundAndHeaderCleanup">
+.mobile-game-ui .day-console{width:158px!important;justify-content:center!important}
+.mobile-game-ui .day-mid{min-width:136px!important;width:136px!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><a class="reload-top-btn" id="reloadPageButton" href="./" aria-label="Seite neu laden" title="Seite neu laden">↻</a><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
   <div class="top-coin-badge" id="topCoinBadge" data-coin-display aria-label="Coins">◉ 0</div>
   <div class="day-console">
-    <button class="arrow" id="dayPrev" aria-label="Vorheriger Tag">‹</button>
-    <div class="day-mid"><b id="mobileDay">WOCHE 1</b><span id="mobilePhase">KEIMUNG</span><div class="day-dots" id="turnDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small class="turn-dot-label" id="weekProgressLabel">TAG 1 / 7</small></div>
-    <button class="arrow" id="dayNext" aria-label="Nächster Tag">›</button>
+    <div class="day-mid"><b id="mobileDay">WOCHE 1</b><span id="mobilePhase">KEIMUNG</span><div class="day-dots" id="turnDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small class="turn-dot-label" id="weekProgressLabel">TAG 1 · 0/7 · JETZT</small></div>
   </div>
   <div class="tool-rail">
     <div class="rail-tool-group" data-tool-group="orbit"><button class="rail-btn active" data-mobile-tool="orbit"><span class="ico">↻</span>Kamera</button><div class="rail-subcontrols show" id="cameraSubcontrols"><button class="rail-subicon" id="cameraResetMini" type="button" aria-label="Kamera zurücksetzen" title="Kamera zurücksetzen">↺</button></div></div>
@@ -3833,7 +3834,7 @@ function preloadGrowRoomBackgroundMatrix(){
   const loadBatch=deadline=>{
     let loaded=0;
     while(cursor<ordered.length&&loaded<4&&(!deadline||deadline.timeRemaining()>2)){
-      const [l,v]=ordered[cursor++],src=GROWROOM_BACKGROUND_BASE+'growroom-l'+l+'-v'+v+'.webp?v=72';
+      const [l,v]=ordered[cursor++],src=GROWROOM_BACKGROUND_BASE+'growroom-l'+l+'-v'+v+'.webp?v=78sharp';
       if(growRoomBackgroundImages.has(src))continue;
       const img=new Image(),rec={img,loaded:false,failed:false};
       growRoomBackgroundImages.set(src,rec);
@@ -3861,7 +3862,7 @@ function growRoomBackgroundLevels(){
 }
 function growRoomBackgroundPath(){
   const t=growRoomBackgroundLevels();
-  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.webp?v=72';
+  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.webp?v=78sharp';
 }
 function ensureGrowRoomBackgroundImage(){
   const src=growRoomBackgroundPath();
@@ -5625,8 +5626,7 @@ document.getElementById('adminDaySkip')?.addEventListener('click',()=>{
   }
 });
 document.getElementById('careClose')?.addEventListener('click',()=>careDrawer?.classList.remove('open'));
-document.getElementById('dayPrev')?.addEventListener('click',()=>{ if(gameState?.settings?.debugBypass) setDay(Math.max(1,currentDay-1)); else showGameToast('Vergangene Tage bleiben in deiner Grow-Historie'); });
-document.getElementById('dayNext')?.addEventListener('click',()=>{const a=plantDayAvailability();showGameToast(a.ok?'TAG ✓ beendet den aktuellen Pflanzentag':a.label);});
+
 document.getElementById('cameraButton')?.addEventListener('click',()=>showGameToast('Foto-Modus folgt'));
 function setMainPanel(name){const wrap=document.querySelector('.bottom-wrap');document.querySelectorAll('[data-ui-tab]').forEach(b=>b.classList.toggle('active',b.dataset.uiTab===name));document.querySelectorAll('[data-game-panel]').forEach(p=>p.classList.toggle('active',p.dataset.gamePanel===name));if(wrap)wrap.classList.toggle('meta-open',name!=='care');renderMetaPanels();requestRender();}
 document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>setMainPanel(btn.dataset.uiTab)));
