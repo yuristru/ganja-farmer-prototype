@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V77 Seven Turn Gameplay</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V78 Time and Consequences</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3222,7 +3222,7 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
 function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(1.31,level-2)/5)*5;}
@@ -3275,7 +3275,14 @@ function ensureResourceState(st){
   if(typeof st.coins!=='number'||(!st.progression.owned.length&&st.collection.length===0&&st.coins===0))st.coins=450;
   st.wallet=st.wallet||{lastDailyCoinDate:null,dailyCoinAmount:DAILY_FREE_COINS};
   st.wallet.dailyCoinAmount=DAILY_FREE_COINS;
-  if(st.plant)st.plant.harvested=!!st.plant.harvested;
+  if(st.plant){
+    st.plant.harvested=!!st.plant.harvested;
+    st.plant.conditionMemory=st.plant.conditionMemory||{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0};
+    st.plant.conditionMemory.stressDebt=clamp(Number(st.plant.conditionMemory.stressDebt)||0,0,1);
+    st.plant.conditionMemory.recoveryMomentum=clamp(Number(st.plant.conditionMemory.recoveryMomentum)||0,0,1);
+    st.plant.conditionMemory.lastEvaluatedDay=Math.max(0,Number(st.plant.conditionMemory.lastEvaluatedDay)||0);
+  }
+  st.session=st.session||{lastSeenAt:Date.now(),offlineMs:0};
   applyEquippedSetup(st);
   return st;
 }
@@ -3291,9 +3298,18 @@ function claimDailyCoins(st){
   return DAILY_FREE_COINS;
 }
 function loadGameState(){
-  const raw=storageGet();let st;
+  const raw=storageGet();let st,offlineMs=0;
   if(!raw)st=createGameState();
-  else try{st=JSON.parse(raw);if(!st||st.version!==1)st=createGameState();else st=ensureResourceState(st)}catch(e){st=createGameState()}
+  else try{
+    st=JSON.parse(raw);
+    if(!st||st.version!==1)st=createGameState();
+    else{
+      const lastSeen=Number(st.session?.lastSeenAt)||Date.now();
+      offlineMs=Math.max(0,Date.now()-lastSeen);
+      st=ensureResourceState(st);
+    }
+  }catch(e){st=createGameState()}
+  st.session=st.session||{};st.session.offlineMs=offlineMs;st.session.lastSeenAt=Date.now();
   const daily=claimDailyCoins(st);if(daily)storageSet(JSON.stringify(st));
   return st;
 }
@@ -3308,7 +3324,7 @@ function normalizeRealDay(){
 }
 function persistTrainingToGame(){if(!gameState)return;const defoliations=gameState.training?.defoliations||[];gameState.training={prunes:[...plantEdits.prunes.values()].map(x=>({...x})),bends:[...plantEdits.bends.entries()].map(([axisId,events])=>({axisId,events:events.map(e=>({...e}))})),defoliations:[...defoliations]}}
 function hydrateTrainingFromGame(){plantEdits.prunes.clear();plantEdits.bends.clear();for(const p of gameState.training?.prunes||[])plantEdits.prunes.set(p.nodeId,{...p});for(const b of gameState.training?.bends||[])plantEdits.bends.set(b.axisId,(b.events||[]).map(e=>({...e})))}
-function saveGameState(){if(!gameState)return;persistTrainingToGame();storageSet(JSON.stringify(gameState))}
+function saveGameState(){if(!gameState)return;persistTrainingToGame();gameState.session=gameState.session||{};gameState.session.lastSeenAt=Date.now();storageSet(JSON.stringify(gameState))}
 function deterministicDayValue(day,salt){const R=rng((currentPlantSeed()*131+day*977+salt*7919)>>>0);return R()}
 function dailyLight(day){const cloud=deterministicDayValue(day,11),fx=equippedEffects();const wave=.06*Math.sin(day*.63);return clamp(.54+cloud*.38+wave+fx.lightBonus,.42,1)}
 function dailyClimate(day){const n=deterministicDayValue(day,23),fx=equippedEffects();return clamp(.73+n*.16+.03*Math.sin(day*.41)+fx.climateBonus,.66,1)}
@@ -3426,25 +3442,53 @@ function evaluatePlantResponse(snap,previous={stress:0,growthPotential:1}){
     const load=(deficit*.27+acute*.09)/resilience;
     stress=clamp(stress+load-(deficit<.22&&acute<.28?.028:0),0,1);
   }
+  const memory=gameState?.plant?.conditionMemory||{stressDebt:0,recoveryMomentum:0};
+  const debt=clamp(Number(memory.stressDebt)||0,0,1),recovery=clamp(Number(memory.recoveryMomentum)||0,0,1);
   const priorPotential=clamp(Number(previous.growthPotential)||1,.5,1);
-  const permanentLoss=Math.max(0,stress-.40)*w.permanent+Math.max(0,acute-.72)*.0035;
-  const growthPotential=clamp(priorPotential-permanentLoss,.62,1);
-  const vigorBase=1-deficit*.31-stress*.39-acute*.14;
+  const permanentLoss=Math.max(0,stress-.40)*w.permanent+Math.max(0,acute-.72)*.0035+Math.max(0,debt-.60)*.0028;
+  const growthPotential=clamp(priorPotential-permanentLoss+recovery*.0015,.62,1);
+  const vigorBase=1-deficit*.31-stress*.39-acute*.14-debt*.10+recovery*.035;
   const vigor=clamp(vigorBase*lerp(.965,1.04,gene.growth),.28,1);
   return{
     fulfillment,stress,vigor,growthPotential,
     damage:{waterDef,nutrientDef,waterExcess,nutrientExcess,lightDef,climateDef,acute},
-    phaseWeights:w
+    phaseWeights:w,
+    carry:{stressDebt:debt,recoveryMomentum:recovery}
   };
 }
 function simulateCurrentDay(){
-  const snap=currentNeedSnapshot(gameState.plant.day);
-  const response=evaluatePlantResponse(snap,{stress:gameState.plant.stress||0,growthPotential:gameState.plant.growthPotential||1});
-  const result={...snap,...response,createdAt:Date.now()};
+  const snap=currentNeedSnapshot(gameState.plant.day),previousStress=gameState.plant.stress||0,previousPotential=gameState.plant.growthPotential||1;
+  const previousMemory=gameState.plant.conditionMemory||{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0};
+  const response=evaluatePlantResponse(snap,{stress:previousStress,growthPotential:previousPotential});
+  const healthy=response.fulfillment>=.90&&response.damage.acute<.18;
+  const stressDebt=clamp(
+    (Number(previousMemory.stressDebt)||0)*.82+
+    response.damage.acute*.11+
+    (1-response.fulfillment)*.09-
+    (healthy?.075:0)-
+    (Number(previousMemory.recoveryMomentum)||0)*.025,
+    0,1
+  );
+  const recoveryMomentum=clamp(
+    (Number(previousMemory.recoveryMomentum)||0)*.60+
+    (healthy?.34:0)-
+    response.damage.acute*.10-
+    stressDebt*.05,
+    0,1
+  );
+  const conditionMemory={stressDebt,recoveryMomentum,lastEvaluatedDay:gameState.plant.day};
+  const result={
+    ...snap,...response,
+    conditionMemory,
+    stressDelta:response.stress-previousStress,
+    growthPotentialDelta:response.growthPotential-previousPotential,
+    createdAt:Date.now()
+  };
   gameState.history[String(gameState.plant.day)]=result;
   recordBiographyDay(result);
   gameState.plant.stress=response.stress;
   gameState.plant.growthPotential=response.growthPotential;
+  gameState.plant.conditionMemory=conditionMemory;
   return result;
 }
 function waterDemand(day){
@@ -3522,7 +3566,10 @@ function plantDayAvailability(){
 }
 function advancePlantDay(force=false){
   if(gameState.plant.day>=84)return false;
-  const day=gameState.plant.day;simulateCurrentDay();consumeForNextDay(day);
+  const day=gameState.plant.day,result=simulateCurrentDay();
+  result.turnsUsed=Math.max(0,Number(gameState.turn?.turnsToday)||0);
+  result.unusedTurns=Math.max(0,MAX_TURNS_PER_PLANT_DAY-result.turnsUsed);
+  consumeForNextDay(day);
   gameState.plant.day=Math.min(84,day+1);currentDay=gameState.plant.day;stage=legacyStageForDay(currentDay);
   gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=0;gameState.turn.lastAction=null;
   gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();
@@ -3543,6 +3590,7 @@ function updateGameHUD(){
   $('mobilePhase').textContent=phaseForDay(currentDay).toUpperCase();
   const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · '+used+'/7 · '+time;weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.remaining<=0?'Alle 7 Züge verbraucht · Tag abschließen':'Nächster Zug ist bereit';}
   $('mobileVigor').innerHTML='Vitalität <strong>'+Math.round(vigor*100)+'%</strong><span class="info-dot">i</span>';
+  const memory=gameState.plant?.conditionMemory||{};$('mobileVigor').title='Langzeitstress '+Math.round((memory.stressDebt||0)*100)+'% · Erholung '+Math.round((memory.recoveryMomentum||0)*100)+'%';
   const careStress=recentCareState();
   for(const name of ['water','light','nutrients','climate']){
     const level=snap.levels[name],score=snap.scores[name];
@@ -5559,10 +5607,22 @@ document.getElementById('adminSkip')?.addEventListener('click',()=>{
   const av=turnActionAvailability();if(!av.ok){showGameToast(av.wait>0?'Nächster Zug in '+formatCountdown(av.wait):'7/7 Züge · Tag abschließen');return;}
   if(commitTurnAction('Skip'))showGameToast('Zug übersprungen · '+gameState.turn.turnsToday+'/7');
 });
+function dayConsequenceLabel(result){
+  if(!result)return'stabile Entwicklung';
+  if((result.damage?.acute||0)>.66)return'akuter Stress';
+  if((result.stressDelta||0)>.08)return'Stress steigt';
+  if((result.growthPotentialDelta||0)<-.004)return'Wachstumspotenzial sinkt';
+  if((result.conditionMemory?.stressDebt||0)>.48)return'Langzeitstress wirkt nach';
+  if((result.conditionMemory?.recoveryMomentum||0)>.35)return'gute Erholung';
+  return result.fulfillment>=.90?'stabile Entwicklung':'leichter Stress';
+}
 document.getElementById('adminDaySkip')?.addEventListener('click',()=>{
   if(gameState.plant.day>=84){showGameToast('Grow abgeschlossen');return;}
   const finished=gameState.plant.day,used=gameState.turn.turnsToday||0;
-  if(advancePlantDay(true))showGameToast('Tag '+finished+' abgeschlossen · '+used+'/7 Züge genutzt');
+  if(advancePlantDay(true)){
+    const result=gameState.history?.[String(finished)];
+    showGameToast('Tag '+finished+' · '+used+'/7 · '+dayConsequenceLabel(result));
+  }
 });
 document.getElementById('careClose')?.addEventListener('click',()=>careDrawer?.classList.remove('open'));
 document.getElementById('dayPrev')?.addEventListener('click',()=>{ if(gameState?.settings?.debugBypass) setDay(Math.max(1,currentDay-1)); else showGameToast('Vergangene Tage bleiben in deiner Grow-Historie'); });
@@ -5586,7 +5646,17 @@ syncEquipment3D();
 syncEquipment2D();
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
 document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
+function announceOfflineReturn(){
+  const ms=Math.max(0,Number(gameState?.session?.offlineMs)||0);
+  if(ms>=TURN_WAIT_MS){
+    const hours=Math.floor(ms/3600000);
+    showGameToast((hours>=1?hours+' h ':'')+'Offline · nächster Zug kann bereit sein');
+  }
+  if(gameState?.session){gameState.session.offlineMs=0;saveGameState();}
+}
+addEventListener('pagehide',()=>{if(gameState)saveGameState();});
 renderMetaPanels();
+setTimeout(announceOfflineReturn,350);
 setInterval(()=>{updateGameHUD();},1000);
 resize();
 })();
