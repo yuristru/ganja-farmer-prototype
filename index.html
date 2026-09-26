@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V79 Flowering 2.0</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V80 Harvest and Collection Loop</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2891,6 +2891,24 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 </style><style id="v78SharpBackgroundAndHeaderCleanup">
 .mobile-game-ui .day-console{width:158px!important;justify-content:center!important}
 .mobile-game-ui .day-mid{min-width:136px!important;width:136px!important}
+</style><style id="v80HarvestCollection">
+.mobile-game-ui .hall-of-fame-v80{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:3px 8px!important;
+  margin:9px 1px 10px!important;
+  padding:9px 10px!important;
+  border:1px solid rgba(255,218,76,.55)!important;
+  border-radius:14px!important;
+  background:radial-gradient(circle at 85% 20%,rgba(255,220,73,.16),transparent 36%),linear-gradient(145deg,#3a3514,#162b25 72%)!important;
+  box-shadow:0 3px 0 rgba(17,16,5,.72),inset 0 1px 0 rgba(255,244,170,.13)!important;
+}
+.mobile-game-ui .hall-of-fame-v80 span{
+  grid-column:1/-1!important;color:#ffe76f!important;font:1000 6.5px/1 system-ui!important;letter-spacing:.7px!important
+}
+.mobile-game-ui .hall-of-fame-v80 strong{color:#fff!important;font:1000 10px/1.1 system-ui!important}
+.mobile-game-ui .hall-of-fame-v80 b{color:#caff78!important;font:1000 13px/1 system-ui!important}
+.mobile-game-ui .hall-of-fame-v80 small{grid-column:1/-1!important;color:#bdc9a3!important;font:800 6.5px/1.15 system-ui!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3157,9 +3175,10 @@ function drawJarBudPile(canvas,seed){
   const inCollection=!!canvas.closest?.('.collection-item-card.jar');
   // Every jar looks genuinely packed. Harvest quality only controls how high the pile reaches.
   // Collection jars use fewer, much larger flowers so the actual bud morphology is readable on mobile.
-  const fill=clamp(Number(canvas.dataset.jarFill||.82),.70,.98);
-  const requestedCount=Math.max(16,Number(canvas.dataset.jarCount||22));
-  const count=inCollection?Math.min(15,Math.max(11,Math.round(requestedCount*.48))):requestedCount;
+  const quality=clamp(Number(canvas.dataset.jarQuality||70)/100,.35,1),grams=Math.max(10,Number(canvas.dataset.jarGrams||55));
+  const fill=clamp(Number(canvas.dataset.jarFill||(.50+Math.min(1,grams/100)*.32+quality*.13)),.56,.98);
+  const requestedCount=Math.max(12,Number(canvas.dataset.jarCount||Math.round(12+Math.min(1,grams/100)*18+quality*8)));
+  const count=inCollection?Math.min(17,Math.max(9,Math.round(requestedCount*.48))):requestedCount;
   const left=cssW*.11,right=cssW*.89,bottom=cssH*.92;
   const pileTop=bottom-cssH*(.72*fill);
   const usableH=Math.max(20,bottom-pileTop),pieces=[];
@@ -3171,7 +3190,7 @@ function drawJarBudPile(canvas,seed){
     const topness=(bottom-y)/usableH;
     const sideInset=cssW*(.01+topness*.025);
     const x=(left+sideInset)+R()*Math.max(4,(right-left)-sideInset*2);
-    const baseScale=(inCollection?(.235+R()*.075):(.125+R()*.055))*(cssW/86)*(1-depth*.06);
+    const baseScale=(inCollection?(.205+quality*.055+R()*.070):(.112+quality*.030+R()*.052))*(cssW/86)*(1-depth*.06);
     const w=master.width*baseScale,h=master.height*baseScale*(.80+R()*.17);
     const rot=(R()-.5)*1.45;
     pieces.push({depth,w,h,x,y,rot});
@@ -3726,9 +3745,13 @@ function harvestScores(){const hs=Object.values(gameState.history||{}),avg=key=>
 let pendingHarvestResult=null;
 function harvestRating(score){if(score>=92)return{label:'EXZELLENT',cls:'excellent'};if(score>=82)return{label:'SEHR GUT',cls:'verygood'};if(score>=70)return{label:'GUT',cls:'good'};if(score>=55)return{label:'SOLIDE',cls:'solid'};return{label:'MÄSSIG',cls:'moderate'};}
 function buildHarvestResult(){
-  const scores=harvestScores(),g=activeGenetics(),reward=Math.max(80,Math.round(scores.total*5));
-  const grams=Math.max(12,Math.round(14+scores.size*.46+scores.density*.27+scores.potency*.05));
-  const biography=biographySummary(),geneticProfile=activeGeneticProfile(),signature=growSignature(scores);return{scores,g,reward,grams,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
+  const scores=harvestScores(),g=activeGenetics(),flowerQuality=liveFlowerQuality(),biography=biographySummary(),geneticProfile=activeGeneticProfile(),signature=growSignature(scores);
+  const yieldFactor=clamp(scores.size*.0042+scores.density*.0032+flowerQuality.density*.20+biography.flower*.12,.28,1.02);
+  const grams=Math.max(10,Math.round(8+yieldFactor*82));
+  const reward=Math.max(80,Math.round(scores.total*3.7+grams*1.65));
+  const jarFill=clamp(.50+(grams/100)*.32+(scores.density/100)*.13,.56,.97);
+  const budCount=Math.max(14,Math.round(12+(grams/100)*18+(scores.density/100)*8));
+  return{scores,g,reward,grams,jarFill,budCount,flowerQuality,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
 }
 function drawHarvestBud(result){
   const c=document.getElementById('harvestBudCanvas');if(!c)return;const x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);
@@ -3751,19 +3774,25 @@ function populateHarvestResult(result){
   const jb=document.getElementById('jarBuds');
   const jarSeed=activeSeed()||makeSeed(result.g.id||'dream',Number(result.seed)||58317,'common','Harvest');
   const jarPreviewId=registerBudPreview(jarSeed,'harvest-jar-'+result.seed);
-  const harvestFill=clamp(.70+(result.scores?.total||70)/100*.18+Math.min(1,(result.grams||50)/100)*.10,.72,.98);
-  const jarCount=Math.round(24+harvestFill*14);
-  jb.innerHTML='<canvas class="jar-bud-pile" data-jar-buds="'+jarPreviewId+'" data-jar-salt="'+result.seed+'" data-jar-count="'+jarCount+'" data-jar-fill="'+harvestFill.toFixed(3)+'" data-w="168" data-h="158"></canvas>';
+  const harvestFill=clamp(Number(result.jarFill)||(.50+Math.min(1,(result.grams||50)/100)*.32+(result.scores?.density||70)/100*.13),.56,.97);
+  const jarCount=Math.max(14,Number(result.budCount)||Math.round(12+Math.min(1,(result.grams||50)/100)*18+(result.scores?.density||70)/100*8));
+  jb.innerHTML='<canvas class="jar-bud-pile" data-jar-buds="'+jarPreviewId+'" data-jar-salt="'+result.seed+'" data-jar-count="'+jarCount+'" data-jar-fill="'+harvestFill.toFixed(3)+'" data-jar-quality="'+(result.scores?.total||70)+'" data-jar-grams="'+(result.grams||50)+'" data-w="168" data-h="158"></canvas>';
   renderSeedBudPreviews(jb);drawHarvestBud(result);
 }
 function openHarvestResults(){
-  if(gameState.plant.day<84){showGameToast('Grow noch nicht abgeschlossen');return;}if(gameState.plant.harvested){const last=gameState.collection?.[0];if(!last){showGameToast('Bereits geerntet');return;}pendingHarvestResult={scores:last.scores,g:GENETICS[last.genetics]||activeGenetics(),reward:last.reward,grams:last.grams||Math.max(12,Math.round(14+last.scores.size*.46+last.scores.density*.27+last.scores.potency*.05)),rating:harvestRating(last.score),seed:last.seed,signature:last.signature||[],biography:last.biography||biographySummary(),geneticProfile:last.geneticProfile||activeGeneticProfile(),phenotype:last.phenotype||'Unknown',committed:true};}else pendingHarvestResult=buildHarvestResult();
+  if(gameState.plant.day<84){showGameToast('Grow noch nicht abgeschlossen');return;}if(gameState.plant.harvested){const last=gameState.collection?.[0];if(!last){showGameToast('Bereits geerntet');return;}pendingHarvestResult={scores:last.scores,g:GENETICS[last.genetics]||activeGenetics(),reward:last.reward,grams:last.grams||Math.max(10,Math.round(8+(last.scores.size*.0042+last.scores.density*.0032+.30)*82)),jarFill:last.jarFill,budCount:last.budCount,flowerQuality:last.flowerQuality||liveFlowerQuality(),rating:harvestRating(last.score),seed:last.seed,signature:last.signature||[],biography:last.biography||biographySummary(),geneticProfile:last.geneticProfile||activeGeneticProfile(),phenotype:last.phenotype||'Unknown',committed:true};}else pendingHarvestResult=buildHarvestResult();
   populateHarvestResult(pendingHarvestResult);document.getElementById('harvestStepBud').classList.add('active');document.getElementById('harvestStepJar').classList.remove('active');const overlay=document.getElementById('harvestResults');overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
 }
 function commitHarvestResult(){
   if(!pendingHarvestResult||pendingHarvestResult.committed)return;const r=pendingHarvestResult;
-  const currentSeed=gameState.genetics.currentSeed;const jar={id:'jar-'+(currentSeed?.id||r.seed),seedId:currentSeed?.id||null,acquiredAt:currentSeed?.acquiredAt||Date.now(),name:r.g.name+' #'+String(r.seed).slice(-5),genetics:r.g.id,seed:r.seed,score:r.scores.total,scores:r.scores,reward:r.reward,grams:r.grams,rating:r.rating.label,day:gameState.plant.day,phenotype:r.phenotype,rarity:currentSeed?.rarity||'common',traits:{...(currentSeed?.traits||{})},signature:r.signature||[],biography:r.biography||biographySummary(),geneticProfile:r.geneticProfile||activeGeneticProfile(),createdAt:Date.now()};
-  gameState.collection.unshift(jar);gameState.collection=gameState.collection.slice(0,30);gameState.coins+=r.reward;gameState.plant.harvested=true;if(gameState.genetics.currentSeed){gameState.genetics.currentSeed.revealed=true;gameState.seedVault.discovered[gameState.genetics.currentSeed.phenotype]=true;}r.committed=true;saveGameState();renderMetaPanels();updateGameHUD();
+  const currentSeed=gameState.genetics.currentSeed;
+  const harvestSeed=rollHarvestSeed(r);harvestSeed.acquiredAt=Date.now();
+  const jar={id:'jar-'+(currentSeed?.id||r.seed),seedId:currentSeed?.id||null,harvestSeedId:harvestSeed.id,acquiredAt:currentSeed?.acquiredAt||Date.now(),name:r.g.name+' #'+String(r.seed).slice(-5),genetics:r.g.id,seed:r.seed,score:r.scores.total,scores:r.scores,reward:r.reward,grams:r.grams,jarFill:r.jarFill,budCount:r.budCount,flowerQuality:r.flowerQuality,rating:r.rating.label,day:gameState.plant.day,phenotype:r.phenotype,rarity:currentSeed?.rarity||'common',traits:{...(currentSeed?.traits||{})},signature:r.signature||[],biography:r.biography||biographySummary(),geneticProfile:r.geneticProfile||activeGeneticProfile(),createdAt:Date.now()};
+  gameState.collection.unshift(jar);gameState.collection=gameState.collection.slice(0,30);
+  gameState.seedVault.inventory.unshift(harvestSeed);gameState.seedVault.inventory=gameState.seedVault.inventory.slice(0,60);lastSeedDropId=harvestSeed.id;
+  gameState.coins+=r.reward;gameState.plant.harvested=true;
+  if(gameState.genetics.currentSeed){gameState.genetics.currentSeed.revealed=true;gameState.seedVault.discovered[gameState.genetics.currentSeed.phenotype]=true;}
+  r.harvestSeed=harvestSeed;r.committed=true;saveGameState();renderMetaPanels();updateGameHUD();
 }
 function harvestCurrentGrow(){openHarvestResults();}
 function openSeedVault(){
@@ -4115,14 +4144,16 @@ function renderMetaPanels(){
       ...((active&&!gameState.plant.harvested)?[seedEntry(active,'active')]:[]),
       ...recent.map(jarEntry)
     ].sort((a,b)=>b.sortAt-a.sortAt);
-    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed)),fill=clamp(.70+(Number(j.score)||70)/100*.18+Math.min(1,(Number(j.grams)||60)/100)*.10,.72,.98),budCount=Math.round(18+fill*12);return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-jar-buds="'+previewId+'" data-jar-salt="'+(j.seed||0)+'" data-jar-count="'+budCount+'" data-jar-fill="'+fill.toFixed(3)+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
+    const jarTile=j=>{const seed=jarBudSeed(j),previewId=registerBudPreview(seed,'archive-'+(j.id||j.seed)),quality=clamp((Number(j.score)||70)/100,.35,1),fill=clamp(Number(j.jarFill)||(.50+Math.min(1,(Number(j.grams)||60)/100)*.32+quality*.13),.56,.98),budCount=Math.max(12,Number(j.budCount)||Math.round(12+Math.min(1,(Number(j.grams)||60)/100)*18+quality*8));return '<div class="collection-item-card jar '+(j.demo?'demo ':'')+(j.rarity||'common')+'" data-collection-jar="'+(j.id||'')+'"><div class="collection-jar-art"><canvas data-jar-buds="'+previewId+'" data-jar-salt="'+(j.seed||0)+'" data-jar-count="'+budCount+'" data-jar-fill="'+fill.toFixed(3)+'" data-jar-quality="'+(j.score||70)+'" data-jar-grams="'+(j.grams||60)+'" data-w="86" data-h="86"></canvas><i></i></div><div class="collection-jar-copy"><b>'+j.name+'</b><strong>'+j.score+'/100</strong><small>'+j.grams+' g · '+(j.phenotype||j.rating||'Grow')+'</small><em>'+(j.demo?'DEMO GROW':(j.signature?.[0]?.label||j.rating||'EINGELAGERT'))+'</em></div></div>'};
     const seedTile=(seed,state)=>'<div class="collection-item-card seed '+seed.rarity+' '+state+'" data-collection-seed="'+seed.id+'">'+seedCardHTML(seed,{active:state==='active',interactive:false})+(state==='seed'?'<button type="button" class="collection-plant-seed" data-plant-seed="'+seed.id+'">PFLANZEN</button>':'<span class="collection-active-grow">WÄCHST GERADE</span>')+'</div>';
     const ownedHTML=entries.length?entries.map(e=>e.kind==='jar'?jarTile(e.jar):seedTile(e.seed,e.kind)).join(''):'<div class="collection-empty">Noch keine Seeds. Öffne oben dein erstes Pack.</div>';
+    const bestJar=recent.filter(j=>!j.demo).sort((a,b)=>(b.score||0)-(a.score||0)||(b.grams||0)-(a.grams||0))[0]||null;
+    const hall=bestJar?'<div class="hall-of-fame-v80"><span>HALL OF FAME</span><strong>'+bestJar.name+'</strong><b>'+bestJar.score+'/100</b><small>'+bestJar.grams+' g · '+(bestJar.signature?.[0]?.label||bestJar.rating||'TOP GROW')+'</small></div>':'';
     const demos=recent.length===0?'<div class="collection-section-head archive"><b>BEISPIEL-GROWS</b><span>Demo</span></div><div class="collection-unified demo-grid">'+demoJars.map(jarTile).join('')+'</div>':'';
     cc.innerHTML='<div class="collection-scroll">'+
       '<div class="collection-shop-head"><div><b>SEED PACKS</b><small>Neue Seeds landen direkt oben in deiner Sammlung.</small></div><span>◉ '+Math.round(gameState.coins)+'</span></div>'+
       '<div class="seed-packs collection-packs"><button class="seed-pack" data-collection-pack="starter"><b>STARTER</b><small>3 Seeds<br>Rare Chance</small><strong>◉ 150</strong></button><button class="seed-pack" data-collection-pack="genetics"><b>GENETICS</b><small>3 Seeds<br>mind. 1 Rare</small><strong>◉ 450</strong></button><button class="seed-pack exotic" data-collection-pack="exotic"><b>EXOTIC</b><small>3 Seeds<br>Epic Chance</small><strong>◉ 900</strong></button></div>'+
-      '<div class="daily-coin-note"><span>☀ TÄGLICHE COINS</span><b>+'+DAILY_FREE_COINS+' pro Kalendertag</b></div>'+
+      '<div class="daily-coin-note"><span>☀ TÄGLICHE COINS</span><b>+'+DAILY_FREE_COINS+' pro Kalendertag</b></div>'+hall+
       '<div class="collection-section-head"><b>DEINE SAMMLUNG</b><span>'+entries.length+' Exemplare</span></div>'+
       '<div class="collection-unified">'+ownedHTML+'</div>'+demos+'</div>';
     cc.querySelectorAll('[data-collection-pack]').forEach(b=>b.addEventListener('click',()=>openSeedPack(b.dataset.collectionPack)));
@@ -5653,7 +5684,7 @@ const devDrawer=document.getElementById('devDrawer');document.getElementById('de
 document.getElementById('upgradeBack')?.addEventListener('click',()=>{selectedUpgradeCategory=null;renderMetaPanels();});
 document.getElementById('harvestReadyBox')?.addEventListener('click',openHarvestResults);
 document.getElementById('harvestToJar')?.addEventListener('click',()=>{if(!pendingHarvestResult)return;commitHarvestResult();document.getElementById('harvestStepBud').classList.remove('active');document.getElementById('harvestStepJar').classList.add('active');});
-document.getElementById('harvestFinish')?.addEventListener('click',()=>{commitHarvestResult();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');showGameToast('Seed zum Glas geworden · +'+(pendingHarvestResult?.reward||0)+' Coins');setMainPanel('collection');renderMetaPanels();});
+document.getElementById('harvestFinish')?.addEventListener('click',()=>{commitHarvestResult();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');const drop=pendingHarvestResult?.harvestSeed;showGameToast('Ernte eingelagert · +'+(pendingHarvestResult?.reward||0)+' Coins'+(drop?' · neuer '+SEED_RARITY[drop.rarity].label+' Seed':''));setMainPanel('collection');renderMetaPanels();});
 document.getElementById('harvestResultClose')?.addEventListener('click',()=>{document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');});
 
 syncEquipment3D();
