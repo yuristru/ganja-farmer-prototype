@@ -3811,18 +3811,59 @@ function buildHarvestResult(){
   const budCount=Math.max(14,Math.round(12+(grams/100)*18+(scores.density/100)*8));
   return{scores,g,reward,grams,jarFill,budCount,flowerQuality,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
 }
+const harvestBudMasterCache=new Map();
+function renderHarvestBudMaster(result){
+  const score=result?.scores?.total||70,key=[result?.seed||PLANT_SEED,score,result?.scores?.density||0,result?.scores?.potency||0,result?.scores?.aroma||0,result?.scores?.style||0].join('|');
+  if(harvestBudMasterCache.has(key))return harvestBudMasterCache.get(key);
+  const size=768,base=196,renderScale=size/base,master=document.createElement('canvas');master.width=size;master.height=size;
+  const mctx=master.getContext('2d'),previewQueue=[],previewProj=p=>({x:size*.5+p.x*.94,y:size*.72-p.y*.94,z:p.z||0,scale:.94});
+  const fq=result?.flowerQuality||{};
+  const quality={
+    density:clamp(Number(fq.density)||((result?.scores?.density||70)/100),.32,1.08),
+    resin:clamp(Number(fq.resin)||((result?.scores?.potency||70)/100),.25,1.10),
+    aroma:clamp(Number(fq.aroma)||((result?.scores?.aroma||70)/100),.25,1.10),
+    color:clamp(Number(fq.color)||((result?.scores?.style||70)/100),.20,1),
+    damage:clamp(Number(fq.damage)||0,0,1),
+    airflow:clamp(Number(fq.airflow)||.78,0,1),
+    light:clamp(Number(fq.light)||.90,0,1),
+    leafiness:clamp(Number(fq.leafiness)||.28,.14,.62),
+    foxtail:clamp(Number(fq.foxtail)||.055,.02,.28),
+    ripeness:.98,
+    stress:clamp(Number(fq.stress)||0,0,1),
+    debt:clamp(Number(fq.debt)||0,0,1),
+    flowerScore:clamp(Number(fq.flowerScore)||score/100,0,1)
+  };
+  mctx.clearRect(0,0,size,size);
+  drawBud({
+    seed:Number(result?.seed)||PLANT_SEED,
+    p:v(0,-2*renderScale,0),
+    dir:v(0,1,0),
+    r:46*renderScale,
+    maturity:.99,
+    stage:'mature',
+    terminal:true
+  },{
+    ctx:mctx,proj:previewProj,queue:previewQueue,quality,
+    genetics:result?.g||activeGenetics(),
+    interactionLOD:false
+  });
+  previewQueue.sort((a,b)=>a.z-b.z).forEach(o=>o.draw());
+  harvestBudMasterCache.set(key,master);
+  if(harvestBudMasterCache.size>12)harvestBudMasterCache.delete(harvestBudMasterCache.keys().next().value);
+  return master;
+}
 function drawHarvestBud(result){
-  const c=document.getElementById('harvestBudCanvas');if(!c)return;const x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);
-  const R=rng((result.seed||PLANT_SEED)^0x71a9),q=result.scores.total/100,resin=result.scores.potency/100,density=result.scores.density/100;
-  const glow=x.createRadialGradient(w*.5,h*.46,10,w*.5,h*.46,w*.48);glow.addColorStop(0,'rgba(132,255,94,.18)');glow.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=glow;x.fillRect(0,0,w,h);
-  // Sugar leaves first, so the flower mass sits naturally in front of them.
-  x.save();x.translate(w/2,155);const leafCount=8+Math.round(q*5);for(let i=0;i<leafCount;i++){const a=-Math.PI*.9+(i/(leafCount-1))*Math.PI*1.8+(R()-.5)*.22,len=42+R()*38,ww=7+R()*5;x.save();x.rotate(a);x.translate(0,-8+R()*35);const lg=x.createLinearGradient(0,0,0,-len);lg.addColorStop(0,'#255d35');lg.addColorStop(.65,'#4f9d48');lg.addColorStop(1,'#7bc65c');x.fillStyle=lg;x.beginPath();x.moveTo(0,5);for(let j=1;j<=9;j++){const t=j/9,side=(j%2?1:-1),edge=Math.sin(Math.PI*t)*ww*(.78+.22*Math.sin(t*30));x.lineTo(side*edge,-t*len);}x.lineTo(0,-len-5);for(let j=9;j>=1;j--){const t=j/9,side=(j%2?-1:1),edge=Math.sin(Math.PI*t)*ww*(.78+.22*Math.sin(t*30));x.lineTo(side*edge,-t*len);}x.closePath();x.fill();x.restore();}x.restore();
-  // Dense stack of pointed calyces, tapered at top and bottom rather than round grape-like blobs.
-  const lobes=68+Math.round(density*38);for(let i=0;i<lobes;i++){const t=R(),yy=48+t*210+(R()-.5)*10,shape=Math.pow(Math.sin(Math.PI*t),.72),spread=18+shape*(48+20*density),xx=w/2+(R()-.5)*spread*1.55,rr=(5.5+R()*8.5)*(0.82+density*.22);const rot=(R()-.5)*1.2;const g=x.createRadialGradient(xx-rr*.25,yy-rr*.35,1,xx,yy,rr*1.25);g.addColorStop(0,q>.82?'#c2ff91':'#95d86c');g.addColorStop(.48,q>.65?'#579d48':'#5e884a');g.addColorStop(1,'#20472e');x.fillStyle=g;x.save();x.translate(xx,yy);x.rotate(rot);x.beginPath();x.moveTo(0,-rr*1.35);x.bezierCurveTo(rr*.78,-rr*.72,rr*.72,rr*.72,0,rr*1.02);x.bezierCurveTo(-rr*.72,rr*.72,-rr*.78,-rr*.72,0,-rr*1.35);x.fill();x.restore();}
-  // Pistils emerge in broken pairs, with more orange on mature/high-quality flowers.
-  x.lineCap='round';const pistils=34+Math.round(q*38);for(let i=0;i<pistils;i++){const t=.05+R()*.88,yy=48+t*210,shape=Math.pow(Math.sin(Math.PI*t),.72),spread=15+shape*(45+17*density),xx=w/2+(R()-.5)*spread*1.45,len=8+R()*17;x.strokeStyle='rgba('+(220+Math.round(R()*28))+','+(112+Math.round(R()*52))+','+(45+Math.round(R()*28))+','+(.58+R()*.34)+')';x.lineWidth=.9+R()*.7;x.beginPath();x.moveTo(xx,yy);x.quadraticCurveTo(xx+(R()-.5)*13,yy-len*.48,xx+(R()-.5)*20,yy-len);x.stroke();}
-  // Resin sparkle, strongest around the upper and middle flower surface.
-  const frost=55+Math.round(resin*120);for(let i=0;i<frost;i++){const t=.03+R()*.91,yy=48+t*210,shape=Math.pow(Math.sin(Math.PI*t),.72),spread=14+shape*(48+18*density),xx=w/2+(R()-.5)*spread*1.48;x.fillStyle='rgba(239,255,229,'+(.24+resin*.50)+')';x.beginPath();x.arc(xx,yy,.55+R()*1.25,0,Math.PI*2);x.fill();}
+  const canvas=document.getElementById('harvestBudCanvas');if(!canvas)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1),cssW=360,cssH=340;
+  canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
+  const x=canvas.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,cssW,cssH);
+  const glow=x.createRadialGradient(cssW*.5,cssH*.47,18,cssW*.5,cssH*.47,cssW*.48);
+  glow.addColorStop(0,'rgba(132,255,94,.18)');glow.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=glow;x.fillRect(0,0,cssW,cssH);
+  const master=renderHarvestBudMaster(result),zoom=2.42;
+  const scale=Math.max(cssW/master.width,cssH/master.height)*zoom,w=master.width*scale,h=master.height*scale;
+  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
+  x.drawImage(master,(cssW-w)/2,cssH*.53-h*.50,w,h);
 }
 function populateHarvestResult(result){
   document.getElementById('harvestBudTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);document.getElementById('harvestJarTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);
