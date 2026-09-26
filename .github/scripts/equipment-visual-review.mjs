@@ -23,10 +23,10 @@ await page.waitForTimeout(1600);
 
 // Use the game's own demo control to create a mature, stable plant scene.
 await page.evaluate(()=>document.getElementById('devGood')?.click());
-await page.waitForTimeout(900);
+await page.waitForTimeout(1700);
 
 async function shot(name){
-  await page.waitForTimeout(420);
+  await page.waitForTimeout(1700);
   await page.screenshot({path:path.join(out,name+'.png')});
 }
 async function domMetrics(kind){
@@ -53,6 +53,23 @@ async function domMetrics(kind){
 }
 const data={lamps:[],vents:[],console:consoleLog};
 
+// Capture the real level-1 sunlight state through persisted game state.
+// The production game has no artificial lamp or cone at this level.
+await page.evaluate(()=>{
+  const key='gf_mobile_game_v1',raw=localStorage.getItem(key);
+  if(raw){const st=JSON.parse(raw);st.progression.levels.light=1;localStorage.setItem(key,JSON.stringify(st));}
+});
+await page.reload({waitUntil:'networkidle'});
+await page.waitForTimeout(1700);
+data.lamps.push({expected:1,...await domMetrics('light')});
+await shot('lamp-01');
+
+// Restore the game's own scenario. This starts at the actual default Clip LED (L2) and room-air ventilation (L1).
+await page.evaluate(()=>document.getElementById('devGood')?.click());
+await page.waitForTimeout(1700);
+data.vents.push({expected:1,...await domMetrics('vent')});
+await shot('vent-01');
+
 // Lamp demo starts at the real default Clip LED, level 2. Click the actual rendered lamp
 // between captures, exactly as a player does in V62.
 for(let expected=2;expected<=10;expected++){
@@ -61,7 +78,7 @@ for(let expected=2;expected<=10;expected++){
   await shot('lamp-'+String(expected).padStart(2,'0'));
   if(expected<10){
     await page.locator('.room-lamp').click({position:{x:Math.max(2,m.element.w/2),y:Math.max(2,m.element.h/2)}});
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(1700);
   }
 }
 
@@ -70,13 +87,13 @@ for(let expected=2;expected<=10;expected++){
 await page.reload({waitUntil:'networkidle'});
 await page.waitForTimeout(1300);
 await page.evaluate(()=>document.getElementById('devGood')?.click());
-await page.waitForTimeout(700);
+await page.waitForTimeout(1700);
 await page.locator('[data-ui-tab="upgrades"]').click();
 await page.waitForTimeout(200);
 await page.locator('[data-upgrade-category="vent"]').click();
 await page.waitForTimeout(200);
 await page.locator('[data-buy-level="2"]').click();
-await page.waitForTimeout(350);
+await page.waitForTimeout(1700);
 await page.locator('[data-game-panel="upgrades"] [data-panel-close]').click();
 await page.waitForTimeout(350);
 
