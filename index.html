@@ -4981,6 +4981,7 @@ function liveFlowerQuality(){
 }
 function drawBud(b,renderEnv=null){
   const dctx=renderEnv?.ctx||ctx,dproj=renderEnv?.proj||proj,dqueue=renderEnv?.queue||queue;
+  const m=clamp(b.maturity===undefined?.5:b.maturity,0,1);
   const rawQl=renderEnv?.quality||liveFlowerQuality(),dgenetics=renderEnv?.genetics||activeGenetics(),dlod=renderEnv?.interactionLOD??interactionLOD;
   const qNum=(v,fallback)=>Number.isFinite(Number(v))?Number(v):fallback;
   const dql={
@@ -5002,7 +5003,6 @@ function drawBud(b,renderEnv=null){
   const axis=norm(b.dir||v(0,1,0));
   let side3=norm(cross(axis,v(0,1,0)));if(len(side3)<.01)side3=v(1,0,0);
   let radial3=norm(cross(side3,axis));if(len(radial3)<.01)radial3=v(0,0,1);
-  const m=clamp(b.maturity===undefined?.5:b.maturity,0,1);
   const stageName=b.stage||flowerStageName(m);
   const terminal=!!b.terminal;
   const ql=dql;
