@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V62 Demo Equipment Cycle</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V63 Hanging Lights Only</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1239,7 +1239,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform:scale(var(--eq-scale,1));
   transform-origin:center;
 }
-.mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-image:url("assets/equipment/light.png?v=62")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-image:url("assets/equipment/light.png?v=63")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-image:url("assets/equipment/vent.png?v=62")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-image:url("assets/equipment/irrigation.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-image:url("assets/equipment/nutrients.png?v=57")}
@@ -2352,6 +2352,40 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-lamp{transform:translateX(-50%) scale(.94)!important;transform-origin:50% 0!important}
   .mobile-game-ui .room-lamp.lamp-mode-clip{transform:translateX(-50%) rotate(-2deg) scale(.94)!important}
 }
+</style><style id="v63HangingLightsOnly">
+/* Every artificial lamp is ceiling suspended. No clip/gooseneck lamp is rendered. */
+.mobile-game-ui .room-lamp{
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  overflow:visible!important;
+}
+.mobile-game-ui .room-lamp:before,
+.mobile-game-ui .room-lamp:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-40px;
+  width:2px;
+  height:51px;
+  border-radius:2px;
+  background:repeating-linear-gradient(180deg,#879295 0 4px,#293337 4px 8px);
+  box-shadow:1px 0 0 rgba(0,0,0,.52);
+  opacity:.92;
+}
+.mobile-game-ui .room-lamp:before{left:31%}
+.mobile-game-ui .room-lamp:after{right:31%}
+.mobile-game-ui .room-light-canvas{
+  transform:scale(var(--lamp-art-scale,1))!important;
+  transform-origin:50% 42%!important;
+}
+.mobile-game-ui .room-lamp[data-light-level="2"]:before,
+.mobile-game-ui .room-lamp[data-light-level="3"]:before{left:34%}
+.mobile-game-ui .room-lamp[data-light-level="2"]:after,
+.mobile-game-ui .room-lamp[data-light-level="3"]:after{right:34%}
+
+/* Disable all old clip-specific lamp rules from previous versions. */
+.mobile-game-ui .lamp-mode-clip{display:none!important}
+.mobile-game-ui .room-lamp.lamp-mode-clip{transform:none!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -2678,7 +2712,7 @@ function rollHarvestSeed(result){const R=rng(seedHash(result.seed,result.scores.
 const UPGRADE_CATEGORIES={
   pot:{id:'pot',name:'Topf',icon:'◉',need:'Wasser',accent:'water',baseCost:55,names:['Startertopf 7 L','Fabric Pot 9 L','Air Pot 11 L','Air Pot 13 L','Root Pot 15 L','Root Pot 17 L','Pro Air 19 L','Pro Air 21 L','Smart Pot 23 L','Smart Pot 25 L']},
   substrate:{id:'substrate',name:'Substrat',icon:'▰',need:'Wasser + Dünger',accent:'dual',baseCost:60,names:['Basiserde','Erde + Perlit','Light Mix','Bio Mix','Living Mix I','Living Mix II','Living Mix III','Living Soil','Living Soil Pro','Living Soil Ultra']},
-  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Sonnenlicht','Clip LED','LED 40 W','LED 80 W','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
+  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Sonnenlicht','Hängelampe 40 W','Hängelampe 80 W','Grow Panel XS','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
   vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Mini Fan','Clip Fan','Circulation Fan','Dual Fan','Inline Fan','Airflow Pro','Climate Fan','Smart Air','Climate Core']},
   irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Feuchtigkeitsstab','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
   nutrients:{id:'nutrients',name:'Nährstoffe',icon:'◆',need:'Dünger',accent:'feed',baseCost:70,names:['Basisdünger','Grow Feed','Grow + Bloom','Mineral Duo','Bio Feed','Precision Feed','Dose Kit','Smart Dose','Nutrient Lab','Nutrient Core']},
@@ -3095,8 +3129,13 @@ function openSeedPack(type){
   reveal.querySelector('.collection-pack-close')?.addEventListener('click',()=>{reveal.remove();renderMetaPanels();});
 }
 
-function equipmentAssetStyle(id,level){
+const LIGHT_HANGING_SOURCE_LEVEL={1:1,2:5,3:5,4:6,5:6,6:7,7:8,8:9,9:10,10:10};
+function equipmentSourceLevel(id,level){
   const n=Math.max(1,Math.min(10,Number(level)||1));
+  return id==='light'?(LIGHT_HANGING_SOURCE_LEVEL[n]||5):n;
+}
+function equipmentAssetStyle(id,level){
+  const n=equipmentSourceLevel(id,level);
   return '--eq-x:'+(((n-1)/9)*100).toFixed(3)+'%;--eq-scale:1';
 }
 function equipmentVisualHTML(id,level,context='level'){
@@ -3200,7 +3239,7 @@ function roomEquipmentStrip(id){
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src='assets/equipment/'+id+'.png?v=62';
+    img.src='assets/equipment/'+id+'.png?v=63';
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
@@ -3209,7 +3248,8 @@ function renderRoomEquipmentCanvas(canvas){
   const id=canvas?.dataset.eqStrip,level=Math.max(1,Math.min(10,Number(canvas?.dataset.eqLevel)||1));
   if(!id||!canvas)return;
   roomEquipmentStrip(id).then(({img,segments})=>{
-    const seg=segments[level-1];if(!seg)return;
+    const sourceLevel=equipmentSourceLevel(id,level);
+    const seg=segments[sourceLevel-1];if(!seg)return;
     const size=512,ctx=canvas.getContext('2d');
     canvas.width=size;canvas.height=size;ctx.clearRect(0,0,size,size);
     const margin=id==='light'?22:34;
@@ -3230,18 +3270,18 @@ function syncEquipment2D(){
   const lightLevel=roomDemoLevel('light',purchasedLight),ventLevel=roomDemoLevel('vent',purchasedVent);
   const hasLamp=lightLevel>1,hasVent=ventLevel>1;
 
-  // Per-level scene composition. The early clip lights and free-standing fans need
-  // different physical placement from the later suspended panels and inline duct fans.
+  // V63: every artificial light is a ceiling-hung fixture.
+  // Early logical tiers reuse smaller hanging-panel artwork instead of clip or wall lamps.
   const lampScene={
-    2:{size:110,top:88,x:40,coneTop:157,coneX:50,coneWidth:150,coneAlpha:.120,mode:'clip'},
-    3:{size:118,top:84,x:43,coneTop:157,coneX:50,coneWidth:166,coneAlpha:.132,mode:'clip'},
-    4:{size:126,top:82,x:50,coneTop:158,coneX:50,coneWidth:184,coneAlpha:.145,mode:'panel'},
-    5:{size:138,top:79,x:50,coneTop:156,coneX:50,coneWidth:202,coneAlpha:.158,mode:'panel'},
-    6:{size:148,top:77,x:50,coneTop:155,coneX:50,coneWidth:218,coneAlpha:.170,mode:'panel'},
-    7:{size:156,top:75,x:50,coneTop:154,coneX:50,coneWidth:234,coneAlpha:.182,mode:'panel'},
-    8:{size:164,top:73,x:50,coneTop:153,coneX:50,coneWidth:250,coneAlpha:.194,mode:'panel'},
-    9:{size:172,top:71,x:50,coneTop:152,coneX:50,coneWidth:266,coneAlpha:.206,mode:'panel'},
-    10:{size:182,top:69,x:50,coneTop:151,coneX:50,coneWidth:282,coneAlpha:.220,mode:'panel'}
+    2:{size:116,top:82,x:50,coneTop:158,coneX:50,coneWidth:158,coneAlpha:.120,scale:.78},
+    3:{size:126,top:79,x:50,coneTop:157,coneX:50,coneWidth:174,coneAlpha:.132,scale:.88},
+    4:{size:136,top:77,x:50,coneTop:156,coneX:50,coneWidth:190,coneAlpha:.145,scale:.88},
+    5:{size:146,top:75,x:50,coneTop:155,coneX:50,coneWidth:206,coneAlpha:.158,scale:.98},
+    6:{size:154,top:73,x:50,coneTop:154,coneX:50,coneWidth:222,coneAlpha:.170,scale:1},
+    7:{size:162,top:71,x:50,coneTop:153,coneX:50,coneWidth:238,coneAlpha:.182,scale:1},
+    8:{size:170,top:69,x:50,coneTop:152,coneX:50,coneWidth:254,coneAlpha:.194,scale:1},
+    9:{size:178,top:67,x:50,coneTop:151,coneX:50,coneWidth:270,coneAlpha:.206,scale:.98},
+    10:{size:190,top:64,x:50,coneTop:150,coneX:50,coneWidth:288,coneAlpha:.220,scale:1.08}
   };
   const ventScene={
     2:{size:64,top:232,right:18,mode:'wall'},
@@ -3260,7 +3300,7 @@ function syncEquipment2D(){
     ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-top:'+lc.coneTop+'px;--cone-x:'+lc.coneX+'%;--cone-alpha:'+lc.coneAlpha+';--cone-width:'+lc.coneWidth+'px"></span>'
     : '';
   const lamp=hasLamp
-    ? '<button type="button" class="room-lamp room-demo-cycle lamp-mode-'+lc.mode+'" data-demo-equipment="light" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px;--lamp-x:'+lc.x+'%" aria-label="Demo Lichtvariante wechseln: '+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'" title="Tippen: nächste Lichtvariante"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></button>'
+    ? '<button type="button" class="room-lamp room-demo-cycle lamp-mode-panel" data-demo-equipment="light" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px;--lamp-x:'+lc.x+'%;--lamp-art-scale:'+lc.scale+'" aria-label="Demo Lichtvariante wechseln: '+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'" title="Tippen: nächste Lichtvariante"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></button>'
     : '';
   const vent=hasVent
     ? '<button type="button" class="room-vent-rig room-demo-cycle vent-mode-'+vc.mode+'" data-demo-equipment="vent" data-vent-level="'+ventLevel+'" style="--vent-size:'+vc.size+'px;--vent-top:'+vc.top+'px;--vent-right:'+vc.right+'px" aria-label="Demo Lüftungsvariante wechseln: '+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'" title="Tippen: nächste Lüftungsvariante"><i class="vent-duct"></i><i class="vent-backplate"></i><i class="vent-shelf"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></button>'
