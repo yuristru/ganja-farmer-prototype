@@ -3446,7 +3446,7 @@ function evaluatePlantResponse(snap,previous={stress:0,growthPotential:1}){
   const debt=clamp(Number(memory.stressDebt)||0,0,1),recovery=clamp(Number(memory.recoveryMomentum)||0,0,1);
   const priorPotential=clamp(Number(previous.growthPotential)||1,.5,1);
   const permanentLoss=Math.max(0,stress-.40)*w.permanent+Math.max(0,acute-.72)*.0035+Math.max(0,debt-.60)*.0028;
-  const growthPotential=clamp(priorPotential-permanentLoss+recovery*.0015,.62,1);
+  const growthPotential=clamp(priorPotential-permanentLoss,.62,1);
   const vigorBase=1-deficit*.31-stress*.39-acute*.14-debt*.10+recovery*.035;
   const vigor=clamp(vigorBase*lerp(.965,1.04,gene.growth),.28,1);
   return{
@@ -5649,8 +5649,8 @@ document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('g
 function announceOfflineReturn(){
   const ms=Math.max(0,Number(gameState?.session?.offlineMs)||0);
   if(ms>=TURN_WAIT_MS){
-    const hours=Math.floor(ms/3600000);
-    showGameToast((hours>=1?hours+' h ':'')+'Offline · nächster Zug kann bereit sein');
+    const hours=Math.floor(ms/3600000),ta=turnActionAvailability(),prefix=(hours>=1?hours+' h ':'')+'Offline · ';
+    showGameToast(prefix+(ta.remaining<=0?'7/7 Züge · Tag abschließen':ta.ok?'nächster Zug bereit':'noch '+formatCountdown(ta.wait)));
   }
   if(gameState?.session){gameState.session.offlineMs=0;saveGameState();}
 }
