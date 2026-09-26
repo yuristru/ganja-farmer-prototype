@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V75 Plant State Visuals</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V76 Unified Growth Simulation</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3354,21 +3354,47 @@ function mixHex(a,b,t){
   const h=v=>Math.round(v).toString(16).padStart(2,'0');return '#'+h(lerp(ar,br,t))+h(lerp(ag,bg,t))+h(lerp(ab,bb,t));
 }
 
-function simulateCurrentDay(){
-  const snap=currentNeedSnapshot(gameState.plant.day),prevStress=gameState.plant.stress||0,deficit=1-snap.fulfillment;
-  let stress=prevStress;
-  const gene=activeGenetics(),resilience=lerp(.88,1.08,gene.resilience);
-  if(deficit<.10)stress=Math.max(0,stress-.10*resilience);else stress=clamp(stress+(deficit*.30)/resilience-(deficit<.24?.035:0),0,1);
-  const priorPotential=gameState.plant.growthPotential||1;
-  const permanentLoss=Math.max(0,stress-.42)*.0105;
-  const growthPotential=clamp(priorPotential-permanentLoss,.64,1);
-  const vigor=clamp(1-deficit*.30-stress*.42,.44,1);
+function phaseResponseWeights(day){
+  if(day<15)return{water:.38,light:.20,nutrients:.16,climate:.26,recovery:.115,permanent:.0085};
+  if(day<36)return{water:.31,light:.30,nutrients:.23,climate:.16,recovery:.105,permanent:.0100};
+  if(day<57)return{water:.28,light:.31,nutrients:.27,climate:.14,recovery:.090,permanent:.0115};
+  return{water:.27,light:.32,nutrients:.28,climate:.13,recovery:.080,permanent:.0125};
+}
+function evaluatePlantResponse(snap,previous={stress:0,growthPotential:1}){
+  const w=phaseResponseWeights(snap.day),scores=snap.scores;
+  const weighted=scores.water*w.water+scores.light*w.light+scores.nutrients*w.nutrients+scores.climate*w.climate;
+  const weakest=Math.min(scores.water,scores.light,scores.nutrients,scores.climate);
+  const fulfillment=clamp(weighted*.66+weakest*.34,0,1);
   const waterDef=deficiencySeverity(snap.levels.water),nutrientDef=deficiencySeverity(snap.levels.nutrients);
   const waterExcess=excessSeverity(snap.levels.water),nutrientExcess=excessSeverity(snap.levels.nutrients);
-  const acute=Math.max(waterDef,nutrientDef,waterExcess*.65,nutrientExcess*.72);
-  const adjustedVigor=clamp((vigor-acute*.16)*lerp(.97,1.035,gene.growth),.30,1);
-  const result={...snap,stress,vigor:adjustedVigor,growthPotential,damage:{waterDef,nutrientDef,waterExcess,nutrientExcess,acute},createdAt:Date.now()};
-  gameState.history[String(gameState.plant.day)]=result;recordBiographyDay(result);gameState.plant.stress=stress;gameState.plant.growthPotential=growthPotential;
+  const lightDef=clamp(1-scores.light,0,1),climateDef=clamp(1-scores.climate,0,1);
+  const acute=Math.max(waterDef,nutrientDef,waterExcess*.68,nutrientExcess*.74,lightDef*.62,climateDef*.58);
+  const deficit=1-fulfillment,gene=activeGenetics(),resilience=lerp(.86,1.10,gene.resilience);
+  let stress=clamp(Number(previous.stress)||0,0,1);
+  if(deficit<.09&&acute<.16)stress=Math.max(0,stress-w.recovery*resilience);
+  else{
+    const load=(deficit*.27+acute*.09)/resilience;
+    stress=clamp(stress+load-(deficit<.22&&acute<.28?.028:0),0,1);
+  }
+  const priorPotential=clamp(Number(previous.growthPotential)||1,.5,1);
+  const permanentLoss=Math.max(0,stress-.40)*w.permanent+Math.max(0,acute-.72)*.0035;
+  const growthPotential=clamp(priorPotential-permanentLoss,.62,1);
+  const vigorBase=1-deficit*.31-stress*.39-acute*.14;
+  const vigor=clamp(vigorBase*lerp(.965,1.04,gene.growth),.28,1);
+  return{
+    fulfillment,stress,vigor,growthPotential,
+    damage:{waterDef,nutrientDef,waterExcess,nutrientExcess,lightDef,climateDef,acute},
+    phaseWeights:w
+  };
+}
+function simulateCurrentDay(){
+  const snap=currentNeedSnapshot(gameState.plant.day);
+  const response=evaluatePlantResponse(snap,{stress:gameState.plant.stress||0,growthPotential:gameState.plant.growthPotential||1});
+  const result={...snap,...response,createdAt:Date.now()};
+  gameState.history[String(gameState.plant.day)]=result;
+  recordBiographyDay(result);
+  gameState.plant.stress=response.stress;
+  gameState.plant.growthPotential=response.growthPotential;
   return result;
 }
 function waterDemand(day){
@@ -3395,9 +3421,29 @@ function consumeForNextDay(day){
   if(fx.autoWater&&gameState.care.water<.34){const before=gameState.care.water;gameState.care.water=clamp(before+.20,0,1);logCareDose('auto-water',.20,before,gameState.care.water);}
 }
 function lastHistoryAtOrBefore(day){for(let d=Math.floor(day);d>=1;d--){const h=gameState?.history?.[String(d)];if(h)return h}return null}
-function gameGrowthScaleForDay(day){const h=lastHistoryAtOrBefore(day);if(!h)return 1;return clamp(.55+.45*(h.vigor*h.growthPotential),.48,1)}
+function plantResponseAtDay(day){
+  const exact=gameState?.history?.[String(Math.floor(day))];
+  if(exact)return exact;
+  const h=lastHistoryAtOrBefore(day);
+  if(h)return h;
+  const snap=currentNeedSnapshot(Math.max(1,Math.floor(day)));
+  return {...snap,...evaluatePlantResponse(snap,{stress:gameState?.plant?.stress||0,growthPotential:gameState?.plant?.growthPotential||1})};
+}
+function gameGrowthScaleForDay(day){
+  const r=plantResponseAtDay(day);
+  return clamp(.52+.48*(r.vigor*r.growthPotential),.45,1);
+}
 function gameGrowthScaleForProgress(prog){return gameGrowthScaleForDay(dayForProgress(prog))}
-function gameFlowerQualityFactor(startDay){let total=0,n=0;for(let d=Math.max(1,startDay);d<=currentDay;d++){const h=gameState?.history?.[String(d)];if(h){total+=h.vigor*h.growthPotential;n++}}const avg=n?total/n:(lastHistoryAtOrBefore(currentDay)?.vigor||1);return clamp(.58+.42*avg,.55,1)}
+function gameFlowerQualityFactor(startDay){
+  let total=0,weight=0;
+  for(let d=Math.max(1,startDay);d<=currentDay;d++){
+    const h=gameState?.history?.[String(d)];if(!h)continue;
+    const phaseWeight=d>=57?1.20:d>=36?1:0.72;
+    total+=(h.vigor*h.growthPotential*(1-(h.damage?.acute||0)*.12))*phaseWeight;weight+=phaseWeight;
+  }
+  const live=plantResponseAtDay(currentDay),avg=weight?total/weight:(live.vigor*live.growthPotential);
+  return clamp(.54+.46*avg,.50,1);
+}
 function formatCountdown(ms){const sec=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function careActionAvailability(action){
   if(gameState.settings.debugBypass)return{ok:true,wait:0};
