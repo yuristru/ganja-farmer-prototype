@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V61 Sprite Safe Room Equipment</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V62 Demo Equipment Cycle</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1239,8 +1239,8 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform:scale(var(--eq-scale,1));
   transform-origin:center;
 }
-.mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-image:url("assets/equipment/light.png?v=60")}
-.mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-image:url("assets/equipment/vent.png?v=57")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-image:url("assets/equipment/light.png?v=62")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-image:url("assets/equipment/vent.png?v=62")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-image:url("assets/equipment/irrigation.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-image:url("assets/equipment/nutrients.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="sensor"]{background-image:url("assets/equipment/sensor.png?v=57")}
@@ -2214,6 +2214,144 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-lamp{transform:translateX(-50%) scale(.94)!important;transform-origin:50% 0!important}
   .mobile-game-ui .room-vent-rig{right:14px!important}
 }
+</style><style id="v62DemoEquipmentCycle">
+/* Demo inspection: lamp and fan are interactive without changing purchased progression. */
+.mobile-game-ui .equipment2d-layer{pointer-events:none!important}
+.mobile-game-ui .room-demo-cycle{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+.mobile-game-ui .room-demo-cycle:active{filter:brightness(1.13)!important}
+
+/* Lamp placement follows the actual mechanical type. */
+.mobile-game-ui .room-lamp{
+  left:var(--lamp-x,50%)!important;
+  top:calc(var(--safe-top) + var(--lamp-top,80px))!important;
+  width:var(--lamp-size,140px)!important;
+  height:var(--lamp-size,140px)!important;
+  transform:translateX(-50%)!important;
+}
+.mobile-game-ui .lamp-mode-clip{
+  transform:translateX(-50%) rotate(-2deg)!important;
+}
+.mobile-game-ui .lamp-mode-panel{
+  transform:translateX(-50%)!important;
+}
+.mobile-game-ui .room-light-canvas{
+  width:100%!important;
+  height:100%!important;
+  filter:drop-shadow(0 8px 9px rgba(0,0,0,.48)) drop-shadow(0 8px 18px rgba(255,221,150,.14))!important;
+}
+
+/* Cone tracks the emitter, not the canvas box. */
+.mobile-game-ui .room-light-cone{
+  left:var(--cone-x,50%)!important;
+  top:calc(var(--safe-top) + var(--cone-top,156px))!important;
+  transform:translateX(-50%)!important;
+}
+
+/* Ventilation integration by equipment family. */
+.mobile-game-ui .room-vent-rig{
+  right:var(--vent-right,14px)!important;
+  top:calc(var(--safe-top) + var(--vent-top,224px))!important;
+  width:var(--vent-size,76px)!important;
+  height:var(--vent-size,76px)!important;
+  border-radius:12px!important;
+  overflow:visible!important;
+}
+.mobile-game-ui .room-vent-rig:before{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  inset:-5px!important;
+  border:1px solid rgba(110,139,142,.34)!important;
+  border-radius:14px!important;
+  background:rgba(9,20,22,.34)!important;
+  box-shadow:0 7px 12px rgba(0,0,0,.28)!important;
+}
+.mobile-game-ui .room-vent-canvas{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.48))!important;
+}
+.mobile-game-ui .vent-duct,
+.mobile-game-ui .vent-shelf{display:none!important}
+
+/* PC fan: flat wall mounting. */
+.mobile-game-ui .vent-mode-wall:before{
+  inset:-8px!important;
+  border-radius:10px!important;
+  background:linear-gradient(145deg,rgba(34,48,51,.78),rgba(8,16,18,.74))!important;
+}
+
+/* Clip fan: no fake duct box. Let the clamp-shaped asset read naturally. */
+.mobile-game-ui .vent-mode-clip:before{
+  inset:-3px!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Circulation fans live on a small wall shelf, not in an inline duct frame. */
+.mobile-game-ui .vent-mode-shelf:before{
+  inset:-3px!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.mobile-game-ui .vent-mode-shelf .vent-shelf{
+  display:block!important;
+  position:absolute!important;
+  z-index:-1!important;
+  left:-7px!important;
+  right:-7px!important;
+  bottom:4px!important;
+  height:6px!important;
+  border-radius:4px!important;
+  background:linear-gradient(180deg,#667579,#263438)!important;
+  box-shadow:0 5px 8px rgba(0,0,0,.48)!important;
+}
+
+/* Inline fans from level 6 onward connect visually to a proper vertical duct. */
+.mobile-game-ui .vent-mode-duct .vent-duct{
+  display:block!important;
+  position:absolute!important;
+  z-index:-2!important;
+  right:26%!important;
+  top:-56px!important;
+  width:36%!important;
+  height:61px!important;
+  border-radius:14px 14px 4px 4px!important;
+  background:repeating-linear-gradient(180deg,#152124 0 7px,#455458 7px 10px,#111a1d 10px 16px)!important;
+  box-shadow:inset 4px 0 6px rgba(255,255,255,.05),0 5px 8px rgba(0,0,0,.42)!important;
+}
+.mobile-game-ui .vent-mode-duct:before{
+  inset:-8px!important;
+  background:linear-gradient(145deg,rgba(28,40,43,.90),rgba(6,13,15,.88))!important;
+  border:2px solid rgba(103,126,130,.54)!important;
+}
+
+/* Keep demo taps above the camera canvas without making the rest of the equipment layer interactive. */
+.mobile-game-ui .room-demo-cycle:focus-visible{
+  outline:2px solid rgba(156,255,92,.72)!important;
+  outline-offset:3px!important;
+}
+
+@media(max-width:370px){
+  .mobile-game-ui .room-lamp{transform:translateX(-50%) scale(.94)!important;transform-origin:50% 0!important}
+  .mobile-game-ui .room-lamp.lamp-mode-clip{transform:translateX(-50%) rotate(-2deg) scale(.94)!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -2966,6 +3104,18 @@ function equipmentVisualHTML(id,level,context='level'){
   return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
 }
 const roomEquipmentStripCache=new Map();
+const demoRoomEquipment={light:null,vent:null};
+function roomDemoLevel(id,purchased){
+  return demoRoomEquipment[id]??purchased;
+}
+function cycleRoomDemoEquipment(id,purchased){
+  const current=roomDemoLevel(id,purchased);
+  const next=current>=10?2:Math.max(2,current+1);
+  demoRoomEquipment[id]=next;
+  syncEquipment2D();
+  const label=UPGRADE_CATEGORIES[id]?.names?.[next-1]||('Stufe '+next);
+  showGameToast((id==='light'?'Licht':'Lüftung')+' Demo · L'+next+' · '+label);
+}
 function roomEquipmentStrip(id){
   if(roomEquipmentStripCache.has(id))return roomEquipmentStripCache.get(id);
   const promise=new Promise((resolve,reject)=>{
@@ -2976,8 +3126,26 @@ function roomEquipmentStrip(id){
         scan.width=img.naturalWidth;scan.height=img.naturalHeight;
         const sx=scan.getContext('2d',{willReadFrequently:true});
         sx.clearRect(0,0,scan.width,scan.height);sx.drawImage(img,0,0);
-        const px=sx.getImageData(0,0,scan.width,scan.height).data,w=scan.width,h=scan.height;
-        const occupied=new Uint8Array(w);
+        const imageData=sx.getImageData(0,0,scan.width,scan.height),px=imageData.data,w=scan.width,h=scan.height;
+        const occupied=new Uint8Array(w),separator=new Uint8Array(w);
+        // Some source strips still contain narrow dark divider remnants between items.
+        // Detect columns that are dark and opaque for most of the strip height and erase them
+        // before object segmentation. This keeps those bars out of the room artwork.
+        for(let x=0;x<w;x++){
+          let opaque=0,dark=0;
+          for(let y=0;y<h;y++){
+            const i=(y*w+x)*4,a=px[i+3];
+            if(a>=42){
+              opaque++;
+              if(px[i]<42&&px[i+1]<42&&px[i+2]<42)dark++;
+            }
+          }
+          if(opaque>h*.42&&dark>opaque*.82)separator[x]=1;
+        }
+        for(let x=0;x<w;x++)if(separator[x]){
+          for(let q=Math.max(0,x-2);q<=Math.min(w-1,x+2);q++)for(let y=0;y<h;y++)px[(y*w+q)*4+3]=0;
+        }
+        sx.putImageData(imageData,0,0);
         for(let x=0;x<w;x++){
           let hits=0;
           for(let y=0;y<h;y++){
@@ -3028,11 +3196,11 @@ function roomEquipmentStrip(id){
           const cw=w/10;
           segments=Array.from({length:10},(_,i)=>({x:Math.round(i*cw),y:0,w:Math.round(cw),h}));
         }
-        resolve({img,segments});
+        resolve({img:scan,segments});
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src='assets/equipment/'+id+'.png?v=61';
+    img.src='assets/equipment/'+id+'.png?v=62';
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
@@ -3058,34 +3226,53 @@ function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
   const lv=gameState.progression?.levels||{};
-  const lightLevel=Math.max(1,Number(lv.light||1)),ventLevel=Math.max(1,Number(lv.vent||1));
+  const purchasedLight=Math.max(1,Number(lv.light||1)),purchasedVent=Math.max(1,Number(lv.vent||1));
+  const lightLevel=roomDemoLevel('light',purchasedLight),ventLevel=roomDemoLevel('vent',purchasedVent);
   const hasLamp=lightLevel>1,hasVent=ventLevel>1;
 
+  // Per-level scene composition. The early clip lights and free-standing fans need
+  // different physical placement from the later suspended panels and inline duct fans.
   const lampScene={
-    2:{size:94,top:91,coneTop:158,coneWidth:155,coneAlpha:.125},
-    3:{size:108,top:87,coneTop:158,coneWidth:170,coneAlpha:.138},
-    4:{size:118,top:84,coneTop:158,coneWidth:184,coneAlpha:.150},
-    5:{size:132,top:80,coneTop:156,coneWidth:202,coneAlpha:.162},
-    6:{size:142,top:78,coneTop:155,coneWidth:216,coneAlpha:.174},
-    7:{size:150,top:76,coneTop:154,coneWidth:230,coneAlpha:.186},
-    8:{size:158,top:74,coneTop:153,coneWidth:244,coneAlpha:.198},
-    9:{size:166,top:72,coneTop:152,coneWidth:258,coneAlpha:.210},
-    10:{size:178,top:70,coneTop:151,coneWidth:274,coneAlpha:.224}
+    2:{size:110,top:88,x:40,coneTop:157,coneX:50,coneWidth:150,coneAlpha:.120,mode:'clip'},
+    3:{size:118,top:84,x:43,coneTop:157,coneX:50,coneWidth:166,coneAlpha:.132,mode:'clip'},
+    4:{size:126,top:82,x:50,coneTop:158,coneX:50,coneWidth:184,coneAlpha:.145,mode:'panel'},
+    5:{size:138,top:79,x:50,coneTop:156,coneX:50,coneWidth:202,coneAlpha:.158,mode:'panel'},
+    6:{size:148,top:77,x:50,coneTop:155,coneX:50,coneWidth:218,coneAlpha:.170,mode:'panel'},
+    7:{size:156,top:75,x:50,coneTop:154,coneX:50,coneWidth:234,coneAlpha:.182,mode:'panel'},
+    8:{size:164,top:73,x:50,coneTop:153,coneX:50,coneWidth:250,coneAlpha:.194,mode:'panel'},
+    9:{size:172,top:71,x:50,coneTop:152,coneX:50,coneWidth:266,coneAlpha:.206,mode:'panel'},
+    10:{size:182,top:69,x:50,coneTop:151,coneX:50,coneWidth:282,coneAlpha:.220,mode:'panel'}
   };
-  const lc=lampScene[lightLevel]||lampScene[2];
+  const ventScene={
+    2:{size:64,top:232,right:18,mode:'wall'},
+    3:{size:78,top:225,right:12,mode:'clip'},
+    4:{size:84,top:229,right:10,mode:'shelf'},
+    5:{size:88,top:226,right:9,mode:'shelf'},
+    6:{size:72,top:228,right:18,mode:'duct'},
+    7:{size:76,top:226,right:16,mode:'duct'},
+    8:{size:80,top:224,right:14,mode:'duct'},
+    9:{size:84,top:222,right:12,mode:'duct'},
+    10:{size:90,top:220,right:9,mode:'duct'}
+  };
+  const lc=lampScene[lightLevel]||lampScene[2],vc=ventScene[ventLevel]||ventScene[2];
 
   const lightCone=hasLamp
-    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-top:'+lc.coneTop+'px;--cone-alpha:'+lc.coneAlpha+';--cone-width:'+lc.coneWidth+'px"></span>'
+    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-top:'+lc.coneTop+'px;--cone-x:'+lc.coneX+'%;--cone-alpha:'+lc.coneAlpha+';--cone-width:'+lc.coneWidth+'px"></span>'
     : '';
   const lamp=hasLamp
-    ? '<span class="room-lamp" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px" title="'+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></span>'
+    ? '<button type="button" class="room-lamp room-demo-cycle lamp-mode-'+lc.mode+'" data-demo-equipment="light" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px;--lamp-x:'+lc.x+'%" aria-label="Demo Lichtvariante wechseln: '+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'" title="Tippen: nächste Lichtvariante"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></button>'
     : '';
   const vent=hasVent
-    ? '<span class="room-vent-rig" data-vent-level="'+ventLevel+'" title="'+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'"><i class="vent-duct"></i><i class="vent-backplate"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></span>'
+    ? '<button type="button" class="room-vent-rig room-demo-cycle vent-mode-'+vc.mode+'" data-demo-equipment="vent" data-vent-level="'+ventLevel+'" style="--vent-size:'+vc.size+'px;--vent-top:'+vc.top+'px;--vent-right:'+vc.right+'px" aria-label="Demo Lüftungsvariante wechseln: '+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'" title="Tippen: nächste Lüftungsvariante"><i class="vent-duct"></i><i class="vent-backplate"></i><i class="vent-shelf"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></button>'
     : '';
 
   layer.innerHTML=[lightCone,lamp,vent].join('');
   renderRoomEquipmentCanvases(layer);
+  layer.querySelectorAll('[data-demo-equipment]').forEach(el=>el.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    const id=el.dataset.demoEquipment;
+    cycleRoomDemoEquipment(id,id==='light'?purchasedLight:purchasedVent);
+  }));
   ui?.classList.add('hybrid-equipment-ready');
   return true;
 }
