@@ -1,0 +1,33 @@
+name: Build Grow Room Matrix
+on:
+  push:
+    paths:
+      - '.github/scripts/build-growroom-matrix.py'
+      - '.github/workflows/build-growroom-matrix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - run: python .github/scripts/build-growroom-matrix.py
+      - name: Commit generated grow room assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/growroom/backgrounds/growroom-l3-*.webp
+          git add assets/growroom/backgrounds/growroom-l4-*.webp
+          git add assets/growroom/backgrounds/growroom-l5-*.webp
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Add remaining 15 grow room background variants"
+          git push
