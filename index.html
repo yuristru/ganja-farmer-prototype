@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V69 Complete Grow Room Matrix</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V70 Final Grow Room Background System</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2805,8 +2805,8 @@ function rollHarvestSeed(result){const R=rng(seedHash(result.seed,result.scores.
 const UPGRADE_CATEGORIES={
   pot:{id:'pot',name:'Topf',icon:'◉',need:'Wasser',accent:'water',baseCost:55,names:['Startertopf 7 L','Fabric Pot 9 L','Air Pot 11 L','Air Pot 13 L','Root Pot 15 L','Root Pot 17 L','Pro Air 19 L','Pro Air 21 L','Smart Pot 23 L','Smart Pot 25 L']},
   substrate:{id:'substrate',name:'Substrat',icon:'▰',need:'Wasser + Dünger',accent:'dual',baseCost:60,names:['Basiserde','Erde + Perlit','Light Mix','Bio Mix','Living Mix I','Living Mix II','Living Mix III','Living Soil','Living Soil Pro','Living Soil Ultra']},
-  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Sonnenlicht','Hängelampe 40 W','Hängelampe 80 W','Grow Panel XS','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
-  vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Rohrlüfter XS','Rohrlüfter S','Rohrlüfter M','Rohrlüfter L','Airflow S','Airflow M','Airflow L','Silent Air Pro','Climate Core']},
+  light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Hängelampe 40 W','Hängelampe 80 W','Grow Panel S','Grow Panel L','Sun Engine X']},
+  vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Rohrlüfter S','Rohrlüfter M','Airflow L','Climate Core']},
   irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Feuchtigkeitsstab','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
   nutrients:{id:'nutrients',name:'Nährstoffe',icon:'◆',need:'Dünger',accent:'feed',baseCost:70,names:['Basisdünger','Grow Feed','Grow + Bloom','Mineral Duo','Bio Feed','Precision Feed','Dose Kit','Smart Dose','Nutrient Lab','Nutrient Core']},
   sensor:{id:'sensor',name:'Sensorik',icon:'⌬',need:'Analyse',accent:'sensor',baseCost:50,names:['Augenmaß','Feuchteanzeige','Thermometer','Hygrometer','Soil Meter','Multi Sensor','Grow Monitor','Grow Hub','Grow Hub Pro','Grow AI Core']}
@@ -2814,10 +2814,11 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);levels.light=2;return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{dateKey:localDayKey(),turnsToday:0,lastTurnAt:0},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
-function upgradeLevel(st,id){return Math.max(1,Math.min(10,Number(st?.progression?.levels?.[id]||1)));}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{dateKey:localDayKey(),turnsToday:0,lastTurnAt:0},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
+function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
 function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(1.31,level-2)/5)*5;}
-function categoryBenefits(id,level){const n=Math.max(1,Math.min(10,level)),step=n-1;
+function categoryBenefits(id,level){const n=Math.max(1,Math.min(upgradeMaxLevel(id),level)),step=(id==='light'||id==='vent')?(n-1)*(9/4):n-1;
   if(id==='pot')return ['Wasserverbrauch -'+Math.round(step*2.2)+'%','Puffer +'+Math.round(step*4)+'%','Drainage +'+Math.round(step*1.5)+'%'];
   if(id==='substrate')return ['Wasserhalt +'+Math.round(step*3.5)+'%','Düngerpuffer +'+Math.round(step*3.8)+'%'];
   if(id==='light')return ['Lichtstabilität +'+Math.round(step*1.2)+'%','Minimum +'+Math.round(step*.8)+'%'];
@@ -2828,8 +2829,8 @@ function categoryBenefits(id,level){const n=Math.max(1,Math.min(10,level)),step=
   return [];
 }
 function equippedEffects(st=gameState){
-  const l=id=>upgradeLevel(st,id),fx={lightBonus:0,climateBonus:0,autoWater:false,sensor:false,waterDoseBonus:0,feedDoseBonus:0,ventDecayFactor:1,nutrientUseFactor:1};
-  fx.lightBonus=(l('light')-1)*.012;fx.climateBonus=(l('vent')-1)*.012;fx.ventDecayFactor=1-(l('vent')-1)*.02;
+  const l=id=>upgradeLevel(st,id),scaled=id=>((l(id)-1)/Math.max(1,upgradeMaxLevel(id)-1))*9,fx={lightBonus:0,climateBonus:0,autoWater:false,sensor:false,waterDoseBonus:0,feedDoseBonus:0,ventDecayFactor:1,nutrientUseFactor:1};
+  fx.lightBonus=scaled('light')*.012;fx.climateBonus=scaled('vent')*.012;fx.ventDecayFactor=1-scaled('vent')*.02;
   fx.autoWater=l('irrigation')>=8;fx.waterDoseBonus=(l('irrigation')-1)*.012;fx.feedDoseBonus=(l('nutrients')-1)*.008;fx.nutrientUseFactor=1-(l('nutrients')-1)*.02;fx.sensor=l('sensor')>=3;return fx;
 }
 function applyEquippedSetup(st=gameState){if(!st)return;const potL=upgradeLevel(st,'pot'),subL=upgradeLevel(st,'substrate');st.setup=st.setup||{};st.setup.pot={id:'pot-l'+potL,name:UPGRADE_CATEGORIES.pot.names[potL-1],liters:7+(potL-1)*2,waterUse:1-(potL-1)*.022,drainage:.10+(potL-1)*.015};st.setup.substrate={id:'substrate-l'+subL,name:UPGRADE_CATEGORIES.substrate.names[subL-1],waterHolding:1+(subL-1)*.035,nutrientBuffer:1+(subL-1)*.038};}
@@ -2841,7 +2842,17 @@ function ensureResourceState(st){
   st.setup=st.setup||{};
   st.setup.pot=st.setup.pot||{id:'starter-7l',name:'Startertopf',liters:7,waterUse:1,drainage:.10};
   st.setup.substrate=st.setup.substrate||{id:'soil-basic',name:'Erde',waterHolding:1,nutrientBuffer:1};
-  st.progression=st.progression||{owned:[],equipped:{},levels:{}};st.progression.owned=st.progression.owned||[];st.progression.equipped=st.progression.equipped||{};st.progression.levels=st.progression.levels||{};UPGRADE_CATEGORY_ORDER.forEach(id=>{if(!Number.isFinite(st.progression.levels[id]))st.progression.levels[id]=1;st.progression.levels[id]=Math.max(1,Math.min(10,st.progression.levels[id]));});st.uiMigrations=st.uiMigrations||{};if(!st.uiMigrations.starterLampV44){if(st.progression.levels.light===1)st.progression.levels.light=2;st.uiMigrations.starterLampV44=true;}if(st.progression.owned.includes('pot12'))st.progression.levels.pot=Math.max(st.progression.levels.pot,3);if(st.progression.owned.includes('substrate'))st.progression.levels.substrate=Math.max(st.progression.levels.substrate,5);if(st.progression.owned.includes('light1'))st.progression.levels.light=Math.max(st.progression.levels.light,5);if(st.progression.owned.includes('fan1'))st.progression.levels.vent=Math.max(st.progression.levels.vent,4);if(st.progression.owned.includes('autoWater'))st.progression.levels.irrigation=Math.max(st.progression.levels.irrigation,8);if(st.progression.owned.includes('sensor'))st.progression.levels.sensor=Math.max(st.progression.levels.sensor,5);
+  st.progression=st.progression||{owned:[],equipped:{},levels:{}};st.progression.owned=st.progression.owned||[];st.progression.equipped=st.progression.equipped||{};st.progression.levels=st.progression.levels||{};
+  UPGRADE_CATEGORY_ORDER.forEach(id=>{if(!Number.isFinite(st.progression.levels[id]))st.progression.levels[id]=1;});
+  st.uiMigrations=st.uiMigrations||{};
+  if(!st.uiMigrations.growRoomFiveTierV70){
+    st.progression.levels.light=Math.max(1,Math.min(5,Math.ceil((Number(st.progression.levels.light)||1)/2)));
+    st.progression.levels.vent=Math.max(1,Math.min(5,Math.ceil((Number(st.progression.levels.vent)||1)/2)));
+    st.uiMigrations.growRoomFiveTierV70=true;
+  }
+  st.uiMigrations.starterLampV44=true;
+  UPGRADE_CATEGORY_ORDER.forEach(id=>{st.progression.levels[id]=Math.max(1,Math.min(upgradeMaxLevel(id),Number(st.progression.levels[id])||1));});
+  if(st.progression.owned.includes('pot12'))st.progression.levels.pot=Math.max(st.progression.levels.pot,3);if(st.progression.owned.includes('substrate'))st.progression.levels.substrate=Math.max(st.progression.levels.substrate,5);if(st.progression.owned.includes('light1'))st.progression.levels.light=Math.max(st.progression.levels.light,3);if(st.progression.owned.includes('fan1'))st.progression.levels.vent=Math.max(st.progression.levels.vent,2);if(st.progression.owned.includes('autoWater'))st.progression.levels.irrigation=Math.max(st.progression.levels.irrigation,8);if(st.progression.owned.includes('sensor'))st.progression.levels.sensor=Math.max(st.progression.levels.sensor,5);
   st.genetics=st.genetics||{active:'dream',phenotypeSeed:st.plant?.seed||PLANT_SEED};if(!st.genetics.currentSeed)st.genetics.currentSeed=makeSeed(st.genetics.active||'dream',st.genetics.phenotypeSeed||st.plant?.seed||PLANT_SEED,'common','Legacy Grow');
   st.seedVault=st.seedVault||starterSeedVault();st.seedVault.inventory=Array.isArray(st.seedVault.inventory)?st.seedVault.inventory:[];st.seedVault.discovered=st.seedVault.discovered||{};st.seedVault.packsOpened=Number(st.seedVault.packsOpened||0);
   st.collection=Array.isArray(st.collection)?st.collection:[];ensureBiography(st);
@@ -3152,7 +3163,7 @@ function makeOvercareScenario(kind){
 }
 function buyUpgradeLevel(categoryId,targetLevel){
   const cat=UPGRADE_CATEGORIES[categoryId];if(!cat)return;const current=upgradeLevel(gameState,categoryId);targetLevel=Number(targetLevel);
-  if(targetLevel!==current+1||targetLevel>10){showGameToast(targetLevel<=current?'Stufe bereits freigeschaltet':'Erst die vorherige Stufe freischalten');return;}
+  if(targetLevel!==current+1||targetLevel>upgradeMaxLevel(categoryId)){showGameToast(targetLevel<=current?'Stufe bereits freigeschaltet':'Erst die vorherige Stufe freischalten');return;}
   const price=upgradePrice(categoryId,targetLevel);if(gameState.coins<price){showGameToast('Nicht genug Coins · '+price+' benötigt');return;}
   gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;ensureGrowRoomBackgroundImage();saveGameState();updateGameHUD();syncEquipment3D();syncEquipment2D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
 }
@@ -3257,9 +3268,25 @@ function openSeedPack(type){
 const GROWROOM_BACKGROUND_BASE='assets/growroom/backgrounds/';
 const GROWROOM_VISUAL_TIERS=5;
 const growRoomBackgroundImages=new Map();
+let growRoomMatrixPreloadStarted=false;
+function preloadGrowRoomBackgroundMatrix(){
+  if(growRoomMatrixPreloadStarted)return;
+  growRoomMatrixPreloadStarted=true;
+  const run=()=>{
+    for(let l=1;l<=5;l++)for(let v=1;v<=5;v++){
+      const src=GROWROOM_BACKGROUND_BASE+'growroom-l'+l+'-v'+v+'.webp?v=70';
+      if(growRoomBackgroundImages.has(src))continue;
+      const img=new Image(),rec={img,loaded:false,failed:false};
+      growRoomBackgroundImages.set(src,rec);
+      img.onload=()=>{rec.loaded=true;};
+      img.onerror=()=>{rec.failed=true;};
+      img.src=src;
+    }
+  };
+  if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1800});else setTimeout(run,500);
+}
 function growRoomVisualTier(level){
-  const n=Math.max(1,Math.min(10,Number(level)||1));
-  return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Math.ceil(n/2)));
+  return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Number(level)||1));
 }
 function growRoomBackgroundLevels(){
   const lv=gameState?.progression?.levels||{};
@@ -3270,7 +3297,7 @@ function growRoomBackgroundLevels(){
 }
 function growRoomBackgroundPath(){
   const t=growRoomBackgroundLevels();
-  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.webp?v=68';
+  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.webp?v=70';
 }
 function ensureGrowRoomBackgroundImage(){
   const src=growRoomBackgroundPath();
@@ -3279,7 +3306,7 @@ function ensureGrowRoomBackgroundImage(){
   const img=new Image();
   rec={img,loaded:false,failed:false};
   growRoomBackgroundImages.set(src,rec);
-  img.onload=()=>{rec.loaded=true;worldBgCanvas=null;syncEquipment2D();requestRender();};
+  img.onload=()=>{rec.loaded=true;worldBgCanvas=null;syncEquipment2D();requestRender();preloadGrowRoomBackgroundMatrix();};
   img.onerror=()=>{rec.failed=true;worldBgCanvas=null;syncEquipment2D();requestRender();};
   img.src=src;
   return rec;
@@ -3295,12 +3322,12 @@ function hasGrowRoomBackground(){
   return !!rec?.loaded;
 }
 
-const LIGHT_HANGING_SOURCE_LEVEL={1:1,2:5,3:5,4:6,5:6,6:7,7:8,8:9,9:10,10:10};
-const VENT_INLINE_SOURCE_LEVEL={1:1,2:6,3:6,4:7,5:7,6:8,7:8,8:9,9:9,10:10};
+const LIGHT_HANGING_SOURCE_LEVEL={1:5,2:6,3:7,4:8,5:10};
+const VENT_INLINE_SOURCE_LEVEL={1:1,2:6,3:7,4:9,5:10};
 function equipmentSourceLevel(id,level){
-  const n=Math.max(1,Math.min(10,Number(level)||1));
+  const n=Math.max(1,Math.min(upgradeMaxLevel(id),Number(level)||1));
   if(id==='light')return LIGHT_HANGING_SOURCE_LEVEL[n]||5;
-  if(id==='vent')return VENT_INLINE_SOURCE_LEVEL[n]||6;
+  if(id==='vent')return VENT_INLINE_SOURCE_LEVEL[n]||1;
   return n;
 }
 function equipmentAssetStyle(id,level){
@@ -3319,7 +3346,7 @@ function roomDemoLevel(id,purchased){
 function cycleRoomDemoEquipment(id,purchased){
   const currentTier=growRoomVisualTier(roomDemoLevel(id,purchased));
   const nextTier=currentTier>=5?1:currentTier+1;
-  demoRoomEquipment[id]=nextTier*2-1;
+  demoRoomEquipment[id]=nextTier;
   worldBgCanvas=null;
   ensureGrowRoomBackgroundImage();
   syncEquipment2D();
@@ -3437,71 +3464,16 @@ function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
   ensureGrowRoomBackgroundImage();
-  if(hasGrowRoomBackground()){
-    layer.innerHTML=
-      '<button type="button" class="room-bg-demo-hotspot room-bg-demo-light" data-bg-demo-equipment="light" aria-label="Demo Lichtvariante wechseln"></button>'+
-      '<button type="button" class="room-bg-demo-hotspot room-bg-demo-vent" data-bg-demo-equipment="vent" aria-label="Demo Lüftungsvariante wechseln"></button>';
-    layer.querySelectorAll('[data-bg-demo-equipment]').forEach(el=>el.addEventListener('click',e=>{
-      e.preventDefault();e.stopPropagation();
-      const id=el.dataset.bgDemoEquipment,lv=gameState.progression?.levels||{};
-      cycleRoomDemoEquipment(id,Number(lv[id]||1));
-    }));
-    ui?.classList.add('baked-growroom-ready');
-    ui?.classList.remove('hybrid-equipment-ready');
-    return true;
-  }
-  ui?.classList.remove('baked-growroom-ready');
-  const lv=gameState.progression?.levels||{};
-  const purchasedLight=Math.max(1,Number(lv.light||1)),purchasedVent=Math.max(1,Number(lv.vent||1));
-  const lightLevel=roomDemoLevel('light',purchasedLight),ventLevel=roomDemoLevel('vent',purchasedVent);
-  const hasLamp=lightLevel>1,hasVent=ventLevel>1;
-
-  // V63: every artificial light is a ceiling-hung fixture.
-  // Early logical tiers reuse smaller hanging-panel artwork instead of clip or wall lamps.
-  const lampScene={
-    2:{size:116,top:82,x:50,coneTop:158,coneX:50,coneWidth:158,coneAlpha:.120,scale:.78},
-    3:{size:126,top:79,x:50,coneTop:157,coneX:50,coneWidth:174,coneAlpha:.132,scale:.88},
-    4:{size:136,top:77,x:50,coneTop:156,coneX:50,coneWidth:190,coneAlpha:.145,scale:.88},
-    5:{size:146,top:75,x:50,coneTop:155,coneX:50,coneWidth:206,coneAlpha:.158,scale:.98},
-    6:{size:154,top:73,x:50,coneTop:154,coneX:50,coneWidth:222,coneAlpha:.170,scale:1},
-    7:{size:162,top:71,x:50,coneTop:153,coneX:50,coneWidth:238,coneAlpha:.182,scale:1},
-    8:{size:170,top:69,x:50,coneTop:152,coneX:50,coneWidth:254,coneAlpha:.194,scale:1},
-    9:{size:178,top:67,x:50,coneTop:151,coneX:50,coneWidth:270,coneAlpha:.206,scale:.98},
-    10:{size:190,top:64,x:50,coneTop:150,coneX:50,coneWidth:288,coneAlpha:.220,scale:1.08}
-  };
-  // V64: ventilation is one coherent installed inline-duct system.
-  // Logical tiers change fan size/performance, never the physical equipment family.
-  const ventScene={
-    2:{size:66,top:221,right:14,scale:.82},
-    3:{size:72,top:219,right:12,scale:.92},
-    4:{size:76,top:217,right:11,scale:.88},
-    5:{size:82,top:215,right:10,scale:.98},
-    6:{size:86,top:213,right:9,scale:.94},
-    7:{size:90,top:211,right:8,scale:1.02},
-    8:{size:94,top:209,right:7,scale:.98},
-    9:{size:98,top:207,right:6,scale:1.04},
-    10:{size:104,top:204,right:5,scale:1.08}
-  };
-  const lc=lampScene[lightLevel]||lampScene[2],vc=ventScene[ventLevel]||ventScene[2];
-
-  const lightCone=hasLamp
-    ? '<span class="room-light-cone" data-light-level="'+lightLevel+'" style="--cone-top:'+lc.coneTop+'px;--cone-x:'+lc.coneX+'%;--cone-alpha:'+lc.coneAlpha+';--cone-width:'+lc.coneWidth+'px"></span>'
-    : '';
-  const lamp=hasLamp
-    ? '<button type="button" class="room-lamp room-demo-cycle lamp-mode-panel" data-demo-equipment="light" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px;--lamp-x:'+lc.x+'%;--lamp-art-scale:'+lc.scale+'" aria-label="Demo Lichtvariante wechseln: '+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'" title="Tippen: nächste Lichtvariante"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></button>'
-    : '';
-  const vent=hasVent
-    ? '<button type="button" class="room-vent-rig room-demo-cycle vent-mode-inline" data-demo-equipment="vent" data-vent-level="'+ventLevel+'" style="--vent-size:'+vc.size+'px;--vent-top:'+vc.top+'px;--vent-right:'+vc.right+'px;--vent-art-scale:'+vc.scale+'" aria-label="Demo Lüftungsvariante wechseln: '+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'" title="Tippen: nächste Lüftungsvariante"><i class="vent-wall-flange"></i><i class="vent-pipe vent-pipe-out"></i><i class="vent-pipe vent-pipe-in"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></button>'
-    : '';
-
-  layer.innerHTML=[lightCone,lamp,vent].join('');
-  renderRoomEquipmentCanvases(layer);
-  layer.querySelectorAll('[data-demo-equipment]').forEach(el=>el.addEventListener('click',e=>{
+  layer.innerHTML=
+    '<button type="button" class="room-bg-demo-hotspot room-bg-demo-light" data-bg-demo-equipment="light" aria-label="Demo Lichtvariante wechseln"></button>'+
+    '<button type="button" class="room-bg-demo-hotspot room-bg-demo-vent" data-bg-demo-equipment="vent" aria-label="Demo Lüftungsvariante wechseln"></button>';
+  layer.querySelectorAll('[data-bg-demo-equipment]').forEach(el=>el.addEventListener('click',e=>{
     e.preventDefault();e.stopPropagation();
-    const id=el.dataset.demoEquipment;
-    cycleRoomDemoEquipment(id,id==='light'?purchasedLight:purchasedVent);
+    const id=el.dataset.bgDemoEquipment,lv=gameState.progression?.levels||{};
+    cycleRoomDemoEquipment(id,Number(lv[id]||1));
   }));
-  ui?.classList.add('hybrid-equipment-ready');
+  ui?.classList.add('baked-growroom-ready');
+  ui?.classList.remove('hybrid-equipment-ready');
   return true;
 }
 function syncEquipment3D(){
@@ -3514,14 +3486,14 @@ function renderMetaPanels(){
   const grid=document.getElementById('upgradeGrid');if(grid){
     const title=document.getElementById('upgradePanelTitle'),sub=document.getElementById('upgradePanelSub'),back=document.getElementById('upgradeBack');
     if(!selectedUpgradeCategory){
-      if(title)title.textContent='GROW ROOM';if(sub)sub.textContent='Kategorie wählen · Stufe 1 ist dein Starter-Setup · Ausbau bis Stufe 10';if(back)back.classList.remove('show');
+      if(title)title.textContent='GROW ROOM';if(sub)sub.textContent='Kategorie wählen · Licht und Lüftung haben je 5 Raumvarianten';if(back)back.classList.remove('show');
       grid.className='upgrade-category-grid';
-      grid.innerHTML=UPGRADE_CATEGORY_ORDER.map(id=>{const c=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),next=lv<10?upgradePrice(id,lv+1):0,benefits=categoryBenefits(id,lv);return '<button type="button" class="upgrade-category '+c.accent+'" data-upgrade-category="'+id+'"><span class="upgrade-cat-mini">'+equipmentVisualHTML(id,lv,'category')+'<i>LV '+lv+'</i></span><span class="upgrade-cat-main"><strong>'+c.name+'</strong><small>'+c.names[lv-1]+'</small><span class="need-impact">'+c.need+'</span></span><span class="upgrade-cat-side"><b>'+lv+'<small>/10</small></b><span>'+(lv<10?'NÄCHSTE<br><em>◉ '+next+'</em>':'MAX')+'</span></span></button>'}).join('');
+      grid.innerHTML=UPGRADE_CATEGORY_ORDER.map(id=>{const c=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id),next=lv<max?upgradePrice(id,lv+1):0,benefits=categoryBenefits(id,lv);return '<button type="button" class="upgrade-category '+c.accent+'" data-upgrade-category="'+id+'"><span class="upgrade-cat-mini">'+equipmentVisualHTML(id,lv,'category')+'<i>LV '+lv+'</i></span><span class="upgrade-cat-main"><strong>'+c.name+'</strong><small>'+c.names[lv-1]+'</small><span class="need-impact">'+c.need+'</span></span><span class="upgrade-cat-side"><b>'+lv+'<small>/'+max+'</small></b><span>'+(lv<max?'NÄCHSTE<br><em>◉ '+next+'</em>':'MAX')+'</span></span></button>'}).join('');
       grid.querySelectorAll('[data-upgrade-category]').forEach(b=>b.addEventListener('click',()=>{selectedUpgradeCategory=b.dataset.upgradeCategory;renderMetaPanels();}));
     }else{
       const id=selectedUpgradeCategory,c=UPGRADE_CATEGORIES[id],current=upgradeLevel(gameState,id);if(!c){selectedUpgradeCategory=null;renderMetaPanels();return;}
       if(title)title.textContent=c.icon+' '+c.name.toUpperCase();if(sub)sub.textContent='Aktuell Stufe '+current+' · '+c.names[current-1]+' · wirkt auf '+c.need;if(back)back.classList.add('show');grid.className='upgrade-level-list';
-      grid.innerHTML=Array.from({length:10},(_,i)=>i+1).map(lv=>{const done=lv<current,active=lv===current,next=lv===current+1,locked=lv>current+1,price=upgradePrice(id,lv),benefits=categoryBenefits(id,lv),canBuy=next&&gameState.coins>=price;return '<div class="upgrade-level '+(active?'current ':'')+(done?'done ':'')+(locked?'locked ':'')+(next?'next ':'')+'"><div class="level-mini '+c.accent+'">'+equipmentVisualHTML(id,lv,'level')+'<b>'+lv+'</b></div><div class="level-copy"><div class="level-title"><strong>STUFE '+lv+'</strong><span>'+c.names[lv-1]+'</span></div><div class="level-benefits">'+benefits.map(x=>'<i>'+x+'</i>').join('')+'</div></div><div class="level-action">'+(active?'<b class="state-current">AKTIV</b>':done?'<b class="state-owned">✓</b>':next?'<button type="button" data-buy-level="'+lv+'" '+(canBuy?'':'class="poor"')+'><small>UPGRADE</small><strong>◉ '+price+'</strong></button>':'<b class="state-lock">🔒</b>')+'</div></div>'}).join('');
+      grid.innerHTML=Array.from({length:upgradeMaxLevel(id)},(_,i)=>i+1).map(lv=>{const done=lv<current,active=lv===current,next=lv===current+1,locked=lv>current+1,price=upgradePrice(id,lv),benefits=categoryBenefits(id,lv),canBuy=next&&gameState.coins>=price;return '<div class="upgrade-level '+(active?'current ':'')+(done?'done ':'')+(locked?'locked ':'')+(next?'next ':'')+'"><div class="level-mini '+c.accent+'">'+equipmentVisualHTML(id,lv,'level')+'<b>'+lv+'</b></div><div class="level-copy"><div class="level-title"><strong>STUFE '+lv+'</strong><span>'+c.names[lv-1]+'</span></div><div class="level-benefits">'+benefits.map(x=>'<i>'+x+'</i>').join('')+'</div></div><div class="level-action">'+(active?'<b class="state-current">AKTIV</b>':done?'<b class="state-owned">✓</b>':next?'<button type="button" data-buy-level="'+lv+'" '+(canBuy?'':'class="poor"')+'><small>UPGRADE</small><strong>◉ '+price+'</strong></button>':'<b class="state-lock">🔒</b>')+'</div></div>'}).join('');
       grid.querySelectorAll('[data-buy-level]').forEach(b=>b.addEventListener('click',()=>buyUpgradeLevel(id,Number(b.dataset.buyLevel))));
     }
     window.GanjariumEquipment3D?.renderPreviews(grid);
