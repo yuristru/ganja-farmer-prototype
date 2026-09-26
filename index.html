@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V74 Upgrade Shop 2.0</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V75 Plant State Visuals</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3280,22 +3280,25 @@ function excessSeverity(level,high=.82,severe=.98){
   return clamp((level-high)/Math.max(.01,severe-high),0,1);
 }
 function recentCareState(throughDay=currentDay-1,windowDays=7){
-  let waterDef=0,nutrientDef=0,waterExcess=0,nutrientExcess=0,n=0;
+  let waterDef=0,nutrientDef=0,waterExcess=0,nutrientExcess=0,lightDef=0,climateDef=0,n=0;
   let waterStreak=0,nutrientStreak=0;
   for(let d=Math.max(1,throughDay-windowDays+1);d<=throughDay;d++){
     const h=gameState?.history?.[String(d)];if(!h)continue;
     const w=h.levels?.water??.7,nu=h.levels?.nutrients??.68;
     waterDef+=deficiencySeverity(w);nutrientDef+=deficiencySeverity(nu);
-    waterExcess+=excessSeverity(w);nutrientExcess+=excessSeverity(nu);n++;
+    waterExcess+=excessSeverity(w);nutrientExcess+=excessSeverity(nu);
+    lightDef+=clamp(1-(h.scores?.light??1),0,1);climateDef+=clamp(1-(h.scores?.climate??1),0,1);n++;
   }
   for(let d=throughDay;d>=1;d--){const h=gameState?.history?.[String(d)];if(!h||((h.levels?.water??1)>=.42))break;waterStreak++;}
   for(let d=throughDay;d>=1;d--){const h=gameState?.history?.[String(d)];if(!h||((h.levels?.nutrients??1)>=.42))break;nutrientStreak++;}
-  const live=currentNeedSnapshot(currentDay);
+  const live=currentNeedSnapshot(currentDay),liveLightDef=clamp(1-live.scores.light,0,1),liveClimateDef=clamp(1-live.scores.climate,0,1);
   return{
     waterDef:clamp((n?waterDef/n:0)*.72+deficiencySeverity(live.levels.water)*.28,0,1),
     nutrientDef:clamp((n?nutrientDef/n:0)*.72+deficiencySeverity(live.levels.nutrients)*.28,0,1),
     waterExcess:clamp((n?waterExcess/n:0)*.72+excessSeverity(live.levels.water)*.28,0,1),
     nutrientExcess:clamp((n?nutrientExcess/n:0)*.72+excessSeverity(live.levels.nutrients)*.28,0,1),
+    lightDef:clamp((n?lightDef/n:0)*.65+liveLightDef*.35,0,1),
+    climateDef:clamp((n?climateDef/n:0)*.65+liveClimateDef*.35,0,1),
     waterStreak,nutrientStreak
   };
 }
@@ -3308,7 +3311,23 @@ function leafStressForBirth(birthProg,age){
   const yellow=clamp(st.nutrientDef*(.30+.78*oldLeaf)+Math.max(0,st.nutrientStreak-2)*.10,0,1);
   const burn=clamp(st.nutrientExcess*(.25+.55*oldLeaf)+Math.max(0,st.waterStreak-4)*.08,0,1);
   const overwater=clamp(st.waterExcess*.82,0,1);
-  return{drought,yellow,burn,overwater,oldLeaf};
+  const pale=clamp(st.lightDef*(.38+.42*(1-oldLeaf)),0,1);
+  const climate=clamp(st.climateDef*(.42+.36*oldLeaf),0,1);
+  const global=clamp(gameState?.plant?.stress||0,0,1);
+  return{drought,yellow,burn,overwater,pale,climate,global,oldLeaf};
+}
+function livePlantVisualState(){
+  const st=recentCareState(),stress=clamp(gameState?.plant?.stress||0,0,1);
+  return{
+    stress,
+    drought:st.waterDef,
+    overwater:st.waterExcess,
+    deficiency:st.nutrientDef,
+    burn:st.nutrientExcess,
+    lowLight:st.lightDef,
+    climate:st.climateDef,
+    severity:clamp(Math.max(st.waterDef,st.waterExcess,st.nutrientDef,st.nutrientExcess,st.lightDef*.8,st.climateDef*.8,stress*.85),0,1)
+  };
 }
 function flowerDevelopmentFactor(startDay){
   let total=0,n=0,severeDays=0;
@@ -4147,7 +4166,7 @@ function fanShapeC148(fingers){
 }
 let queue=[];
 function queueStem(ax){
-  const n=ax.pts.length-1;
+  const n=ax.pts.length-1,visual=livePlantVisualState();
   for(let i=0;i<n;i++){
     const a=proj(ax.pts[i]), b=proj(ax.pts[i+1]), t=i/Math.max(1,n-1), z=(a.z+b.z)/2;
     const baseW=ax.depth===0?CFG.stemWidth:ax.width;
@@ -4155,7 +4174,11 @@ function queueStem(ax){
     const w=Math.max(ax.depth===0?3.2:1.4,baseW*taper);
     queue.push({z:z-.6,draw(){
       const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-      g.addColorStop(0,ax.depth===0?'#4e6e39':'#516f3b');g.addColorStop(.55,ax.depth===0?'#86a65b':'#86a65a');g.addColorStop(1,ax.depth===0?'#a9c776':'#a7c376');
+      const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
+      const s0=mixHex(ax.depth===0?'#4e6e39':'#516f3b','#777044',stemFade);
+      const s1=mixHex(ax.depth===0?'#86a65b':'#86a65a','#9d965e',stemFade);
+      const s2=mixHex(ax.depth===0?'#a9c776':'#a7c376','#b3a86c',stemFade);
+      g.addColorStop(0,s0);g.addColorStop(.55,s1);g.addColorStop(1,s2);
       ctx.strokeStyle=g;ctx.lineWidth=w+1.4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
       ctx.strokeStyle='rgba(207,229,159,.38)';ctx.lineWidth=Math.max(1,w*.28);ctx.beginPath();ctx.moveTo(a.x+.8,a.y);ctx.lineTo(b.x+.8,b.y);ctx.stroke();
     }});
@@ -4630,7 +4653,7 @@ function drawLeaf(o){
   const petioleScale=o.petioleScale!==undefined?o.petioleScale:1;
   const stressVisual=leafStressForBirth(o.birth||0,age);
   const baseDroopScale=o.droopScale!==undefined?o.droopScale:1;
-  const droopScale=baseDroopScale*(1+stressVisual.drought*.72+stressVisual.overwater*.48);
+  const droopScale=baseDroopScale*(1+stressVisual.drought*.72+stressVisual.overwater*.58+stressVisual.climate*.18);
   const c148Scale=(LEAF.length*size*scaleJitter)/masterLength;
   const low=interactionLOD;
   const lodFingers=low&&fingers===7?5:fingers;
@@ -4678,10 +4701,11 @@ function drawLeaf(o){
     let c0=latePalette?latePalette[0]:young?'#397844':'#327039';
     let c1=latePalette?latePalette[1]:young?'#65a25a':'#4a8748';
     let c2=latePalette?latePalette[2]:young?'#91c46c':'#5d9d51';
-    const yellow=stressVisual.yellow,burn=stressVisual.burn,dry=stressVisual.drought;
-    c0=mixHex(mixHex(c0,'#b2a642',yellow*.72),'#655039',Math.max(burn*.55,dry*.22));
-    c1=mixHex(mixHex(c1,'#c8ba4e',yellow*.82),'#72563b',Math.max(burn*.62,dry*.20));
-    c2=mixHex(mixHex(c2,'#d7ca63',yellow*.88),'#86613f',Math.max(burn*.68,dry*.18));
+    const yellow=stressVisual.yellow,burn=stressVisual.burn,dry=stressVisual.drought,pale=stressVisual.pale,climate=stressVisual.climate,global=stressVisual.global;
+    c0=mixHex(mixHex(mixHex(c0,'#b2a642',yellow*.72),'#8fa86a',pale*.42),'#655039',Math.max(burn*.55,dry*.22,climate*.18));
+    c1=mixHex(mixHex(mixHex(c1,'#c8ba4e',yellow*.82),'#a2ba7a',pale*.48),'#72563b',Math.max(burn*.62,dry*.20,climate*.20));
+    c2=mixHex(mixHex(mixHex(c2,'#d7ca63',yellow*.88),'#b5c88a',pale*.54),'#86613f',Math.max(burn*.68,dry*.18,climate*.22));
+    if(global>.52){const fatigue=(global-.52)/.48;c0=mixHex(c0,'#697047',fatigue*.28);c1=mixHex(c1,'#788052',fatigue*.30);c2=mixHex(c2,'#8a8d5a',fatigue*.32);}
     g.addColorStop(0,c0);g.addColorStop(.52,c1);g.addColorStop(1,c2);
     ctx.fillStyle=g;ctx.fill();
     ctx.strokeStyle='rgba(168,198,111,.72)';ctx.lineWidth=.34;
@@ -4689,6 +4713,11 @@ function drawLeaf(o){
     if(!low){
       ctx.strokeStyle='rgba(136,169,94,.30)';ctx.lineWidth=.18;
       veinSegments.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();});
+      const tip=centerPts[centerPts.length-1];
+      if(tip&&stressVisual.burn>.20){
+        const r=Math.max(1.2,4.2*c148Scale)*(0.55+stressVisual.burn*.85);
+        ctx.fillStyle='rgba(104,66,42,'+(0.25+stressVisual.burn*.55)+')';ctx.beginPath();ctx.arc(tip.x,tip.y,r,0,Math.PI*2);ctx.fill();
+      }
     }
   }
 
@@ -4700,7 +4729,10 @@ function drawLeaf(o){
         ctx.closePath();
       }
       let lc=age<.38?'#4f8d4c':(currentDay>=81?'#737346':currentDay>=76?'#5f7d48':'#4a8748');
-      lc=mixHex(lc,'#c1b44c',stressVisual.yellow*.78);lc=mixHex(lc,'#6f5239',Math.max(stressVisual.burn*.58,stressVisual.drought*.20));
+      lc=mixHex(lc,'#c1b44c',stressVisual.yellow*.78);
+      lc=mixHex(lc,'#9fb676',stressVisual.pale*.46);
+      lc=mixHex(lc,'#6f5239',Math.max(stressVisual.burn*.58,stressVisual.drought*.20,stressVisual.climate*.18));
+      if(stressVisual.global>.52)lc=mixHex(lc,'#74784e',((stressVisual.global-.52)/.48)*.30);
       ctx.fillStyle=lc;ctx.fill();
     }});
   }else{
