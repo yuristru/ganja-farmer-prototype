@@ -3611,7 +3611,7 @@ function updateGameHUD(){
     if(action==='feed'){m.card.classList.toggle('need-warning',snap.levels.nutrients<.42);m.card.classList.toggle('need-danger',snap.levels.nutrients<.28);m.card.classList.toggle('over-limit',snap.levels.nutrients>.86);}
     if(action==='vent'){m.card.classList.toggle('need-warning',snap.levels.ventilation<.45);m.card.classList.toggle('need-danger',snap.levels.ventilation<.25);}
     m.card.disabled=!ready;m.card.setAttribute('aria-disabled',String(!ready));
-    if(!ready)$(m.status).textContent=formatCountdown(av.wait);
+    if(!ready)$(m.status).textContent=av.remaining<=0?'TAG ABSCHLIESSEN':formatCountdown(av.wait);
   }
   if(careStress.waterStreak>=2&&careActionAvailability('water').ok)$('waterStatus').textContent='Mangel '+careStress.waterStreak+'T';
   if(careStress.nutrientStreak>=2&&careActionAvailability('feed').ok)$('nutrientsStatus').textContent='Mangel '+careStress.nutrientStreak+'T';
