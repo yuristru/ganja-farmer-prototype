@@ -2921,6 +2921,21 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .needs-panel.harvest-mode .harvest-ready-box{
   box-shadow:0 0 0 2px rgba(153,255,91,.18),0 6px 22px rgba(87,255,63,.18)!important;
 }
+</style><style id="v81HarvestedStatus">
+.mobile-game-ui .harvest-ready-box.harvested{
+  border-color:#55b9c6!important;
+  background:linear-gradient(180deg,#154955,#0d3440)!important;
+  box-shadow:0 4px 0 #08222a,0 0 18px rgba(65,185,203,.18),inset 0 1px 0 rgba(189,241,247,.13)!important;
+  color:#e9fdff!important;
+}
+.mobile-game-ui .harvest-ready-box.harvested .harvest-ready-icon{
+  background:#0a2931!important;
+  color:#8cecff!important;
+  box-shadow:inset 0 0 0 2px rgba(140,236,255,.18)!important;
+}
+.mobile-game-ui .harvest-ready-box.harvested small{color:#8cecff!important;opacity:1!important}
+.mobile-game-ui .harvest-ready-box.harvested strong{font-size:16px!important;line-height:1!important}
+.mobile-game-ui .harvest-ready-box.harvested em{color:#b6d9dd!important;opacity:1!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3654,7 +3669,19 @@ function updateGameHUD(){
   const waterCard=$('waterCard'),feedCard=$('feedCard'),ventCard=$('ventCard');
   const actionMeta={water:{card:waterCard,level:snap.levels.water,recommended:snap.levels.water<.58,status:'waterStatus'},feed:{card:feedCard,level:snap.levels.nutrients,recommended:snap.levels.nutrients<.55,status:'nutrientsStatus'},vent:{card:ventCard,level:snap.levels.ventilation,recommended:snap.levels.ventilation<.58,status:'climateStatus'}};
   if($('setupChip'))$('setupChip').textContent=(gameState.setup?.pot?.liters||7)+' L · '+(gameState.setup?.substrate?.name||'Erde');
-  const harvestReady=currentDay>=84;const carePanel=document.querySelector('[data-game-panel="care"]');if(carePanel)carePanel.classList.toggle('harvest-mode',harvestReady);const harvestBox=$('harvestReadyBox');if(harvestBox){harvestBox.style.display=harvestReady?'grid':'none';harvestBox.disabled=!!gameState.plant.harvested;harvestBox.querySelector('strong').textContent=gameState.plant.harvested?'ERNTE EINGELAGERT':'ERNTEN';harvestBox.querySelector('em').textContent=gameState.plant.harvested?'In deiner Sammlung gespeichert':'Deine Blüten sind bereit';}
+  const harvestReady=currentDay>=84,harvested=!!gameState.plant.harvested;
+  const carePanel=document.querySelector('[data-game-panel="care"]');if(carePanel)carePanel.classList.toggle('harvest-mode',harvestReady);
+  const harvestBox=$('harvestReadyBox');
+  if(harvestBox){
+    harvestBox.style.display=harvestReady?'grid':'none';
+    harvestBox.disabled=false;
+    harvestBox.classList.toggle('harvested',harvested);
+    harvestBox.setAttribute('aria-label',harvested?'Neuen Seed wählen':'Pflanze ernten');
+    const icon=harvestBox.querySelector('.harvest-ready-icon');if(icon)icon.textContent=harvested?'✦':'✂';
+    harvestBox.querySelector('small').textContent=harvested?'STATUS · ERNTE EINGELAGERT':'TAG 84 · GROW ABGESCHLOSSEN';
+    harvestBox.querySelector('strong').textContent=harvested?'NEUEN SEED WÄHLEN':'ERNTEN';
+    harvestBox.querySelector('em').textContent=harvested?'Grow abgeschlossen · Ernte in Sammlung':'Deine Blüten sind bereit';
+  }
   for(const [action,m] of Object.entries(actionMeta)){
     if(!m.card)continue;const av=careActionAvailability(action),ready=av.ok;
     m.card.classList.toggle('cooldown',!ready);m.card.classList.toggle('can-act',ready&&m.recommended);
@@ -3662,7 +3689,7 @@ function updateGameHUD(){
     if(action==='feed'){m.card.classList.toggle('need-warning',snap.levels.nutrients<.42);m.card.classList.toggle('need-danger',snap.levels.nutrients<.28);m.card.classList.toggle('over-limit',snap.levels.nutrients>.86);}
     if(action==='vent'){m.card.classList.toggle('need-warning',snap.levels.ventilation<.45);m.card.classList.toggle('need-danger',snap.levels.ventilation<.25);}
     m.card.disabled=!ready;m.card.setAttribute('aria-disabled',String(!ready));
-    if(!ready)$(m.status).textContent=harvestReady?'ERNTE BEREIT':av.remaining<=0?'TAG ABSCHLIESSEN':av.wait>0?formatCountdown(av.wait):(av.label||'GESPERRT');
+    if(!ready)$(m.status).textContent=harvested?'ERNTE EINGELAGERT':harvestReady?'ERNTE BEREIT':av.remaining<=0?'TAG ABSCHLIESSEN':av.wait>0?formatCountdown(av.wait):(av.label||'GESPERRT');
   }
   if(careStress.waterStreak>=2&&careActionAvailability('water').ok)$('waterStatus').textContent='Mangel '+careStress.waterStreak+'T';
   if(careStress.nutrientStreak>=2&&careActionAvailability('feed').ok)$('nutrientsStatus').textContent='Mangel '+careStress.nutrientStreak+'T';
@@ -5740,7 +5767,13 @@ document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListen
 const cameraResetMini=document.getElementById('cameraResetMini');if(cameraResetMini)cameraResetMini.addEventListener('click',e=>{e.stopPropagation();setCameraPreset('reset');showGameToast('Kamera zurückgesetzt');});
 const devDrawer=document.getElementById('devDrawer');document.getElementById('devToggle')?.addEventListener('click',()=>devDrawer.classList.toggle('open'));document.getElementById('devClose')?.addEventListener('click',()=>devDrawer.classList.remove('open'));document.querySelector('.dev-grid')?.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(()=>devDrawer.classList.remove('open'),0);});
 document.getElementById('upgradeBack')?.addEventListener('click',()=>{selectedUpgradeCategory=null;renderMetaPanels();});
-document.getElementById('harvestReadyBox')?.addEventListener('click',openHarvestResults);
+document.getElementById('harvestReadyBox')?.addEventListener('click',()=>{
+  if(!gameState?.plant?.harvested){openHarvestResults();return;}
+  const latestJar=gameState.collection?.[0],seedId=latestJar?.harvestSeedId;
+  if(seedId&&(gameState.seedVault?.inventory||[]).some(seed=>seed.id===seedId))selectedVaultSeedId=seedId;
+  setMainPanel('collection');
+  renderMetaPanels();
+});
 document.getElementById('harvestToJar')?.addEventListener('click',()=>{if(!pendingHarvestResult)return;document.getElementById('harvestStepBud').classList.remove('active');document.getElementById('harvestStepJar').classList.add('active');});
 document.getElementById('harvestFinish')?.addEventListener('click',()=>{commitHarvestResult();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');const drop=pendingHarvestResult?.harvestSeed;showGameToast('Ernte eingelagert · +'+(pendingHarvestResult?.reward||0)+' Coins'+(drop?' · neuer '+SEED_RARITY[drop.rarity].label+' Seed':''));setMainPanel('collection');renderMetaPanels();});
 document.getElementById('harvestResultClose')?.addEventListener('click',()=>{document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');});
