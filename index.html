@@ -3811,59 +3811,26 @@ function buildHarvestResult(){
   const budCount=Math.max(14,Math.round(12+(grams/100)*18+(scores.density/100)*8));
   return{scores,g,reward,grams,jarFill,budCount,flowerQuality,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
 }
-const harvestBudMasterCache=new Map();
-function renderHarvestBudMaster(result){
-  const score=result?.scores?.total||70,key=[result?.seed||PLANT_SEED,score,result?.scores?.density||0,result?.scores?.potency||0,result?.scores?.aroma||0,result?.scores?.style||0].join('|');
-  if(harvestBudMasterCache.has(key))return harvestBudMasterCache.get(key);
-  const size=768,base=196,renderScale=size/base,master=document.createElement('canvas');master.width=size;master.height=size;
-  const mctx=master.getContext('2d'),previewQueue=[],previewProj=p=>({x:size*.5+p.x*.94,y:size*.72-p.y*.94,z:p.z||0,scale:.94});
-  const fq=result?.flowerQuality||{};
-  const quality={
-    density:clamp(Number(fq.density)||((result?.scores?.density||70)/100),.32,1.08),
-    resin:clamp(Number(fq.resin)||((result?.scores?.potency||70)/100),.25,1.10),
-    aroma:clamp(Number(fq.aroma)||((result?.scores?.aroma||70)/100),.25,1.10),
-    color:clamp(Number(fq.color)||((result?.scores?.style||70)/100),.20,1),
-    damage:clamp(Number(fq.damage)||0,0,1),
-    airflow:clamp(Number(fq.airflow)||.78,0,1),
-    light:clamp(Number(fq.light)||.90,0,1),
-    leafiness:clamp(Number(fq.leafiness)||.28,.14,.62),
-    foxtail:clamp(Number(fq.foxtail)||.055,.02,.28),
-    ripeness:.98,
-    stress:clamp(Number(fq.stress)||0,0,1),
-    debt:clamp(Number(fq.debt)||0,0,1),
-    flowerScore:clamp(Number(fq.flowerScore)||score/100,0,1)
-  };
-  mctx.clearRect(0,0,size,size);
-  drawBud({
-    seed:Number(result?.seed)||PLANT_SEED,
-    p:v(0,-2*renderScale,0),
-    dir:v(0,1,0),
-    r:46*renderScale,
-    maturity:.99,
-    stage:'mature',
-    terminal:true
-  },{
-    ctx:mctx,proj:previewProj,queue:previewQueue,quality,
-    genetics:result?.g||activeGenetics(),
-    interactionLOD:false
-  });
-  previewQueue.sort((a,b)=>a.z-b.z).forEach(o=>o.draw());
-  harvestBudMasterCache.set(key,master);
-  if(harvestBudMasterCache.size>12)harvestBudMasterCache.delete(harvestBudMasterCache.keys().next().value);
-  return master;
+function harvestPreviewSeed(result){
+  const current=activeSeed(),rarity=current?.rarity||'common';
+  const seed=makeSeed(result?.g?.id||'dream',Number(result?.seed)||PLANT_SEED,rarity,'Harvest Preview');
+  seed.phenotype=result?.phenotype||current?.phenotype||seed.phenotype;
+  seed.revealed=true;
+  if(current?.traits)seed.traits={...seed.traits,...current.traits};
+  return seed;
 }
 function drawHarvestBud(result){
   const canvas=document.getElementById('harvestBudCanvas');if(!canvas)return;
-  const dpr=Math.min(2,window.devicePixelRatio||1),cssW=360,cssH=340;
+  const seed=harvestPreviewSeed(result),master=renderCoreBudMaster(seed),dpr=Math.min(2,window.devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect(),cssW=Math.max(320,Math.round(rect.width||360)),cssH=Math.max(300,Math.round(rect.height||340));
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const x=canvas.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,cssW,cssH);
-  const glow=x.createRadialGradient(cssW*.5,cssH*.47,18,cssW*.5,cssH*.47,cssW*.48);
+  const glow=x.createRadialGradient(cssW*.5,cssH*.46,18,cssW*.5,cssH*.46,cssW*.48);
   glow.addColorStop(0,'rgba(132,255,94,.18)');glow.addColorStop(1,'rgba(0,0,0,0)');
   x.fillStyle=glow;x.fillRect(0,0,cssW,cssH);
-  const master=renderHarvestBudMaster(result),zoom=2.42;
-  const scale=Math.max(cssW/master.width,cssH/master.height)*zoom,w=master.width*scale,h=master.height*scale;
   x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
-  x.drawImage(master,(cssW-w)/2,cssH*.53-h*.50,w,h);
+  const zoom=2.55,scale=Math.max(cssW/master.width,cssH/master.height)*zoom,w=master.width*scale,h=master.height*scale;
+  x.drawImage(master,(cssW-w)/2,cssH*.58-h*.50,w,h);
 }
 function populateHarvestResult(result){
   document.getElementById('harvestBudTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);document.getElementById('harvestJarTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);
