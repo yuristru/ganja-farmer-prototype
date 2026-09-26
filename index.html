@@ -2514,20 +2514,22 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform-origin:50% 80%;
 }
 .mobile-game-ui .room-eq-substrate{
-  left:4px;
-  bottom:calc(var(--safe-bottom) + 116px);
-  width:74px!important;
-  height:58px!important;
-  opacity:.78!important;
-  transform:rotate(-3deg) scale(.92);
+  left:66px;
+  bottom:calc(var(--safe-bottom) + 190px);
+  width:76px!important;
+  height:52px!important;
+  z-index:1!important;
+  opacity:.84!important;
+  transform:rotate(-2deg) scaleX(1.08) scaleY(.84);
   transform-origin:50% 100%;
-  filter:drop-shadow(0 9px 6px rgba(0,0,0,.26)) drop-shadow(0 1px 1px rgba(0,0,0,.20))!important;
+  filter:drop-shadow(0 8px 5px rgba(0,0,0,.24)) drop-shadow(0 1px 1px rgba(0,0,0,.18))!important;
 }
 .mobile-game-ui .room-eq-nutrients{
   left:-8px;
   bottom:calc(var(--safe-bottom) + 174px);
   width:92px!important;
   height:92px!important;
+  z-index:2!important;
   transform:rotate(3deg);
 }
 .mobile-game-ui .room-eq-sensor{
@@ -2551,7 +2553,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
 }
 @media(max-width:370px){
-  .mobile-game-ui .room-eq-substrate{left:2px;bottom:calc(var(--safe-bottom) + 110px);width:68px!important;height:54px!important}
+  .mobile-game-ui .room-eq-substrate{left:54px;bottom:calc(var(--safe-bottom) + 184px);width:70px!important;height:48px!important}
   .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px!important;height:84px!important}
   .mobile-game-ui .room-eq-sensor{right:-2px;width:70px!important;height:70px!important}
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
