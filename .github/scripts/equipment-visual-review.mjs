@@ -19,67 +19,77 @@ page.on('pageerror',e=>consoleLog.push({type:'pageerror',text:String(e)}));
 await page.goto('http://127.0.0.1:4173/?equipment-review=1',{waitUntil:'networkidle'});
 await page.evaluate(()=>localStorage.clear());
 await page.reload({waitUntil:'networkidle'});
-await page.waitForTimeout(1800);
-await page.evaluate(()=>{
-  if(window.__GFTRAIN?.setDay)window.__GFTRAIN.setDay(44);
-  if(typeof gameState!=='undefined'&&gameState){
-    gameState.plant.day=44;
-    gameState.progression.levels.light=6;
-    gameState.progression.levels.vent=6;
-    if(typeof updateGameHUD==='function')updateGameHUD();
-    if(typeof invalidatePlant==='function')invalidatePlant();
-    if(typeof requestRender==='function')requestRender();
-  }
-});
-await page.waitForTimeout(700);
+await page.waitForTimeout(1600);
 
-async function setVariant(light,vent){
-  await page.evaluate(({light,vent})=>{
-    demoRoomEquipment.light=light;
-    demoRoomEquipment.vent=vent;
-    syncEquipment2D();
-    if(typeof requestRender==='function')requestRender();
-  },{light,vent});
-  await page.waitForTimeout(500);
+// Use the game's own demo control to create a mature, stable plant scene.
+await page.evaluate(()=>document.getElementById('devGood')?.click());
+await page.waitForTimeout(900);
+
+async function shot(name){
+  await page.waitForTimeout(420);
+  await page.screenshot({path:path.join(out,name+'.png')});
 }
-async function metrics(kind,level){
-  return await page.evaluate(({kind,level})=>{
-    const selector=kind==='light'?'.room-lamp':'.room-vent-rig';
-    const el=document.querySelector(selector);
+async function domMetrics(kind){
+  return await page.evaluate((kind)=>{
+    const el=document.querySelector(kind==='light'?'.room-lamp':'.room-vent-rig');
     const canvas=document.querySelector(kind==='light'?'.room-light-canvas':'.room-vent-canvas');
-    const rect=el?.getBoundingClientRect();
-    const cr=canvas?.getBoundingClientRect();
+    const cone=document.querySelector('.room-light-cone');
+    const rect=o=>{const r=o?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}:null};
     let content=null;
     if(canvas&&canvas.width&&canvas.height){
-      const ctx=canvas.getContext('2d');
-      const d=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+      const ctx=canvas.getContext('2d'),d=ctx.getImageData(0,0,canvas.width,canvas.height).data;
       let x0=canvas.width,y0=canvas.height,x1=-1,y1=-1,count=0;
       for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
         if(d[(y*canvas.width+x)*4+3]>16){count++;if(x<x0)x0=x;if(y<y0)y0=y;if(x>x1)x1=x;if(y>y1)y1=y;}
       }
       if(x1>=x0)content={x0,y0,x1,y1,w:x1-x0+1,h:y1-y0+1,coverage:count/(canvas.width*canvas.height)};
     }
-    const cone=document.querySelector('.room-light-cone')?.getBoundingClientRect();
     return {
-      kind,level,
-      element:rect?{x:rect.x,y:rect.y,w:rect.width,h:rect.height,right:rect.right,bottom:rect.bottom}:null,
-      canvas:cr?{x:cr.x,y:cr.y,w:cr.width,h:cr.height,right:cr.right,bottom:cr.bottom}:null,
-      content,
-      cone:cone?{x:cone.x,y:cone.y,w:cone.width,h:cone.height,right:cone.right,bottom:cone.bottom}:null,
-      viewport:{w:innerWidth,h:innerHeight}
+      level:Number(el?.dataset[kind==='light'?'lightLevel':'ventLevel']||0),
+      element:rect(el),canvas:rect(canvas),cone:rect(cone),content,
+      title:el?.getAttribute('title')||'',viewport:{w:innerWidth,h:innerHeight}
     };
-  },{kind,level});
+  },kind);
 }
 const data={lamps:[],vents:[],console:consoleLog};
-for(let level=1;level<=10;level++){
-  await setVariant(level,1);
-  await page.screenshot({path:path.join(out,'lamp-'+String(level).padStart(2,'0')+'.png')});
-  data.lamps.push(await metrics('light',level));
+
+// Lamp demo starts at the real default Clip LED, level 2. Click the actual rendered lamp
+// between captures, exactly as a player does in V62.
+for(let expected=2;expected<=10;expected++){
+  const m=await domMetrics('light');
+  data.lamps.push({expected,...m});
+  await shot('lamp-'+String(expected).padStart(2,'0'));
+  if(expected<10){
+    await page.locator('.room-lamp').click({position:{x:Math.max(2,m.element.w/2),y:Math.max(2,m.element.h/2)}});
+    await page.waitForTimeout(250);
+  }
 }
-for(let level=1;level<=10;level++){
-  await setVariant(6,level);
-  await page.screenshot({path:path.join(out,'vent-'+String(level).padStart(2,'0')+'.png')});
-  data.vents.push(await metrics('vent',level));
+
+// Reload to clear the lamp demo override, restore the real scene, then buy only ventilation L2
+// through the actual upgrade UI. No internal game variables are accessed.
+await page.reload({waitUntil:'networkidle'});
+await page.waitForTimeout(1300);
+await page.evaluate(()=>document.getElementById('devGood')?.click());
+await page.waitForTimeout(700);
+await page.locator('[data-ui-tab="upgrades"]').click();
+await page.waitForTimeout(200);
+await page.locator('[data-upgrade-category="vent"]').click();
+await page.waitForTimeout(200);
+await page.locator('[data-buy-level="2"]').click();
+await page.waitForTimeout(350);
+await page.locator('[data-game-panel="upgrades"] [data-panel-close]').click();
+await page.waitForTimeout(350);
+
+for(let expected=2;expected<=10;expected++){
+  const m=await domMetrics('vent');
+  data.vents.push({expected,...m});
+  await shot('vent-'+String(expected).padStart(2,'0'));
+  if(expected<10){
+    await page.locator('.room-vent-rig').click({position:{x:Math.max(2,m.element.w/2),y:Math.max(2,m.element.h/2)}});
+    await page.waitForTimeout(250);
+  }
 }
+
+data.console=consoleLog;
 fs.writeFileSync(path.join(out,'review.json'),JSON.stringify(data,null,2));
 await browser.close();
