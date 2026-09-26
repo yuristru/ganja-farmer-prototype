@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V78 Time and Consequences</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V79 Flowering 2.0</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3397,17 +3397,17 @@ function livePlantVisualState(){
   };
 }
 function flowerDevelopmentFactor(startDay){
-  let total=0,n=0,severeDays=0;
+  let load=0,n=0,severeDays=0;
   for(let d=Math.max(startDay,currentDay-6);d<currentDay;d++){
     const h=gameState?.history?.[String(d)];if(!h)continue;
-    const w=h.levels?.water??.7,nu=h.levels?.nutrients??.68;
-    const sev=Math.max(deficiencySeverity(w),deficiencySeverity(nu));
-    total+=sev;n++;if(w<.25||nu<.28)severeDays++;
+    const acute=h.damage?.acute??Math.max(deficiencySeverity(h.levels?.water??.7),deficiencySeverity(h.levels?.nutrients??.68));
+    const environment=Math.max(1-(h.scores?.light??1),1-(h.scores?.climate??1));
+    const sev=Math.max(acute,environment*.72);
+    load+=sev;n++;if(sev>.68)severeDays++;
   }
-  const live=currentNeedSnapshot(currentDay);
-  const liveSev=Math.max(deficiencySeverity(live.levels.water),deficiencySeverity(live.levels.nutrients));
-  const avg=n?total/n:0;
-  return clamp(1-avg*.62-liveSev*.20-severeDays*.08,.08,1);
+  const live=plantResponseAtDay(currentDay),liveSev=Math.max(live.damage?.acute??0,1-(live.scores?.light??1),1-(live.scores?.climate??1));
+  const debt=gameState?.plant?.conditionMemory?.stressDebt||0;
+  return clamp(1-(n?load/n:0)*.48-liveSev*.16-severeDays*.055-debt*.10,.12,1);
 }
 function flowerOnsetBlocked(startDay){
   if(currentDay-startDay>5)return false;
@@ -4898,10 +4898,21 @@ function drawLeaf(o){
 }
 function THREELESS_DEG(deg){return deg*Math.PI/180;}
 function liveFlowerQuality(){
-  const hs=Object.values(gameState?.history||{}).filter(h=>h&&h.day>=36);if(!hs.length)return{density:1,resin:.72,aroma:.72,color:.5};
-  const avg=k=>hs.reduce((a,h)=>a+(h[k]??1),0)/hs.length;const vigor=avg('vigor'),stress=avg('stress'),g=activeGenetics();
-  const ventilation=hs.reduce((a,h)=>a+(h.levels?.ventilation??.62),0)/hs.length;
-  const gp=activeGeneticProfile(),bio=biographySummary();return{density:clamp(.52+.48*vigor-.18*stress+.05*(bio.flower-.75),.42,1.05),resin:clamp((.38+.38*vigor+.20*g.flower+.10*ventilation-.18*stress)*gp.resin,.25,1),aroma:clamp((.36+.30*vigor+.24*g.flower+.16*ventilation-.16*stress)*gp.aroma,.25,1),color:clamp(.22+.30*g.style+.28*gp.colorExpression+.16*(1-stress),.2,.98)};
+  const hs=Object.values(gameState?.history||{}).filter(h=>h&&h.day>=36);
+  const g=activeGenetics(),gp=activeGeneticProfile(),bio=biographySummary();
+  if(!hs.length)return{density:.76,resin:.66,aroma:.66,color:.5,damage:0,airflow:.62,light:.82,leafiness:.32,foxtail:.08,ripeness:clamp((currentDay-57)/27,0,1)};
+  const avgValue=fn=>hs.reduce((a,h)=>a+fn(h),0)/hs.length;
+  const vigor=avgValue(h=>h.vigor??1),stress=avgValue(h=>h.stress??0),potential=avgValue(h=>h.growthPotential??1);
+  const airflow=avgValue(h=>h.levels?.ventilation??.62),light=avgValue(h=>h.scores?.light??1),climate=avgValue(h=>h.scores?.climate??1);
+  const nutrients=avgValue(h=>h.scores?.nutrients??1),damage=avgValue(h=>h.damage?.acute??0),debt=avgValue(h=>h.conditionMemory?.stressDebt??0);
+  const ripeness=smoothstep01((currentDay-57)/27);
+  const density=clamp((.30+.30*vigor+.18*potential+.13*light+.09*nutrients-.18*damage-.08*debt)*lerp(.94,1.06,g.flower),.32,1.05);
+  const resin=clamp((.28+.24*vigor+.18*potential+.15*light+.10*airflow+.10*g.flower-.15*damage-.08*stress)*gp.resin,.22,1.08);
+  const aroma=clamp((.26+.22*vigor+.16*potential+.18*climate+.14*airflow+.12*g.flower-.14*damage-.08*stress)*gp.aroma,.22,1.08);
+  const color=clamp(.18+.28*g.style+.28*gp.colorExpression+.16*ripeness+.10*(1-stress),.18,1);
+  const leafiness=clamp(.22+(1-density)*.32+(1-light)*.18+damage*.12,.18,.62);
+  const foxtail=clamp(.035+(1-climate)*.18+(1-light)*.08+damage*.08,.03,.24);
+  return{density,resin,aroma,color,damage,airflow,light,leafiness,foxtail,ripeness,stress,debt,flowerScore:bio.flower};
 }
 function drawBud(b,renderEnv=null){
   const dctx=renderEnv?.ctx||ctx,dproj=renderEnv?.proj||proj,dqueue=renderEnv?.queue||queue;
@@ -4935,17 +4946,20 @@ function drawBud(b,renderEnv=null){
   // Previously late-born flower sites could stay in that renderer until day 60 and then
   // jump abruptly to the compact Flower Lab geometry on day 61. From day 58 onward we
   // always use the Flower Lab body while keeping each site's own maturity for size/detail.
-  const isEarly=m<FT.earlyThreshold && currentDay<=FT.earlyRendererUntilDay;
-  const lengthWorld=b.r*(terminal?(FT.termLenBase+FT.termLenGain*m):(FT.latLenBase+FT.latLenGain*m));
-  const radiusWorld=b.r*(terminal?(FT.termRadBase+FT.termRadGain*m):(FT.latRadBase+FT.latRadGain*m));
-  const frostFrac=m<.34?0:smoothstep01((m-.34)/.66);
-  const brownFrac=m<.72?0:clamp((m-.72)/.28,0,1);
+  const isEarly=m<FT.earlyThreshold;
+  const flowerMass=clamp(lerp(.72,1.12,ql.density)*(1-ql.damage*.16),.58,1.12);
+  const lengthScale=clamp(lerp(1.04,.94,ql.density)*(1-ql.damage*.05),.82,1.08);
+  const radialScale=clamp(flowerMass*lerp(.94,1.08,ql.resin),.56,1.18);
+  const lengthWorld=b.r*(terminal?(FT.termLenBase+FT.termLenGain*m):(FT.latLenBase+FT.latLenGain*m))*lengthScale;
+  const radiusWorld=b.r*(terminal?(FT.termRadBase+FT.termRadGain*m):(FT.latRadBase+FT.latRadGain*m))*radialScale;
+  const frostFrac=m<.28?0:smoothstep01((m-.28)/.72)*lerp(.58,1.12,ql.resin);
+  const brownFrac=m<.60?0:clamp(((m-.60)/.40)*(.58+.52*ql.ripeness)+ql.damage*.06,0,.96);
   const p0=dproj(add(b.p,mul(axis,-lengthWorld*.12)));
   const p1=dproj(add(b.p,mul(axis,lengthWorld*.90)));
   let dx=p1.x-p0.x,dy=p1.y-p0.y,dl=Math.hypot(dx,dy)||1;
   const ux=dx/dl,uy=dy/dl,px=-uy,py=ux;
   const mid=dproj(add(b.p,mul(axis,lengthWorld*.38)));
-  const screenR=Math.max(1.25,b.r*mid.scale*(terminal?.62:.58));
+  const screenR=Math.max(1.25,b.r*mid.scale*(terminal?.62:.58)*radialScale);
   const bodyBase=screenR*(.50+.08*m),bodyMid=screenR*(.72+.10*m),bodyTip=screenR*(.26+.05*m);
   const z=(p0.z+p1.z+mid.z)/3;
 
@@ -5071,14 +5085,14 @@ function drawBud(b,renderEnv=null){
   // Flower Lab V6 renderer for stacking, swelling and mature flowers.
   // It intentionally builds the cola from overlapping bud-sites instead of one smooth body.
   const FL6={
-    density:(terminal?.72:.62)*lerp(.82,1.14,ql.density),
-    separation:terminal?.26:.34,
-    calyx:.60,
-    leaves:terminal?.30:.24,
-    asymmetry:terminal?.16:.20,
-    foxtail:stageName==='mature'?.10:.07,
-    frost:clamp(frostFrac*(terminal?1.00:.86)*lerp(.55,1.22,ql.resin),0,1),
-    pistils:stageName==='stacking'?.78:stageName==='swelling'?.66:.52
+    density:clamp((terminal?.66:.56)*lerp(.72,1.26,ql.density)*(1-ql.damage*.18),.34,.94),
+    separation:clamp((terminal?.20:.29)+(1-ql.density)*.18+ql.damage*.14,.16,.54),
+    calyx:clamp(.46+.24*ql.density+.10*ql.resin-.10*ql.damage,.36,.82),
+    leaves:clamp((terminal?.24:.20)+ql.leafiness*.24,.18,.50),
+    asymmetry:clamp((terminal?.13:.17)+ql.damage*.08,.12,.28),
+    foxtail:clamp((stageName==='mature'?.045:.025)+ql.foxtail,.03,.26),
+    frost:clamp(frostFrac*(terminal?1.00:.86),0,1),
+    pistils:clamp((stageName==='stacking'?.80:stageName==='swelling'?.66:.50)*(.90+.10*ql.ripeness),.38,.86)
   };
   const matureLenWorld=b.r*(terminal?(1.18+.44*m):(.78+.26*m));
   const mp0=dproj(add(b.p,mul(axis,-matureLenWorld*.10)));
@@ -5086,7 +5100,7 @@ function drawBud(b,renderEnv=null){
   const mdx=mp1.x-mp0.x,mdy=mp1.y-mp0.y,mdl=Math.hypot(mdx,mdy)||1;
   const mux=mdx/mdl,muy=mdy/mdl,mpx=-muy,mpy=mux;
   const mmid=dproj(add(b.p,mul(axis,matureLenWorld*.40)));
-  const maxR=Math.max(1.3,b.r*mmid.scale*(terminal?.66:.54));
+  const maxR=Math.max(1.3,b.r*mmid.scale*(terminal?.66:.54)*radialScale);
   const mz=(mp0.z+mp1.z+mmid.z)/3;
   const detailFactor=maxR<5.2?.22:maxR<7.2?.46:maxR<10?.68:1;
 
@@ -5229,7 +5243,7 @@ function drawBud(b,renderEnv=null){
       }
       if(FL6.frost>.03&&detailFactor>.58){
         const dots=Math.round(FL6.frost*c.L*.20);
-        dctx.fillStyle='rgba(239,246,230,'+(.08+.22*FL6.frost)+')';
+        dctx.fillStyle=ql.ripeness>.78?'rgba(248,239,205,'+(.09+.24*FL6.frost)+')':'rgba(239,246,230,'+(.08+.22*FL6.frost)+')';
         for(let f=0;f<dots;f++){
           const aa=R()*Math.PI*2,rr=Math.sqrt(R())*c.L*.38;
           dctx.beginPath();dctx.arc(c.cx+Math.cos(aa)*rr,c.cy+Math.sin(aa)*rr*.58,.18+.36*R(),0,Math.PI*2);dctx.fill();
