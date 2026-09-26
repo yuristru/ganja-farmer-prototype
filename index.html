@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V64 Inline Ventilation Only</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V65 Day 36 Demo Fix</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2533,7 +2533,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
-<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devBypass">Wartezeit umgehen</button><button id="devGood">35 Tage perfekt</button><button id="devStress">35 Tage mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
+<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script>
 (()=>{
@@ -3077,7 +3077,39 @@ function applyCare(action){
   }
   gameState.care.cooldowns[action]=Date.now();saveGameState();updateGameHUD();invalidatePlant();requestRender();
 }
-function makeScenario(kind){const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;for(let d=1;d<=34;d++){gameState.plant.day=d;if(kind==='good'){gameState.care.water=.66;gameState.care.nutrients=.68;const base=currentNeedSnapshot(d);base.levels.light=.92;base.levels.climate=.82;base.scores={water:1,light:1,nutrients:1,climate:1};base.fulfillment=1;gameState.history[String(d)]={...base,stress:0,vigor:1,growthPotential:1,createdAt:Date.now()};gameState.plant.stress=0;gameState.plant.growthPotential=1}else{const bad=d>=12&&d<=20;gameState.care.water=bad?.28:.66;gameState.care.nutrients=bad?.38:.68;const h=simulateCurrentDay();if(bad){h.vigor=Math.min(h.vigor,.58);h.stress=Math.max(h.stress,.62);h.growthPotential=Math.min(h.growthPotential,.93);gameState.history[String(d)]=h;gameState.plant.stress=h.stress;gameState.plant.growthPotential=h.growthPotential}}}gameState.plant.day=35;gameState.turn.turnsToday=0;gameState.turn.lastTurnAt=0;gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();gameState.care.cooldowns={water:0,feed:0,vent:0};saveGameState();currentDay=35;resetBioPlant();invalidatePlant();sync();requestRender();showGameToast(kind==='good'?'35 Tage perfekte Pflege':'Stressphase Tag 12-20')}
+function makeScenario(kind){
+  const bypass=gameState?.settings?.debugBypass||false,targetDay=36;
+  gameState=createGameState();gameState.settings.debugBypass=bypass;
+  // Simulate 35 completed grow days, then display the beginning of day 36.
+  for(let d=1;d<targetDay;d++){
+    gameState.plant.day=d;
+    if(kind==='good'){
+      gameState.care.water=.66;gameState.care.nutrients=.68;
+      const base=currentNeedSnapshot(d);
+      base.levels.light=.92;base.levels.climate=.82;base.scores={water:1,light:1,nutrients:1,climate:1};base.fulfillment=1;
+      gameState.history[String(d)]={...base,stress:0,vigor:1,growthPotential:1,createdAt:Date.now()};
+      gameState.plant.stress=0;gameState.plant.growthPotential=1;
+    }else{
+      const bad=d>=12&&d<=20;
+      gameState.care.water=bad?.28:.66;gameState.care.nutrients=bad?.38:.68;
+      const h=simulateCurrentDay();
+      if(bad){h.vigor=Math.min(h.vigor,.58);h.stress=Math.max(h.stress,.62);h.growthPotential=Math.min(h.growthPotential,.93);gameState.history[String(d)]=h;gameState.plant.stress=h.stress;gameState.plant.growthPotential=h.growthPotential;}
+    }
+  }
+  gameState.plant.day=targetDay;
+  gameState.turn.turnsToday=0;gameState.turn.lastTurnAt=0;
+  gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();
+  gameState.care.cooldowns={water:0,feed:0,vent:0};
+  currentDay=targetDay;stage=legacyStageForDay(targetDay);
+
+  // Settings demo presets must always produce a deterministic visible target view.
+  yaw=0;pitch=.16;zoom=1;panX=0;panY=0;
+  interactionLOD=false;plantAutoScale=.8;
+  resetBioPlant();invalidatePlant();worldBgCanvas=null;
+  saveGameState();sync();renderMetaPanels();requestRender();
+  requestAnimationFrame(()=>{invalidatePlant();requestRender();});
+  showGameToast(kind==='good'?'Tag 36 · perfekte Pflege':'Tag 36 · Stressphase 12-20');
+}
 function makeCareDeficitScenario(kind){
   const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;
   const targetDay=kind==='nutrient'?49:35;
