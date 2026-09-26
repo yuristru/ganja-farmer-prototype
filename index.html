@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V65 Day 36 Demo Fix</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V66 Grow Room Background Matrix</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -2466,6 +2466,19 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     transform-origin:100% 50%!important;
   }
 }
+</style><style id="v66GrowRoomBackgroundMatrix">
+.mobile-game-ui.baked-growroom-ready .room-light-cone,
+.mobile-game-ui.baked-growroom-ready .room-lamp,
+.mobile-game-ui.baked-growroom-ready .room-vent-rig,
+.mobile-game-ui.baked-growroom-ready .room-light,
+.mobile-game-ui.baked-growroom-ready .room-vent{display:none!important}
+.mobile-game-ui .room-bg-demo-hotspot{
+  position:absolute;z-index:9;appearance:none;border:0;padding:0;margin:0;
+  background:transparent;opacity:0;pointer-events:auto;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.mobile-game-ui .room-bg-demo-light{left:25%;top:7%;width:50%;height:25%}
+.mobile-game-ui .room-bg-demo-vent{right:0;top:7%;width:30%;height:38%}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3141,7 +3154,7 @@ function buyUpgradeLevel(categoryId,targetLevel){
   const cat=UPGRADE_CATEGORIES[categoryId];if(!cat)return;const current=upgradeLevel(gameState,categoryId);targetLevel=Number(targetLevel);
   if(targetLevel!==current+1||targetLevel>10){showGameToast(targetLevel<=current?'Stufe bereits freigeschaltet':'Erst die vorherige Stufe freischalten');return;}
   const price=upgradePrice(categoryId,targetLevel);if(gameState.coins<price){showGameToast('Nicht genug Coins · '+price+' benötigt');return;}
-  gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;saveGameState();updateGameHUD();syncEquipment3D();syncEquipment2D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
+  gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;ensureGrowRoomBackgroundImage();saveGameState();updateGameHUD();syncEquipment3D();syncEquipment2D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
 }
 function chooseGenetics(id){
   if(!GENETICS[id])return;
@@ -3241,6 +3254,47 @@ function openSeedPack(type){
   reveal.querySelector('.collection-pack-close')?.addEventListener('click',()=>{reveal.remove();renderMetaPanels();});
 }
 
+const GROWROOM_BACKGROUND_BASE='assets/growroom/backgrounds/';
+const GROWROOM_VISUAL_TIERS=5;
+const growRoomBackgroundImages=new Map();
+function growRoomVisualTier(level){
+  const n=Math.max(1,Math.min(10,Number(level)||1));
+  return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Math.ceil(n/2)));
+}
+function growRoomBackgroundLevels(){
+  const lv=gameState?.progression?.levels||{};
+  return {
+    light:growRoomVisualTier(roomDemoLevel('light',lv.light||1)),
+    vent:growRoomVisualTier(roomDemoLevel('vent',lv.vent||1))
+  };
+}
+function growRoomBackgroundPath(){
+  const t=growRoomBackgroundLevels();
+  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.png?v=66';
+}
+function ensureGrowRoomBackgroundImage(){
+  const src=growRoomBackgroundPath();
+  let rec=growRoomBackgroundImages.get(src);
+  if(rec)return rec;
+  const img=new Image();
+  rec={img,loaded:false,failed:false};
+  growRoomBackgroundImages.set(src,rec);
+  img.onload=()=>{rec.loaded=true;worldBgCanvas=null;syncEquipment2D();requestRender();};
+  img.onerror=()=>{rec.failed=true;worldBgCanvas=null;syncEquipment2D();requestRender();};
+  img.src=src;
+  return rec;
+}
+function drawImageCover(g,img,x,y,w,h){
+  const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;
+  if(!iw||!ih)return;
+  const scale=Math.max(w/iw,h/ih),sw=w/scale,sh=h/scale,sx=(iw-sw)/2,sy=(ih-sh)/2;
+  g.drawImage(img,sx,sy,sw,sh,x,y,w,h);
+}
+function hasGrowRoomBackground(){
+  const rec=ensureGrowRoomBackgroundImage();
+  return !!rec?.loaded;
+}
+
 const LIGHT_HANGING_SOURCE_LEVEL={1:1,2:5,3:5,4:6,5:6,6:7,7:8,8:9,9:10,10:10};
 const VENT_INLINE_SOURCE_LEVEL={1:1,2:6,3:6,4:7,5:7,6:8,7:8,8:9,9:9,10:10};
 function equipmentSourceLevel(id,level){
@@ -3263,12 +3317,14 @@ function roomDemoLevel(id,purchased){
   return demoRoomEquipment[id]??purchased;
 }
 function cycleRoomDemoEquipment(id,purchased){
-  const current=roomDemoLevel(id,purchased);
-  const next=current>=10?2:Math.max(2,current+1);
-  demoRoomEquipment[id]=next;
+  const currentTier=growRoomVisualTier(roomDemoLevel(id,purchased));
+  const nextTier=currentTier>=5?1:currentTier+1;
+  demoRoomEquipment[id]=nextTier*2-1;
+  worldBgCanvas=null;
+  ensureGrowRoomBackgroundImage();
   syncEquipment2D();
-  const label=UPGRADE_CATEGORIES[id]?.names?.[next-1]||('Stufe '+next);
-  showGameToast((id==='light'?'Licht':'Lüftung')+' Demo · L'+next+' · '+label);
+  requestRender();
+  showGameToast((id==='light'?'Licht':'Lüftung')+' Demo · Variante '+nextTier+'/5');
 }
 function roomEquipmentStrip(id){
   if(roomEquipmentStripCache.has(id))return roomEquipmentStripCache.get(id);
@@ -3380,6 +3436,21 @@ function renderRoomEquipmentCanvases(root=document){
 function syncEquipment2D(){
   const layer=document.getElementById('equipment2dLayer'),ui=document.getElementById('mobileGameUI');
   if(!layer||!gameState)return false;
+  ensureGrowRoomBackgroundImage();
+  if(hasGrowRoomBackground()){
+    layer.innerHTML=
+      '<button type="button" class="room-bg-demo-hotspot room-bg-demo-light" data-bg-demo-equipment="light" aria-label="Demo Lichtvariante wechseln"></button>'+
+      '<button type="button" class="room-bg-demo-hotspot room-bg-demo-vent" data-bg-demo-equipment="vent" aria-label="Demo Lüftungsvariante wechseln"></button>';
+    layer.querySelectorAll('[data-bg-demo-equipment]').forEach(el=>el.addEventListener('click',e=>{
+      e.preventDefault();e.stopPropagation();
+      const id=el.dataset.bgDemoEquipment,lv=gameState.progression?.levels||{};
+      cycleRoomDemoEquipment(id,Number(lv[id]||1));
+    }));
+    ui?.classList.add('baked-growroom-ready');
+    ui?.classList.remove('hybrid-equipment-ready');
+    return true;
+  }
+  ui?.classList.remove('baked-growroom-ready');
   const lv=gameState.progression?.levels||{};
   const purchasedLight=Math.max(1,Number(lv.light||1)),purchasedVent=Math.max(1,Number(lv.vent||1));
   const lightLevel=roomDemoLevel('light',purchasedLight),ventLevel=roomDemoLevel('vent',purchasedVent);
@@ -4807,7 +4878,7 @@ function drawWorldLeaf(g,x,y,s,a,alpha=.32){
   }
   g.restore();
 }
-function buildWorldBackground(){
+function buildWorldBackgroundFallback(){
   if(!W||!H)return;
   const c=document.createElement('canvas');c.width=Math.max(1,Math.round(W*DPR));c.height=Math.max(1,Math.round(H*DPR));
   const g=c.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
@@ -4841,6 +4912,24 @@ function buildWorldBackground(){
   // vignette for UI readability
   let vig=g.createRadialGradient(W*.5,H*.43,H*.18,W*.5,H*.45,H*.72);vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(.65,'rgba(0,0,0,.05)');vig.addColorStop(1,'rgba(0,0,0,.48)');g.fillStyle=vig;g.fillRect(0,0,W,H);
   worldBgCanvas=c;worldBgW=W;worldBgH=H;
+}
+function buildWorldBackground(){
+  if(!W||!H)return;
+  const rec=ensureGrowRoomBackgroundImage();
+  if(rec?.loaded&&rec.img?.naturalWidth){
+    const c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(W*DPR));c.height=Math.max(1,Math.round(H*DPR));
+    const g=c.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
+    drawImageCover(g,rec.img,0,0,W,H);
+    const vig=g.createRadialGradient(W*.5,H*.46,H*.20,W*.5,H*.46,H*.76);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(.72,'rgba(0,0,0,.015)');
+    vig.addColorStop(1,'rgba(0,0,0,.20)');
+    g.fillStyle=vig;g.fillRect(0,0,W,H);
+    worldBgCanvas=c;worldBgW=W;worldBgH=H;
+    return;
+  }
+  buildWorldBackgroundFallback();
 }
 function drawWorldBackground(){if(!worldBgCanvas||worldBgW!==W||worldBgH!==H)buildWorldBackground();if(worldBgCanvas)ctx.drawImage(worldBgCanvas,0,0,W,H)}
 
