@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V63 Hanging Lights Only</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V64 Inline Ventilation Only</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1240,7 +1240,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform-origin:center;
 }
 .mobile-game-ui .eq2d-sprite[data-eq2d="light"]{background-image:url("assets/equipment/light.png?v=63")}
-.mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-image:url("assets/equipment/vent.png?v=62")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="vent"]{background-image:url("assets/equipment/vent.png?v=64")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-image:url("assets/equipment/irrigation.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-image:url("assets/equipment/nutrients.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="sensor"]{background-image:url("assets/equipment/sensor.png?v=57")}
@@ -2386,6 +2386,86 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 /* Disable all old clip-specific lamp rules from previous versions. */
 .mobile-game-ui .lamp-mode-clip{display:none!important}
 .mobile-game-ui .room-lamp.lamp-mode-clip{transform:none!important}
+</style><style id="v64InlineVentilationOnly">
+/* One coherent ventilation family: inline fan + ducting, mounted to the right wall. */
+.mobile-game-ui .vent-mode-wall,
+.mobile-game-ui .vent-mode-clip,
+.mobile-game-ui .vent-mode-shelf,
+.mobile-game-ui .vent-mode-duct{display:none!important}
+
+.mobile-game-ui .room-vent-rig.vent-mode-inline{
+  position:absolute!important;
+  z-index:4!important;
+  right:var(--vent-right,10px)!important;
+  top:calc(var(--safe-top) + var(--vent-top,214px))!important;
+  width:var(--vent-size,84px)!important;
+  height:var(--vent-size,84px)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.mobile-game-ui .room-vent-rig.vent-mode-inline:before{display:none!important}
+
+.mobile-game-ui .vent-wall-flange{
+  position:absolute!important;
+  z-index:-4!important;
+  right:-8px!important;
+  top:28%!important;
+  width:18px!important;
+  height:44%!important;
+  border-radius:4px!important;
+  background:linear-gradient(90deg,#1a2528,#59676a 45%,#182225)!important;
+  border:1px solid rgba(125,145,148,.60)!important;
+  box-shadow:0 4px 7px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+
+.mobile-game-ui .vent-pipe{
+  display:block!important;
+  position:absolute!important;
+  z-index:-3!important;
+  top:36%!important;
+  height:28%!important;
+  background:
+    repeating-linear-gradient(90deg,#172225 0 8px,#435155 8px 11px,#111a1d 11px 17px)!important;
+  border-top:1px solid rgba(125,145,148,.34)!important;
+  border-bottom:1px solid rgba(0,0,0,.50)!important;
+  box-shadow:0 4px 7px rgba(0,0,0,.34),inset 0 2px 3px rgba(255,255,255,.04)!important;
+}
+.mobile-game-ui .vent-pipe-out{
+  right:-3px!important;
+  width:37%!important;
+}
+.mobile-game-ui .vent-pipe-in{
+  left:-22%!important;
+  width:40%!important;
+  opacity:.88!important;
+}
+
+.mobile-game-ui .room-vent-canvas{
+  position:absolute!important;
+  z-index:2!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  transform:scale(var(--vent-art-scale,1))!important;
+  transform-origin:center!important;
+  filter:drop-shadow(0 5px 8px rgba(0,0,0,.52))!important;
+}
+
+/* Source families used by the shop and room are now inline-only too. */
+.mobile-game-ui [data-eq2d="vent"]{
+  transform:scale(var(--eq-scale,1))!important;
+}
+
+@media(max-width:370px){
+  .mobile-game-ui .room-vent-rig.vent-mode-inline{
+    right:4px!important;
+    transform:scale(.94)!important;
+    transform-origin:100% 50%!important;
+  }
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><canvas class="equipment3d-layer" id="equipment3dCanvas" aria-hidden="true"></canvas><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -2713,7 +2793,7 @@ const UPGRADE_CATEGORIES={
   pot:{id:'pot',name:'Topf',icon:'◉',need:'Wasser',accent:'water',baseCost:55,names:['Startertopf 7 L','Fabric Pot 9 L','Air Pot 11 L','Air Pot 13 L','Root Pot 15 L','Root Pot 17 L','Pro Air 19 L','Pro Air 21 L','Smart Pot 23 L','Smart Pot 25 L']},
   substrate:{id:'substrate',name:'Substrat',icon:'▰',need:'Wasser + Dünger',accent:'dual',baseCost:60,names:['Basiserde','Erde + Perlit','Light Mix','Bio Mix','Living Mix I','Living Mix II','Living Mix III','Living Soil','Living Soil Pro','Living Soil Ultra']},
   light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Sonnenlicht','Hängelampe 40 W','Hängelampe 80 W','Grow Panel XS','Grow Panel S','Grow Panel M','Grow Panel L','Full Spectrum','Smart Spectrum','Sun Engine X']},
-  vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Mini Fan','Clip Fan','Circulation Fan','Dual Fan','Inline Fan','Airflow Pro','Climate Fan','Smart Air','Climate Core']},
+  vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Rohrlüfter XS','Rohrlüfter S','Rohrlüfter M','Rohrlüfter L','Airflow S','Airflow M','Airflow L','Silent Air Pro','Climate Core']},
   irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Feuchtigkeitsstab','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
   nutrients:{id:'nutrients',name:'Nährstoffe',icon:'◆',need:'Dünger',accent:'feed',baseCost:70,names:['Basisdünger','Grow Feed','Grow + Bloom','Mineral Duo','Bio Feed','Precision Feed','Dose Kit','Smart Dose','Nutrient Lab','Nutrient Core']},
   sensor:{id:'sensor',name:'Sensorik',icon:'⌬',need:'Analyse',accent:'sensor',baseCost:50,names:['Augenmaß','Feuchteanzeige','Thermometer','Hygrometer','Soil Meter','Multi Sensor','Grow Monitor','Grow Hub','Grow Hub Pro','Grow AI Core']}
@@ -3130,9 +3210,12 @@ function openSeedPack(type){
 }
 
 const LIGHT_HANGING_SOURCE_LEVEL={1:1,2:5,3:5,4:6,5:6,6:7,7:8,8:9,9:10,10:10};
+const VENT_INLINE_SOURCE_LEVEL={1:1,2:6,3:6,4:7,5:7,6:8,7:8,8:9,9:9,10:10};
 function equipmentSourceLevel(id,level){
   const n=Math.max(1,Math.min(10,Number(level)||1));
-  return id==='light'?(LIGHT_HANGING_SOURCE_LEVEL[n]||5):n;
+  if(id==='light')return LIGHT_HANGING_SOURCE_LEVEL[n]||5;
+  if(id==='vent')return VENT_INLINE_SOURCE_LEVEL[n]||6;
+  return n;
 }
 function equipmentAssetStyle(id,level){
   const n=equipmentSourceLevel(id,level);
@@ -3239,7 +3322,7 @@ function roomEquipmentStrip(id){
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src='assets/equipment/'+id+'.png?v=63';
+    img.src='assets/equipment/'+id+'.png?v=64';
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
@@ -3283,16 +3366,18 @@ function syncEquipment2D(){
     9:{size:178,top:67,x:50,coneTop:151,coneX:50,coneWidth:270,coneAlpha:.206,scale:.98},
     10:{size:190,top:64,x:50,coneTop:150,coneX:50,coneWidth:288,coneAlpha:.220,scale:1.08}
   };
+  // V64: ventilation is one coherent installed inline-duct system.
+  // Logical tiers change fan size/performance, never the physical equipment family.
   const ventScene={
-    2:{size:64,top:232,right:18,mode:'wall'},
-    3:{size:78,top:225,right:12,mode:'clip'},
-    4:{size:84,top:229,right:10,mode:'shelf'},
-    5:{size:88,top:226,right:9,mode:'shelf'},
-    6:{size:72,top:228,right:18,mode:'duct'},
-    7:{size:76,top:226,right:16,mode:'duct'},
-    8:{size:80,top:224,right:14,mode:'duct'},
-    9:{size:84,top:222,right:12,mode:'duct'},
-    10:{size:90,top:220,right:9,mode:'duct'}
+    2:{size:66,top:221,right:14,scale:.82},
+    3:{size:72,top:219,right:12,scale:.92},
+    4:{size:76,top:217,right:11,scale:.88},
+    5:{size:82,top:215,right:10,scale:.98},
+    6:{size:86,top:213,right:9,scale:.94},
+    7:{size:90,top:211,right:8,scale:1.02},
+    8:{size:94,top:209,right:7,scale:.98},
+    9:{size:98,top:207,right:6,scale:1.04},
+    10:{size:104,top:204,right:5,scale:1.08}
   };
   const lc=lampScene[lightLevel]||lampScene[2],vc=ventScene[ventLevel]||ventScene[2];
 
@@ -3303,7 +3388,7 @@ function syncEquipment2D(){
     ? '<button type="button" class="room-lamp room-demo-cycle lamp-mode-panel" data-demo-equipment="light" data-light-level="'+lightLevel+'" style="--lamp-size:'+lc.size+'px;--lamp-top:'+lc.top+'px;--lamp-x:'+lc.x+'%;--lamp-art-scale:'+lc.scale+'" aria-label="Demo Lichtvariante wechseln: '+UPGRADE_CATEGORIES.light.names[lightLevel-1]+'" title="Tippen: nächste Lichtvariante"><canvas class="room-equipment-canvas room-light-canvas" data-eq-strip="light" data-eq-level="'+lightLevel+'"></canvas></button>'
     : '';
   const vent=hasVent
-    ? '<button type="button" class="room-vent-rig room-demo-cycle vent-mode-'+vc.mode+'" data-demo-equipment="vent" data-vent-level="'+ventLevel+'" style="--vent-size:'+vc.size+'px;--vent-top:'+vc.top+'px;--vent-right:'+vc.right+'px" aria-label="Demo Lüftungsvariante wechseln: '+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'" title="Tippen: nächste Lüftungsvariante"><i class="vent-duct"></i><i class="vent-backplate"></i><i class="vent-shelf"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></button>'
+    ? '<button type="button" class="room-vent-rig room-demo-cycle vent-mode-inline" data-demo-equipment="vent" data-vent-level="'+ventLevel+'" style="--vent-size:'+vc.size+'px;--vent-top:'+vc.top+'px;--vent-right:'+vc.right+'px;--vent-art-scale:'+vc.scale+'" aria-label="Demo Lüftungsvariante wechseln: '+UPGRADE_CATEGORIES.vent.names[ventLevel-1]+'" title="Tippen: nächste Lüftungsvariante"><i class="vent-wall-flange"></i><i class="vent-pipe vent-pipe-out"></i><i class="vent-pipe vent-pipe-in"></i><canvas class="room-equipment-canvas room-vent-canvas" data-eq-strip="vent" data-eq-level="'+ventLevel+'"></canvas></button>'
     : '';
 
   layer.innerHTML=[lightCone,lamp,vent].join('');
