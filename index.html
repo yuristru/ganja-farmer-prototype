@@ -3824,7 +3824,9 @@ function commitHarvestResult(){
   gameState.seedVault.inventory.unshift(harvestSeed);gameState.seedVault.inventory=gameState.seedVault.inventory.slice(0,60);lastSeedDropId=harvestSeed.id;
   gameState.coins+=r.reward;gameState.plant.harvested=true;
   if(gameState.genetics.currentSeed){gameState.genetics.currentSeed.revealed=true;gameState.seedVault.discovered[gameState.genetics.currentSeed.phenotype]=true;}
-  r.harvestSeed=harvestSeed;r.committed=true;saveGameState();renderMetaPanels();updateGameHUD();
+  r.harvestSeed=harvestSeed;r.committed=true;
+  interactionMode='orbit';activeBendAxis=null;drag=false;hitNodes=[];hitAxes=[];hitLeaves=[];
+  saveGameState();renderMetaPanels();updateGameHUD();requestRender();
 }
 function harvestCurrentGrow(){openHarvestResults();}
 function openSeedVault(){
@@ -5637,14 +5639,19 @@ function drawWorldBackground(){if(!worldBgCanvas||worldBgW!==W||worldBgH!==H)bui
 function render(){
   updateViewTrig();
   ctx.clearRect(0,0,W,H);drawWorldBackground();queue=[];
-  const P=getPlantCached(),careState=recentCareState(),plantVisual=livePlantVisualState(careState),flowerQuality=P.buds.length?liveFlowerQuality():null;
+  const P=getPlantCached(),harvested=!!gameState?.plant?.harvested;
+  const careState=harvested?null:recentCareState(),plantVisual=harvested?{stress:0,drought:0,overwater:0,deficiency:0,burn:0,lowLight:0,climate:0,severity:0}:livePlantVisualState(careState);
+  const flowerQuality=!harvested&&P.buds.length?liveFlowerQuality():null;
   updatePlantViewport(P);
   queuePot3D();
   P.axes.forEach(ax=>queueStem(ax,plantVisual));
-  P.leaves.forEach(leaf=>drawLeaf(leaf,{careState}));
-  P.buds.forEach(bud=>drawBud(bud,{quality:flowerQuality}));
+  if(!harvested){
+    P.leaves.forEach(leaf=>drawLeaf(leaf,{careState}));
+    P.buds.forEach(bud=>drawBud(bud,{quality:flowerQuality}));
+  }
   queue.sort((a,b)=>a.z-b.z).forEach(o=>o.draw());
-  drawTrainingOverlay(P);
+  if(harvested){hitNodes=[];hitAxes=[];hitLeaves=[];}
+  else drawTrainingOverlay(P);
 }
 canvas.addEventListener('pointerdown',e=>{
   const pos=getPointerPos(e);activePointers.set(e.pointerId,pos);
