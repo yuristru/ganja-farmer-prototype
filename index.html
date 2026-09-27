@@ -4764,9 +4764,9 @@ const SEEDLING_INTRO_MAX_DAY=3;
 function isSeedlingIntroStage(day=currentDay){return !gameState?.plant?.harvested&&Number(day)>=1&&Number(day)<=SEEDLING_INTRO_MAX_DAY;}
 function seedlingTrainingUnlocked(day=currentDay){return Number(day)>SEEDLING_INTRO_MAX_DAY;}
 function seedlingIntroStage(day=currentDay){return clamp(Math.round(Number(day)||1),1,SEEDLING_INTRO_MAX_DAY);}
-function seedlingIntroVariant(){
-  const seed=currentPlantSeed(),R=rng(seedHash(seed,0x5eed11)),gp=activeGeneticProfile(),family=activeSeed()?.genetics||gameState?.genetics?.active||'dream';
-  const familyHue=family==='comet'?103:family==='violet'?121:112;
+function seedlingVariantForSeed(seed,family=activeSeed()?.genetics||gameState?.genetics?.active||'dream',gp=activeGeneticProfile()){
+  seed=Number(seed)>>>0;
+  const R=rng(seedHash(seed,0x5eed11)),familyHue=family==='comet'?103:family==='violet'?121:112;
   return{
     seed,
     family,
@@ -4782,6 +4782,7 @@ function seedlingIntroVariant(){
     shell:R()>.34
   };
 }
+function seedlingIntroVariant(){return seedlingVariantForSeed(currentPlantSeed());}
 function seedlingIntroDescriptor(day=currentDay){
   const stage=seedlingIntroStage(day),v=seedlingIntroVariant();
   const baseHeight=[0,37,50,64][stage]*v.heightScale;
@@ -4910,6 +4911,7 @@ tools.querySelectorAll('button').forEach(btn=>btn.onclick=()=>setTool(btn.datase
 window.__GFSEEDLING={
   snapshot:()=>seedlingIntroDescriptor(currentDay),
   variant:()=>({...seedlingIntroVariant()}),
+  variantForSeed:seed=>({...seedlingVariantForSeed(Number(seed)>>>0)}),
   trainingUnlocked:()=>seedlingTrainingUnlocked(currentDay)
 };
 window.__GFTRAIN={
@@ -5380,12 +5382,22 @@ function buildPlant(){
     const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.62:1;
     const scalePoint=p=>add(origin,mul(sub(p,origin),bridgeScale));
     const bridgePts=G.pts.map(scalePoint);
-    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness});
-    const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.62:.50;
-    P.leaves.push({p:add(top,v(-8,-5,0)),dir:norm(v(-1,.20,.10)),size:cotSize,age:1,cot:true,seed:11});
-    P.leaves.push({p:add(top,v(8,-5,0)),dir:norm(v(1,.20,-.08)),size:cotSize,age:1,cot:true,seed:12});
-    addFan(top,norm(v(.54,.82,.18)),currentDay===4?.42:.30,.025,13,'tip');
-    if(currentDay===4)addFan(top,norm(v(-.56,.80,-.16)),.39,.029,14,'tip');
+    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.72:1)});
+    const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.58:.50;
+    P.leaves.push({p:add(top,v(-7,-7,0)),dir:norm(v(-1,.18,.10)),size:cotSize,age:1,cot:true,seed:11});
+    P.leaves.push({p:add(top,v(7,-7,0)),dir:norm(v(1,.18,-.08)),size:cotSize,age:1,cot:true,seed:12});
+    if(currentDay===4){
+      const trueLeaves=[
+        {id:'day4:true:L',dir:norm(v(-.84,.30,.42)),seed:13,yawJitter:-.08},
+        {id:'day4:true:R',dir:norm(v(.84,.30,-.42)),seed:14,yawJitter:.08}
+      ];
+      for(const leaf of trueLeaves){
+        if((gameState.training?.defoliations||[]).includes(leaf.id))continue;
+        P.leaves.push({id:leaf.id,nodeId:G.visibleNodes[0]?.id||null,p:add(top,v(0,1,0)),dir:leaf.dir,size:.36*gp.leafScale,age:.24,birth:.025,seed:leaf.seed,kind:'tip',scaleJitter:1,widthScale:gp.leafWidth*1.04,petioleScale:.86,yawJitter:leaf.yawJitter,pitchJitter:0,rollJitter:0,droopScale:.96});
+      }
+    }else{
+      addFan(top,norm(v(.05,.92,.14)),.30,.025,13,'tip');
+    }
     if(currentDay===4){
       const visibleCount=G.visibleNodes.length;
       for(const node of G.visibleNodes){
