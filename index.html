@@ -3166,7 +3166,7 @@ let plantCache=null,plantCacheDay=-1;
 let renderPending=false,interactionLOD=false,wheelLODTimer=0;
 const plantEdits={prunes:new Map(),bends:new Map()};
 let interactionMode='orbit',pruneTarget='leaf',activeBendAxis=null,bendStartY=0,bendStartValue=0;
-let pointerGesture=null,bendGestureCancelled=false;
+let pointerGesture=null,bendGestureCancelled=false,bendStartHadCurrentEvent=false;
 const CAMERA_DRAG_THRESHOLD=7;
 let hitNodes=[],hitAxes=[],hitLeaves=[];
 
@@ -6309,8 +6309,16 @@ function startCameraDrag(pos){
 }
 function cancelActiveBendForCamera(){
   if(activeBendAxis){
-    setBendValue(activeBendAxis,bendStartValue);
-    invalidatePlant();
+    const list=plantEdits.bends.get(activeBendAxis)||[];
+    const sameIndex=list.findIndex(e=>e.day===currentDay);
+    if(bendStartHadCurrentEvent){
+      if(sameIndex>=0)list[sameIndex].amount=bendStartValue;
+    }else if(sameIndex>=0){
+      list.splice(sameIndex,1);
+    }
+    if(list.length)plantEdits.bends.set(activeBendAxis,list);
+    else plantEdits.bends.delete(activeBendAxis);
+    persistTrainingToGame();saveGameState();invalidatePlant();
   }
   bendGestureCancelled=true;
   activeBendAxis=null;
@@ -6345,8 +6353,9 @@ canvas.addEventListener('pointerdown',e=>{
     const ax=findAxisHit(pos.x,pos.y);
     if(ax){
       pointerGesture={kind:'bend',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
-      activeBendAxis=ax.id;bendStartY=pos.y;bendStartValue=bendValue(ax.id);drag=true;
-      beginInteraction();
+      activeBendAxis=ax.id;bendStartY=pos.y;bendStartValue=bendValue(ax.id);
+      bendStartHadCurrentEvent=(plantEdits.bends.get(ax.id)||[]).some(ev=>ev.day===currentDay);
+      drag=true;beginInteraction();
     }else{
       pointerGesture={kind:'camera',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
       startCameraDrag(pos);
@@ -6421,7 +6430,7 @@ function endPointer(e){
   }
 
   if(activePointers.size===0){
-    drag=false;activeBendAxis=null;bendGestureCancelled=false;pointerGesture=null;
+    drag=false;activeBendAxis=null;bendGestureCancelled=false;bendStartHadCurrentEvent=false;pointerGesture=null;
     endInteraction();
   }else if(wasPinch&&activePointers.size===1){
     // Do not let the remaining finger unexpectedly cut/bend after a pinch.
