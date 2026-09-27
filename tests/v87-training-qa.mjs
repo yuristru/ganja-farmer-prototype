@@ -22,8 +22,15 @@ const server=http.createServer((req,res)=>{
 await new Promise(resolve=>server.listen(4173,'127.0.0.1',resolve));
 
 const browser=await chromium.launch({headless:true});
-const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:1});
 const url='http://127.0.0.1:4173/';
+const storageKey='gf_mobile_game_v1';
+
+const bootstrap=await browser.newContext({viewport:{width:393,height:852},deviceScaleFactor:1});
+const bootstrapPage=await bootstrap.newPage();
+await bootstrapPage.goto(url,{waitUntil:'networkidle'});
+await bootstrapPage.waitForFunction(key=>localStorage.getItem(key),storageKey);
+const defaultState=await bootstrapPage.evaluate(key=>JSON.parse(localStorage.getItem(key)),storageKey);
+await bootstrap.close();
 
 const variants={
   A:{
@@ -68,64 +75,72 @@ function phaseStats(day){
   return Object.fromEntries(Object.entries(counts).map(([k,n])=>[k,{sum:n,days:n}]));
 }
 
-async function seedState(variant,day){
-  await page.goto(url,{waitUntil:'networkidle'});
-  await page.waitForFunction(()=>localStorage.getItem('gf_mobile_game_v1'));
-  await page.evaluate(({variant,day,phase})=>{
-    const key='gf_mobile_game_v1';
-    const st=JSON.parse(localStorage.getItem(key));
-    st.plant.day=day;
-    st.plant.stress=0;
-    st.plant.growthPotential=1;
-    st.plant.harvested=false;
-    st.plant.conditionMemory={stressDebt:0,recoveryMomentum:.35,lastEvaluatedDay:day};
-    st.care.water=.68;
-    st.care.nutrients=.68;
-    st.care.ventilation=.78;
-    st.care.cooldowns={water:0,feed:0,vent:0};
-    st.turn={day,turnsToday:0,lastTurnAt:0,lastAction:null};
-    st.cycle={dateKey:'2099-01-01',advancesToday:0,lastAdvanceAt:0};
-    st.settings={...(st.settings||{}),debugBypass:true};
-    st.training=structuredClone(variant.training);
-    st.history={};
-    for(let d=1;d<=day;d++){
-      st.history[String(d)]={
-        day:d,
-        fulfillment:1,
-        stress:0,
-        vigor:1,
-        growthPotential:1,
-        scores:{water:1,light:1,nutrients:1,climate:1},
-        levels:{water:.68,light:.92,nutrients:.68,ventilation:.78,climate:.86},
-        damage:{waterDef:0,nutrientDef:0,waterExcess:0,nutrientExcess:0,lightDef:0,climateDef:0,acute:0},
-        conditionMemory:{stressDebt:0,recoveryMomentum:.35,lastEvaluatedDay:d},
-        createdAt:0
-      };
-    }
-    st.biography={
-      perfectDays:day,
-      stressDays:0,
-      severeDays:0,
-      longestStressStreak:0,
-      currentStressStreak:0,
-      phase,
-      events:[],
-      defoliationEvents:structuredClone(variant.defEvents)
+function buildState(variant,day){
+  const st=structuredClone(defaultState);
+  st.plant.day=day;
+  st.plant.stress=0;
+  st.plant.growthPotential=1;
+  st.plant.harvested=false;
+  st.plant.conditionMemory={stressDebt:0,recoveryMomentum:.35,lastEvaluatedDay:day};
+  st.care.water=.68;
+  st.care.nutrients=.68;
+  st.care.ventilation=.78;
+  st.care.cooldowns={water:0,feed:0,vent:0};
+  st.turn={day,turnsToday:0,lastTurnAt:0,lastAction:null};
+  st.cycle={dateKey:'2099-01-01',advancesToday:0,lastAdvanceAt:0};
+  st.settings={...(st.settings||{}),debugBypass:true};
+  st.training=structuredClone(variant.training);
+  st.history={};
+  for(let d=1;d<=day;d++){
+    st.history[String(d)]={
+      day:d,
+      fulfillment:1,
+      stress:0,
+      vigor:1,
+      growthPotential:1,
+      scores:{water:1,light:1,nutrients:1,climate:1},
+      levels:{water:.68,light:.92,nutrients:.68,ventilation:.78,climate:.86},
+      damage:{waterDef:0,nutrientDef:0,waterExcess:0,nutrientExcess:0,lightDef:0,climateDef:0,acute:0},
+      conditionMemory:{stressDebt:0,recoveryMomentum:.35,lastEvaluatedDay:d},
+      createdAt:0
     };
-    localStorage.setItem(key,JSON.stringify(st));
-  },{variant,day,phase:phaseStats(day)});
-  await page.reload({waitUntil:'networkidle'});
+  }
+  st.biography={
+    perfectDays:day,
+    stressDays:0,
+    severeDays:0,
+    longestStressStreak:0,
+    currentStressStreak:0,
+    phase:phaseStats(day),
+    events:[],
+    defoliationEvents:structuredClone(variant.defEvents)
+  };
+  return st;
+}
+
+async function openCase(variant,day){
+  const state=buildState(variant,day);
+  const context=await browser.newContext({viewport:{width:393,height:852},deviceScaleFactor:1});
+  await context.addInitScript(({key,state})=>{
+    localStorage.setItem(key,JSON.stringify(state));
+  },{key:storageKey,state});
+  const page=await context.newPage();
+  const pageErrors=[];
+  page.on('pageerror',e=>pageErrors.push(String(e)));
+  await page.goto(url,{waitUntil:'networkidle'});
   await page.waitForFunction(()=>window.__GFTRAIN && window.__GFTRAIN.getBiology);
   await page.evaluate(day=>window.__GFTRAIN.setDay(day),day);
   await page.waitForTimeout(550);
+  return{context,page,pageErrors};
 }
 
-async function measureArchitecture(){
+async function measureArchitecture(page){
   await page.click('[data-mobile-tool="bend"]');
-  await page.waitForTimeout(120);
+  await page.waitForTimeout(140);
   const raw=await page.evaluate(()=>({
     hits:window.__GFTRAIN.getHits(),
-    biology:window.__GFTRAIN.getBiology()
+    biology:window.__GFTRAIN.getBiology(),
+    state:window.__GFTRAIN.getState()
   }));
   const pts=raw.hits.axes.flatMap(a=>a.screen||[]);
   const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
@@ -144,20 +159,24 @@ async function measureArchitecture(){
     growingBuds:growing,
     activatedBuds:activated,
     generations,
+    storedPrunes:raw.state.prunes.length,
+    storedBendAxes:raw.state.bends.length,
     bounds:Object.fromEntries(Object.entries(bounds).map(([k,v])=>[k,Math.round(v*10)/10]))
   };
 }
 
-async function readTrainingBadges(){
+async function readTrainingBadges(page){
   await page.click('[data-ui-tab="genetics"]');
-  await page.waitForTimeout(80);
+  await page.waitForTimeout(100);
   return await page.locator('.training-architecture-v87 span').allTextContents();
 }
 
-async function readHarvest(){
+async function readHarvest(page){
   await page.click('[data-ui-tab="care"]');
+  await page.waitForTimeout(60);
   await page.click('#harvestReadyBox');
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(220);
+  const total=Number((await page.locator('#harvestTotalScore').innerText()).trim());
   const metrics={};
   const rows=page.locator('#harvestMetrics > div');
   const n=await rows.count();
@@ -168,7 +187,8 @@ async function readHarvest(){
     metrics[label]=value;
   }
   return {
-    total:Number((await page.locator('#harvestTotalScore').innerText()).trim()),
+    overlayOpen:await page.locator('#harvestResults').evaluate(el=>el.classList.contains('open')),
+    total,
     grams:Number((await page.locator('#jarAmount').innerText()).replace(/[^0-9.]/g,'')),
     rating:(await page.locator('#harvestFinalRating').innerText()).trim(),
     reward:Number((await page.locator('#harvestReward').innerText()).replace(/[^0-9.]/g,'')),
@@ -178,18 +198,19 @@ async function readHarvest(){
 }
 
 const days=[25,40,60,84];
-const results={meta:{viewport:'393x852',seed:'Garden Dream #48291',care:'perfect deterministic',days},variants:{}};
+const results={meta:{viewport:'393x852',seed:'Garden Dream #48291',care:'perfect deterministic',days,note:'Training state injected before app boot to isolate architecture and scoring.'},variants:{}};
 
 for(const [id,variant] of Object.entries(variants)){
   results.variants[id]={label:variant.label,days:{}};
   for(const day of days){
-    await seedState(variant,day);
-    const architecture=await measureArchitecture();
-    const badges=await readTrainingBadges();
+    const{context,page,pageErrors}=await openCase(variant,day);
+    const architecture=await measureArchitecture(page);
+    const badges=await readTrainingBadges(page);
     await page.locator('#c').screenshot({path:path.join(outDir,`${id}-day${day}.png`)});
-    const record={architecture,badges};
-    if(day===84)record.harvest=await readHarvest();
+    const record={architecture,badges,pageErrors};
+    if(day===84)record.harvest=await readHarvest(page);
     results.variants[id].days[String(day)]=record;
+    await context.close();
   }
 }
 
