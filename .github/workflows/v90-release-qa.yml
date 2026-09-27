@@ -1,0 +1,32 @@
+name: V90 Release Candidate QA
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'tests/v90-release-qa.mjs'
+      - '.github/workflows/v90-release-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  vertical-slice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run V90 two-grow vertical slice
+        run: node tests/v90-release-qa.mjs
+      - name: Upload QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v90-release-qa
+          path: qa/v90/
+          if-no-files-found: warn
