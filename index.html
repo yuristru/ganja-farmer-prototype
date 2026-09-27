@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V83 Substrate Demo Polish</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V84 Substrate Perspective</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1244,7 +1244,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .eq2d-sprite[data-eq2d="irrigation"]{background-image:url("assets/equipment/irrigation.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="nutrients"]{background-image:url("assets/equipment/nutrients.png?v=57")}
 .mobile-game-ui .eq2d-sprite[data-eq2d="sensor"]{background-image:url("assets/equipment/sensor.png?v=57")}
-.mobile-game-ui .eq2d-sprite[data-eq2d="substrate"]{background-image:url("assets/equipment/substrate-v2.svg?v=83")}
+.mobile-game-ui .eq2d-sprite[data-eq2d="substrate"]{background-image:url("assets/equipment/substrate-v2.svg?v=84")}
 
 /* Shop previews */
 .mobile-game-ui .upgrade-eq-preview.eq2d-sprite{
@@ -2514,10 +2514,10 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform-origin:50% 80%;
 }
 .mobile-game-ui .room-eq-substrate{
-  left:40px;
+  left:38px;
   bottom:calc(var(--safe-bottom) + 200px);
-  width:124px!important;
-  height:88px!important;
+  width:132px!important;
+  height:92px!important;
   z-index:4!important;
   opacity:1!important;
   transform:rotate(-2deg) scaleX(1.07) scaleY(.96);
@@ -2553,7 +2553,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
 }
 @media(max-width:370px){
-  .mobile-game-ui .room-eq-substrate{left:32px;bottom:calc(var(--safe-bottom) + 194px);width:114px!important;height:82px!important}
+  .mobile-game-ui .room-eq-substrate{left:30px;bottom:calc(var(--safe-bottom) + 194px);width:122px!important;height:86px!important}
   .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px!important;height:84px!important}
   .mobile-game-ui .room-eq-sensor{right:-2px;width:70px!important;height:70px!important}
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
@@ -4232,7 +4232,7 @@ function roomEquipmentStrip(id){
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src=id==='substrate'?'assets/equipment/substrate-v2.svg?v=83':'assets/equipment/'+id+'.png?v=64';
+    img.src=id==='substrate'?'assets/equipment/substrate-v2.svg?v=84':'assets/equipment/'+id+'.png?v=64';
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
