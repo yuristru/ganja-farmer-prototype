@@ -40,6 +40,11 @@ results.milestones.fresh={day:fresh.plant.day,coins:fresh.coins,grow:fresh.meta.
 results.assertions.freshStart=fresh.plant.day===1&&fresh.coins===450&&fresh.meta.growNumber===1&&results.milestones.fresh.tech===2;
 results.assertions.carePanelStartsActive=await page.locator('[data-game-panel="care"]').evaluate(el=>el.classList.contains('active'));
 results.assertions.primaryNavVisible=(await page.locator('[data-ui-tab]').count())===4;
+results.assertions.dayControlsVisible=await page.locator('#adminDaySkip').isVisible()&&await page.locator('#adminSkip').isVisible();
+results.assertions.dayControlHitTarget=await page.locator('#adminDaySkip').evaluate(el=>{
+  const r=el.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+  return hit===el||el.contains(hit);
+});
 await screenshot('01-fresh-start.png');
 
 // CI only: use the actual developer control to remove the real-time one-hour wait.
@@ -66,7 +71,7 @@ while((await day())<84){
       const box=await page.locator('#c').boundingBox();
       await page.mouse.click(box.x+target.x,box.y+target.y);
       await page.waitForTimeout(80);
-      const tr=await page.evaluate(()=>window.__GFTRAIN.getTrainingState());
+      const tr=await page.evaluate(()=>window.__GFTRAIN.getState());
       toppingDone=tr.prunes.length>0;
     }
     await page.click('[data-mobile-tool="orbit"]');
@@ -87,7 +92,7 @@ while((await day())<84){
 results.performance.grow1UiLoopMs=Date.now()-loopStart;
 results.ui.careClicks=careClicks;
 results.assertions.reachedHarvestDay=(await day())===84;
-results.assertions.trainingWasUsed=toppingDone&&(await page.evaluate(()=>window.__GFTRAIN.getTrainingState().prunes.length))>=1;
+results.assertions.trainingWasUsed=toppingDone&&(await page.evaluate(()=>window.__GFTRAIN.getState().prunes.length))>=1;
 await screenshot('02-grow1-harvest-ready.png');
 
 // Harvest through the actual overlay.
