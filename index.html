@@ -5373,15 +5373,33 @@ function buildPlant(){
     }
   }
 
-  // Cotyledons are a seedling-only organ, independent from later nodal fan leaves.
+  // Day 4 is the visual bridge from the bespoke 3-day intro into the normal biology model.
+  // Keep it larger than Day 3 and expose the first real node so training/hit targets work normally.
   if(currentDay<=4){
     const main=bioPlant.shoots.get('main'),origin=v(0,-4,0);
-    const G=geometryForShoot(main,origin,v(0,1,0));
-    P.axes.push({id:'main',depth:0,pts:G.pts,width:CFG.stemWidth*gp.stemThickness});
-    const top=G.pts[G.pts.length-1];
-    P.leaves.push({p:add(top,v(-7,-4,0)),dir:norm(v(-1,.22,.08)),size:.50,age:1,cot:true,seed:11});
-    P.leaves.push({p:add(top,v(7,-4,0)),dir:norm(v(1,.22,-.06)),size:.50,age:1,cot:true,seed:12});
-    addFan(top,norm(v(.05,.92,.14)),.30,.025,13,'tip');
+    const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.62:1;
+    const scalePoint=p=>add(origin,mul(sub(p,origin),bridgeScale));
+    const bridgePts=G.pts.map(scalePoint);
+    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness});
+    const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.62:.50;
+    P.leaves.push({p:add(top,v(-8,-5,0)),dir:norm(v(-1,.20,.10)),size:cotSize,age:1,cot:true,seed:11});
+    P.leaves.push({p:add(top,v(8,-5,0)),dir:norm(v(1,.20,-.08)),size:cotSize,age:1,cot:true,seed:12});
+    addFan(top,norm(v(.54,.82,.18)),currentDay===4?.42:.30,.025,13,'tip');
+    if(currentDay===4)addFan(top,norm(v(-.56,.80,-.16)),.39,.029,14,'tip');
+    if(currentDay===4){
+      const visibleCount=G.visibleNodes.length;
+      for(const node of G.visibleNodes){
+        const ng=G.nodeGeom.get(node.id);if(!ng)continue;
+        const p=scalePoint(ng.p),budEvals=evaluateNodeBuds(main,node,prog,G.cut,visibleCount);
+        P.nodes.push({
+          id:node.id,p,axisId:main.id,shootId:main.id,axisNode:node.index,nodeIndex:node.index,
+          birthProg:node.birthProg,age:Math.max(0,prog-node.birthProg),generation:0,positionAlong:node.positionAlong,
+          leafAttachments:node.leafAttachments.map(x=>({...x})),leaves:node.leaves.map(x=>({...x})),
+          budStates:budEvals.map(e=>({id:e.bud.id,side:e.bud.side,state:e.state,suppression:e.suppression,activationProg:Number.isFinite(e.activationProg)?e.activationProg:null,childShootId:e.bud.childShootId,forced:e.forced})),
+          cutAbove:false,cutDay:null
+        });
+      }
+    }
     return P;
   }
 
