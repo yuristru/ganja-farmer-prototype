@@ -3166,6 +3166,8 @@ let plantCache=null,plantCacheDay=-1;
 let renderPending=false,interactionLOD=false,wheelLODTimer=0;
 const plantEdits={prunes:new Map(),bends:new Map()};
 let interactionMode='orbit',pruneTarget='leaf',activeBendAxis=null,bendStartY=0,bendStartValue=0;
+let pointerGesture=null,bendGestureCancelled=false;
+const CAMERA_DRAG_THRESHOLD=7;
 let hitNodes=[],hitAxes=[],hitLeaves=[];
 
 // ---------- GAME STATE V1 ---------------------------------------------------
@@ -6301,55 +6303,148 @@ function render(){
   if(harvested||seedling){hitNodes=[];hitAxes=[];hitLeaves=[];}
   else drawTrainingOverlay(P);
 }
-canvas.addEventListener('pointerdown',e=>{
-  const pos=getPointerPos(e);activePointers.set(e.pointerId,pos);
-  canvas.setPointerCapture(e.pointerId);
-  if(interactionMode==='prune'){
-    if(pruneTarget==='leaf'){const leaf=findLeafHit(pos.x,pos.y);if(leaf)applyDefoliation(leaf);}
-    else {const node=findNodeHit(pos.x,pos.y);if(node)applyPrune(node);}
-    return;
+function startCameraDrag(pos){
+  beginInteraction();
+  drag=true;dragMode='orbit';lastX=pos.x;lastY=pos.y;
+}
+function cancelActiveBendForCamera(){
+  if(activeBendAxis){
+    setBendValue(activeBendAxis,bendStartValue);
+    invalidatePlant();
   }
-  if(interactionMode==='bend'){
-    const ax=findAxisHit(pos.x,pos.y);
-    if(ax){
-      activeBendAxis=ax.id;bendStartY=pos.y;bendStartValue=bendValue(ax.id);drag=true;
+  bendGestureCancelled=true;
+  activeBendAxis=null;
+}
+canvas.addEventListener('pointerdown',e=>{
+  const pos=getPointerPos(e);
+  activePointers.set(e.pointerId,pos);
+  canvas.setPointerCapture(e.pointerId);
+
+  // A second pointer always wins over the current tool: pinch/pan is global.
+  if(activePointers.size===2){
+    cancelActiveBendForCamera();
+    pointerGesture={kind:'pinch'};
+    drag=false;pinchStartDist=0;
+    beginInteraction();updatePinchState();return;
+  }
+
+  bendGestureCancelled=false;
+  if(interactionMode==='prune'){
+    const target=pruneTarget==='leaf'?findLeafHit(pos.x,pos.y):findNodeHit(pos.x,pos.y);
+    if(target){
+      pointerGesture={kind:'prune-tap',pointerId:e.pointerId,startX:pos.x,startY:pos.y,target,targetType:pruneTarget};
+      drag=false;
+    }else{
+      pointerGesture={kind:'camera',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
+      startCameraDrag(pos);
     }
     return;
   }
-  beginInteraction();
-  if(activePointers.size===2){pinchStartDist=0;updatePinchState();return;}
-  drag=true;lastX=pos.x;lastY=pos.y;dragMode='orbit';
+
+  if(interactionMode==='bend'){
+    const ax=findAxisHit(pos.x,pos.y);
+    if(ax){
+      pointerGesture={kind:'bend',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
+      activeBendAxis=ax.id;bendStartY=pos.y;bendStartValue=bendValue(ax.id);drag=true;
+      beginInteraction();
+    }else{
+      pointerGesture={kind:'camera',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
+      startCameraDrag(pos);
+    }
+    return;
+  }
+
+  pointerGesture={kind:'camera',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
+  startCameraDrag(pos);
 });
 canvas.addEventListener('pointermove',e=>{
-  const pos=getPointerPos(e);if(activePointers.has(e.pointerId))activePointers.set(e.pointerId,pos);
-  if(interactionMode==='bend'&&activeBendAxis&&drag){
-    const dy=pos.y-bendStartY;const next=clamp(bendStartValue+dy*.006,0,1);
+  const pos=getPointerPos(e);
+  if(activePointers.has(e.pointerId))activePointers.set(e.pointerId,pos);
+
+  // Pinch/pan works in every tool mode and overrides all one-finger tool gestures.
+  if(activePointers.size>=2){
+    if(pointerGesture?.kind!=='pinch'){
+      cancelActiveBendForCamera();
+      pointerGesture={kind:'pinch'};
+      drag=false;pinchStartDist=0;beginInteraction();
+    }
+    updatePinchState();return;
+  }
+
+  if(pointerGesture?.kind==='prune-tap'&&pointerGesture.pointerId===e.pointerId){
+    const moved=Math.hypot(pos.x-pointerGesture.startX,pos.y-pointerGesture.startY);
+    if(moved>CAMERA_DRAG_THRESHOLD){
+      pointerGesture={kind:'camera',pointerId:e.pointerId,startX:pos.x,startY:pos.y};
+      startCameraDrag(pos);
+    }else return;
+  }
+
+  if(pointerGesture?.kind==='bend'&&activeBendAxis&&drag){
+    const dy=pos.y-bendStartY;
+    const next=clamp(bendStartValue+dy*.006,0,1);
     setBendValue(activeBendAxis,next);invalidatePlant();requestRender();return;
   }
-  if(interactionMode!=='orbit')return;
-  if(activePointers.size===2){updatePinchState();return;}
-  if(!drag)return;
+
+  if(pointerGesture?.kind!=='camera'||!drag)return;
   const dx=pos.x-lastX,dy=pos.y-lastY;
   yaw+=dx*.0105;
   pitch=clamp(pitch+dy*.0105,-1.54,1.54);
   lastX=pos.x;lastY=pos.y;sync();requestRender();
 });
 function endPointer(e){
+  const pos=getPointerPos(e);
+  const gesture=pointerGesture;
+  const wasPinch=gesture?.kind==='pinch'||activePointers.size>1;
   activePointers.delete(e.pointerId);
+
   if(activePointers.size<2)pinchStartDist=0;
-  const finishedBend=activeBendAxis,changed=finishedBend&&Math.abs(bendValue(finishedBend)-bendStartValue)>.018;
-  drag=false;activeBendAxis=null;
-  if(changed){const amount=bendValue(finishedBend),delta=Math.abs(amount-bendStartValue);trainingStress('bend',Math.max(.45,delta*1.4+amount*.35),currentDay);saveGameState();updateGameHUD();const ti=trainingImpactModel(currentDay);showGameToast('Gebogen '+Math.round(amount*100)+'% · '+ti.architecture+' · FREIES TRAINING');}
-  if(interactionMode==='orbit'&&activePointers.size===0)endInteraction();
-  else requestRender();
+
+  if(gesture?.kind==='prune-tap'&&gesture.pointerId===e.pointerId&&!wasPinch){
+    const moved=Math.hypot(pos.x-gesture.startX,pos.y-gesture.startY);
+    if(moved<=CAMERA_DRAG_THRESHOLD){
+      if(gesture.targetType==='leaf')applyDefoliation(gesture.target);
+      else applyPrune(gesture.target);
+    }
+  }
+
+  if(gesture?.kind==='bend'&&activeBendAxis&&!bendGestureCancelled&&!wasPinch){
+    const finishedBend=activeBendAxis;
+    const amount=bendValue(finishedBend);
+    const changed=Math.abs(amount-bendStartValue)>.018;
+    if(changed){
+      const delta=Math.abs(amount-bendStartValue);
+      trainingStress('bend',Math.max(.45,delta*1.4+amount*.35),currentDay);
+      saveGameState();updateGameHUD();
+      const ti=trainingImpactModel(currentDay);
+      showGameToast('Gebogen '+Math.round(amount*100)+'% · '+ti.architecture+' · FREIES TRAINING');
+    }
+  }
+
+  if(activePointers.size===0){
+    drag=false;activeBendAxis=null;bendGestureCancelled=false;pointerGesture=null;
+    endInteraction();
+  }else if(wasPinch&&activePointers.size===1){
+    // Do not let the remaining finger unexpectedly cut/bend after a pinch.
+    const remaining=[...activePointers.entries()][0];
+    pointerGesture={kind:'camera',pointerId:remaining[0],startX:remaining[1].x,startY:remaining[1].y};
+    startCameraDrag(remaining[1]);
+  }else{
+    requestRender();
+  }
 }
-canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);canvas.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&!e.buttons)endPointer(e)});
+canvas.addEventListener('pointerup',endPointer);
+canvas.addEventListener('pointercancel',endPointer);
+canvas.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&!e.buttons)endPointer(e)});
 canvas.addEventListener('wheel',e=>{
   e.preventDefault();
   beginInteraction();
   const factor=Math.exp(-e.deltaY*.0012);zoom=clamp(zoom*factor,.65,2.8);sync();requestRender();
   clearTimeout(wheelLODTimer);wheelLODTimer=setTimeout(endInteraction,110);
 },{passive:false});
+window.__GFCAMERA={
+  snapshot:()=>({yaw,pitch,zoom,panX,panY,interactionMode,dragMode,pointers:activePointers.size}),
+  set:(next={})=>{if(Number.isFinite(next.yaw))yaw=next.yaw;if(Number.isFinite(next.pitch))pitch=next.pitch;if(Number.isFinite(next.zoom))zoom=clamp(next.zoom,.65,2.8);if(Number.isFinite(next.panX))panX=next.panX;if(Number.isFinite(next.panY))panY=next.panY;sync();requestRender();return window.__GFCAMERA.snapshot();}
+};
 // Mobile gameplay controls
 const waterAction=document.getElementById('waterAction'),feedAction=document.getElementById('feedAction');
 waterAction?.addEventListener('click',()=>applyCare('water'));feedAction?.addEventListener('click',()=>applyCare('feed'));document.getElementById('waterCard')?.addEventListener('click',()=>applyCare('water'));document.getElementById('feedCard')?.addEventListener('click',()=>applyCare('feed'));document.getElementById('ventCard')?.addEventListener('click',()=>applyCare('vent'));
@@ -6382,7 +6477,7 @@ function setMainPanel(name){const wrap=document.querySelector('.bottom-wrap');do
 document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>setMainPanel(btn.dataset.uiTab)));
 document.querySelectorAll('[data-panel-close]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();setMainPanel('care');}));
 function syncToolSubcontrols(mode){const cameraSub=document.getElementById('cameraSubcontrols'),pruneSub=document.getElementById('pruneSubcontrols');if(cameraSub)cameraSub.classList.toggle('show',mode==='orbit');if(pruneSub)pruneSub.classList.toggle('show',mode==='prune');}
-document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Entlauben: frei, ohne Zug und ohne Wartezeit.':'Topping: frei, ohne Zug und ohne Wartezeit.'):btn.dataset.mobileTool==='bend'?'Biegen: frei, ohne Zug und ohne Wartezeit.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
+document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Entlauben: Blatt tippen · freie Fläche drehen · Pinch zoomen.':'Topping: Schnittpunkt tippen · freie Fläche drehen · Pinch zoomen.'):btn.dataset.mobileTool==='bend'?'Biegen: Trieb ziehen · freie Fläche drehen · Pinch zoomen.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
 document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();pruneTarget=btn.dataset.pruneTarget;document.querySelectorAll('[data-prune-target]').forEach(b=>b.classList.toggle('active',b===btn));const n=document.getElementById('trainingNote');if(n){n.textContent=pruneTarget==='leaf'?'Entlauben: Blatt antippen. Öffnet Lichtwege, erzeugt aber Erholungsstress.':'Topping: Schnittpunkt antippen. Früh entstehen ausgeglichenere Haupttriebe.';n.classList.add('show')}requestRender();}));
 const cameraResetMini=document.getElementById('cameraResetMini');if(cameraResetMini)cameraResetMini.addEventListener('click',e=>{e.stopPropagation();setCameraPreset('reset');showGameToast('Kamera zurückgesetzt');});
 const devDrawer=document.getElementById('devDrawer');document.getElementById('devToggle')?.addEventListener('click',()=>devDrawer.classList.toggle('open'));document.getElementById('devClose')?.addEventListener('click',()=>devDrawer.classList.remove('open'));document.querySelector('.dev-grid')?.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(()=>devDrawer.classList.remove('open'),0);});
