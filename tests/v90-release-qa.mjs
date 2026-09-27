@@ -120,6 +120,9 @@ results.assertions.harvestSeedDropped=harvested.seedVault.inventory.some(s=>s.id
 results.assertions.tech3Unlocked=results.milestones.afterHarvest.tech===3;
 results.assertions.collectionOpenedAfterHarvest=await page.locator('[data-game-panel="collection"]').evaluate(el=>el.classList.contains('active'));
 results.assertions.hallOfFameCreated=(await page.locator('.hof-row-v89').count())===1;
+const handoffText=await page.locator('.next-grow-banner-v85.v90').innerText();
+results.ui.postHarvestHandoff=handoffText;
+results.assertions.progressionHandoff=/TECH LV 3/.test(handoffText)&&/GENETICS PACK FREI/.test(handoffText);
 await screenshot('04-after-harvest-collection.png');
 
 // Hard reload must not duplicate harvest or reward.
