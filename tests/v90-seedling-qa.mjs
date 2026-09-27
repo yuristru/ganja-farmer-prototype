@@ -58,7 +58,7 @@ results.assertions.trainingUnlocked4=!results.days[4].pruneLocked&&!results.days
 
 // Clicking a locked tool must not activate training.
 await page.evaluate(()=>window.__GFTRAIN.setDay(1));
-await page.click('[data-mobile-tool="prune"]');
+await page.locator('[data-mobile-tool="prune"]').dispatchEvent('click');
 await page.waitForTimeout(80);
 results.assertions.lockedToolCannotActivate=await page.locator('[data-mobile-tool="orbit"]').evaluate(el=>el.classList.contains('active')) &&
   !(await page.locator('[data-mobile-tool="prune"]').evaluate(el=>el.classList.contains('active')));
