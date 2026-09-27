@@ -42,7 +42,8 @@ await page.waitForTimeout(550);
 
 const results={assertions:{},before:{},afterPrune:{},afterDefoliate:{},afterBend:{},ui:{}};
 const read=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
-results.before=await page.evaluate(()=>window.__GFTRAININGRULES.snapshot());
+results.before=await page.evaluate(()=>window.__GFTRAININGRULES.primeBlockedCareForQA());
+await page.waitForTimeout(80);
 const beforeState=await read();
 const originalLast=beforeState.turn.lastTurnAt;
 
