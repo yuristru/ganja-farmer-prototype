@@ -4637,7 +4637,9 @@ window.__GFTRAIN={
   getDay:()=>currentDay,
   getState:()=>({day:currentDay,phase:phaseForDay(currentDay),growth:growthAtDay(currentDay),prunes:[...plantEdits.prunes.values()].map(x=>({...x})),bends:[...plantEdits.bends.entries()].map(([axisId,events])=>({axisId,events:events.map(e=>({...e}))}))}),
   getHits:()=>({nodes:hitNodes.map(n=>({id:n.id,x:n.sx,y:n.sy,axisId:n.axisId,axisNode:n.axisNode,budStates:n.budStates})),axes:hitAxes.map(a=>({id:a.id,depth:a.depth,screen:a.screen.map(p=>({x:p.x,y:p.y}))}))}),
-  getBiology:()=>({shoots:[...bioPlant.shoots.values()].map(s=>({id:s.id,parentShootId:s.parentShootId,parentNodeId:s.parentNodeId,generation:s.generation,birthProg:s.birthProg,nodeIds:[...s.nodeIds],apicalDominance:s.apicalDominance,apicalTip:{...s.apicalTip}})),nodes:[...bioPlant.nodes.values()].map(n=>({id:n.id,shootId:n.shootId,index:n.index,birthProg:n.birthProg,cutAbove:n.cutAbove,cutHistory:[...n.cutHistory],budIds:[...n.budIds]})),buds:[...bioPlant.buds.values()].map(b=>({id:b.id,nodeId:b.nodeId,shootId:b.shootId,side:b.side,state:b.state,naturalActivationProg:Number.isFinite(b.naturalActivationProg)?b.naturalActivationProg:null,activatedProg:b.activatedProg,childShootId:b.childShootId}))})
+  getBiology:()=>({shoots:[...bioPlant.shoots.values()].map(s=>({id:s.id,parentShootId:s.parentShootId,parentNodeId:s.parentNodeId,generation:s.generation,birthProg:s.birthProg,nodeIds:[...s.nodeIds],apicalDominance:s.apicalDominance,apicalTip:{...s.apicalTip}})),nodes:[...bioPlant.nodes.values()].map(n=>({id:n.id,shootId:n.shootId,index:n.index,birthProg:n.birthProg,cutAbove:n.cutAbove,cutHistory:[...n.cutHistory],budIds:[...n.budIds]})),buds:[...bioPlant.buds.values()].map(b=>({id:b.id,nodeId:b.nodeId,shootId:b.shootId,side:b.side,state:b.state,naturalActivationProg:Number.isFinite(b.naturalActivationProg)?b.naturalActivationProg:null,activatedProg:b.activatedProg,childShootId:b.childShootId}))}),
+  getTrainingImpact:()=>({...trainingImpactModel(currentDay)}),
+  getHarvestResult:()=>({...buildHarvestResult()})
 };
 function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 function sync(){
