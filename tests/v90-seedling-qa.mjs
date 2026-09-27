@@ -69,35 +69,30 @@ await page.click('[data-mobile-tool="prune"]');
 await page.waitForTimeout(80);
 results.assertions.day4ToolActivates=await page.locator('[data-mobile-tool="prune"]').evaluate(el=>el.classList.contains('active'));
 
-// Persist a real day-2 state and verify reload returns to the same intro state.
-await page.evaluate(k=>{
-  const s=JSON.parse(localStorage.getItem(k));s.plant.day=2;localStorage.setItem(k,JSON.stringify(s));
-},key);
+// Persist Day 2 through the game's real TAG-✓ path and verify reload.
+await page.evaluate(()=>window.__GFTRAIN.setDay(1));
+await page.click('#adminDaySkip');
+await page.waitForTimeout(100);
 await page.reload({waitUntil:'networkidle'});
 await page.waitForFunction(()=>window.__GFSEEDLING);
 await page.waitForTimeout(120);
 const reload=await page.evaluate(()=>window.__GFSEEDLING.snapshot());
+results.reload=reload;
 results.assertions.reloadDay2=reload.active&&reload.day===2&&reload.name==='cotyledons_open';
 
-// Deterministic seed variation: same seed remains identical, changed seed differs.
+// Deterministic seed variation without mutating the live save.
 const v1=await page.evaluate(()=>window.__GFSEEDLING.variant());
 const v1b=await page.evaluate(()=>window.__GFSEEDLING.variant());
 results.assertions.variantDeterministic=JSON.stringify(v1)===JSON.stringify(v1b);
-await page.evaluate(k=>{
-  const s=JSON.parse(localStorage.getItem(k));
-  s.plant.seed=(Number(s.plant.seed||58317)+17011)>>>0;
-  if(s.genetics?.currentSeed)s.genetics.currentSeed.seed=(Number(s.genetics.currentSeed.seed||58317)+17011)>>>0;
-  localStorage.setItem(k,JSON.stringify(s));
-},key);
-await page.reload({waitUntil:'networkidle'});
-await page.waitForFunction(()=>window.__GFSEEDLING);
-const v2=await page.evaluate(()=>window.__GFSEEDLING.variant());
+const v2=await page.evaluate(seed=>window.__GFSEEDLING.variantForSeed(seed),v1.seed+17011);
 results.variation={original:v1,changed:v2};
 results.assertions.variantChangesWithSeed=
-  Math.abs(v1.heightScale-v2.heightScale)>.001 ||
-  Math.abs(v1.spread-v2.spread)>.001 ||
-  Math.abs(v1.lean-v2.lean)>.001 ||
-  v1.shell!==v2.shell;
+  v1.seed!==v2.seed&&(
+    Math.abs(v1.heightScale-v2.heightScale)>.001 ||
+    Math.abs(v1.spread-v2.spread)>.001 ||
+    Math.abs(v1.lean-v2.lean)>.001 ||
+    v1.shell!==v2.shell
+  );
 
 results.assertions.noBrowserErrors=errors.length===0;
 results.pass=Object.values(results.assertions).every(Boolean);
