@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V84 Substrate Perspective</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V85 New Grow Loop</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3016,6 +3016,16 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .upgrade-demo-controls{right:10px}
   .mobile-game-ui .room-demo-pot-hotspot{width:154px;height:132px;bottom:calc(var(--safe-bottom) + 158px)}
 }
+</style><style id="v85NewGrowLoop">
+.mobile-game-ui .next-grow-banner-v85{
+  margin:0 1px 10px;padding:10px 11px;border:1px solid rgba(154,255,98,.48);border-radius:14px;
+  background:radial-gradient(circle at 88% 18%,rgba(139,255,86,.13),transparent 36%),linear-gradient(160deg,#153f2c,#0a2930);
+  box-shadow:0 3px 0 rgba(3,18,20,.75),inset 0 1px 0 rgba(255,255,255,.06)
+}
+.mobile-game-ui .next-grow-banner-v85 span{display:block;color:#aaff73;font:1000 6.5px/1 system-ui;letter-spacing:.7px}
+.mobile-game-ui .next-grow-banner-v85 strong{display:block;margin-top:5px;color:#fff;font:1000 12px/1.05 system-ui}
+.mobile-game-ui .next-grow-banner-v85 small{display:block;margin-top:4px;color:#9fc3ba;font:750 7px/1.25 system-ui}
+.mobile-game-ui .plant-seed-btn.locked{opacity:.45!important;filter:grayscale(.75)!important;pointer-events:none!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3357,7 +3367,7 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
 const demoVisualState={enabled:false,levels:{}};
@@ -3447,6 +3457,8 @@ function ensureResourceState(st){
   if(st.progression.owned.includes('pot12'))st.progression.levels.pot=Math.max(st.progression.levels.pot,3);if(st.progression.owned.includes('substrate'))st.progression.levels.substrate=Math.max(st.progression.levels.substrate,5);if(st.progression.owned.includes('light1'))st.progression.levels.light=Math.max(st.progression.levels.light,3);if(st.progression.owned.includes('fan1'))st.progression.levels.vent=Math.max(st.progression.levels.vent,2);if(st.progression.owned.includes('autoWater'))st.progression.levels.irrigation=Math.max(st.progression.levels.irrigation,8);if(st.progression.owned.includes('sensor'))st.progression.levels.sensor=Math.max(st.progression.levels.sensor,5);
   st.genetics=st.genetics||{active:'dream',phenotypeSeed:st.plant?.seed||PLANT_SEED};if(!st.genetics.currentSeed)st.genetics.currentSeed=makeSeed(st.genetics.active||'dream',st.genetics.phenotypeSeed||st.plant?.seed||PLANT_SEED,'common','Legacy Grow');
   st.seedVault=st.seedVault||starterSeedVault();st.seedVault.inventory=Array.isArray(st.seedVault.inventory)?st.seedVault.inventory:[];st.seedVault.discovered=st.seedVault.discovered||{};st.seedVault.packsOpened=Number(st.seedVault.packsOpened||0);
+  st.meta=st.meta||{growNumber:1,completedGrows:st.collection?.length||0,lastHarvestAt:null,lastGrowStartedAt:st.createdAt||Date.now()};
+  st.meta.growNumber=Math.max(1,Number(st.meta.growNumber)||1);st.meta.completedGrows=Math.max(0,Number(st.meta.completedGrows)||0);
   st.collection=Array.isArray(st.collection)?st.collection:[];ensureBiography(st);
   if(!Number.isFinite(Number(st.coins))||(!st.progression.owned.length&&st.collection.length===0&&Number(st.coins)===0))st.coins=450;
   st.coins=Math.max(0,Math.round(Number(st.coins)||0));
@@ -3977,6 +3989,9 @@ function commitHarvestResult(){
   gameState.coins+=r.reward;gameState.plant.harvested=true;
   if(gameState.genetics.currentSeed){gameState.genetics.currentSeed.revealed=true;gameState.seedVault.discovered[gameState.genetics.currentSeed.phenotype]=true;}
   r.harvestSeed=harvestSeed;r.committed=true;
+  gameState.meta=gameState.meta||{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:gameState.createdAt||Date.now()};
+  gameState.meta.completedGrows=Math.max(gameState.meta.completedGrows||0,gameState.collection.length);
+  gameState.meta.lastHarvestAt=Date.now();
   interactionMode='orbit';activeBendAxis=null;drag=false;hitNodes=[];hitAxes=[];hitLeaves=[];
   saveGameState();renderMetaPanels();updateGameHUD();requestRender();
 }
@@ -4004,11 +4019,38 @@ function renderSeedVault(){
   const drop=lastSeedDropId?inv.find(x=>x.id===lastSeedDropId):null,hero=document.getElementById('seedDropHero');if(drop){const g=GENETICS[drop.genetics];hero.className='seed-drop-hero show';hero.innerHTML='<div class="seed-drop-orb">'+g.icon+'</div><div class="seed-drop-copy"><small>NEUER SEED AUS DEINER ERNTE</small><strong>'+g.name+' #'+String(drop.seed).slice(-5)+'</strong><span>'+SEED_RARITY[drop.rarity].label+' · PHÄNOTYP ???</span></div>';}else{hero.className='seed-drop-hero';hero.innerHTML='';}
   const list=document.getElementById('seedInventory');list.innerHTML=inv.length?inv.map(seed=>seedCardHTML(seed,{selected:seed.id===selectedVaultSeedId})).join(''):'<div class="seed-detail-empty" style="grid-column:1/-1">Vault leer. Öffne ein Seed Pack.</div>';renderSeedBudPreviews(list);
   list.querySelectorAll('[data-vault-seed]').forEach(b=>b.addEventListener('click',()=>{selectedVaultSeedId=b.dataset.vaultSeed;lastSeedDropId=null;renderSeedVault();}));
-  const seed=inv.find(x=>x.id===selectedVaultSeedId),detail=document.getElementById('seedDetail');if(!seed){detail.className='seed-detail';detail.innerHTML='<div class="seed-detail-empty">Seed auswählen oder ein Pack öffnen.</div>';return;}const g=GENETICS[seed.genetics],traits=Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,4).map(([k,v])=>'<span>'+seedTraitText(k,v)+'</span>').join('');detail.className='seed-detail '+seed.rarity;detail.innerHTML='<div class="seed-detail-preview"><canvas data-seed-bud="'+seed.id+'" data-w="104" data-h="92"></canvas><span class="seed-preview-label">BUD PREVIEW</span></div><div class="seed-detail-copy"><div class="seed-detail-head"><span class="seed-mini">'+g.icon+'</span><div><strong>'+g.name+' #'+String(seed.seed).slice(-5)+'</strong><small>'+SEED_RARITY[seed.rarity].label+' · '+(seed.revealed?seed.phenotype:'Phänotyp noch unbekannt')+'</small></div></div><div class="seed-traits">'+traits+'</div><div class="seed-preview-note">Genetische Vorschau · Farbe, Dichte, Form und Frost aus Seed-Parametern</div></div><button type="button" class="plant-seed-btn" id="plantVaultSeed">DIESEN SEED PFLANZEN</button>';renderSeedBudPreviews(detail);document.getElementById('plantVaultSeed').addEventListener('click',()=>plantSeedFromVault(seed.id));
+  const seed=inv.find(x=>x.id===selectedVaultSeedId),detail=document.getElementById('seedDetail');if(!seed){detail.className='seed-detail';detail.innerHTML='<div class="seed-detail-empty">Seed auswählen oder ein Pack öffnen.</div>';return;}const g=GENETICS[seed.genetics],traits=Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,4).map(([k,v])=>'<span>'+seedTraitText(k,v)+'</span>').join('');detail.className='seed-detail '+seed.rarity;detail.innerHTML='<div class="seed-detail-preview"><canvas data-seed-bud="'+seed.id+'" data-w="104" data-h="92"></canvas><span class="seed-preview-label">BUD PREVIEW</span></div><div class="seed-detail-copy"><div class="seed-detail-head"><span class="seed-mini">'+g.icon+'</span><div><strong>'+g.name+' #'+String(seed.seed).slice(-5)+'</strong><small>'+SEED_RARITY[seed.rarity].label+' · '+(seed.revealed?seed.phenotype:'Phänotyp noch unbekannt')+'</small></div></div><div class="seed-traits">'+traits+'</div><div class="seed-preview-note">Genetische Vorschau · Farbe, Dichte, Form und Frost aus Seed-Parametern</div></div><button type="button" class="plant-seed-btn '+(gameState.plant.harvested?'ready':'locked')+'" id="plantVaultSeed" '+(gameState.plant.harvested?'':'disabled')+'>'+(gameState.plant.harvested?'NEUEN GROW STARTEN':'AKTUELLER GROW LÄUFT')+'</button>';renderSeedBudPreviews(detail);document.getElementById('plantVaultSeed')?.addEventListener('click',()=>plantSeedFromVault(seed.id));
 }
 function plantSeedFromVault(seedId){
-  const idx=gameState.seedVault.inventory.findIndex(x=>x.id===seedId);if(idx<0)return;const seed=gameState.seedVault.inventory[idx];const keep={coins:gameState.coins,wallet:gameState.wallet,progression:gameState.progression,collection:gameState.collection,seedVault:gameState.seedVault,debugBypass:gameState.settings?.debugBypass};keep.seedVault.inventory.splice(idx,1);
-  gameState=createGameState();gameState.coins=keep.coins;gameState.wallet=keep.wallet;gameState.progression=keep.progression;gameState.collection=keep.collection;gameState.seedVault=keep.seedVault;gameState.genetics={active:seed.genetics,phenotypeSeed:seed.seed,currentSeed:{...seed}};gameState.plant.seed=seed.seed;gameState.settings.debugBypass=keep.debugBypass;applyEquippedSetup();hydrateTrainingFromGame();currentDay=1;resetBioPlant();worldBgCanvas=null;invalidatePlant();saveGameState();sync();renderMetaPanels();requestRender();showGameToast(GENETICS[seed.genetics].name+' #'+String(seed.seed).slice(-5)+' gepflanzt');
+  if(!gameState?.plant?.harvested){showGameToast('Erst den aktuellen Grow abschließen');return false;}
+  const idx=gameState.seedVault.inventory.findIndex(x=>x.id===seedId);if(idx<0){showGameToast('Seed nicht mehr verfügbar');return false;}
+  const seed={...gameState.seedVault.inventory[idx],traits:{...(gameState.seedVault.inventory[idx].traits||{})}};
+  const keep={
+    coins:gameState.coins,
+    wallet:{...(gameState.wallet||{})},
+    progression:gameState.progression,
+    collection:gameState.collection,
+    seedVault:{...gameState.seedVault,inventory:gameState.seedVault.inventory.filter((_,i)=>i!==idx),discovered:{...(gameState.seedVault.discovered||{})}},
+    settings:{...(gameState.settings||{})},
+    uiMigrations:{...(gameState.uiMigrations||{})},
+    meta:{...(gameState.meta||{})}
+  };
+  const next=createGameState();
+  next.coins=keep.coins;next.wallet=keep.wallet;next.progression=keep.progression;next.collection=keep.collection;next.seedVault=keep.seedVault;
+  next.settings={...next.settings,...keep.settings};next.uiMigrations=keep.uiMigrations;
+  next.meta={...next.meta,...keep.meta,growNumber:Math.max(1,Number(keep.meta.growNumber)||1)+1,lastGrowStartedAt:Date.now()};
+  next.genetics={active:seed.genetics,phenotypeSeed:seed.seed,currentSeed:{...seed,revealed:false}};
+  next.plant.seed=seed.seed;
+  gameState=ensureResourceState(next);
+  pendingHarvestResult=null;selectedVaultSeedId=null;lastSeedDropId=null;
+  demoVisualState.enabled=false;demoVisualState.levels={};updateUpgradeDemoUI();
+  interactionMode='orbit';activeBendAxis=null;drag=false;hitNodes=[];hitAxes=[];hitLeaves=[];
+  yaw=0;pitch=.16;zoom=1;panX=0;panY=0;
+  hydrateTrainingFromGame();currentDay=1;stage=legacyStageForDay(1);resetBioPlant();worldBgCanvas=null;invalidatePlant();
+  document.getElementById('harvestResults')?.classList.remove('open');document.getElementById('harvestResults')?.setAttribute('aria-hidden','true');
+  applyEquippedSetup();saveGameState();sync();setMainPanel('care');renderMetaPanels();requestRender();
+  showGameToast('Grow '+gameState.meta.growNumber+' gestartet · '+GENETICS[seed.genetics].name+' #'+String(seed.seed).slice(-5));
+  return true;
 }
 function openSeedPack(type){
   const defs={starter:{price:150},genetics:{price:450},exotic:{price:900}},d=defs[type];
@@ -4340,8 +4382,9 @@ function renderMetaPanels(){
     const ownedHTML=entries.length?entries.map(e=>e.kind==='jar'?jarTile(e.jar):seedTile(e.seed,e.kind)).join(''):'<div class="collection-empty">Noch keine Seeds. Öffne oben dein erstes Pack.</div>';
     const bestJar=recent.filter(j=>!j.demo).sort((a,b)=>(b.score||0)-(a.score||0)||(b.grams||0)-(a.grams||0))[0]||null;
     const hall=bestJar?'<div class="hall-of-fame-v80"><span>HALL OF FAME</span><strong>'+bestJar.name+'</strong><b>'+bestJar.score+'/100</b><small>'+bestJar.grams+' g · '+(bestJar.signature?.[0]?.label||bestJar.rating||'TOP GROW')+'</small></div>':'';
+    const nextGrowBanner=gameState.plant.harvested?'<div class="next-grow-banner-v85"><span>ERNTE EINGELAGERT</span><strong>Wähle deinen nächsten Seed</strong><small>Coins, Grow-Room-Upgrades und Sammlung bleiben erhalten.</small></div>':'';
     const demos=recent.length===0?'<div class="collection-section-head archive"><b>BEISPIEL-GROWS</b><span>Demo</span></div><div class="collection-unified demo-grid">'+demoJars.map(jarTile).join('')+'</div>':'';
-    cc.innerHTML='<div class="collection-scroll">'+
+    cc.innerHTML='<div class="collection-scroll">'+nextGrowBanner+
       '<div class="collection-shop-head"><div><b>SEED PACKS</b><small>Neue Seeds landen direkt oben in deiner Sammlung.</small></div><span>◉ '+Math.round(gameState.coins)+'</span></div>'+
       '<div class="seed-packs collection-packs"><button class="seed-pack" data-collection-pack="starter"><b>STARTER</b><small>3 Seeds<br>Rare Chance</small><strong>◉ 150</strong></button><button class="seed-pack" data-collection-pack="genetics"><b>GENETICS</b><small>3 Seeds<br>mind. 1 Rare</small><strong>◉ 450</strong></button><button class="seed-pack exotic" data-collection-pack="exotic"><b>EXOTIC</b><small>3 Seeds<br>Epic Chance</small><strong>◉ 900</strong></button></div>'+
       '<div class="daily-coin-note"><span>☀ TÄGLICHE COINS</span><b>+'+DAILY_FREE_COINS+' pro Kalendertag</b></div>'+hall+
