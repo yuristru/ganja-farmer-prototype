@@ -4891,6 +4891,7 @@ window.__GFSEEDLING={
 };
 window.__GFTRAININGRULES={
   snapshot:()=>({free:true,turnsToday:Number(gameState?.turn?.turnsToday)||0,lastTurnAt:Number(gameState?.turn?.lastTurnAt)||0,day:currentDay}),
+  primeBlockedCareForQA:()=>{gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=MAX_TURNS_PER_PLANT_DAY;gameState.turn.lastTurnAt=Date.now();gameState.turn.lastAction='QA Pflege';saveGameState();updateGameHUD();return window.__GFTRAININGRULES.snapshot();},
   free:true
 };
 window.__GFTRAIN={
