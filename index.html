@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V87.1 Training Yield</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V88 Economy & Progression</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3035,6 +3035,12 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .training-architecture-v87 div{display:flex;flex-wrap:wrap;gap:4px}
 .mobile-game-ui .training-architecture-v87 span{padding:4px 6px;border-radius:7px;background:rgba(145,255,80,.075);border:1px solid rgba(145,255,80,.14);color:#c9f5cc;font:900 6px/1 system-ui}
 .mobile-game-ui .training-architecture-v87 span.warn{background:rgba(255,170,88,.08);border-color:rgba(255,170,88,.22);color:#ffd4a1}
+</style><style id="v88EconomyStyles">
+.upgrade-category-v74.economy-locked{border-style:dashed;filter:saturate(.78)}
+.upgrade-category-v74.economy-locked .upgrade-category-price-v74{color:#f0c96a!important}
+.upgrade-buy-v74.economy-tech-locked{opacity:.58!important;filter:saturate(.35);cursor:not-allowed!important;border-color:#7f6d42!important}
+.seed-pack.economy-locked{opacity:.48;filter:saturate(.4);cursor:not-allowed}
+.seed-pack.economy-locked strong{color:#f0c96a!important}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3134,6 +3140,12 @@ const GAME_STORAGE_KEY='gf_mobile_game_v1';
 const TURN_WAIT_MS=60*60*1000;
 const MAX_TURNS_PER_PLANT_DAY=7;
 const DAILY_FREE_COINS=50;
+const ECONOMY_V88={
+  upgradeGrowth:1.22,
+  starterCoins:450,
+  packPrices:{starter:150,genetics:450,exotic:900},
+  packUnlockGrows:{starter:0,genetics:1,exotic:3}
+};
 let gameState=null;
 let gameToastTimer=0;
 const GENETICS={
@@ -3483,9 +3495,40 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels,unlockedUpgradeLevel:2},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
+function completedGrowCount(st=gameState){return Math.max(0,Number(st?.meta?.completedGrows)||0);}
+function techLevelForCompleted(completed){return Math.max(2,Math.min(10,2+Math.max(0,Number(completed)||0)));}
+function refreshTechUnlock(st=gameState){
+  if(!st)return 2;
+  st.progression=st.progression||{owned:[],equipped:{},levels:{}};
+  const purchasedMax=Math.max(1,...UPGRADE_CATEGORY_ORDER.map(id=>upgradeLevel(st,id)));
+  const target=techLevelForCompleted(completedGrowCount(st));
+  st.progression.unlockedUpgradeLevel=Math.max(2,Math.min(10,Math.max(Number(st.progression.unlockedUpgradeLevel)||0,purchasedMax,target)));
+  return st.progression.unlockedUpgradeLevel;
+}
+function unlockedTechLevel(st=gameState){return refreshTechUnlock(st);}
+function upgradeUnlockGrow(level){return Math.max(0,Number(level)-2);}
+function isUpgradeLevelUnlocked(id,level,st=gameState){return Number(level)<=Math.min(upgradeMaxLevel(id),unlockedTechLevel(st));}
+function seedPackDefinition(type){
+  if(!ECONOMY_V88.packPrices[type])return null;
+  return{price:ECONOMY_V88.packPrices[type],unlockGrow:ECONOMY_V88.packUnlockGrows[type]||0};
+}
+function seedPackUnlocked(type,st=gameState){const d=seedPackDefinition(type);return !!d&&completedGrowCount(st)>=d.unlockGrow;}
+function economySnapshot(st=gameState){
+  const tech=unlockedTechLevel(st),completed=completedGrowCount(st);
+  const prices={};let totalFullUpgradeCost=0;
+  for(const id of UPGRADE_CATEGORY_ORDER){
+    prices[id]=[];
+    for(let lv=2;lv<=upgradeMaxLevel(id);lv++){const p=upgradePrice(id,lv);prices[id].push(p);totalFullUpgradeCost+=p;}
+  }
+  return{
+    coins:Math.round(Number(st?.coins)||0),completedGrows:completed,techLevel:tech,nextTechLevel:Math.min(10,tech+1),
+    nextTechUnlockGrow:tech>=10?null:upgradeUnlockGrow(tech+1),prices,totalFullUpgradeCost,
+    packs:Object.fromEntries(Object.keys(ECONOMY_V88.packPrices).map(type=>[type,{...seedPackDefinition(type),unlocked:seedPackUnlocked(type,st)}]))
+  };
+}
 const demoVisualState={enabled:false,levels:{}};
 function visualUpgradeLevel(id){
   if(demoVisualState.enabled&&Number.isFinite(Number(demoVisualState.levels[id])))return Math.max(1,Math.min(upgradeMaxLevel(id),Number(demoVisualState.levels[id])));
@@ -3519,7 +3562,7 @@ function cycleDemoVisual(id){
   updateUpgradeDemoUI();syncEquipment2D();requestRender();
   showGameToast((UPGRADE_CATEGORIES[id]?.name||id)+' Demo · '+next+'/'+max);
 }
-function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(1.31,level-2)/5)*5;}
+function upgradePrice(id,level){const c=UPGRADE_CATEGORIES[id];if(!c||level<=1)return 0;return Math.round(c.baseCost*Math.pow(ECONOMY_V88.upgradeGrowth,level-2)/5)*5;}
 function categoryBenefits(id,level){const n=Math.max(1,Math.min(upgradeMaxLevel(id),level)),step=(id==='light'||id==='vent')?(n-1)*(9/4):n-1;
   if(id==='pot')return ['Wasserverbrauch -'+Math.round(step*2.2)+'%','Puffer +'+Math.round(step*4)+'%','Drainage +'+Math.round(step*1.5)+'%'];
   if(id==='substrate')return ['Wasserhalt +'+Math.round(step*3.5)+'%','Düngerpuffer +'+Math.round(step*3.8)+'%'];
@@ -3576,6 +3619,7 @@ function ensureResourceState(st){
   st.meta=st.meta||{growNumber:1,completedGrows:st.collection?.length||0,lastHarvestAt:null,lastGrowStartedAt:st.createdAt||Date.now()};
   st.meta.growNumber=Math.max(1,Number(st.meta.growNumber)||1);st.meta.completedGrows=Math.max(0,Number(st.meta.completedGrows)||0);
   st.collection=Array.isArray(st.collection)?st.collection:[];ensureBiography(st);
+  refreshTechUnlock(st);
   if(!Number.isFinite(Number(st.coins))||(!st.progression.owned.length&&st.collection.length===0&&Number(st.coins)===0))st.coins=450;
   st.coins=Math.max(0,Math.round(Number(st.coins)||0));
   st.wallet=st.wallet||{lastDailyCoinDate:null,dailyCoinAmount:DAILY_FREE_COINS};
@@ -4036,6 +4080,7 @@ function makeOvercareScenario(kind){
 function buyUpgradeLevel(categoryId,targetLevel){
   const cat=UPGRADE_CATEGORIES[categoryId];if(!cat)return;const current=upgradeLevel(gameState,categoryId);targetLevel=Number(targetLevel);
   if(targetLevel!==current+1||targetLevel>upgradeMaxLevel(categoryId)){showGameToast(targetLevel<=current?'Stufe bereits freigeschaltet':'Erst die vorherige Stufe freischalten');return;}
+  if(!isUpgradeLevelUnlocked(categoryId,targetLevel,gameState)){showGameToast('Tech-Level gesperrt · nach Grow '+upgradeUnlockGrow(targetLevel));return;}
   const price=upgradePrice(categoryId,targetLevel);if(gameState.coins<price){showGameToast('Nicht genug Coins · '+price+' benötigt');return;}
   gameState.coins-=price;gameState.progression.levels[categoryId]=targetLevel;applyEquippedSetup();worldBgCanvas=null;ensureGrowRoomBackgroundImage();saveGameState();updateGameHUD();syncEquipment3D();syncEquipment2D();renderMetaPanels();invalidatePlant();requestRender();showGameToast(cat.name+' auf Stufe '+targetLevel+' verbessert');
 }
@@ -4056,10 +4101,12 @@ function buildHarvestResult(){
   const yieldTraining=clamp(1+ti.canopyBonus*.45+ti.lateralBoost*.20+ti.flowerBonus*.30-ti.recoveryCost*.12-ti.lateRisk*.60,.76,1.15);
   const yieldFactor=clamp(yieldBase*yieldTraining,.22,1.18);
   const grams=Math.max(10,Math.round(8+yieldFactor*82));
-  const reward=Math.max(80,Math.round(scores.total*3.7+grams*1.65));
+  const performanceBonus=scores.total>=92?40:scores.total>=82?20:scores.total>=70?10:0;
+  const reward=Math.max(220,Math.round(90+scores.total*2.25+grams*2.10+performanceBonus));
+  const techUnlock=Math.max(unlockedTechLevel(gameState),techLevelForCompleted(completedGrowCount(gameState)+1));
   const jarFill=clamp(.50+(grams/110)*.32+(scores.density/100)*.13,.56,.97);
   const budCount=Math.max(14,Math.round(12+(grams/110)*18+(scores.density/100)*8));
-  return{scores,g,reward,grams,jarFill,budCount,flowerQuality,yieldBase,yieldTraining,yieldFactor,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
+  return{scores,g,reward,grams,jarFill,budCount,flowerQuality,yieldBase,yieldTraining,yieldFactor,performanceBonus,techUnlock,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
 }
 function harvestPreviewSeed(result){
   const current=activeSeed(),rarity=current?.rarity||'common';
@@ -4084,7 +4131,7 @@ function drawHarvestBud(result){
 }
 function populateHarvestResult(result){
   document.getElementById('harvestBudTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);document.getElementById('harvestJarTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);
-  document.getElementById('harvestTotalScore').textContent=result.scores.total;document.getElementById('jarAmount').textContent=result.grams+' g';document.getElementById('harvestReward').textContent='+'+result.reward+' COINS';
+  document.getElementById('harvestTotalScore').textContent=result.scores.total;document.getElementById('jarAmount').textContent=result.grams+' g';document.getElementById('harvestReward').textContent='+'+result.reward+' COINS'+(result.techUnlock?' · TECH LV '+result.techUnlock:'');
   for(const id of ['harvestRatingBadge','harvestFinalRating']){const el=document.getElementById(id);el.textContent=result.rating.label;el.className=(id==='harvestRatingBadge'?'rating-badge ':'')+'rating-'+result.rating.cls;}
   const labels={size:'GRÖSSE',density:'DICHTE',potency:'POTENZ',aroma:'AROMA',style:'STYLE'};document.getElementById('harvestMetrics').innerHTML=Object.entries(labels).map(([k,l])=>'<div><span>'+l+'</span><b>'+result.scores[k]+'</b><i><em style="width:'+result.scores[k]+'%"></em></i></div>').join('');const sig=document.getElementById('harvestSignature');if(sig)sig.innerHTML=(result.signature||[]).map(x=>'<span class="'+(x.warn?'warn':x.rare?'rare':'')+'">'+x.label+'</span>').join('');
   const jb=document.getElementById('jarBuds');
@@ -4112,6 +4159,7 @@ function commitHarvestResult(){
   r.harvestSeed=harvestSeed;r.committed=true;
   gameState.meta=gameState.meta||{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:gameState.createdAt||Date.now()};
   gameState.meta.completedGrows=Math.max(gameState.meta.completedGrows||0,gameState.collection.length);
+  refreshTechUnlock(gameState);
   gameState.meta.lastHarvestAt=Date.now();
   interactionMode='orbit';activeBendAxis=null;drag=false;hitNodes=[];hitAxes=[];hitLeaves=[];
   saveGameState();renderMetaPanels();updateGameHUD();requestRender();
@@ -4174,8 +4222,9 @@ function plantSeedFromVault(seedId){
   return true;
 }
 function openSeedPack(type){
-  const defs={starter:{price:150},genetics:{price:450},exotic:{price:900}},d=defs[type];
+  const d=seedPackDefinition(type);
   if(!d)return;
+  if(!seedPackUnlocked(type,gameState)){showGameToast('Seed Pack gesperrt · nach Grow '+d.unlockGrow);return;}
   if(gameState.coins<d.price){showGameToast('Nicht genug Coins');return;}
   gameState.coins-=d.price;gameState.seedVault.packsOpened++;
   const n=gameState.seedVault.packsOpened,rolls=[];
@@ -4445,22 +4494,23 @@ function renderMetaPanels(){
   const grid=document.getElementById('upgradeGrid');if(grid){
     const title=document.getElementById('upgradePanelTitle'),sub=document.getElementById('upgradePanelSub'),back=document.getElementById('upgradeBack');
     if(!selectedUpgradeCategory){
-      if(title)title.textContent='GROW ROOM';if(sub)sub.textContent='Dein Setup auf einen Blick. Kategorie öffnen, aktuelles Gerät mit dem nächsten Upgrade vergleichen und direkt ausbauen.';if(back)back.classList.remove('show');
+      const tech=unlockedTechLevel(gameState),nextGrow=tech>=10?null:upgradeUnlockGrow(tech+1);
+      if(title)title.textContent='GROW ROOM · TECH LV '+tech;if(sub)sub.textContent=tech>=10?'Alle Tech-Level freigeschaltet. Baue dein Setup gezielt fertig aus.':'Stufen bis LV '+tech+' verfügbar · LV '+(tech+1)+' nach Grow '+nextGrow+'.';if(back)back.classList.remove('show');
       grid.className='upgrade-category-grid-v74';
       grid.innerHTML=UPGRADE_CATEGORY_ORDER.map(id=>{
-        const cat=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id),next=lv<max?upgradePrice(id,lv+1):0;
-        return '<button type="button" class="upgrade-category-v74 '+cat.accent+'" data-upgrade-category="'+id+'">'+
+        const cat=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id),nextLevel=lv<max?lv+1:null,next=nextLevel?upgradePrice(id,nextLevel):0,locked=nextLevel&&!isUpgradeLevelUnlocked(id,nextLevel,gameState);
+        return '<button type="button" class="upgrade-category-v74 '+cat.accent+(locked?' economy-locked':'')+'" data-upgrade-category="'+id+'">'+
           '<span class="upgrade-category-art-v74">'+equipmentVisualHTML(id,lv,'category')+'<i class="upgrade-level-chip-v74">LV '+lv+'/'+max+'</i></span>'+
-          '<span class="upgrade-category-copy-v74"><strong>'+cat.name+'</strong><span class="upgrade-category-price-v74 '+(lv>=max?'max':'')+'">'+(lv<max?'◉ '+next:'MAX')+'</span><small>'+cat.names[lv-1]+'</small></span>'+
+          '<span class="upgrade-category-copy-v74"><strong>'+cat.name+'</strong><span class="upgrade-category-price-v74 '+(lv>=max?'max':'')+'">'+(lv>=max?'MAX':locked?'LOCK · GROW '+upgradeUnlockGrow(nextLevel):'◉ '+next)+'</span><small>'+cat.names[lv-1]+'</small></span>'+
         '</button>';
       }).join('');
       grid.querySelectorAll('[data-upgrade-category]').forEach(b=>b.addEventListener('click',()=>{selectedUpgradeCategory=b.dataset.upgradeCategory;renderMetaPanels();}));
     }else{
       const id=selectedUpgradeCategory,cat=UPGRADE_CATEGORIES[id],current=upgradeLevel(gameState,id);if(!cat){selectedUpgradeCategory=null;renderMetaPanels();return;}
-      const max=upgradeMaxLevel(id),nextLevel=current<max?current+1:null,price=nextLevel?upgradePrice(id,nextLevel):0,canBuy=nextLevel&&gameState.coins>=price;
+      const max=upgradeMaxLevel(id),nextLevel=current<max?current+1:null,price=nextLevel?upgradePrice(id,nextLevel):0,nextUnlocked=nextLevel?isUpgradeLevelUnlocked(id,nextLevel,gameState):false,canBuy=nextLevel&&nextUnlocked&&gameState.coins>=price;
       const currentBenefits=categoryBenefits(id,current),nextBenefits=nextLevel?categoryBenefits(id,nextLevel):currentBenefits;
-      if(title)title.textContent=cat.icon+' '+cat.name.toUpperCase();
-      if(sub)sub.textContent=nextLevel?'Vergleiche deinen aktuellen Stand direkt mit dem nächsten Upgrade.':'Diese Kategorie ist vollständig ausgebaut.';
+      if(title)title.textContent=cat.icon+' '+cat.name.toUpperCase()+' · TECH LV '+unlockedTechLevel(gameState);
+      if(sub)sub.textContent=!nextLevel?'Diese Kategorie ist vollständig ausgebaut.':nextUnlocked?'Vergleiche deinen aktuellen Stand direkt mit dem nächsten Upgrade.':'LV '+nextLevel+' wird nach Grow '+upgradeUnlockGrow(nextLevel)+' freigeschaltet.';
       if(back)back.classList.add('show');
       grid.className='upgrade-detail-v74';
       const progress=Array.from({length:max},(_,i)=>'<i class="'+(i<current?'done':'')+'"></i>').join('');
@@ -4475,7 +4525,9 @@ function renderMetaPanels(){
         '<div class="upgrade-progress-v74" style="--upgrade-steps:'+max+'">'+progress+'</div>'+
         '<div class="upgrade-effect-box-v74"><small>'+(nextLevel?'WIRKUNG NACH DEM UPGRADE':'AKTUELLE WIRKUNG')+'</small><div class="upgrade-effects-v74">'+nextBenefits.map(x=>'<i>'+x+'</i>').join('')+'</div><div class="upgrade-impact-v74"><span>Wirkt auf</span><b>'+cat.need+'</b></div></div>'+
         (nextLevel?
-          '<button type="button" class="upgrade-buy-v74 '+(canBuy?'':'poor')+'" data-buy-level="'+nextLevel+'"><span>NÄCHSTE STUFE FREISCHALTEN<strong>'+cat.names[nextLevel-1]+'</strong></span><b>◉ '+price+'</b></button>':
+          (nextUnlocked?
+            '<button type="button" class="upgrade-buy-v74 '+(canBuy?'':'poor')+'" data-buy-level="'+nextLevel+'"><span>NÄCHSTE STUFE FREISCHALTEN<strong>'+cat.names[nextLevel-1]+'</strong></span><b>◉ '+price+'</b></button>':
+            '<button type="button" class="upgrade-buy-v74 economy-tech-locked" disabled><span>TECH-LEVEL GESPERRT<strong>'+cat.names[nextLevel-1]+'</strong></span><b>GROW '+upgradeUnlockGrow(nextLevel)+'</b></button>'):
           '<div class="upgrade-max-v74">✓ MAXIMUM ERREICHT</div>');
       grid.querySelectorAll('[data-buy-level]').forEach(b=>b.addEventListener('click',()=>buyUpgradeLevel(id,Number(b.dataset.buyLevel))));
     }
@@ -4507,7 +4559,7 @@ function renderMetaPanels(){
     const demos=recent.length===0?'<div class="collection-section-head archive"><b>BEISPIEL-GROWS</b><span>Demo</span></div><div class="collection-unified demo-grid">'+demoJars.map(jarTile).join('')+'</div>':'';
     cc.innerHTML='<div class="collection-scroll">'+nextGrowBanner+
       '<div class="collection-shop-head"><div><b>SEED PACKS</b><small>Neue Seeds landen direkt oben in deiner Sammlung.</small></div><span>◉ '+Math.round(gameState.coins)+'</span></div>'+
-      '<div class="seed-packs collection-packs"><button class="seed-pack" data-collection-pack="starter"><b>STARTER</b><small>3 Seeds<br>Rare Chance</small><strong>◉ 150</strong></button><button class="seed-pack" data-collection-pack="genetics"><b>GENETICS</b><small>3 Seeds<br>mind. 1 Rare</small><strong>◉ 450</strong></button><button class="seed-pack exotic" data-collection-pack="exotic"><b>EXOTIC</b><small>3 Seeds<br>Epic Chance</small><strong>◉ 900</strong></button></div>'+
+      '<div class="seed-packs collection-packs">'+['starter','genetics','exotic'].map(type=>{const d=seedPackDefinition(type),open=seedPackUnlocked(type,gameState),name=type==='starter'?'STARTER':type==='genetics'?'GENETICS':'EXOTIC',desc=type==='starter'?'3 Seeds<br>Rare Chance':type==='genetics'?'3 Seeds<br>mind. 1 Rare':'3 Seeds<br>Epic Chance';return '<button class="seed-pack '+(type==='exotic'?'exotic ':'')+(open?'':'economy-locked')+'" data-collection-pack="'+type+'" '+(open?'':'disabled')+'><b>'+name+'</b><small>'+desc+'</small><strong>'+(open?'◉ '+d.price:'LOCK · GROW '+d.unlockGrow)+'</strong></button>'}).join('')+'</div>'+
       '<div class="daily-coin-note"><span>☀ TÄGLICHE COINS</span><b>+'+DAILY_FREE_COINS+' pro Kalendertag</b></div>'+hall+
       '<div class="collection-section-head"><b>DEINE SAMMLUNG</b><span>'+entries.length+' Exemplare</span></div>'+
       '<div class="collection-unified">'+ownedHTML+'</div>'+demos+'</div>';
@@ -4518,7 +4570,7 @@ function renderMetaPanels(){
     }));
     renderSeedBudPreviews(cc);
   }
-  const upTab=document.querySelector('[data-ui-tab="upgrades"]');if(upTab)upTab.classList.toggle('has-new',UPGRADE_CATEGORY_ORDER.some(id=>{const lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id);return lv<max&&gameState.coins>=upgradePrice(id,lv+1);}));
+  const upTab=document.querySelector('[data-ui-tab="upgrades"]');if(upTab)upTab.classList.toggle('has-new',UPGRADE_CATEGORY_ORDER.some(id=>{const lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id),next=lv+1;return lv<max&&isUpgradeLevelUnlocked(id,next,gameState)&&gameState.coins>=upgradePrice(id,next);}));
 }
 function resetGame(){storageClear();gameState=createGameState();hydrateTrainingFromGame();currentDay=1;resetBioPlant();invalidatePlant();saveGameState();sync();renderMetaPanels();requestRender();showGameToast('Neuer Grow gestartet')}
 // ---------------------------------------------------------------------------
@@ -4640,6 +4692,12 @@ window.__GFTRAIN={
   getBiology:()=>({shoots:[...bioPlant.shoots.values()].map(s=>({id:s.id,parentShootId:s.parentShootId,parentNodeId:s.parentNodeId,generation:s.generation,birthProg:s.birthProg,nodeIds:[...s.nodeIds],apicalDominance:s.apicalDominance,apicalTip:{...s.apicalTip}})),nodes:[...bioPlant.nodes.values()].map(n=>({id:n.id,shootId:n.shootId,index:n.index,birthProg:n.birthProg,cutAbove:n.cutAbove,cutHistory:[...n.cutHistory],budIds:[...n.budIds]})),buds:[...bioPlant.buds.values()].map(b=>({id:b.id,nodeId:b.nodeId,shootId:b.shootId,side:b.side,state:b.state,naturalActivationProg:Number.isFinite(b.naturalActivationProg)?b.naturalActivationProg:null,activatedProg:b.activatedProg,childShootId:b.childShootId}))}),
   getTrainingImpact:()=>({...trainingImpactModel(currentDay)}),
   getHarvestResult:()=>({...buildHarvestResult()})
+};
+window.__GFECO={
+  snapshot:()=>economySnapshot(gameState),
+  price:(id,level)=>upgradePrice(id,Number(level)),
+  packUnlocked:type=>seedPackUnlocked(type,gameState),
+  techLevel:()=>unlockedTechLevel(gameState)
 };
 function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 function sync(){
