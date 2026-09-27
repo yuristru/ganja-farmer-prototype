@@ -205,8 +205,12 @@ for(const [id,variant] of Object.entries(variants)){
   for(const day of days){
     const{context,page,pageErrors}=await openCase(variant,day);
     const architecture=await measureArchitecture(page);
+    await page.click('[data-mobile-tool="orbit"]');
+    await page.waitForTimeout(120);
+    const cleanStyle=await page.addStyleTag({content:'#app > *:not(#c), .dev-drawer, .toast{visibility:hidden!important}'});
+    await page.screenshot({path:path.join(outDir,`${id}-day${day}.png`),fullPage:false});
+    await cleanStyle.evaluate(el=>el.remove());
     const badges=await readTrainingBadges(page);
-    await page.locator('#c').screenshot({path:path.join(outDir,`${id}-day${day}.png`)});
     const record={architecture,badges,pageErrors};
     if(day===84)record.harvest=await readHarvest(page);
     results.variants[id].days[String(day)]=record;
