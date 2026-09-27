@@ -3075,28 +3075,6 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .next-grow-banner-v85.v90{padding-bottom:9px!important}
 .mobile-game-ui .next-grow-unlocks-v90{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .mobile-game-ui .next-grow-unlocks-v90 b{display:inline-flex;align-items:center;min-height:19px;padding:0 7px;border:1px solid rgba(173,255,105,.33);border-radius:7px;background:rgba(127,255,81,.08);color:#cfff8a;font:1000 6px/1 system-ui;letter-spacing:.35px}
-</style><style id="v90SeedlingIntro">
-.mobile-game-ui [data-mobile-tool].seedling-locked{
-  opacity:.42!important;
-  filter:grayscale(.72) saturate(.35)!important;
-  border-color:#36515b!important;
-  background:linear-gradient(#173344,#0a2532)!important;
-  box-shadow:0 3px 0 #041923!important;
-}
-.mobile-game-ui [data-mobile-tool].seedling-locked .ico{opacity:.58!important}
-.mobile-game-ui [data-mobile-tool].seedling-locked:after{
-  content:"TAG 4";
-  position:absolute;
-  right:3px;
-  top:3px;
-  padding:2px 3px;
-  border-radius:5px;
-  background:#23343a;
-  color:#8fa3a8;
-  font:1000 4.6px/1 system-ui;
-  letter-spacing:.2px;
-}
-.mobile-game-ui .rail-tool-group[data-tool-group="prune"] .rail-subcontrols:not(.show){pointer-events:none}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -4762,7 +4740,7 @@ function growthAtDay(day){
 }
 const SEEDLING_INTRO_MAX_DAY=3;
 function isSeedlingIntroStage(day=currentDay){return !gameState?.plant?.harvested&&Number(day)>=1&&Number(day)<=SEEDLING_INTRO_MAX_DAY;}
-function seedlingTrainingUnlocked(day=currentDay){return Number(day)>SEEDLING_INTRO_MAX_DAY;}
+function seedlingTrainingUnlocked(day=currentDay){return true;}
 function seedlingIntroStage(day=currentDay){return clamp(Math.round(Number(day)||1),1,SEEDLING_INTRO_MAX_DAY);}
 function seedlingVariantForSeed(seed,family=activeSeed()?.genetics||gameState?.genetics?.active||'dream',gp=activeGeneticProfile()){
   seed=Number(seed)>>>0;
@@ -4801,18 +4779,11 @@ function seedlingViewportPlant(){
   return{axes:[{pts:[v(0,0,0),v(0,d.height+16,0)]}],leaves:[],buds:[],nodes:[]};
 }
 function updateSeedlingTrainingLock(){
-  const locked=!seedlingTrainingUnlocked();
-  document.querySelectorAll('[data-mobile-tool="prune"],[data-mobile-tool="bend"]').forEach(btn=>{
-    btn.classList.toggle('seedling-locked',locked);
-    btn.setAttribute('aria-disabled',String(locked));
-    btn.title=locked?'Training ab Tag 4 verfügbar':'';
+  document.querySelectorAll('[data-mobile-tool="prune"],[data-mobile-tool="bend"],.tools [data-tool="prune"],.tools [data-tool="bend"]').forEach(btn=>{
+    btn.classList.remove('seedling-locked');
+    btn.setAttribute('aria-disabled','false');
+    btn.title='';
   });
-  document.querySelectorAll('.tools [data-tool="prune"],.tools [data-tool="bend"]').forEach(btn=>{
-    btn.classList.toggle('seedling-locked',locked);
-    btn.setAttribute('aria-disabled',String(locked));
-  });
-  const pruneSub=document.getElementById('pruneSubcontrols');
-  if(pruneSub&&locked)pruneSub.classList.remove('show');
 }
 function seedlingColor(v,deltaL=0,alpha=1){return 'hsla('+v.hue+','+v.saturation+'%,'+clamp(v.lightness+deltaL,25,72)+'%,'+alpha+')';}
 function queueSeedlingLens(origin,dir,length,width,color,zLift=0){
@@ -4906,15 +4877,9 @@ function setTool(name){
   if(name==='reset'){
     plantEdits.prunes.clear();plantEdits.bends.clear();persistTrainingToGame();saveGameState();resetBioPlant();invalidatePlant();requestRender();return true;
   }
-  if((name==='prune'||name==='bend')&&!seedlingTrainingUnlocked()){
-    interactionMode='orbit';
-    tools.querySelectorAll('button[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool==='orbit'));
-    showGameToast('Training ab Tag 4 verfügbar');
-    updateSeedlingTrainingLock();requestRender();return false;
-  }
   interactionMode=name;
   tools.querySelectorAll('button[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===name));
-  toolhint.textContent=name==='prune'?'Topping: Nodium anklicken. Früh getoppt entstehen zwei ausgeglichenere Haupttriebe. Späte Schnitte kosten Ertrag.':name==='bend'?'Biegen: Trieb nach unten ziehen. Starkes frühes Biegen schwächt die Apikaldominanz und kann zusätzliche Seitentriebe aktivieren.':'Drehen: Pflanze ziehen';
+  toolhint.textContent=name==='prune'?'Topping: Nodium anklicken. Training ist frei und verbraucht keinen Zug.':name==='bend'?'Biegen: Trieb nach unten ziehen. Training ist frei und verbraucht keinen Zug.':'Drehen: Pflanze ziehen';
   requestRender();return true;
 }
 tools.querySelectorAll('button').forEach(btn=>btn.onclick=()=>setTool(btn.dataset.tool));
@@ -4923,6 +4888,10 @@ window.__GFSEEDLING={
   variant:()=>({...seedlingIntroVariant()}),
   variantForSeed:seed=>({...seedlingVariantForSeed(Number(seed)>>>0)}),
   trainingUnlocked:()=>seedlingTrainingUnlocked(currentDay)
+};
+window.__GFTRAININGRULES={
+  snapshot:()=>({free:true,turnsToday:Number(gameState?.turn?.turnsToday)||0,lastTurnAt:Number(gameState?.turn?.lastTurnAt)||0,day:currentDay}),
+  free:true
 };
 window.__GFTRAIN={
   setDay,
@@ -6222,20 +6191,16 @@ function drawTrainingOverlay(P){
   }
 }
 function applyDefoliation(leaf){
-  if(!seedlingTrainingUnlocked()){showGameToast('Training ab Tag 4 verfügbar');return;}
   if(!leaf||!leaf.id)return;
-  const av=turnActionAvailability();if(!av.ok){showGameToast(turnBlockedMessage(av));return;}
   const list=gameState.training.defoliations||(gameState.training.defoliations=[]);if(list.includes(leaf.id))return;
   if(list.length>=18){showGameToast('Zu viele Blätter entfernt');return;}
   list.push(leaf.id);ensureBiography().defoliationEvents.push({day:currentDay,leafId:leaf.id});trainingStress('defoliate',1,currentDay);
-  commitTurnAction('Entlauben');invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Blatt entfernt · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');
+  saveGameState();invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Blatt entfernt · '+ti.architecture+' · FREIES TRAINING');
 }
 function applyPrune(node){
-  if(!seedlingTrainingUnlocked()){showGameToast('Training ab Tag 4 verfügbar');return;}
   if(!node)return;
   initBioPlant();
   const existing=plantEdits.prunes.get(node.id);if(existing&&existing.cutDay<=currentDay)return;
-  const av=turnActionAvailability();if(!av.ok){showGameToast(turnBlockedMessage(av));return;}
   const event={nodeId:node.id,axisId:node.axisId,axisNode:node.axisNode,cutDay:currentDay,cutProg:growthAtDay(currentDay).prog};
   plantEdits.prunes.set(node.id,event);persistTrainingToGame();
   const bioNode=bioPlant.nodes.get(node.id);
@@ -6243,7 +6208,7 @@ function applyPrune(node){
   const shoot=bioPlant.shoots.get(node.axisId);
   if(shoot)shoot.apicalTip.removalEvents.push({...event});
   trainingStress('prune',1,currentDay);
-  commitTurnAction('Schneiden');invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Getoppt · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');
+  saveGameState();invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Getoppt · '+ti.architecture+' · FREIES TRAINING');
 }
 
 // --- Static Grow Room game world -------------------------------------------------
@@ -6338,9 +6303,6 @@ function render(){
 canvas.addEventListener('pointerdown',e=>{
   const pos=getPointerPos(e);activePointers.set(e.pointerId,pos);
   canvas.setPointerCapture(e.pointerId);
-  if((interactionMode==='prune'||interactionMode==='bend')&&!seedlingTrainingUnlocked()){
-    setTool('orbit');showGameToast('Training ab Tag 4 verfügbar');return;
-  }
   if(interactionMode==='prune'){
     if(pruneTarget==='leaf'){const leaf=findLeafHit(pos.x,pos.y);if(leaf)applyDefoliation(leaf);}
     else {const node=findNodeHit(pos.x,pos.y);if(node)applyPrune(node);}
@@ -6349,7 +6311,6 @@ canvas.addEventListener('pointerdown',e=>{
   if(interactionMode==='bend'){
     const ax=findAxisHit(pos.x,pos.y);
     if(ax){
-      const av=turnActionAvailability();if(!av.ok){showGameToast(turnBlockedMessage(av));return;}
       activeBendAxis=ax.id;bendStartY=pos.y;bendStartValue=bendValue(ax.id);drag=true;
     }
     return;
@@ -6377,7 +6338,7 @@ function endPointer(e){
   if(activePointers.size<2)pinchStartDist=0;
   const finishedBend=activeBendAxis,changed=finishedBend&&Math.abs(bendValue(finishedBend)-bendStartValue)>.018;
   drag=false;activeBendAxis=null;
-  if(changed){const amount=bendValue(finishedBend),delta=Math.abs(amount-bendStartValue);trainingStress('bend',Math.max(.45,delta*1.4+amount*.35),currentDay);commitTurnAction('Biegen');const ti=trainingImpactModel(currentDay);showGameToast('Gebogen '+Math.round(amount*100)+'% · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');}
+  if(changed){const amount=bendValue(finishedBend),delta=Math.abs(amount-bendStartValue);trainingStress('bend',Math.max(.45,delta*1.4+amount*.35),currentDay);saveGameState();updateGameHUD();const ti=trainingImpactModel(currentDay);showGameToast('Gebogen '+Math.round(amount*100)+'% · '+ti.architecture+' · FREIES TRAINING');}
   if(interactionMode==='orbit'&&activePointers.size===0)endInteraction();
   else requestRender();
 }
@@ -6420,7 +6381,7 @@ function setMainPanel(name){const wrap=document.querySelector('.bottom-wrap');do
 document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>setMainPanel(btn.dataset.uiTab)));
 document.querySelectorAll('[data-panel-close]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();setMainPanel('care');}));
 function syncToolSubcontrols(mode){const cameraSub=document.getElementById('cameraSubcontrols'),pruneSub=document.getElementById('pruneSubcontrols');if(cameraSub)cameraSub.classList.toggle('show',mode==='orbit');if(pruneSub)pruneSub.classList.toggle('show',mode==='prune');}
-document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{if(!setTool(btn.dataset.mobileTool)){document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b.dataset.mobileTool==='orbit'));syncToolSubcontrols('orbit');const n=document.getElementById('trainingNote');if(n){n.textContent='Keimling wächst · Training ab Tag 4 verfügbar';n.classList.add('show')}return;}document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Entlauben öffnet die Krone. Zu viel oder zu spät kostet Erholung.':'Topping erzeugt nach etwa 2 Tagen neue Seitentriebe. Früh trainieren ist effizienter.'):btn.dataset.mobileTool==='bend'?'Biegen senkt die Apikaldominanz. Ab stärkerer Biegung können weitere Seitentriebe anspringen.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
+document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Entlauben: frei, ohne Zug und ohne Wartezeit.':'Topping: frei, ohne Zug und ohne Wartezeit.'):btn.dataset.mobileTool==='bend'?'Biegen: frei, ohne Zug und ohne Wartezeit.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
 document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();pruneTarget=btn.dataset.pruneTarget;document.querySelectorAll('[data-prune-target]').forEach(b=>b.classList.toggle('active',b===btn));const n=document.getElementById('trainingNote');if(n){n.textContent=pruneTarget==='leaf'?'Entlauben: Blatt antippen. Öffnet Lichtwege, erzeugt aber Erholungsstress.':'Topping: Schnittpunkt antippen. Früh entstehen ausgeglichenere Haupttriebe.';n.classList.add('show')}requestRender();}));
 const cameraResetMini=document.getElementById('cameraResetMini');if(cameraResetMini)cameraResetMini.addEventListener('click',e=>{e.stopPropagation();setCameraPreset('reset');showGameToast('Kamera zurückgesetzt');});
 const devDrawer=document.getElementById('devDrawer');document.getElementById('devToggle')?.addEventListener('click',()=>devDrawer.classList.toggle('open'));document.getElementById('devClose')?.addEventListener('click',()=>devDrawer.classList.remove('open'));document.querySelector('.dev-grid')?.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(()=>devDrawer.classList.remove('open'),0);});
