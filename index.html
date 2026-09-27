@@ -2514,7 +2514,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   transform-origin:50% 80%;
 }
 .mobile-game-ui .room-eq-substrate{
-  left:64px;
+  left:40px;
   bottom:calc(var(--safe-bottom) + 200px);
   width:124px!important;
   height:88px!important;
@@ -2553,7 +2553,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.58)) drop-shadow(0 0 7px rgba(126,255,103,.12));
 }
 @media(max-width:370px){
-  .mobile-game-ui .room-eq-substrate{left:52px;bottom:calc(var(--safe-bottom) + 194px);width:114px!important;height:82px!important}
+  .mobile-game-ui .room-eq-substrate{left:32px;bottom:calc(var(--safe-bottom) + 194px);width:114px!important;height:82px!important}
   .mobile-game-ui .room-eq-nutrients{left:-12px;width:84px!important;height:84px!important}
   .mobile-game-ui .room-eq-sensor{right:-2px;width:70px!important;height:70px!important}
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
@@ -2995,14 +2995,22 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   width:170px;
   height:142px;
   transform:translateX(-50%);
-  border:1px dashed rgba(157,255,97,.36);
+  border:0!important;
+  outline:0!important;
   border-radius:48% 48% 18% 18%;
-  background:rgba(92,255,75,.015);
+  background:transparent!important;
+  box-shadow:none!important;
+  opacity:0!important;
   pointer-events:auto;
+  -webkit-tap-highlight-color:transparent;
 }
-.mobile-game-ui .room-demo-pot-hotspot:active{
-  background:rgba(114,255,89,.08);
-  border-color:rgba(177,255,122,.72);
+.mobile-game-ui .room-demo-pot-hotspot:active,
+.mobile-game-ui .room-demo-pot-hotspot:focus,
+.mobile-game-ui .room-demo-pot-hotspot:focus-visible{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 @media(max-width:370px){
   .mobile-game-ui .upgrade-demo-controls{right:10px}
