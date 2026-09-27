@@ -33,12 +33,7 @@ const results={assertions:{},prune:{},bend:{},pinch:{}};
 const cam=()=>page.evaluate(()=>window.__GFCAMERA.snapshot());
 const training=()=>page.evaluate(()=>window.__GFTRAIN.getState());
 
-function segDist(px,py,a,b){
-  const vx=b.x-a.x,vy=b.y-a.y,wx=px-a.x,wy=py-a.y,c1=vx*wx+vy*wy;
-  if(c1<=0)return Math.hypot(px-a.x,py-a.y);
-  const c2=vx*vx+vy*vy;if(c2<=c1)return Math.hypot(px-b.x,py-b.y);
-  const t=c1/c2,qx=a.x+t*vx,qy=a.y+t*vy;return Math.hypot(px-qx,py-qy);
-}
+const client=await page.context().newCDPSession(page);
 const box=await page.locator('#c').boundingBox();
 
 function segDist(px,py,a,b){
