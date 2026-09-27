@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V85 New Grow Loop</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V86 Genetics 2.0</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3026,6 +3026,9 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .next-grow-banner-v85 strong{display:block;margin-top:5px;color:#fff;font:1000 12px/1.05 system-ui}
 .mobile-game-ui .next-grow-banner-v85 small{display:block;margin-top:4px;color:#9fc3ba;font:750 7px/1.25 system-ui}
 .mobile-game-ui .plant-seed-btn.locked{opacity:.45!important;filter:grayscale(.75)!important;pointer-events:none!important}
+</style><style id="v86GeneticsArchitecture">
+.mobile-game-ui .gen-architecture-v86{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.mobile-game-ui .gen-architecture-v86 span{padding:5px 7px;border-radius:8px;border:1px solid rgba(116,210,188,.20);background:#0b3038;color:#bcecd3;font:900 6.5px/1 system-ui;letter-spacing:.25px}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3150,8 +3153,60 @@ function seedTraitLabel(k){return({growth:'Wuchs',density:'Dichte',potency:'Pote
 function seedTraitText(k,v){return (v>=0?'+':'')+v+'% '+seedTraitLabel(k);}
 function activeSeed(){return gameState?.genetics?.currentSeed||null;}
 function activeSeedTraits(){return activeSeed()?.traits||{};}
-function seedGeneticProfile(seed=activeSeed()){const raw=(seed?.seed||gameState?.genetics?.phenotypeSeed||PLANT_SEED)>>>0,R=rng(seedHash(raw,0x6d2b79f5)),ph=(seed?.phenotype||'').toLowerCase(),trait=seed?.traits||{};let p={internode:lerp(.91,1.11,R()),branching:lerp(.86,1.17,R()),stretch:lerp(.90,1.15,R()),droughtTolerance:lerp(.90,1.13,R()),feedTolerance:lerp(.90,1.13,R()),resin:lerp(.92,1.12,R()),aroma:lerp(.92,1.12,R()),colorExpression:lerp(.28,.92,R())};p.branching*=1+(trait.growth||0)/180;p.resin*=1+(trait.potency||0)/220;p.aroma*=1+(trait.aroma||0)/220;p.droughtTolerance*=1+(trait.resilience||0)/260;p.feedTolerance*=1+(trait.resilience||0)/280;if(ph.includes('compact')||ph.includes('dense')){p.internode*=.91;p.stretch*=.93;p.branching*=1.06}if(ph.includes('stretch')||ph.includes('tower')||ph.includes('spear')){p.internode*=1.08;p.stretch*=1.10}if(ph.includes('wide'))p.branching*=1.12;if(ph.includes('frost'))p.resin*=1.10;if(ph.includes('purple')||ph.includes('violet')||ph.includes('night'))p.colorExpression=Math.max(p.colorExpression,.82);for(const k of Object.keys(p))p[k]=clamp(p[k],k==='colorExpression'?0:.78,k==='colorExpression'?1:1.25);return p}
+function seedGeneticProfile(seed=activeSeed()){
+  const raw=(seed?.seed||gameState?.genetics?.phenotypeSeed||PLANT_SEED)>>>0,R=rng(seedHash(raw,0x6d2b79f5));
+  const ph=(seed?.phenotype||'').toLowerCase(),trait=seed?.traits||{},family=seed?.genetics||gameState?.genetics?.active||'dream';
+  let p={
+    internode:lerp(.88,1.13,R()),branching:lerp(.78,1.24,R()),stretch:lerp(.88,1.16,R()),
+    droughtTolerance:lerp(.90,1.13,R()),feedTolerance:lerp(.90,1.13,R()),
+    resin:lerp(.92,1.12,R()),aroma:lerp(.92,1.12,R()),colorExpression:lerp(.28,.92,R()),
+    canopy:lerp(.90,1.11,R()),leafScale:lerp(.92,1.08,R()),leafWidth:lerp(.90,1.10,R()),
+    petiole:lerp(.92,1.10,R()),branchAngle:lerp(.90,1.12,R()),stemThickness:lerp(.94,1.08,R()),
+    apical:lerp(.92,1.08,R()),flowerTiming:lerp(-1.6,1.6,R()),flowerMass:lerp(.94,1.07,R())
+  };
+  if(family==='comet'){
+    p.internode*=1.08;p.stretch*=1.10;p.canopy*=.91;p.leafWidth*=.92;p.branchAngle*=.92;p.apical*=1.08;p.stemThickness*=.96;
+  }else if(family==='violet'){
+    p.internode*=.93;p.stretch*=.93;p.canopy*=1.08;p.leafWidth*=1.08;p.branchAngle*=1.10;p.apical*=.92;p.stemThickness*=1.06;p.flowerMass*=1.06;
+  }else{
+    p.canopy*=1.03;p.branchAngle*=1.03;p.apical*=.98;p.leafScale*=1.02;
+  }
+  p.branching*=1+(trait.growth||0)/150;
+  p.internode*=1+(trait.growth||0)/420;p.stretch*=1+(trait.growth||0)/260;
+  p.leafScale*=1+(trait.growth||0)/300;p.leafWidth*=1+(trait.style||0)/260;
+  p.stemThickness*=1+(trait.resilience||0)/330;
+  p.resin*=1+(trait.potency||0)/220;p.aroma*=1+(trait.aroma||0)/220;
+  p.droughtTolerance*=1+(trait.resilience||0)/260;p.feedTolerance*=1+(trait.resilience||0)/280;
+  p.flowerMass*=1+((trait.density||0)+(trait.potency||0))/500;
+  if(ph.includes('compact')||ph.includes('dense')){
+    p.internode*=.86;p.stretch*=.90;p.branching*=1.12;p.canopy*=1.10;p.branchAngle*=1.08;p.leafWidth*=1.07;p.flowerMass*=1.08;p.apical*=.92;
+  }
+  if(ph.includes('stretch')||ph.includes('tower')||ph.includes('spear')){
+    p.internode*=1.12;p.stretch*=1.13;p.branching*=.88;p.canopy*=.90;p.branchAngle*=.91;p.leafWidth*=.92;p.apical*=1.10;
+  }
+  if(ph.includes('wide')||ph.includes('crown')){
+    p.branching*=1.16;p.canopy*=1.15;p.branchAngle*=1.15;p.petiole*=1.07;p.apical*=.91;
+  }
+  if(ph.includes('fringe')){p.leafScale*=1.08;p.leafWidth*=.91;p.canopy*=1.06;}
+  if(ph.includes('stack')){p.flowerMass*=1.10;p.internode*=.96;}
+  if(ph.includes('frost')){p.resin*=1.12;p.flowerMass*=1.04;}
+  if(ph.includes('purple')||ph.includes('violet')||ph.includes('night'))p.colorExpression=Math.max(p.colorExpression,.84);
+  p.internode=clamp(p.internode,.72,1.34);p.branching=clamp(p.branching,.62,1.42);p.stretch=clamp(p.stretch,.72,1.36);
+  p.droughtTolerance=clamp(p.droughtTolerance,.78,1.25);p.feedTolerance=clamp(p.feedTolerance,.78,1.25);
+  p.resin=clamp(p.resin,.78,1.30);p.aroma=clamp(p.aroma,.78,1.30);p.colorExpression=clamp(p.colorExpression,0,1);
+  p.canopy=clamp(p.canopy,.76,1.32);p.leafScale=clamp(p.leafScale,.82,1.20);p.leafWidth=clamp(p.leafWidth,.78,1.24);
+  p.petiole=clamp(p.petiole,.82,1.20);p.branchAngle=clamp(p.branchAngle,.76,1.30);p.stemThickness=clamp(p.stemThickness,.84,1.20);
+  p.apical=clamp(p.apical,.76,1.24);p.flowerTiming=clamp(p.flowerTiming,-3,3);p.flowerMass=clamp(p.flowerMass,.82,1.24);
+  return p;
+}
 function activeGeneticProfile(){return seedGeneticProfile(activeSeed())}
+function geneticArchitectureSummary(profile=activeGeneticProfile(),seed=activeSeed()){
+  const shape=profile.stretch>1.10?'HOCH & SCHLANK':profile.canopy>1.10?'BREITE KRONE':profile.internode<.90?'KOMPAKT':'BALANCIERT';
+  const nodes=profile.internode<.92?'KURZE INTERNODIEN':profile.internode>1.10?'LANGE INTERNODIEN':'MITTLERE INTERNODIEN';
+  const branches=profile.branching>1.12?'STARK VERZWEIGT':profile.branching<.88?'APICAL BETONT':'MODERAT VERZWEIGT';
+  const leaf=profile.leafWidth>1.08?'BREITE BLÄTTER':profile.leafWidth<.93?'SCHMALE BLÄTTER':'MITTLERE BLÄTTER';
+  return{shape,nodes,branches,leaf,phenotype:seed?.phenotype||'Unbekannt'};
+}
 function seedBudVisualProfile(seed){
   const gp=seedGeneticProfile(seed),g=GENETICS[seed?.genetics]||GENETICS.dream,t=seed?.traits||{},ph=(seed?.phenotype||'').toLowerCase();
   let height=1,width=1,density=clamp(.78+(t.density||0)/55, .62,1.22);
@@ -4362,7 +4417,7 @@ function renderMetaPanels(){
   }
   syncEquipment3D();
   syncEquipment2D();
-  const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Dieser Seed bestimmt den gesamten Grow. Deinen nächsten Seed wählst du nach der Ernte direkt in der Sammlung.</div>'; }
+  const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),profile=activeGeneticProfile(),arch=geneticArchitectureSummary(profile,seed),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div class="gen-architecture-v86"><span>'+arch.shape+'</span><span>'+arch.nodes+'</span><span>'+arch.branches+'</span><span>'+arch.leaf+'</span></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Genetik verändert jetzt sichtbar Höhe, Kronenbreite, Internodien, Astwinkel, Blattproportionen und Blütenarchitektur.</div>'; }
   const cc=document.getElementById('collectionContent');if(cc){
     const recent=gameState.collection||[],active=activeSeed(),inventory=gameState.seedVault?.inventory||[];
     const demoJars=[
@@ -4645,9 +4700,10 @@ function hashString(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.cha
 function resetBioPlant(){bioPlant.initialized=false;bioPlant.shoots.clear();bioPlant.nodes.clear();bioPlant.buds.clear();}
 function makeShoot(id,parentShootId,parentNodeId,generation,birthProg,seed,vigor=1,sourceBudId=null){
   if(bioPlant.shoots.has(id))return bioPlant.shoots.get(id);
+  const gp=activeGeneticProfile();
   const shoot={
     id,parentShootId,parentNodeId,generation,birthProg,birthDay:generation===0?1:null,seed,vigorBase:vigor,sourceBudId,
-    nodeIds:[],status:'growing',apicalDominance:clamp(.94-generation*.11,.46,.94),
+    nodeIds:[],status:'growing',apicalDominance:clamp((.94-generation*.11)*gp.apical,.38,.98),
     apicalTip:{status:'active',removalEvents:[]}
   };
   bioPlant.shoots.set(id,shoot);
@@ -4670,7 +4726,7 @@ function makeShoot(id,parentShootId,parentNodeId,generation,birthProg,seed,vigor
       node.leaves.push(leaf);
       const budId=nodeId+':bud:'+(side<0?'L':'R');
       const BR=rng((currentPlantSeed()*71+hashString(budId))>>>0);
-      const chance=(BIO_CONFIG.naturalBranchChance[Math.min(generation,BIO_CONFIG.naturalBranchChance.length-1)]||0)*activeGeneticProfile().branching;const eligible=(i>=2&&i<=maxNodes-2&&BR()<clamp(chance,0,.92));
+      const chance=(BIO_CONFIG.naturalBranchChance[Math.min(generation,BIO_CONFIG.naturalBranchChance.length-1)]||0)*gp.branching;const eligible=(i>=2&&i<=maxNodes-2&&BR()<clamp(chance,0,.92));
       const suppressionPotential=.22+.76*Math.pow(i/maxNodes,1.45);
       const naturalActivationProg=eligible
         ? nodeBirth+BIO_CONFIG.naturalDelay[Math.min(generation,BIO_CONFIG.naturalDelay.length-1)]+suppressionPotential*.17+(BR()-.5)*.045
@@ -4778,8 +4834,8 @@ function rotateYVec(p,a){const c=Math.cos(a),s=Math.sin(a);return v(p.x*c+p.z*s,
 function buildPlant(){
   initBioPlant();
   const P={axes:[],leaves:[],buds:[],nodes:[],shootStates:[]};
-  const growth=growthAtDay(currentDay),prog=growth.prog;
-  const heightRef=Math.max(1,575*growth.hs);
+  const growth=growthAtDay(currentDay),prog=growth.prog,gp=activeGeneticProfile();
+  const heightRef=Math.max(1,575*growth.hs*lerp(.94,1.06,gp.stretch));
 
   function ageFromBirth(birth,span=.28){return clamp((prog-birth)/span,0,1)}
   function addFan(p,dir,size,birth,seed,kind='fan',leafId=null){
@@ -4792,7 +4848,7 @@ function buildPlant(){
     const pitchJitter=THREELESS_DEG(lerp(VARIATION.leafPitchDeg[0]*damp,VARIATION.leafPitchDeg[1]*damp,VR()));
     const rollJitter=THREELESS_DEG(lerp(VARIATION.leafRollDeg[0]*damp,VARIATION.leafRollDeg[1]*damp,VR()));
     const droopScale=lerp(VARIATION.droop[0],VARIATION.droop[1],VR());
-    const careScale=gameGrowthScaleForProgress(birth);P.leaves.push({id:leafId||('leaf:'+seed),p,dir,size:size*(.34+.66*Math.pow(age,.62))*careScale,age,birth,seed,kind,scaleJitter,widthScale,petioleScale,yawJitter,pitchJitter,rollJitter,droopScale,careScale});
+    const careScale=gameGrowthScaleForProgress(birth);P.leaves.push({id:leafId||('leaf:'+seed),p,dir,size:size*gp.leafScale*(.34+.66*Math.pow(age,.62))*careScale,age,birth,seed,kind,scaleJitter,widthScale:widthScale*gp.leafWidth,petioleScale:petioleScale*gp.petiole,yawJitter,pitchJitter,rollJitter,droopScale,careScale});
   }
   function addNodeLeaves(shoot,node,p,ring,tangent){
     node.age=Math.max(0,prog-node.birthProg);
@@ -4817,7 +4873,7 @@ function buildPlant(){
     const architecturalDelay=isTip?0:(1-rel)*7.5;
     const generationDelay=gen*1.6;
     const localDelay=isTip?4:5+node.index*.35;
-    return Math.round(Math.max(FLOWER_CONFIG.visibleDay+architecturalDelay+generationDelay,shootBirthDay+localDelay));
+    return Math.round(Math.max(FLOWER_CONFIG.visibleDay+architecturalDelay+generationDelay+gp.flowerTiming,shootBirthDay+localDelay+gp.flowerTiming));
   }
   function addNodeFlowers(shoot,node,ng){
     if(currentDay<FLOWER_CONFIG.visibleDay||shoot.generation>FLOWER_CONFIG.maxGeneration)return;
@@ -4831,7 +4887,7 @@ function buildPlant(){
     const light=clamp(.72+.34*rel-.07*shoot.generation,.62,1.08);
     const baseR=(shoot.generation===0?12.5:shoot.generation===1?10.4:8.2)*light*(.82+.55*Math.pow(rel,1.7));
     const sizeCurve=.18+.82*Math.pow(smoothstep01(maturity),.72);
-    const siteR=baseR*sizeCurve*gameFlowerQualityFactor(startDay)*flowerDevelopmentFactor(startDay);
+    const siteR=baseR*gp.flowerMass*sizeCurve*gameFlowerQualityFactor(startDay)*flowerDevelopmentFactor(startDay);
     for(const side of [-1,1]){
       const sideDir=side<0?mul(ng.ring,-1):ng.ring;
       const siteP=add(ng.p,add(mul(sideDir,2.4+siteR*.10),mul(ng.tan,1.0)));
@@ -4853,7 +4909,7 @@ function buildPlant(){
     const sizeCurve=.20+.80*Math.pow(smoothstep01(maturity),.68);
     P.buds.push({
       id:shoot.id+':terminalFlower',p:add(tip,mul(td,2.4)),dir:td,ring:null,side:0,
-      r:baseR*vigor*sizeCurve*gameFlowerQualityFactor(startDay)*flowerDevelopmentFactor(startDay),maturity,stage:stageName,startDay,terminal:true,generation:shoot.generation,
+      r:baseR*gp.flowerMass*vigor*sizeCurve*gameFlowerQualityFactor(startDay)*flowerDevelopmentFactor(startDay),maturity,stage:stageName,startDay,terminal:true,generation:shoot.generation,
       seed:hashString(shoot.id+':terminalFlower')
     });
   }
@@ -4862,7 +4918,7 @@ function buildPlant(){
     const cut=activeCutForShoot(shoot.id,prog);
     const allVisible=visibleNodesForShoot(shoot,prog,cut);
     const gen=shoot.generation,interval=BIO_CONFIG.nodeInterval[Math.min(gen,BIO_CONFIG.nodeInterval.length-1)];
-    const gp=activeGeneticProfile(),baseInternode=BIO_CONFIG.internode[Math.min(gen,BIO_CONFIG.internode.length-1)]*gp.internode;const stageStretch=(currentDay<26?1:currentDay<50?lerp(1,1.15,(currentDay-26)/24):1.15)*lerp(1,gp.stretch,clamp((currentDay-22)/28,0,1));
+    const baseInternode=BIO_CONFIG.internode[Math.min(gen,BIO_CONFIG.internode.length-1)]*gp.internode;const stageStretch=(currentDay<26?1:currentDay<50?lerp(1,1.15,(currentDay-26)/24):1.15)*lerp(1,gp.stretch,clamp((currentDay-22)/28,0,1));
     let pts=[v(origin.x,origin.y,origin.z)],current=v(origin.x,origin.y,origin.z),dir=norm(baseDir);
     const nodePointIndex=new Map();
     for(const node of allVisible){
@@ -4903,7 +4959,7 @@ function buildPlant(){
     visited.add(shoot.id);
     const G=geometryForShoot(shoot,origin,baseDir);
     if(G.pts.length<2)return;
-    const width=Math.max(1.4,(shoot.generation===0?CFG.stemWidth:4.7/(1+shoot.generation*.42))*clamp(shoot.vigorBase,.60,1.15));
+    const width=Math.max(1.4,(shoot.generation===0?CFG.stemWidth:4.7/(1+shoot.generation*.42))*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
     P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId});
     P.shootStates.push({id:shoot.id,generation:shoot.generation,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,birthProg:shoot.birthProg,tipActive:G.tipActive,cut:G.cut?{...G.cut}:null,apicalDominance:G.tipActive?shoot.apicalDominance:.10,status:G.tipActive?'growing':'topped'});
 
@@ -4924,8 +4980,9 @@ function buildPlant(){
         if(e.state!=='growing')continue;
         const child=ensureChildShoot(shoot,node,e);if(!child)continue;
         const sideDir=e.bud.side<0?mul(ng.ring,-1):ng.ring;
-        const outward=norm(add(mul(sideDir,.86),add(mul(ng.tan,.08),v(0,.48+.05*shoot.generation,0))));
-        const childOrigin=add(ng.p,mul(sideDir,4.2));
+        const lateral=.86*gp.branchAngle*gp.canopy,rise=(.48+.05*shoot.generation)/Math.sqrt(Math.max(.72,gp.branchAngle));
+        const outward=norm(add(mul(sideDir,lateral),add(mul(ng.tan,.08),v(0,rise,0))));
+        const childOrigin=add(ng.p,mul(sideDir,4.2*gp.canopy));
         renderShoot(child,childOrigin,outward,visited);
       }
     }
@@ -4944,7 +5001,7 @@ function buildPlant(){
   if(currentDay<=4){
     const main=bioPlant.shoots.get('main'),origin=v(0,-4,0);
     const G=geometryForShoot(main,origin,v(0,1,0));
-    P.axes.push({id:'main',depth:0,pts:G.pts,width:CFG.stemWidth});
+    P.axes.push({id:'main',depth:0,pts:G.pts,width:CFG.stemWidth*gp.stemThickness});
     const top=G.pts[G.pts.length-1];
     P.leaves.push({p:add(top,v(-7,-4,0)),dir:norm(v(-1,.22,.08)),size:.50,age:1,cot:true,seed:11});
     P.leaves.push({p:add(top,v(7,-4,0)),dir:norm(v(1,.22,-.06)),size:.50,age:1,cot:true,seed:12});
