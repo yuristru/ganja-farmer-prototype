@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V86 Genetics 2.0</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V87 Training Strategy</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3029,6 +3029,12 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 </style><style id="v86GeneticsArchitecture">
 .mobile-game-ui .gen-architecture-v86{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .mobile-game-ui .gen-architecture-v86 span{padding:5px 7px;border-radius:8px;border:1px solid rgba(116,210,188,.20);background:#0b3038;color:#bcecd3;font:900 6.5px/1 system-ui;letter-spacing:.25px}
+</style><style id="v87TrainingStrategy">
+.mobile-game-ui .training-architecture-v87{margin-top:8px;padding:7px 8px;border-radius:10px;border:1px solid rgba(145,255,80,.18);background:linear-gradient(145deg,rgba(13,49,43,.92),rgba(7,34,42,.92))}
+.mobile-game-ui .training-architecture-v87 small{display:block;color:#82aa9e;font:900 5.8px/1 system-ui;letter-spacing:.8px;margin-bottom:5px}
+.mobile-game-ui .training-architecture-v87 div{display:flex;flex-wrap:wrap;gap:4px}
+.mobile-game-ui .training-architecture-v87 span{padding:4px 6px;border-radius:7px;background:rgba(145,255,80,.075);border:1px solid rgba(145,255,80,.14);color:#c9f5cc;font:900 6px/1 system-ui}
+.mobile-game-ui .training-architecture-v87 span.warn{background:rgba(255,170,88,.08);border-color:rgba(255,170,88,.22);color:#ffd4a1}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -3400,9 +3406,64 @@ function renderSeedBudPreviews(root=document){
 function phaseKeyForDay(day){return day<15?'seedling':day<36?'veg':day<57?'stretch':'flower'}
 function ensureBiography(st=gameState){if(!st)return null;st.biography=st.biography||{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]};st.biography.phase=st.biography.phase||{};for(const k of ['seedling','veg','stretch','flower'])st.biography.phase[k]=st.biography.phase[k]||{sum:0,days:0};st.biography.events=Array.isArray(st.biography.events)?st.biography.events:[];st.biography.defoliationEvents=Array.isArray(st.biography.defoliationEvents)?st.biography.defoliationEvents:[];return st.biography}
 function recordBiographyDay(result){const b=ensureBiography(),phase=phaseKeyForDay(result.day),ful=result.fulfillment||0;b.phase[phase].sum+=ful;b.phase[phase].days++;if(ful>=.91)b.perfectDays++;const severe=(result.damage?.acute||0)>.62||ful<.48;if(ful<.72){b.stressDays++;b.currentStressStreak++;b.longestStressStreak=Math.max(b.longestStressStreak,b.currentStressStreak)}else b.currentStressStreak=0;if(severe){b.severeDays++;b.events.push({day:result.day,type:'stress',severity:Math.round((1-ful)*100)})}if(b.events.length>24)b.events=b.events.slice(-24)}
-function trainingSummary(){const prunes=gameState.training?.prunes||[],bends=gameState.training?.bends||[],defs=ensureBiography()?.defoliationEvents||[],pruneDays=prunes.map(x=>x.cutDay||99),bendDays=bends.flatMap(x=>(x.events||[]).map(e=>e.day||99)),earlyTraining=pruneDays.filter(d=>d>=15&&d<=35).length+bendDays.filter(d=>d>=15&&d<=42).length,lateTraining=pruneDays.filter(d=>d>49).length+bendDays.filter(d=>d>56).length+defs.filter(e=>e.day>56).length;return{prunes:prunes.length,bends:bendDays.length,defoliations:defs.length,earlyTraining,lateTraining}}
+function trainingImpactModel(day=gameState?.plant?.day||currentDay||1){
+  const training=gameState?.training||{},prunes=training.prunes||[],bends=training.bends||[],defs=ensureBiography()?.defoliationEvents||[];
+  const bendEvents=bends.flatMap(x=>(x.events||[]).map(e=>({...e,axisId:x.axisId}))).filter(e=>(e.day||99)<=day&&Number(e.amount)>.08);
+  let canopy=0,lateral=0,flower=0,style=0,recoveryCost=0,lateRisk=0;
+  for(const p of prunes){
+    const d=Number(p.cutDay)||99;if(d>day)continue;
+    if(d<12){recoveryCost+=.055;lateRisk+=.018;}
+    else if(d<=35){canopy+=.072;lateral+=.105;flower+=.020;style+=.040;recoveryCost+=.016;}
+    else if(d<=49){canopy+=.040;lateral+=.055;flower+=.006;style+=.018;recoveryCost+=.024;}
+    else{flower-=.050;recoveryCost+=.050;lateRisk+=.075;}
+  }
+  for(const e of bendEvents){
+    const d=Number(e.day)||99,a=clamp(Number(e.amount)||0,0,1);
+    if(d>=12&&d<=42){canopy+=a*.050;lateral+=a*.060;flower+=a*.012;style+=a*.026;recoveryCost+=a*.008;}
+    else if(d<=56){canopy+=a*.025;lateral+=a*.026;style+=a*.010;recoveryCost+=a*.014;}
+    else{flower-=a*.030;recoveryCost+=a*.026;lateRisk+=a*.050;}
+  }
+  const usefulDefs=defs.filter(e=>(e.day||99)<=day&&e.day>=24&&e.day<=55).length;
+  const lateDefs=defs.filter(e=>(e.day||99)<=day&&e.day>55).length;
+  canopy+=Math.min(10,usefulDefs)*.008;flower+=Math.min(8,usefulDefs)*.004;style+=Math.min(10,usefulDefs)*.003;
+  recoveryCost+=lateDefs*.008;lateRisk+=lateDefs*.012;
+  if(defs.length>12)recoveryCost+=(defs.length-12)*.007;
+  const actionLoad=prunes.filter(p=>(p.cutDay||99)<=day).length+bendEvents.length+defs.filter(e=>(e.day||99)<=day).length;
+  if(actionLoad>15)recoveryCost+=(actionLoad-15)*.005;
+  const canopyBonus=clamp(canopy-recoveryCost*.10,0,.22),lateralBoost=clamp(lateral,0,.28);
+  const flowerBonus=clamp(flower-recoveryCost*.12-lateRisk*.30,-.16,.14),styleBonus=clamp(style-lateRisk*.10,0,.18);
+  let architecture='NATÜRLICH';
+  if(canopyBonus>.15&&lateralBoost>.16)architecture='FLACHE MULTI-KRONE';
+  else if(lateralBoost>.12)architecture='STARK VERZWEIGT';
+  else if(canopyBonus>.08)architecture='OFFENE KRONE';
+  else if(prunes.some(p=>(p.cutDay||99)<=day))architecture='GETOPPT';
+  else if(bendEvents.length)architecture='GEFORMT';
+  return{prunes:prunes.filter(p=>(p.cutDay||99)<=day).length,bends:bendEvents.length,defoliations:defs.filter(e=>(e.day||99)<=day).length,canopyBonus,lateralBoost,flowerBonus,styleBonus,recoveryCost:clamp(recoveryCost,0,.35),lateRisk:clamp(lateRisk,0,.45),architecture};
+}
+function trainingRecoveryFactor(day=currentDay){
+  const training=gameState?.training||{},defs=ensureBiography()?.defoliationEvents||[];let load=0;
+  for(const p of training.prunes||[]){const age=day-(Number(p.cutDay)||99);if(age>=0&&age<=5)load+=(age<2?.050:.032)*(1-age/6);}
+  for(const b of training.bends||[])for(const e of b.events||[]){const age=day-(Number(e.day)||99);if(age>=0&&age<=4)load+=(Number(e.amount)||0)*.018*(1-age/5);}
+  for(const e of defs){const age=day-(Number(e.day)||99);if(age>=0&&age<=3)load+=.010*(1-age/4);}
+  return clamp(1-load,.82,1);
+}
+function trainingFlowerFactor(day=currentDay){
+  const t=trainingImpactModel(day);
+  return clamp(1+t.canopyBonus*.18+t.flowerBonus*.42-t.lateRisk*.24-t.recoveryCost*.08,.80,1.08);
+}
+function trainingStress(type,intensity=1,day=currentDay){
+  const base=type==='prune'?.028:type==='bend'?.018:.016;
+  const timing=day<12?1.45:day>56?1.70:day>49?1.35:1;
+  const amount=clamp(base*Math.max(.35,Number(intensity)||1)*timing,.006,.095);
+  gameState.plant.stress=clamp((gameState.plant.stress||0)+amount,0,1);
+  gameState.plant.conditionMemory=gameState.plant.conditionMemory||{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0};
+  gameState.plant.conditionMemory.stressDebt=clamp((gameState.plant.conditionMemory.stressDebt||0)+amount*.48,0,1);
+  gameState.plant.conditionMemory.recoveryMomentum=clamp((gameState.plant.conditionMemory.recoveryMomentum||0)-amount*.35,0,1);
+  return amount;
+}
+function trainingSummary(){const prunes=gameState.training?.prunes||[],bends=gameState.training?.bends||[],defs=ensureBiography()?.defoliationEvents||[],pruneDays=prunes.map(x=>x.cutDay||99),bendDays=bends.flatMap(x=>(x.events||[]).map(e=>e.day||99)),earlyTraining=pruneDays.filter(d=>d>=15&&d<=35).length+bendDays.filter(d=>d>=15&&d<=42).length,lateTraining=pruneDays.filter(d=>d>49).length+bendDays.filter(d=>d>56).length+defs.filter(e=>e.day>56).length;return{prunes:prunes.length,bends:bendDays.length,defoliations:defs.length,earlyTraining,lateTraining,impact:trainingImpactModel(gameState?.plant?.day||currentDay)}}
 function biographySummary(){const b=ensureBiography(),phaseAvg=k=>{const p=b.phase[k];return p.days?p.sum/p.days:1},t=trainingSummary();return{perfectDays:b.perfectDays||0,stressDays:b.stressDays||0,severeDays:b.severeDays||0,longestStressStreak:b.longestStressStreak||0,veg:phaseAvg('veg'),flower:phaseAvg('flower'),training:t}}
-function growSignature(scores){const b=biographySummary(),gp=activeGeneticProfile(),out=[];if(b.perfectDays>=18)out.push({label:'PRÄZISIONS-GROW'});if(b.flower>=.90)out.push({label:'CLEAN FLOWER'});if(b.training.earlyTraining>=2&&b.training.lateTraining===0)out.push({label:'TRAINED CANOPY'});if(gp.resin>1.08&&scores.potency>=82)out.push({label:'HEAVY FROST',rare:true});if(gp.colorExpression>.80&&scores.style>=78)out.push({label:'COLOR FADE',rare:true});if(b.longestStressStreak>=4)out.push({label:'STRESS NARBE',warn:true});if(b.training.lateTraining>=2)out.push({label:'LATE TRAINING',warn:true});if(!out.length)out.push({label:'CLEAN RUN'});return out.slice(0,3)}
+function growSignature(scores){const b=biographySummary(),gp=activeGeneticProfile(),ti=b.training.impact||trainingImpactModel(84),out=[];if(b.perfectDays>=18)out.push({label:'PRÄZISIONS-GROW'});if(b.flower>=.90)out.push({label:'CLEAN FLOWER'});if(ti.lateralBoost>.14&&ti.lateRisk<.08)out.push({label:'TOPPING SPLIT'});else if(ti.canopyBonus>.10&&ti.lateRisk<.08)out.push({label:'TRAINED CANOPY'});if(gp.resin>1.08&&scores.potency>=82)out.push({label:'HEAVY FROST',rare:true});if(gp.colorExpression>.80&&scores.style>=78)out.push({label:'COLOR FADE',rare:true});if(b.longestStressStreak>=4)out.push({label:'STRESS NARBE',warn:true});if(ti.lateRisk>.12||b.training.lateTraining>=2)out.push({label:'LATE TRAINING',warn:true});if(!out.length)out.push({label:'CLEAN RUN'});return out.slice(0,3)}
 
 function rarityForRoll(score,R){const q=score||50,r=R();if(q>=92&&r<.08)return'legendary';if(q>=82&&r<.24)return'epic';if(q>=70&&r<.48)return'rare';if(r<.18)return'rare';return'common';}
 function generateRandomSeed(rarity=null,source='Pack',salt=Date.now()){
@@ -3769,7 +3830,7 @@ function plantResponseAtDay(day){
 }
 function gameGrowthScaleForDay(day){
   const r=plantResponseAtDay(day);
-  return clamp(.52+.48*(r.vigor*r.growthPotential),.45,1);
+  return clamp((.52+.48*(r.vigor*r.growthPotential))*trainingRecoveryFactor(day),.42,1);
 }
 function gameGrowthScaleForProgress(prog){return gameGrowthScaleForDay(dayForProgress(prog))}
 function gameFlowerQualityFactor(startDay){
@@ -3780,7 +3841,7 @@ function gameFlowerQualityFactor(startDay){
     total+=(h.vigor*h.growthPotential*(1-(h.damage?.acute||0)*.12))*phaseWeight;weight+=phaseWeight;
   }
   const live=plantResponseAtDay(currentDay),avg=weight?total/weight:(live.vigor*live.growthPotential);
-  return clamp(.54+.46*avg,.50,1);
+  return clamp((.54+.46*avg)*trainingFlowerFactor(currentDay),.46,1.08);
 }
 function formatCountdown(ms){const sec=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function turnActionAvailability(){
@@ -3983,7 +4044,7 @@ function chooseGenetics(id){
   if(gameState.plant.day>1||Object.keys(gameState.history||{}).length){showGameToast('Genetik ist für diesen Grow bereits festgelegt');return;}
   gameState.genetics.active=id;gameState.genetics.phenotypeSeed=(PLANT_SEED+Object.keys(GENETICS).indexOf(id)*17311)>>>0;saveGameState();renderMetaPanels();invalidatePlant();requestRender();showGameToast(GENETICS[id].name+' gewählt');
 }
-function harvestScores(){const hs=Object.values(gameState.history||{}),avg=key=>hs.length?hs.reduce((a,h)=>a+(h[key]??1),0)/hs.length:1,vigor=avg('vigor'),potential=gameState.plant.growthPotential||1,stress=gameState.plant.stress||0,g=activeGenetics(),gp=activeGeneticProfile(),bio=biographySummary(),t=bio.training,trainingQuality=clamp(t.earlyTraining*.15-t.lateTraining*.13,0,.65),cleanRun=clamp(1-bio.severeDays/12-bio.longestStressStreak/18,0,1),size=Math.round(clamp((.46*vigor+.40*potential+.14*bio.veg)*lerp(.94,1.05,g.growth)*(1+trainingQuality*.08),0,1)*100),fq=liveFlowerQuality(),st=activeSeedTraits(),density=Math.round(clamp((.38*vigor+.20*(1-stress)+.28*fq.density+.14*bio.flower)*lerp(.94,1.05,g.flower)+(st.density||0)/260+trainingQuality*.035,0,1)*100),potency=Math.round(clamp(.34*vigor+.20*potential+.10*g.flower+.24*fq.resin+.12*bio.flower+(st.potency||0)/260,0,1)*100),aroma=Math.round(clamp(.24*vigor+.20*g.flower+.12*cleanRun+.30*fq.aroma+.14*bio.flower+(st.aroma||0)/260,0,1)*100),style=Math.round(clamp(.30*g.style+.18*trainingQuality+.20*potential+.17*gp.colorExpression+.15*cleanRun,0,1)*100),total=Math.round(size*.22+density*.24+potency*.20+aroma*.18+style*.16);return{size,density,potency,aroma,style,total}}
+function harvestScores(){const hs=Object.values(gameState.history||{}),avg=key=>hs.length?hs.reduce((a,h)=>a+(h[key]??1),0)/hs.length:1,vigor=avg('vigor'),potential=gameState.plant.growthPotential||1,stress=gameState.plant.stress||0,g=activeGenetics(),gp=activeGeneticProfile(),bio=biographySummary(),t=bio.training,ti=t.impact||trainingImpactModel(84),trainingQuality=clamp(.18+ti.canopyBonus*1.70+ti.lateralBoost*.75+ti.styleBonus*.65-ti.recoveryCost*.55-ti.lateRisk*.95,0,.72),cleanRun=clamp(1-bio.severeDays/12-bio.longestStressStreak/18,0,1),trainingYield=clamp(1+ti.canopyBonus*.24+ti.flowerBonus*.18-ti.recoveryCost*.10-ti.lateRisk*.12,.86,1.09),size=Math.round(clamp((.46*vigor+.40*potential+.14*bio.veg)*lerp(.94,1.05,g.growth)*trainingYield,0,1)*100),fq=liveFlowerQuality(),st=activeSeedTraits(),density=Math.round(clamp((.38*vigor+.20*(1-stress)+.28*fq.density+.14*bio.flower)*lerp(.94,1.05,g.flower)+(st.density||0)/260+trainingQuality*.035+ti.flowerBonus*.08,0,1)*100),potency=Math.round(clamp(.34*vigor+.20*potential+.10*g.flower+.24*fq.resin+.12*bio.flower+(st.potency||0)/260-ti.lateRisk*.025,0,1)*100),aroma=Math.round(clamp(.24*vigor+.20*g.flower+.12*cleanRun+.30*fq.aroma+.14*bio.flower+(st.aroma||0)/260-ti.lateRisk*.018,0,1)*100),style=Math.round(clamp(.30*g.style+.18*trainingQuality+.20*potential+.17*gp.colorExpression+.15*cleanRun+ti.styleBonus*.12,0,1)*100),total=Math.round(size*.22+density*.24+potency*.20+aroma*.18+style*.16);return{size,density,potency,aroma,style,total}}
 let pendingHarvestResult=null;
 function harvestRating(score){if(score>=92)return{label:'EXZELLENT',cls:'excellent'};if(score>=82)return{label:'SEHR GUT',cls:'verygood'};if(score>=70)return{label:'GUT',cls:'good'};if(score>=55)return{label:'SOLIDE',cls:'solid'};return{label:'MÄSSIG',cls:'moderate'};}
 function buildHarvestResult(){
@@ -4417,7 +4478,7 @@ function renderMetaPanels(){
   }
   syncEquipment3D();
   syncEquipment2D();
-  const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),profile=activeGeneticProfile(),arch=geneticArchitectureSummary(profile,seed),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div class="gen-architecture-v86"><span>'+arch.shape+'</span><span>'+arch.nodes+'</span><span>'+arch.branches+'</span><span>'+arch.leaf+'</span></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Genetik verändert jetzt sichtbar Höhe, Kronenbreite, Internodien, Astwinkel, Blattproportionen und Blütenarchitektur.</div>'; }
+  const gc=document.getElementById('geneticsContent');if(gc){const g=activeGenetics(),seed=activeSeed(),profile=activeGeneticProfile(),arch=geneticArchitectureSummary(profile,seed),ti=trainingImpactModel(currentDay),trait=(n,v)=>'<div class="trait-row"><span>'+n+'</span><span class="trait-bar"><i style="width:'+Math.round(v*100)+'%"></i></span><b>'+Math.round(v*100)+'</b></div>';const bonus=seed?Object.entries(seed.traits).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([k,v])=>'<span class="current-seed-badge">'+seedTraitText(k,v)+'</span>').join(''):'';const trainingBadges=['<span>'+ti.architecture+'</span>','<span>'+ti.prunes+' TOPPING</span>','<span>'+ti.bends+' BIEGUNGEN</span>','<span>'+ti.defoliations+' BLÄTTER</span>',ti.lateRisk>.08?'<span class="warn">SPÄTES TRAINING</span>':''].join('');gc.innerHTML='<div class="genetics-hero"><div class="seed-orb">'+g.icon+'</div><div><div class="gen-name">'+g.name+' #'+String(gameState.genetics.phenotypeSeed).slice(-5)+'</div><div class="gen-code">'+g.code+' · '+(seed?.revealed?seed.phenotype.toUpperCase():'PHÄNOTYP ???')+'</div>'+trait('Resilienz',g.resilience)+trait('Wuchs',g.growth)+trait('Blüte',g.flower)+trait('Style',g.style)+'</div></div><div class="gen-architecture-v86"><span>'+arch.shape+'</span><span>'+arch.nodes+'</span><span>'+arch.branches+'</span><span>'+arch.leaf+'</span></div><div class="training-architecture-v87"><small>TRAINING 2.0 · ARCHITEKTUR</small><div>'+trainingBadges+'</div></div><div style="margin-top:7px">'+bonus+'</div><div class="gen-lock-note">Genetik gibt die Ausgangsform vor. Training verändert Apikaldominanz, Seitentriebe, Kronenöffnung, Erholung und späteren Ertrag.</div>'; }
   const cc=document.getElementById('collectionContent');if(cc){
     const recent=gameState.collection||[],active=activeSeed(),inventory=gameState.seedVault?.inventory||[];
     const demoJars=[
@@ -4562,7 +4623,7 @@ function setTool(name){
   }
   interactionMode=name;
   tools.querySelectorAll('button[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===name));
-  toolhint.textContent=name==='prune'?'Topping: Nodium anklicken. Geschnitten wird direkt oberhalb des Nodiums. Die Spitze fällt sofort weg. Achselknospen werden aktiviert und beginnen frühestens zwei Tage später sichtbar auszutreiben.':name==='bend'?'Biegen: Trieb anklicken und nach unten ziehen. Die Basis bleibt stehen, die Spitze biegt sich.':'Drehen: Pflanze ziehen';
+  toolhint.textContent=name==='prune'?'Topping: Nodium anklicken. Früh getoppt entstehen zwei ausgeglichenere Haupttriebe. Späte Schnitte kosten Ertrag.':name==='bend'?'Biegen: Trieb nach unten ziehen. Starkes frühes Biegen schwächt die Apikaldominanz und kann zusätzliche Seitentriebe aktivieren.':'Drehen: Pflanze ziehen';
   requestRender();
 }
 tools.querySelectorAll('button').forEach(btn=>btn.onclick=()=>setTool(btn.dataset.tool));
@@ -4761,7 +4822,19 @@ function suppressionAtNode(shoot,node,visibleCount,cut,prog){
   const apexActive=!cut;
   const distanceEffect=Math.exp(-distance*.43);
   const ageRelief=clamp(1-nodeAge*.34,.62,1);
-  return clamp((apexActive?shoot.apicalDominance:.10)*distanceEffect*ageRelief,0,1);
+  const bend=bendEvent(shoot.id),bendRelief=bend&&bend.day<=currentDay?clamp((Number(bend.amount)||0)*.72,0,.68):0;
+  return clamp((apexActive?shoot.apicalDominance*(1-bendRelief):.10)*distanceEffect*ageRelief,0,1);
+}
+function bendDrivenActivation(shoot,node,bud){
+  const e=bendEvent(shoot.id);if(!e||e.day>currentDay||Number(e.amount)<.28||node.index<2||node.positionAlong<.26||node.positionAlong>.92)return null;
+  const buds=node.budIds.map(id=>bioPlant.buds.get(id)).filter(Boolean).sort((a,b)=>b.competitionScore-a.competitionScore);
+  const rank=Math.max(0,buds.findIndex(x=>x.id===bud.id)),gp=activeGeneticProfile(),a=clamp(Number(e.amount)||0,0,1);
+  const allowSecond=a>.68&&gp.branching>.90;
+  if(rank>0&&!allowSecond)return null;
+  const drive=a*.62+(gp.branching-1)*.45+(bud.lightPotential||.8)*.16+node.positionAlong*.08-rank*.10;
+  if(drive<.50)return null;
+  const activationDay=Math.min(84,Math.max(1,Math.round(e.day+2+(1-node.positionAlong)*2+rank)));
+  return{activationDay,activationProg:growthAtDay(activationDay).prog};
 }
 function naturalWinnerForNode(node){
   const buds=node.budIds.map(id=>bioPlant.buds.get(id)).filter(Boolean);
@@ -4782,17 +4855,20 @@ function evaluateNodeBuds(shoot,node,prog,cut,visibleCount){
   const out=[];
   for(const budId of node.budIds){
     const bud=bioPlant.buds.get(budId);if(!bud)continue;
-    if(bud.removed){bud.state='removed';out.push({bud,state:'removed',activationProg:Infinity,suppression:1,forced:false});continue;}
+    if(bud.removed){bud.state='removed';out.push({bud,state:'removed',activationProg:Infinity,suppression:1,forced:false,trained:false});continue;}
     const suppression=suppressionAtNode(shoot,node,visibleCount,cut,prog);
     let natural=bud.naturalActivationProg;
     if(Number.isFinite(natural)&&naturalWinner&&bud.id!==naturalWinner)natural=Infinity;
     const naturalAlreadyActiveAtCut=forced&&Number.isFinite(natural)&&natural<=cut.cutProg+.000001;
-    const activationProg=forced&&!naturalAlreadyActiveAtCut?forcedActivation:natural;
+    const bendDrive=!forced?bendDrivenActivation(shoot,node,bud):null;
+    let activationProg=forced&&!naturalAlreadyActiveAtCut?forcedActivation:natural;
+    let activationDay=forced?forcedGrowthDay:null,trained=false;
+    if(bendDrive&&bendDrive.activationProg<activationProg){
+      activationProg=bendDrive.activationProg;activationDay=bendDrive.activationDay;trained=true;
+    }
     let state='dormant';
     if(forced&&!naturalAlreadyActiveAtCut&&currentDay>=cut.cutDay&&currentDay<forcedGrowthDay){
       state='activated';
-    }else if(forced&&!naturalAlreadyActiveAtCut&&currentDay>=forcedGrowthDay){
-      state='growing';
     }else if(Number.isFinite(activationProg)&&prog>=activationProg-.000001){
       state='growing';
     }else if(Number.isFinite(activationProg)&&prog>=activationProg-.055){
@@ -4802,23 +4878,24 @@ function evaluateNodeBuds(shoot,node,prog,cut,visibleCount){
     }
     bud.state=state;
     if((state==='activated'||state==='growing')&&bud.activatedProg===null)bud.activatedProg=activationProg;
-    out.push({bud,state,activationProg,suppression,forced,activationDay:forced?forcedGrowthDay:null});
+    out.push({bud,state,activationProg,suppression,forced,trained,activationDay});
   }
   return out;
 }
 function ensureChildShoot(parentShoot,node,budEval){
-  const {bud,activationProg,forced}=budEval;
+  const {bud,activationProg,forced,trained}=budEval;
   if(!Number.isFinite(activationProg)||parentShoot.generation>=BIO_CONFIG.maxGeneration)return null;
   const id=bud.childShootId||('shoot:'+bud.id);
-  let vigor=parentShoot.vigorBase*(.84+.18*bud.vigorPotential)*(forced?1.08:.94);
+  let vigor=parentShoot.vigorBase*(.84+.18*bud.vigorPotential)*(forced?1.06:trained?1.01:.94);
   if(forced){
     const siblingId=node.budIds.find(x=>x!==bud.id),sib=siblingId?bioPlant.buds.get(siblingId):null;
     if(sib){
       const wins=bud.competitionScore>=sib.competitionScore;
       const age=Math.max(0,growthAtDay(currentDay).prog-activationProg);
-      vigor*=age>.12?(wins?1.08:.82):(wins?1.02:.94);
+      vigor*=age>.12?(wins?1.04:.95):(wins?1.02:.98);
     }
   }
+  if(trained)vigor*=1+clamp((bendValue(parentShoot.id)-.25)*.05,0,.035);
   let shoot=bioPlant.shoots.get(id);
   const inferredBirthDay=budEval.activationDay||dayForProgress(activationProg);
   if(!shoot){
@@ -5810,8 +5887,8 @@ function applyDefoliation(leaf){
   const av=turnActionAvailability();if(!av.ok){showGameToast(turnBlockedMessage(av));return;}
   const list=gameState.training.defoliations||(gameState.training.defoliations=[]);if(list.includes(leaf.id))return;
   if(list.length>=18){showGameToast('Zu viele Blätter entfernt');return;}
-  list.push(leaf.id);ensureBiography().defoliationEvents.push({day:currentDay,leafId:leaf.id});gameState.plant.stress=clamp((gameState.plant.stress||0)+.018,0,1);
-  commitTurnAction('Entlauben');invalidatePlant();requestRender();showGameToast('Blatt entfernt · Zug '+gameState.turn.turnsToday+'/7');
+  list.push(leaf.id);ensureBiography().defoliationEvents.push({day:currentDay,leafId:leaf.id});trainingStress('defoliate',1,currentDay);
+  commitTurnAction('Entlauben');invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Blatt entfernt · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');
 }
 function applyPrune(node){
   if(!node)return;
@@ -5824,7 +5901,8 @@ function applyPrune(node){
   if(bioNode){bioNode.cutAbove={...event};bioNode.cutHistory.push({...event});}
   const shoot=bioPlant.shoots.get(node.axisId);
   if(shoot)shoot.apicalTip.removalEvents.push({...event});
-  commitTurnAction('Schneiden');invalidatePlant();requestRender();showGameToast('Geschnitten · Zug '+gameState.turn.turnsToday+'/7');
+  trainingStress('prune',1,currentDay);
+  commitTurnAction('Schneiden');invalidatePlant();requestRender();const ti=trainingImpactModel(currentDay);showGameToast('Getoppt · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');
 }
 
 // --- Static Grow Room game world -------------------------------------------------
@@ -5950,7 +6028,7 @@ function endPointer(e){
   if(activePointers.size<2)pinchStartDist=0;
   const finishedBend=activeBendAxis,changed=finishedBend&&Math.abs(bendValue(finishedBend)-bendStartValue)>.018;
   drag=false;activeBendAxis=null;
-  if(changed){commitTurnAction('Biegen');showGameToast('Gebogen · Zug '+gameState.turn.turnsToday+'/7');}
+  if(changed){const amount=bendValue(finishedBend),delta=Math.abs(amount-bendStartValue);trainingStress('bend',Math.max(.45,delta*1.4+amount*.35),currentDay);commitTurnAction('Biegen');const ti=trainingImpactModel(currentDay);showGameToast('Gebogen '+Math.round(amount*100)+'% · '+ti.architecture+' · Zug '+gameState.turn.turnsToday+'/7');}
   if(interactionMode==='orbit'&&activePointers.size===0)endInteraction();
   else requestRender();
 }
@@ -5993,8 +6071,8 @@ function setMainPanel(name){const wrap=document.querySelector('.bottom-wrap');do
 document.querySelectorAll('[data-ui-tab]').forEach(btn=>btn.addEventListener('click',()=>setMainPanel(btn.dataset.uiTab)));
 document.querySelectorAll('[data-panel-close]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();setMainPanel('care');}));
 function syncToolSubcontrols(mode){const cameraSub=document.getElementById('cameraSubcontrols'),pruneSub=document.getElementById('pruneSubcontrols');if(cameraSub)cameraSub.classList.toggle('show',mode==='orbit');if(pruneSub)pruneSub.classList.toggle('show',mode==='prune');}
-document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Schneiden · Blatt: Blatt antippen.':'Schneiden · Triebe: Schnittpunkt am Trieb antippen.'):btn.dataset.mobileTool==='bend'?'Biegen: Trieb ziehen und nach unten formen.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
-document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();pruneTarget=btn.dataset.pruneTarget;document.querySelectorAll('[data-prune-target]').forEach(b=>b.classList.toggle('active',b===btn));const n=document.getElementById('trainingNote');if(n){n.textContent=pruneTarget==='leaf'?'Schneiden · Blatt: Blatt antippen.':'Schneiden · Triebe: Schnittpunkt am Trieb antippen.';n.classList.add('show')}requestRender();}));
+document.querySelectorAll('[data-mobile-tool]').forEach(btn=>btn.addEventListener('click',()=>{setTool(btn.dataset.mobileTool);document.querySelectorAll('[data-mobile-tool]').forEach(b=>b.classList.toggle('active',b===btn));syncToolSubcontrols(btn.dataset.mobileTool);const n=document.getElementById('trainingNote');if(n){n.textContent=btn.dataset.mobileTool==='prune'?(pruneTarget==='leaf'?'Entlauben öffnet die Krone. Zu viel oder zu spät kostet Erholung.':'Topping erzeugt nach etwa 2 Tagen neue Seitentriebe. Früh trainieren ist effizienter.'):btn.dataset.mobileTool==='bend'?'Biegen senkt die Apikaldominanz. Ab stärkerer Biegung können weitere Seitentriebe anspringen.':'';n.classList.toggle('show',btn.dataset.mobileTool!=='orbit')}}));
+document.querySelectorAll('[data-prune-target]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();pruneTarget=btn.dataset.pruneTarget;document.querySelectorAll('[data-prune-target]').forEach(b=>b.classList.toggle('active',b===btn));const n=document.getElementById('trainingNote');if(n){n.textContent=pruneTarget==='leaf'?'Entlauben: Blatt antippen. Öffnet Lichtwege, erzeugt aber Erholungsstress.':'Topping: Schnittpunkt antippen. Früh entstehen ausgeglichenere Haupttriebe.';n.classList.add('show')}requestRender();}));
 const cameraResetMini=document.getElementById('cameraResetMini');if(cameraResetMini)cameraResetMini.addEventListener('click',e=>{e.stopPropagation();setCameraPreset('reset');showGameToast('Kamera zurückgesetzt');});
 const devDrawer=document.getElementById('devDrawer');document.getElementById('devToggle')?.addEventListener('click',()=>devDrawer.classList.toggle('open'));document.getElementById('devClose')?.addEventListener('click',()=>devDrawer.classList.remove('open'));document.querySelector('.dev-grid')?.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(()=>devDrawer.classList.remove('open'),0);});
 document.getElementById('upgradeBack')?.addEventListener('click',()=>{selectedUpgradeCategory=null;renderMetaPanels();});
