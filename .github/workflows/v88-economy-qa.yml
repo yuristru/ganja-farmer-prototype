@@ -1,0 +1,32 @@
+name: V88 Economy QA
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'tests/v88-economy-qa.mjs'
+      - '.github/workflows/v88-economy-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  economy-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run V88 economy comparison
+        run: node tests/v88-economy-qa.mjs
+      - name: Upload QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v88-economy-qa
+          path: qa/v88/
+          if-no-files-found: warn
