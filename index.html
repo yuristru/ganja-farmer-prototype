@@ -4834,6 +4834,16 @@ function queueSeedlingTrueLeaf(origin,angle,length,width,vv,side){
     queueSeedlingLens(palm,v(Math.cos(a),.15,Math.sin(a)),length*lenScale,width*widthScale,seedlingColor(vv,-4),.16);
   }
 }
+function queueDay4BridgeCrown(P){
+  const main=(P?.axes||[]).find(ax=>ax.id==='main')||(P?.axes||[])[0];if(!main?.pts?.length)return;
+  const top=main.pts[main.pts.length-1],vv=seedlingIntroVariant();
+  const cotOrigin=add(top,v(0,-9,0)),cotLen=17.5*vv.leafScale,cotW=6.6*vv.leafScale;
+  queueSeedlingLens(cotOrigin,v(-1,.10,.10),cotLen,cotW,seedlingColor(vv,2),.10);
+  queueSeedlingLens(cotOrigin,v(1,.10,-.08),cotLen,cotW,seedlingColor(vv,5),.12);
+  const crown=add(top,v(0,2,0)),trueScale=1.06*vv.leafScale;
+  queueSeedlingTrueLeaf(crown,.56+vv.twist,24*trueScale,6.1*trueScale,vv,1);
+  queueSeedlingTrueLeaf(crown,Math.PI+.56+vv.twist,24*trueScale,6.1*trueScale,vv,-1);
+}
 function queueSeedlingIntro(){
   const d=seedlingIntroDescriptor(),vv=d.variant,base=v(0,1,0),top=v(vv.lean*d.height,d.height,Math.sin(vv.twist)*3);
   const a=proj(base),b=proj(top),z=(a.z+b.z)/2;
@@ -5379,10 +5389,10 @@ function buildPlant(){
   // Keep it larger than Day 3 and expose the first real node so training/hit targets work normally.
   if(currentDay<=4){
     const main=bioPlant.shoots.get('main'),origin=v(0,-4,0);
-    const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.62:1;
+    const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.34:1;
     const scalePoint=p=>add(origin,mul(sub(p,origin),bridgeScale));
     const bridgePts=G.pts.map(scalePoint);
-    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.72:1)});
+    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.64:1)});
     const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.58:.50;
     P.leaves.push({p:add(top,v(-7,-7,0)),dir:norm(v(-1,.18,.10)),size:cotSize,age:1,cot:true,seed:11});
     P.leaves.push({p:add(top,v(7,-7,0)),dir:norm(v(1,.18,-.08)),size:cotSize,age:1,cot:true,seed:12});
@@ -6316,7 +6326,8 @@ function render(){
   }else{
     P.axes.forEach(ax=>queueStem(ax,plantVisual));
     if(!harvested){
-      P.leaves.forEach(leaf=>drawLeaf(leaf,{careState}));
+      if(currentDay===4)queueDay4BridgeCrown(P);
+      else P.leaves.forEach(leaf=>drawLeaf(leaf,{careState}));
       P.buds.forEach(bud=>drawBud(bud,{quality:flowerQuality}));
     }
   }
