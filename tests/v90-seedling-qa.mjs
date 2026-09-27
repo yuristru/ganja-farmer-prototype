@@ -53,21 +53,16 @@ results.assertions.stageNames=d1.name==='emergence'&&d2.name==='cotyledons_open'
 results.assertions.day123Active=d1.active&&d2.active&&d3.active;
 results.assertions.day4Normal=!d4.active&&d4.trainingUnlocked;
 results.assertions.visualProgression=d1.height<d2.height&&d2.height<d3.height&&d1.trueLeafScale===0&&d2.trueLeafScale>0&&d3.trueLeafScale>d2.trueLeafScale;
-results.assertions.trainingLocked123=[1,2,3].every(d=>results.days[d].pruneLocked&&results.days[d].bendLocked&&results.days[d].pruneAria==='true');
-results.assertions.trainingUnlocked4=!results.days[4].pruneLocked&&!results.days[4].bendLocked&&results.days[4].pruneAria==='false';
+results.assertions.trainingAlwaysUnlocked=[1,2,3,4].every(d=>!results.days[d].pruneLocked&&!results.days[d].bendLocked&&results.days[d].pruneAria==='false');
 
-// Clicking a locked tool must not activate training.
+// Training tools remain selectable even during the visual seedling intro.
 await page.evaluate(()=>window.__GFTRAIN.setDay(1));
-await page.locator('[data-mobile-tool="prune"]').dispatchEvent('click');
-await page.waitForTimeout(80);
-results.assertions.lockedToolCannotActivate=await page.locator('[data-mobile-tool="orbit"]').evaluate(el=>el.classList.contains('active')) &&
-  !(await page.locator('[data-mobile-tool="prune"]').evaluate(el=>el.classList.contains('active')));
-
-// Day 4 must permit the training tool again.
-await page.evaluate(()=>window.__GFTRAIN.setDay(4));
 await page.click('[data-mobile-tool="prune"]');
 await page.waitForTimeout(80);
-results.assertions.day4ToolActivates=await page.locator('[data-mobile-tool="prune"]').evaluate(el=>el.classList.contains('active'));
+results.assertions.day1TrainingToolSelectable=await page.locator('[data-mobile-tool="prune"]').evaluate(el=>el.classList.contains('active'));
+await page.click('[data-mobile-tool="bend"]');
+await page.waitForTimeout(80);
+results.assertions.day1BendToolSelectable=await page.locator('[data-mobile-tool="bend"]').evaluate(el=>el.classList.contains('active'));
 
 // Persist Day 2 through the game's real TAG-✓ path and verify reload.
 await page.evaluate(()=>window.__GFTRAIN.setDay(1));
@@ -104,7 +99,7 @@ fs.writeFileSync(path.join(outDir,'summary.txt'),[
   `Day 2: ${d2.name}, height ${d2.height.toFixed(1)}`,
   `Day 3: ${d3.name}, height ${d3.height.toFixed(1)}`,
   `Day 4 intro active: ${d4.active}`,
-  `Training locked 1-3 / unlocked 4: ${results.assertions.trainingLocked123} / ${results.assertions.trainingUnlocked4}`,
+  `Training selectable day 1-4: ${results.assertions.trainingAlwaysUnlocked}`,
   `PASS: ${results.pass}`
 ].join('\n'));
 console.log(JSON.stringify(results,null,2));
