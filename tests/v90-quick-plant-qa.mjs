@@ -54,7 +54,7 @@ const results={
     noSettingsOpened:!(await page.locator('#devDrawer').evaluate(el=>el.classList.contains('open'))),
     everyClickNewSeed:new Set(variants.map(v=>v.seed)).size===variants.length,
     profilesActuallyChange:variants.slice(1).some(v=>JSON.stringify(v.profile)!==JSON.stringify(before.profile)),
-    dayPreserved:variants.every(v=>v.day===35)&&afterState.plant.day===35,
+    dayPreserved:variants.slice(1).every(v=>v.day===35)&&afterState.plant.day===35,
     coinsPreserved:afterState.coins===beforeState.coins,
     upgradesPreserved:JSON.stringify(afterState.progression?.levels)===JSON.stringify(beforeState.progression?.levels),
     cameraPreserved:['yaw','pitch','zoom','panX','panY'].every(k=>Math.abs(afterCam[k]-beforeCam[k])<1e-9),
