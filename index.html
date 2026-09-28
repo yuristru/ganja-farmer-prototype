@@ -4672,7 +4672,10 @@ function resetGame(){storageClear();gameState=createGameState();hydrateTrainingF
 let quickPlantVariantCounter=0;
 function quickPlantVariant(){
   if(!gameState)return null;
-  const oldSeed=currentPlantSeed(),day=gameState.plant.day;
+  const oldSeed=currentPlantSeed(),day=clamp(Math.round(Number(currentDay||gameState.plant.day)||1),1,84);
+  // Preserve exactly what the player is looking at, even in dev/demo day overrides.
+  gameState.plant.day=day;
+  if(gameState.turn)gameState.turn.day=day;
   quickPlantVariantCounter++;
   let salt;
   if(globalThis.crypto?.getRandomValues){
