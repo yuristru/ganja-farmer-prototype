@@ -39,6 +39,7 @@ const mature=[results.days[18],results.days[35],results.days[60]];
 results.assertions.mainStemHasEnoughPoints=mature.every(s=>s&&s.points>=4);
 results.assertions.mainStemNotPerfectlyStraight=mature.every(s=>s.maxDeviation>1.2);
 results.assertions.organicTurnPresent=mature.every(s=>s.totalTurn>.018);
+results.assertions.visibleFrontCurvature=mature.every(s=>Number(s.visibleXSpan||0)>8);
 results.assertions.curvaturePersistsWithAge=results.days[60].maxDeviation>1.2;
 results.assertions.noBrowserErrors=errors.length===0;
 results.pass=Object.values(results.assertions).every(Boolean);
