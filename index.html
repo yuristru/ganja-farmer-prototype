@@ -4988,24 +4988,81 @@ function fanShapeC148(fingers){
 }
 let queue=[];
 function queueStem(ax,visualState=null){
-  const n=ax.pts.length-1,visual=visualState||livePlantVisualState();
-  for(let i=0;i<n;i++){
-    const a=proj(ax.pts[i]), b=proj(ax.pts[i+1]), t=i/Math.max(1,n-1), z=(a.z+b.z)/2;
-    const baseW=ax.depth===0?CFG.stemWidth:ax.width;
+  const visual=visualState||livePlantVisualState(),pts=ax.pts||[];
+  if(pts.length<2)return;
+  const screen=pts.map(proj),n=screen.length-1;
+  const avgZ=screen.reduce((s,p)=>s+p.z,0)/screen.length;
+  const baseW=ax.depth===0?CFG.stemWidth:ax.width;
+  const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
+  const s0=mixHex(ax.depth===0?'#4e6e39':'#516f3b','#777044',stemFade);
+  const s1=mixHex(ax.depth===0?'#86a65b':'#86a65a','#9d965e',stemFade);
+  const s2=mixHex(ax.depth===0?'#a9c776':'#a7c376','#b3a86c',stemFade);
+
+  const widthAt=t=>{
     const taper=ax.depth===0?(1-t*.58):(1-t*(1-CFG.branchTaper));
-    const w=Math.max(ax.depth===0?3.2:1.4,baseW*taper);
-    queue.push({z:z-.6,draw(){
-      const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-      const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
-      const s0=mixHex(ax.depth===0?'#4e6e39':'#516f3b','#777044',stemFade);
-      const s1=mixHex(ax.depth===0?'#86a65b':'#86a65a','#9d965e',stemFade);
-      const s2=mixHex(ax.depth===0?'#a9c776':'#a7c376','#b3a86c',stemFade);
-      g.addColorStop(0,s0);g.addColorStop(.55,s1);g.addColorStop(1,s2);
-      ctx.strokeStyle=g;ctx.lineWidth=w+1.4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-      ctx.strokeStyle='rgba(207,229,159,.38)';ctx.lineWidth=Math.max(1,w*.28);ctx.beginPath();ctx.moveTo(a.x+.8,a.y);ctx.lineTo(b.x+.8,b.y);ctx.stroke();
+    return Math.max(ax.depth===0?3.2:1.4,baseW*taper);
+  };
+  const traceSmoothPath=()=>{
+    ctx.beginPath();
+    ctx.moveTo(screen[0].x,screen[0].y);
+    if(screen.length===2){
+      ctx.lineTo(screen[1].x,screen[1].y);
+      return;
+    }
+    for(let i=1;i<screen.length-1;i++){
+      const p=screen[i],next=screen[i+1],mx=(p.x+next.x)/2,my=(p.y+next.y)/2;
+      ctx.quadraticCurveTo(p.x,p.y,mx,my);
+    }
+    const pre=screen[screen.length-2],last=screen[screen.length-1];
+    ctx.quadraticCurveTo(pre.x,pre.y,last.x,last.y);
+  };
+
+  // One continuous body instead of independently stroked internodes.
+  // This removes the "bamboo tube" seams while the biology can still keep discrete nodes.
+  queue.push({z:avgZ-.62,draw(){
+    const first=screen[0],last=screen[screen.length-1];
+    const g=ctx.createLinearGradient(first.x,first.y,last.x,last.y);
+    g.addColorStop(0,s0);g.addColorStop(.55,s1);g.addColorStop(1,s2);
+
+    ctx.save();
+    ctx.lineJoin='round';ctx.lineCap='round';
+
+    // Soft outer body. Width uses the lower/middle stem thickness; the visible taper
+    // is reinforced below with short overlapping tapered strokes.
+    const midW=widthAt(.38);
+    ctx.strokeStyle=g;ctx.lineWidth=midW+1.1;
+    traceSmoothPath();ctx.stroke();
+
+    // Continuous highlight follows the same curve, so no segment boundary can appear.
+    ctx.strokeStyle='rgba(207,229,159,.30)';
+    ctx.lineWidth=Math.max(.8,midW*.22);
+    traceSmoothPath();ctx.stroke();
+
+    // Overlapping local strokes restore organic taper without introducing hard joints.
+    for(let i=0;i<n;i++){
+      const a=screen[i],b=screen[i+1],t=(i+.5)/n,w=widthAt(t);
+      const prev=i>0?screen[i-1]:a,next=i+2<screen.length?screen[i+2]:b;
+      const sx=(a.x+b.x)/2,sy=(a.y+b.y)/2;
+      const c1x=a.x+(b.x-prev.x)*.20,c1y=a.y+(b.y-prev.y)*.20;
+      const c2x=b.x-(next.x-a.x)*.20,c2y=b.y-(next.y-a.y)*.20;
+      ctx.strokeStyle=g;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(sx-(b.x-a.x)*.52,sy-(b.y-a.y)*.52);
+      ctx.bezierCurveTo(c1x,c1y,c2x,c2y,sx+(b.x-a.x)*.52,sy+(b.y-a.y)*.52);ctx.stroke();
+    }
+    ctx.restore();
+  }});
+
+  // Nodes remain biologically visible only as subtle local thickening.
+  // No separate bright ellipses/rings: those were the main source of the bamboo look.
+  ax.pts.slice(1,-1).forEach((p,i)=>{
+    const q=proj(p),t=(i+1)/n,w=widthAt(t),r=Math.max(.75,w*.56)*clamp(CFG.nodeBulge,.82,1.18);
+    queue.push({z:q.z-.50,draw(){
+      ctx.save();
+      ctx.globalAlpha=ax.depth===0?.16:.11;
+      ctx.fillStyle=ax.depth===0?'#b7ce86':'#afc67e';
+      ctx.beginPath();ctx.ellipse(q.x,q.y,r,r*.42,0,0,Math.PI*2);ctx.fill();
+      ctx.restore();
     }});
-  }
-  ax.pts.slice(1,-1).forEach((p,i)=>{const q=proj(p),t=(i+1)/n;const r=(ax.depth===0?4.7:2.5)*CFG.nodeBulge*(1-t*.35);queue.push({z:q.z-.5,draw(){ctx.fillStyle=ax.depth===0?'rgba(190,215,139,.56)':'rgba(183,210,132,.48)';ctx.beginPath();ctx.ellipse(q.x,q.y,r,r*.55,0,0,Math.PI*2);ctx.fill();}})})
+  });
 }
 const BIO_CONFIG={
   maxGeneration:4,
@@ -5287,10 +5344,22 @@ function buildPlant(){
       const vigor=clamp(shoot.vigorBase,.48,1.25);
       const careGrowth=gameGrowthScaleForProgress(node.birthProg);const segLen=baseInternode*segAge*stageStretch*(.88+.16*vigor)*(.91+NR()*.18)*careGrowth;
       const swayAngle=node.angle+(NR()-.5)*.28;
-      const swayMag=(gen===0?1.6:2.6)*(1-node.positionAlong*.18);
-      const sway=v(Math.cos(swayAngle)*swayMag,0,Math.sin(swayAngle)*swayMag);
+      const shootR=rng((shoot.seed*811+currentPlantSeed()*37+gen*101)>>>0);
+      const driftPhase=(shoot.seed%997)*.011+gen*.73;
+      const rel=node.positionAlong;
+      // Cannabis stems are continuous but rarely ruler-straight. Give each shoot a
+      // deterministic low-frequency drift plus smaller node-to-node variation.
+      const organicAmp=gen===0?4.8:3.2;
+      const waveX=Math.sin(driftPhase+rel*Math.PI*1.55)*organicAmp*(.72+.28*(1-rel));
+      const waveZ=Math.cos(driftPhase*.83+rel*Math.PI*1.28)*organicAmp*.72*(.76+.24*(1-rel));
+      const micro=(gen===0?1.9:2.7)*(1-rel*.16);
+      const sway=v(
+        waveX+Math.cos(swayAngle)*micro*(.72+shootR()*.18),
+        0,
+        waveZ+Math.sin(swayAngle)*micro*(.72+shootR()*.18)
+      );
       const tropism=v(0,gen===0?.20:.08+.055*gen,0);
-      dir=norm(add(mul(dir,.91),add(mul(norm(baseDir),.06),add(mul(sway,.018),tropism))));
+      dir=norm(add(mul(dir,.885),add(mul(norm(baseDir),.055),add(mul(sway,gen===0?.020:.018),tropism))));
       current=add(current,mul(dir,segLen));
       pts.push(current);nodePointIndex.set(node.id,pts.length-1);
     }
@@ -6464,6 +6533,24 @@ canvas.addEventListener('wheel',e=>{
 window.__GFCAMERA={
   snapshot:()=>({yaw,pitch,zoom,panX,panY,interactionMode,dragMode,pointers:activePointers.size}),
   set:(next={})=>{if(Number.isFinite(next.yaw))yaw=next.yaw;if(Number.isFinite(next.pitch))pitch=next.pitch;if(Number.isFinite(next.zoom))zoom=clamp(next.zoom,.65,2.8);if(Number.isFinite(next.panX))panX=next.panX;if(Number.isFinite(next.panY))panY=next.panY;sync();requestRender();return window.__GFCAMERA.snapshot();}
+};
+window.__GFSTEM={
+  snapshot:()=>{
+    const P=getPlantCached(),main=P.axes.find(a=>a.id==='main')||P.axes.find(a=>a.depth===0)||null;
+    if(!main||!main.pts?.length)return null;
+    const base=main.pts[0],tip=main.pts[main.pts.length-1];
+    const line=sub(tip,base),lineLen=Math.max(.001,len(line));
+    let maxDeviation=0,totalTurn=0;
+    for(let i=1;i<main.pts.length-1;i++){
+      const p=main.pts[i],bp=sub(p,base);
+      const t=clamp((bp.x*line.x+bp.y*line.y+bp.z*line.z)/(lineLen*lineLen),0,1);
+      const closest=add(base,mul(line,t));
+      maxDeviation=Math.max(maxDeviation,len(sub(p,closest)));
+      const a=norm(sub(main.pts[i],main.pts[i-1])),b=norm(sub(main.pts[i+1],main.pts[i]));
+      totalTurn+=Math.acos(clamp(a.x*b.x+a.y*b.y+a.z*b.z,-1,1));
+    }
+    return{points:main.pts.length,maxDeviation,totalTurn,base:{...base},tip:{...tip}};
+  }
 };
 window.__GFPOT={
   soilProbe:()=>{
