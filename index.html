@@ -6096,38 +6096,49 @@ function queuePot3D(){
     else{base.addColorStop(0,'#4b3528');base.addColorStop(.52,'#35261e');base.addColorStop(1,'#211813')}
     ctx.fillStyle=base;ctx.fillRect(minX-2,minY-2,maxX-minX+4,maxY-minY+4);
 
-    // Deterministic pseudo random generator based on plant + substrate, so texture does not shimmer between frames.
+    // Deterministic substrate details live in pot-local 3D space.
+    // Important: never derive these from the projected screen ellipse. Otherwise the
+    // pot rotates underneath a texture that appears glued to the display.
     let seed=((gameState?.plant?.seed||PLANT_SEED) ^ Math.imul(substrateLevel,0x45d9f3b) ^ (living?0x51f15e:0x2f6e2b))>>>0;
     const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
+    const projectedSoilParticle=(radiusFrac=.94,heightJitter=0)=>{
+      const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*radiusFrac;
+      const world=v(Math.cos(a)*soilR*r,topY+2.25+heightJitter,Math.sin(a)*soilR*r);
+      return{world,p:proj(world),a,r};
+    };
+    const screenAngleForWorldDirection=(world,angle)=>{
+      const q0=proj(world),q1=proj(add(world,v(Math.cos(angle)*4,0,Math.sin(angle)*4)));
+      return Math.atan2(q1.y-q0.y,q1.x-q0.x);
+    };
     const count=92;
     for(let i=0;i<count;i++){
-      // Uniform-ish ellipse distribution, slightly inset from the rim.
-      const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*.94;
-      const x=cx+Math.cos(a)*rx*r,y=cy+Math.sin(a)*ry*r;
-      const kind=rnd();
+      const particle=projectedSoilParticle(.94,(rnd()-.5)*.55),x=particle.p.x,y=particle.p.y;
+      const kind=rnd(),localScale=Math.max(.72,particle.p.scale||1);
       if(kind<(.10+substrateLevel*.015)){
         // Perlite / pale mineral fragments.
-        const rr=(.7+rnd()*1.45)*Math.max(.75,soil2[0]?.scale||1);
+        const rr=(.7+rnd()*1.45)*localScale,rot=screenAngleForWorldDirection(particle.world,rnd()*Math.PI*2);
         ctx.fillStyle=living?'rgba(210,202,172,.76)':'rgba(194,185,164,.64)';
-        ctx.beginPath();ctx.ellipse(x,y,rr,rr*(.48+.35*rnd()),rnd()*Math.PI,0,Math.PI*2);ctx.fill();
+        ctx.beginPath();ctx.ellipse(x,y,rr,rr*(.48+.35*rnd()),rot,0,Math.PI*2);ctx.fill();
         ctx.fillStyle='rgba(255,255,235,.16)';ctx.beginPath();ctx.arc(x-rr*.2,y-rr*.18,rr*.28,0,Math.PI*2);ctx.fill();
       }else if(kind<(.24+substrateLevel*.018)){
-        // Bark / organic particles.
-        const w=1.4+rnd()*3.3,h=.65+rnd()*1.2;
-        ctx.save();ctx.translate(x,y);ctx.rotate((rnd()-.5)*1.5);ctx.fillStyle=soilRich?'rgba(134,91,48,.82)':living?'rgba(113,76,45,.78)':'rgba(92,61,42,.64)';ctx.fillRect(-w/2,-h/2,w,h);ctx.restore();
+        // Bark / organic particles. Its orientation is bound to the pot plane too.
+        const w=(1.4+rnd()*3.3)*localScale,h=(.65+rnd()*1.2)*localScale;
+        const rot=screenAngleForWorldDirection(particle.world,rnd()*Math.PI*2);
+        ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.fillStyle=soilRich?'rgba(134,91,48,.82)':living?'rgba(113,76,45,.78)':'rgba(92,61,42,.64)';ctx.fillRect(-w/2,-h/2,w,h);ctx.restore();
       }else{
         // Fine dark soil granules.
-        const rr=.35+rnd()*1.05;
+        const rr=(.35+rnd()*1.05)*localScale;
         ctx.fillStyle=rnd()>.5?'rgba(18,12,9,.48)':'rgba(102,72,49,.34)';
         ctx.beginPath();ctx.arc(x,y,rr,0,Math.PI*2);ctx.fill();
       }
     }
 
-    // A few larger clumps break the perfectly smooth surface.
+    // Larger clumps are world-bound as well, so recognizable features rotate with the pot.
     for(let i=0;i<13;i++){
-      const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*.78,x=cx+Math.cos(a)*rx*r,y=cy+Math.sin(a)*ry*r;
-      const rr=1.4+rnd()*2.3;
-      ctx.fillStyle='rgba(28,19,14,.55)';ctx.beginPath();ctx.ellipse(x,y,rr*1.35,rr*.62,rnd()*Math.PI,0,Math.PI*2);ctx.fill();
+      const particle=projectedSoilParticle(.78,(rnd()-.5)*.35),x=particle.p.x,y=particle.p.y;
+      const rr=(1.4+rnd()*2.3)*Math.max(.72,particle.p.scale||1);
+      const rot=screenAngleForWorldDirection(particle.world,rnd()*Math.PI*2);
+      ctx.fillStyle='rgba(28,19,14,.55)';ctx.beginPath();ctx.ellipse(x,y,rr*1.35,rr*.62,rot,0,Math.PI*2);ctx.fill();
       ctx.strokeStyle='rgba(111,77,50,.22)';ctx.lineWidth=.7;ctx.stroke();
     }
     ctx.restore();
@@ -6453,6 +6464,13 @@ canvas.addEventListener('wheel',e=>{
 window.__GFCAMERA={
   snapshot:()=>({yaw,pitch,zoom,panX,panY,interactionMode,dragMode,pointers:activePointers.size}),
   set:(next={})=>{if(Number.isFinite(next.yaw))yaw=next.yaw;if(Number.isFinite(next.pitch))pitch=next.pitch;if(Number.isFinite(next.zoom))zoom=clamp(next.zoom,.65,2.8);if(Number.isFinite(next.panX))panX=next.panX;if(Number.isFinite(next.panY))panY=next.panY;sync();requestRender();return window.__GFCAMERA.snapshot();}
+};
+window.__GFPOT={
+  soilProbe:()=>{
+    const potLevel=visualUpgradeLevel('pot'),soilR=53+potVisualProfile(potLevel).radiusExtra*.84,topY=-6;
+    const locals=[v(soilR*.58,topY+2.25,soilR*.12),v(-soilR*.31,topY+2.25,soilR*.47),v(soilR*.08,topY+2.25,-soilR*.66)];
+    return locals.map((world,index)=>{const p=proj(world);return{index,world:{x:world.x,y:world.y,z:world.z},screen:{x:p.x,y:p.y,z:p.z}}});
+  }
 };
 // Mobile gameplay controls
 const waterAction=document.getElementById('waterAction'),feedAction=document.getElementById('feedAction');
