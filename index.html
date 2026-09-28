@@ -5113,83 +5113,78 @@ function queueStem(ax,visualState=null){
   const avgZ=screen.reduce((s,p)=>s+p.z,0)/screen.length;
   const baseW=ax.depth===0?CFG.stemWidth:ax.width;
   const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
-  const s0=mixHex(ax.depth===0?'#4e6e39':'#516f3b','#777044',stemFade);
-  const s1=mixHex(ax.depth===0?'#86a65b':'#86a65a','#9d965e',stemFade);
-  const s2=mixHex(ax.depth===0?'#a9c776':'#a7c376','#b3a86c',stemFade);
+  const s0=mixHex(ax.depth===0?'#456633':'#4d6b38','#777044',stemFade);
+  const s1=mixHex(ax.depth===0?'#76994d':'#7d9c54','#9d965e',stemFade);
+  const s2=mixHex(ax.depth===0?'#a5c56f':'#a7c376','#b3a86c',stemFade);
 
   const widthAt=t=>{
+    t=clamp(t,0,1);
     if(ax.depth===0){
-      // Mature cannabis stems read as one tapered woody/green axis, not a uniform pole.
-      // Slight basal flare, fast early taper and a much finer upper stem.
-      const base=baseW*.80;
-      const taper=.98-.64*Math.pow(clamp(t,0,1),.72);
-      const basalFlare=1+.15*Math.exp(-t*11);
-      const organic=1+.018*Math.sin(t*Math.PI*3.2+(ax.id?.length||0));
-      return Math.max(2.15,base*taper*basalFlare*organic);
+      // Strong basal flare, then continuous taper into a fine apical stem.
+      const base=Math.max(4.8,baseW*.92);
+      const taper=.24+.76*Math.pow(1-t,.82);
+      const flare=1+.22*Math.exp(-t*12);
+      return Math.max(1.35,base*taper*flare);
     }
-    const taper=1-t*(1-CFG.branchTaper);
-    return Math.max(1.15,baseW*taper);
-  };
-  const traceSmoothPath=()=>{
-    ctx.beginPath();
-    ctx.moveTo(screen[0].x,screen[0].y);
-    if(screen.length===2){
-      ctx.lineTo(screen[1].x,screen[1].y);
-      return;
-    }
-    for(let i=1;i<screen.length-1;i++){
-      const p=screen[i],next=screen[i+1],mx=(p.x+next.x)/2,my=(p.y+next.y)/2;
-      ctx.quadraticCurveTo(p.x,p.y,mx,my);
-    }
-    const pre=screen[screen.length-2],last=screen[screen.length-1];
-    ctx.quadraticCurveTo(pre.x,pre.y,last.x,last.y);
+    // Every lateral shoot is thickest where it leaves its parent and gets visibly
+    // thinner towards the tip. Higher-generation shoots start finer as well.
+    const depthScale=Math.pow(.78,Math.max(0,ax.depth-1));
+    const base=Math.max(2.0,baseW*depthScale);
+    const taper=.18+.82*Math.pow(1-t,.72);
+    return Math.max(.72,base*taper);
   };
 
-  // One continuous body instead of independently stroked internodes.
-  // This removes the "bamboo tube" seams while the biology can still keep discrete nodes.
+  const tangents=screen.map((p,i)=>{
+    const a=screen[Math.max(0,i-1)],b=screen[Math.min(screen.length-1,i+1)];
+    const dx=b.x-a.x,dy=b.y-a.y,l=Math.max(.001,Math.hypot(dx,dy));
+    return{x:dx/l,y:dy/l};
+  });
+  const left=[],right=[];
+  for(let i=0;i<screen.length;i++){
+    const p=screen[i],t=i/n,tan=tangents[i],w=widthAt(t)*.5;
+    const nx=-tan.y,ny=tan.x;
+    left.push({x:p.x+nx*w,y:p.y+ny*w});
+    right.push({x:p.x-nx*w,y:p.y-ny*w});
+  }
+
   queue.push({z:avgZ-.62,draw(){
     const first=screen[0],last=screen[screen.length-1];
     const g=ctx.createLinearGradient(first.x,first.y,last.x,last.y);
-    g.addColorStop(0,s0);g.addColorStop(.55,s1);g.addColorStop(1,s2);
-
+    g.addColorStop(0,s0);g.addColorStop(.58,s1);g.addColorStop(1,s2);
     ctx.save();
-    ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.moveTo(left[0].x,left[0].y);
+    for(let i=1;i<left.length;i++){
+      const prev=left[i-1],cur=left[i];
+      ctx.quadraticCurveTo(prev.x,prev.y,(prev.x+cur.x)/2,(prev.y+cur.y)/2);
+    }
+    ctx.lineTo(left[left.length-1].x,left[left.length-1].y);
+    for(let i=right.length-1;i>=0;i--){
+      const cur=right[i],next=right[Math.max(0,i-1)];
+      ctx.quadraticCurveTo(cur.x,cur.y,(cur.x+next.x)/2,(cur.y+next.y)/2);
+    }
+    ctx.closePath();ctx.fill();
 
-    // Soft outer body. Width uses the lower/middle stem thickness; the visible taper
-    // is reinforced below with short overlapping tapered strokes.
-    const midW=widthAt(.38);
-    ctx.strokeStyle=g;ctx.lineWidth=midW+1.1;
-    traceSmoothPath();ctx.stroke();
-
-    // Continuous highlight follows the same curve, so no segment boundary can appear.
-    ctx.strokeStyle='rgba(207,229,159,.30)';
-    ctx.lineWidth=Math.max(.8,midW*.22);
-    traceSmoothPath();ctx.stroke();
-
-    // Overlapping local strokes restore organic taper without introducing hard joints.
+    // One soft highlight follows the center line; it becomes finer toward the tip.
+    ctx.strokeStyle='rgba(214,234,169,.24)';
+    ctx.lineCap='round';ctx.lineJoin='round';
     for(let i=0;i<n;i++){
-      const a=screen[i],b=screen[i+1],t=(i+.5)/n,w=widthAt(t);
-      const prev=i>0?screen[i-1]:a,next=i+2<screen.length?screen[i+2]:b;
-      const sx=(a.x+b.x)/2,sy=(a.y+b.y)/2;
-      const c1x=a.x+(b.x-prev.x)*.20,c1y=a.y+(b.y-prev.y)*.20;
-      const c2x=b.x-(next.x-a.x)*.20,c2y=b.y-(next.y-a.y)*.20;
-      ctx.strokeStyle=g;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(sx-(b.x-a.x)*.52,sy-(b.y-a.y)*.52);
-      ctx.bezierCurveTo(c1x,c1y,c2x,c2y,sx+(b.x-a.x)*.52,sy+(b.y-a.y)*.52);ctx.stroke();
+      const a=screen[i],b=screen[i+1],t=(i+.5)/n;
+      ctx.lineWidth=Math.max(.35,widthAt(t)*.12);
+      ctx.beginPath();ctx.moveTo(a.x+.45,a.y);ctx.lineTo(b.x+.45,b.y);ctx.stroke();
     }
     ctx.restore();
   }});
 
-  // Nodes remain biologically visible only as subtle local thickening.
-  // No separate bright ellipses/rings: those were the main source of the bamboo look.
+  // Nodes are biological attachment points, not visible rings.
   ax.pts.slice(1,-1).forEach((p,i)=>{
-    const q=proj(p),t=(i+1)/n,w=widthAt(t),r=Math.max(.55,w*.40);
+    const q=proj(p),t=(i+1)/n,w=widthAt(t);
     queue.push({z:q.z-.50,draw(){
-      // A node is only a tiny local swelling. Branch/leaf attachment carries the visual cue.
-      ctx.save();
-      ctx.globalAlpha=ax.depth===0?.045:.035;
-      ctx.fillStyle=ax.depth===0?'#b7ce86':'#afc67e';
-      ctx.beginPath();ctx.ellipse(q.x,q.y,r,r*.30,0,0,Math.PI*2);ctx.fill();
-      ctx.restore();
+      ctx.save();ctx.globalAlpha=ax.depth===0?.025:.018;
+      ctx.fillStyle='#b5cc83';ctx.beginPath();
+      ctx.ellipse(q.x,q.y,Math.max(.35,w*.25),Math.max(.18,w*.10),0,0,Math.PI*2);
+      ctx.fill();ctx.restore();
     }});
   });
 }
@@ -5475,23 +5470,8 @@ function buildPlant(){
       const swayAngle=node.angle+(NR()-.5)*.28;
       const rel=node.positionAlong;
       if(gen===0){
-        // The previous version could curve mostly in Z, which still looked ruler-straight
-        // from the default camera. Force a subtle seed-specific X lean plus a broad S-curve.
-        const SR=rng(seedHash(shoot.seed^currentPlantSeed(),0x57e6a11));
-        const leanSign=SR()>.5?1:-1;
-        const leanX=leanSign*lerp(.020,.052,SR());
-        const leanZ=lerp(-.030,.030,SR());
-        const phase=SR()*Math.PI*2;
-        const sCurveX=Math.sin(phase+rel*Math.PI*1.42)*.030+Math.sin(phase*.63+rel*Math.PI*2.55)*.010;
-        const sCurveZ=Math.cos(phase*.81+rel*Math.PI*1.27)*.025;
-        const nodeNoise=(NR()-.5)*.010*(1-rel*.35);
-        const target=norm(v(
-          leanX+sCurveX+nodeNoise,
-          1,
-          leanZ+sCurveZ+(NR()-.5)*.008
-        ));
-        // Low-pass steering creates a continuous living stem rather than zig-zag segments.
-        dir=norm(add(mul(dir,.74),mul(target,.26)));
+        const target=norm(v((NR()-.5)*.018,1,(NR()-.5)*.014));
+        dir=norm(add(mul(dir,.86),mul(target,.14)));
       }else{
         const micro=(2.0+gen*.45)*(1-rel*.14);
         const sideways=v(Math.cos(swayAngle)*micro,0,Math.sin(swayAngle)*micro);
@@ -5509,6 +5489,26 @@ function buildPlant(){
       pts.push(add(current,mul(dir,tipLen)));
     }else if(pts.length===1&&prog>=shoot.birthProg){
       pts.push(add(current,mul(dir,baseInternode*.20)));
+    }
+    if(pts.length>=3){
+      const base=pts[0],top=pts[pts.length-1];
+      const axisHeight=Math.max(1,top.y-base.y);
+      const CR=rng(seedHash(shoot.seed^currentPlantSeed()^(gen*0x9e37),0x51e77));
+      const phase=CR()*Math.PI*2;
+      const leanSign=CR()>.5?1:-1;
+      const leanAmp=gen===0?axisHeight*lerp(.035,.065,CR()):axisHeight*lerp(.010,.025,CR());
+      const curveAmp=gen===0?axisHeight*lerp(.018,.036,CR()):axisHeight*lerp(.008,.018,CR());
+      const depthAmp=gen===0?axisHeight*lerp(.010,.022,CR()):axisHeight*lerp(.006,.014,CR());
+      pts=pts.map((p,i)=>{
+        if(i===0)return p;
+        const q=i/(pts.length-1);
+        const ease=q*q*(3-2*q);
+        const primary=Math.sin(phase+q*Math.PI*1.55)-Math.sin(phase);
+        const secondary=Math.sin(phase*.57+q*Math.PI*2.25)-Math.sin(phase*.57);
+        const x=leanSign*leanAmp*ease + curveAmp*(primary*.72+secondary*.28)*Math.sin(Math.PI*q);
+        const z=depthAmp*(Math.cos(phase*.81+q*Math.PI*1.35)-Math.cos(phase*.81))*Math.sin(Math.PI*q);
+        return v(p.x+x,p.y,p.z+z);
+      });
     }
     pts=applyAxisBend(shoot.id,pts,gen);
     const nodeGeom=new Map();
@@ -6688,7 +6688,12 @@ window.__GFSTEM={
       totalTurn+=Math.acos(clamp(a.x*b.x+a.y*b.y+a.z*b.z,-1,1));
     }
     const xs=main.pts.map(p=>p.x),visibleXSpan=Math.max(...xs)-Math.min(...xs);
-    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,base:{...base},tip:{...tip}};
+    const mainBaseWidth=Math.max(4.8,CFG.stemWidth*.92)*(1+.22);
+    const mainTipWidth=Math.max(1.35,Math.max(4.8,CFG.stemWidth*.92)*.24);
+    const branch=P.axes.find(a=>a.depth===1)||null;
+    const branchBaseWidth=branch?Math.max(2.0,branch.width):null;
+    const branchTipWidth=branch?Math.max(.72,branchBaseWidth*.18):null;
+    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,mainBaseWidth,mainTipWidth,branchBaseWidth,branchTipWidth,base:{...base},tip:{...tip}};
   }
 };
 window.__GFPOT={
