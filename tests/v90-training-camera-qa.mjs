@@ -54,7 +54,16 @@ async function freePoint(){
     for(const ax of hits.axes||[])for(let i=0;i<(ax.screen||[]).length-1;i++)d=Math.min(d,segDist(p.x,p.y,ax.screen[i],ax.screen[i+1]));
     return d;
   }
-  return candidates.map(p=>({...p,d:distanceToPlant(p)})).sort((a,b)=>b.d-a.d)[0];
+  const eligible=[];
+  for(const p of candidates){
+    const onCanvas=await page.evaluate(({x,y})=>{
+      const canvas=document.getElementById('c'),r=canvas.getBoundingClientRect(),el=document.elementFromPoint(r.left+x,r.top+y);
+      return el===canvas||canvas.contains(el);
+    },p);
+    if(onCanvas)eligible.push({...p,d:distanceToPlant(p)});
+  }
+  if(!eligible.length)throw new Error('No free canvas point outside UI overlays');
+  return eligible.sort((a,b)=>b.d-a.d)[0];
 }
 async function touchDrag(id,from,to){
   await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[
