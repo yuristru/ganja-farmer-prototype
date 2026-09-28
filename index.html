@@ -5111,7 +5111,7 @@ function queueStem(ax,visualState=null){
   if(pts.length<2)return;
   const screen=pts.map(proj),n=screen.length-1;
   const avgZ=screen.reduce((s,p)=>s+p.z,0)/screen.length;
-  const baseW=ax.depth===0?CFG.stemWidth:ax.width;
+  const baseW=Math.max(.6,Number(ax.width)||(ax.depth===0?CFG.stemWidth:2.8));
   const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
   const s0=mixHex(ax.depth===0?'#456633':'#4d6b38','#777044',stemFade);
   const s1=mixHex(ax.depth===0?'#76994d':'#7d9c54','#9d965e',stemFade);
@@ -5120,18 +5120,21 @@ function queueStem(ax,visualState=null){
   const widthAt=t=>{
     t=clamp(t,0,1);
     if(ax.depth===0){
-      // Strong basal flare, then continuous taper into a fine apical stem.
-      const base=Math.max(4.8,baseW*.92);
-      const taper=.24+.76*Math.pow(1-t,.82);
-      const flare=1+.22*Math.exp(-t*12);
-      return Math.max(1.35,base*taper*flare);
+      // Cannabis trunk: visibly strongest at the substrate, then continuously
+      // narrows into a genuinely fine apical stem. No pole-like upper half.
+      const base=Math.max(5.0,baseW*.98);
+      const taper=.105+.895*Math.pow(1-t,.68);
+      const flare=1+.26*Math.exp(-t*13);
+      const upperSoftening=1-.16*smoothstep01(clamp((t-.48)/.52,0,1));
+      return Math.max(.82,base*taper*flare*upperSoftening);
     }
-    // Every lateral shoot is thickest where it leaves its parent and gets visibly
-    // thinner towards the tip. Higher-generation shoots start finer as well.
-    const depthScale=Math.pow(.78,Math.max(0,ax.depth-1));
-    const base=Math.max(2.0,baseW*depthScale);
-    const taper=.18+.82*Math.pow(1-t,.72);
-    return Math.max(.72,base*taper);
+    // Lateral shoots obey the same biological rule. Each generation starts finer,
+    // and every individual shoot becomes visibly thin at its distal end.
+    const depthScale=Math.pow(.70,Math.max(0,ax.depth-1));
+    const base=Math.max(1.25,baseW*depthScale);
+    const taper=.075+.925*Math.pow(1-t,.62);
+    const upperSoftening=1-.18*smoothstep01(clamp((t-.42)/.58,0,1));
+    return Math.max(.34,base*taper*upperSoftening);
   };
 
   const tangents=screen.map((p,i)=>{
@@ -5496,20 +5499,38 @@ function buildPlant(){
       const CR=rng(seedHash(shoot.seed^currentPlantSeed()^(gen*0x9e37),0x51e77));
       const phase=CR()*Math.PI*2;
       const leanSign=CR()>.5?1:-1;
-      const sSign=CR()>.5?1:-1;
-      const leanAmp=gen===0?axisHeight*lerp(.022,.042,CR()):axisHeight*lerp(.010,.024,CR());
-      const curveAmp=gen===0?axisHeight*lerp(.038,.058,CR()):axisHeight*lerp(.010,.022,CR());
-      const depthAmp=gen===0?axisHeight*lerp(.012,.026,CR()):axisHeight*lerp(.006,.014,CR());
+      const bendSign=CR()>.5?1:-1;
+
+      // Main stem must read as organic even from the default front camera.
+      // Keep the base rooted, let the lower third drift, counter-bend through the
+      // middle and finish with a smaller apical correction instead of a straight pole.
+      const leanAmp=gen===0?axisHeight*lerp(.050,.078,CR()):axisHeight*lerp(.014,.030,CR());
+      const curveAmp=gen===0?axisHeight*lerp(.060,.090,CR()):axisHeight*lerp(.018,.036,CR());
+      const depthAmp=gen===0?axisHeight*lerp(.018,.034,CR()):axisHeight*lerp(.010,.022,CR());
+      const secondaryAmp=gen===0?axisHeight*lerp(.014,.026,CR()):axisHeight*lerp(.006,.014,CR());
+
       pts=pts.map((p,i)=>{
         if(i===0)return p;
         const q=i/(pts.length-1);
-        const ease=q*q*(3-2*q);
-        // Guaranteed front-view S curve: zero at base/tip, opposite drift through
-        // the lower and upper half. Seed-specific sign, lean and harmonic keep plants unique.
-        const sCurve=sSign*Math.sin(q*Math.PI*2);
-        const harmonic=Math.sin(q*Math.PI*3+phase)*Math.sin(Math.PI*q);
-        const x=leanSign*leanAmp*ease + curveAmp*(sCurve*.82+harmonic*.18);
-        const z=depthAmp*(Math.sin(q*Math.PI*2+phase)-Math.sin(phase))*Math.sin(Math.PI*q);
+        const rootEase=smoothstep01(clamp(q/.16,0,1));
+        const leanEase=smoothstep01(q);
+        const envelope=Math.pow(Math.sin(Math.PI*q),.82);
+
+        // Two broad non-symmetric bends. Using a phase offset prevents the familiar
+        // perfect sine-wave look and ensures the silhouette visibly leaves center.
+        const primary=Math.sin(q*Math.PI*1.62+phase*.16)*envelope;
+        const secondary=Math.sin(q*Math.PI*3.15+phase)*envelope;
+        const lowerBias=Math.sin(clamp(q/.72,0,1)*Math.PI)*Math.pow(1-q,.32);
+
+        const x=rootEase*(
+          leanSign*leanAmp*leanEase +
+          bendSign*curveAmp*(primary*.72+lowerBias*.42) +
+          secondaryAmp*secondary
+        );
+        const z=rootEase*depthAmp*(
+          Math.cos(q*Math.PI*1.45+phase)*envelope +
+          Math.sin(q*Math.PI*2.4+phase*.7)*envelope*.38
+        );
         return v(p.x+x,p.y,p.z+z);
       });
     }
@@ -5529,7 +5550,8 @@ function buildPlant(){
     visited.add(shoot.id);
     const G=geometryForShoot(shoot,origin,baseDir);
     if(G.pts.length<2)return;
-    const width=Math.max(1.4,(shoot.generation===0?CFG.stemWidth:4.7/(1+shoot.generation*.42))*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
+    const generationWidth=shoot.generation===0?CFG.stemWidth:5.0*Math.pow(.66,Math.max(0,shoot.generation-1));
+    const width=Math.max(shoot.generation===0?2.0:.72,generationWidth*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
     P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId});
     P.shootStates.push({id:shoot.id,generation:shoot.generation,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,birthProg:shoot.birthProg,tipActive:G.tipActive,cut:G.cut?{...G.cut}:null,apicalDominance:G.tipActive?shoot.apicalDominance:.10,status:G.tipActive?'growing':'topped'});
 
@@ -5552,7 +5574,8 @@ function buildPlant(){
         const sideDir=e.bud.side<0?mul(ng.ring,-1):ng.ring;
         const lateral=.86*gp.branchAngle*gp.canopy,rise=(.48+.05*shoot.generation)/Math.sqrt(Math.max(.72,gp.branchAngle));
         const outward=norm(add(mul(sideDir,lateral),add(mul(ng.tan,.08),v(0,rise,0))));
-        const childOrigin=add(ng.p,mul(sideDir,4.2*gp.canopy));
+        const junctionOffset=Math.max(1.4,3.0*gp.canopy*Math.pow(.84,shoot.generation));
+        const childOrigin=add(ng.p,mul(sideDir,junctionOffset));
         renderShoot(child,childOrigin,outward,visited);
       }
     }
@@ -6696,7 +6719,7 @@ window.__GFSTEM={
     const branch=P.axes.find(a=>a.depth===1)||null;
     const branchBaseWidth=branch?Math.max(2.0,branch.width):null;
     const branchTipWidth=branch?Math.max(.72,branchBaseWidth*.18):null;
-    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,mainBaseWidth,mainTipWidth,branchBaseWidth,branchTipWidth,base:{...base},tip:{...tip}};
+    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,mainBaseWidth,mainTipWidth,mainTaperRatio:mainTipWidth/mainBaseWidth,branchBaseWidth,branchTipWidth,branchTaperRatio:branchBaseWidth?branchTipWidth/branchBaseWidth:null,base:{...base},tip:{...tip}};
   }
 };
 window.__GFPOT={
