@@ -1,0 +1,32 @@
+name: V90 Demo Cycle QA
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'tests/v90-demo-cycle-qa.mjs'
+      - '.github/workflows/v90-demo-cycle-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  demo-cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run full demo cycle QA
+        run: node tests/v90-demo-cycle-qa.mjs
+      - name: Upload QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v90-demo-cycle-qa
+          path: qa/v90-demo-cycle/
+          if-no-files-found: warn
