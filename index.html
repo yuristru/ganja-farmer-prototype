@@ -3145,7 +3145,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
-<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 perfekt (buschig)</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
+<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script>
 (()=>{
@@ -5100,8 +5100,17 @@ function queueStem(ax,visualState=null){
   const s2=mixHex(ax.depth===0?'#a9c776':'#a7c376','#b3a86c',stemFade);
 
   const widthAt=t=>{
-    const taper=ax.depth===0?(1-t*.58):(1-t*(1-CFG.branchTaper));
-    return Math.max(ax.depth===0?3.2:1.4,baseW*taper);
+    if(ax.depth===0){
+      // Mature cannabis stems read as one tapered woody/green axis, not a uniform pole.
+      // Slight basal flare, fast early taper and a much finer upper stem.
+      const base=baseW*.80;
+      const taper=.98-.64*Math.pow(clamp(t,0,1),.72);
+      const basalFlare=1+.15*Math.exp(-t*11);
+      const organic=1+.018*Math.sin(t*Math.PI*3.2+(ax.id?.length||0));
+      return Math.max(2.15,base*taper*basalFlare*organic);
+    }
+    const taper=1-t*(1-CFG.branchTaper);
+    return Math.max(1.15,baseW*taper);
   };
   const traceSmoothPath=()=>{
     ctx.beginPath();
@@ -5155,12 +5164,13 @@ function queueStem(ax,visualState=null){
   // Nodes remain biologically visible only as subtle local thickening.
   // No separate bright ellipses/rings: those were the main source of the bamboo look.
   ax.pts.slice(1,-1).forEach((p,i)=>{
-    const q=proj(p),t=(i+1)/n,w=widthAt(t),r=Math.max(.75,w*.56)*clamp(CFG.nodeBulge,.82,1.18);
+    const q=proj(p),t=(i+1)/n,w=widthAt(t),r=Math.max(.55,w*.40);
     queue.push({z:q.z-.50,draw(){
+      // A node is only a tiny local swelling. Branch/leaf attachment carries the visual cue.
       ctx.save();
-      ctx.globalAlpha=ax.depth===0?.16:.11;
+      ctx.globalAlpha=ax.depth===0?.045:.035;
       ctx.fillStyle=ax.depth===0?'#b7ce86':'#afc67e';
-      ctx.beginPath();ctx.ellipse(q.x,q.y,r,r*.42,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(q.x,q.y,r,r*.30,0,0,Math.PI*2);ctx.fill();
       ctx.restore();
     }});
   });
@@ -5445,22 +5455,31 @@ function buildPlant(){
       const vigor=clamp(shoot.vigorBase,.48,1.25);
       const careGrowth=gameGrowthScaleForProgress(node.birthProg);const segLen=baseInternode*segAge*stageStretch*(.88+.16*vigor)*(.91+NR()*.18)*careGrowth;
       const swayAngle=node.angle+(NR()-.5)*.28;
-      const shootR=rng((shoot.seed*811+currentPlantSeed()*37+gen*101)>>>0);
-      const driftPhase=(shoot.seed%997)*.011+gen*.73;
       const rel=node.positionAlong;
-      // Cannabis stems are continuous but rarely ruler-straight. Give each shoot a
-      // deterministic low-frequency drift plus smaller node-to-node variation.
-      const organicAmp=gen===0?4.8:3.2;
-      const waveX=Math.sin(driftPhase+rel*Math.PI*1.55)*organicAmp*(.72+.28*(1-rel));
-      const waveZ=Math.cos(driftPhase*.83+rel*Math.PI*1.28)*organicAmp*.72*(.76+.24*(1-rel));
-      const micro=(gen===0?1.9:2.7)*(1-rel*.16);
-      const sway=v(
-        waveX+Math.cos(swayAngle)*micro*(.72+shootR()*.18),
-        0,
-        waveZ+Math.sin(swayAngle)*micro*(.72+shootR()*.18)
-      );
-      const tropism=v(0,gen===0?.20:.08+.055*gen,0);
-      dir=norm(add(mul(dir,.885),add(mul(norm(baseDir),.055),add(mul(sway,gen===0?.020:.018),tropism))));
+      if(gen===0){
+        // The previous version could curve mostly in Z, which still looked ruler-straight
+        // from the default camera. Force a subtle seed-specific X lean plus a broad S-curve.
+        const SR=rng(seedHash(shoot.seed^currentPlantSeed(),0x57e6a11));
+        const leanSign=SR()>.5?1:-1;
+        const leanX=leanSign*lerp(.020,.052,SR());
+        const leanZ=lerp(-.030,.030,SR());
+        const phase=SR()*Math.PI*2;
+        const sCurveX=Math.sin(phase+rel*Math.PI*1.42)*.030+Math.sin(phase*.63+rel*Math.PI*2.55)*.010;
+        const sCurveZ=Math.cos(phase*.81+rel*Math.PI*1.27)*.025;
+        const nodeNoise=(NR()-.5)*.010*(1-rel*.35);
+        const target=norm(v(
+          leanX+sCurveX+nodeNoise,
+          1,
+          leanZ+sCurveZ+(NR()-.5)*.008
+        ));
+        // Low-pass steering creates a continuous living stem rather than zig-zag segments.
+        dir=norm(add(mul(dir,.74),mul(target,.26)));
+      }else{
+        const micro=(2.0+gen*.45)*(1-rel*.14);
+        const sideways=v(Math.cos(swayAngle)*micro,0,Math.sin(swayAngle)*micro);
+        const target=norm(add(norm(baseDir),mul(sideways,.020)));
+        dir=norm(add(mul(dir,.82),mul(target,.18)));
+      }
       current=add(current,mul(dir,segLen));
       pts.push(current);nodePointIndex.set(node.id,pts.length-1);
     }
@@ -6650,7 +6669,8 @@ window.__GFSTEM={
       const a=norm(sub(main.pts[i],main.pts[i-1])),b=norm(sub(main.pts[i+1],main.pts[i]));
       totalTurn+=Math.acos(clamp(a.x*b.x+a.y*b.y+a.z*b.z,-1,1));
     }
-    return{points:main.pts.length,maxDeviation,totalTurn,base:{...base},tip:{...tip}};
+    const xs=main.pts.map(p=>p.x),visibleXSpan=Math.max(...xs)-Math.min(...xs);
+    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,base:{...base},tip:{...tip}};
   }
 };
 window.__GFPOT={
