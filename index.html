@@ -3588,7 +3588,7 @@ const UPGRADE_CATEGORIES={
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
 function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels,unlockedUpgradeLevel:2},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false,demoAutoCare:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels,unlockedUpgradeLevel:2},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
 function completedGrowCount(st=gameState){return Math.max(0,Number(st?.meta?.completedGrows)||0);}
@@ -4012,6 +4012,17 @@ function plantDayAvailability(){
   const used=Math.max(0,Number(gameState.turn?.turnsToday)||0);
   return{ok:true,label:'TAG ABSCHLIESSEN',sub:used+'/'+MAX_TURNS_PER_PLANT_DAY+' Züge genutzt',wait:0,remaining:MAX_TURNS_PER_PLANT_DAY-used};
 }
+const DEMO_CARE_TARGETS={water:.70,nutrients:.68,ventilation:.82};
+function demoAutoCareEnabled(){return !!gameState?.settings?.demoAutoCare;}
+function refillDemoCare(){
+  if(!gameState?.care)return false;
+  gameState.care.water=DEMO_CARE_TARGETS.water;
+  gameState.care.nutrients=DEMO_CARE_TARGETS.nutrients;
+  gameState.care.ventilation=DEMO_CARE_TARGETS.ventilation;
+  gameState.care.cooldowns={water:0,feed:0,vent:0};
+  if(gameState.turn){gameState.turn.lastTurnAt=0;gameState.turn.lastAction=null;}
+  return true;
+}
 function advancePlantDay(force=false){
   if(gameState.plant.day>=84)return false;
   const day=gameState.plant.day,result=simulateCurrentDay();
@@ -4021,6 +4032,7 @@ function advancePlantDay(force=false){
   gameState.plant.day=Math.min(84,day+1);currentDay=gameState.plant.day;stage=legacyStageForDay(currentDay);
   gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=0;gameState.turn.lastAction=null;
   gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();
+  if(force&&demoAutoCareEnabled())refillDemoCare();
   saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();return true;
 }
 function maybeAdvancePlantDay(){return false;}
@@ -4112,7 +4124,7 @@ function applyCare(action){
 }
 function makeScenario(kind,shapePreset='natural'){
   const bypass=gameState?.settings?.debugBypass||false,targetDay=36;
-  gameState=createGameState();gameState.settings.debugBypass=bypass;gameState.settings.devShapePreset=shapePreset;
+  gameState=createGameState();gameState.settings.debugBypass=bypass;gameState.settings.devShapePreset=shapePreset;gameState.settings.demoAutoCare=kind==='good';
   // Simulate 35 completed grow days, then display the beginning of day 36.
   for(let d=1;d<targetDay;d++){
     gameState.plant.day=d;
@@ -4133,6 +4145,7 @@ function makeScenario(kind,shapePreset='natural'){
   gameState.turn.turnsToday=0;gameState.turn.lastTurnAt=0;
   gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();
   gameState.care.cooldowns={water:0,feed:0,vent:0};
+  if(gameState.settings.demoAutoCare)refillDemoCare();
   currentDay=targetDay;stage=legacyStageForDay(targetDay);
 
   // Settings demo presets must always produce a deterministic visible target view.
@@ -4157,7 +4170,7 @@ function makeScenario(kind,shapePreset='natural'){
   showGameToast(kind==='good'?'Tag 36 · perfekte Pflege'+shapeLabel:'Tag 36 · Stressphase 12-20');
 }
 function makeCareDeficitScenario(kind){
-  const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;
+  const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;gameState.settings.demoAutoCare=false;
   const targetDay=kind==='nutrient'?49:35;
   for(let d=1;d<targetDay;d++){
     gameState.plant.day=d;
@@ -4171,7 +4184,7 @@ function makeCareDeficitScenario(kind){
   showGameToast(kind==='water'?'7 Tage Wassermangel':'7 Tage Nährstoffmangel');
 }
 function makeOvercareScenario(kind){
-  const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;
+  const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;gameState.settings.demoAutoCare=false;
   const targetDay=42;
   for(let d=1;d<targetDay;d++){
     gameState.plant.day=d;const bad=d>=targetDay-5;
@@ -4767,6 +4780,11 @@ window.__GFDEVSHAPE={
   load:(preset='natural')=>makeScenario('good',preset),
   preset:()=>devShapePreset(),
   metrics:()=>plantArchitectureMetrics()
+};
+window.__GFDEMOCARE={
+  enabled:()=>demoAutoCareEnabled(),
+  snapshot:()=>({day:gameState?.plant?.day,water:gameState?.care?.water,nutrients:gameState?.care?.nutrients,ventilation:gameState?.care?.ventilation,turnsToday:gameState?.turn?.turnsToday,lastTurnAt:gameState?.turn?.lastTurnAt,autoCare:demoAutoCareEnabled()}),
+  targets:()=>({...DEMO_CARE_TARGETS})
 };
 // ---------------------------------------------------------------------------
 function invalidatePlant(){plantCache=null;plantCacheDay=-1;}
@@ -6702,7 +6720,7 @@ document.getElementById('adminDaySkip')?.addEventListener('click',()=>{
   const finished=gameState.plant.day,used=gameState.turn.turnsToday||0;
   if(advancePlantDay(true)){
     const result=gameState.history?.[String(finished)];
-    showGameToast('Tag '+finished+' · '+used+'/7 · '+dayConsequenceLabel(result));
+    showGameToast('Tag '+finished+' · '+used+'/7 · '+dayConsequenceLabel(result)+(demoAutoCareEnabled()?' · Autopflege':'') );
   }
 });
 document.getElementById('careClose')?.addEventListener('click',()=>careDrawer?.classList.remove('open'));
