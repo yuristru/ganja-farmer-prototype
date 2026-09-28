@@ -3145,7 +3145,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
-<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
+<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 perfekt (buschig)</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script>
 (()=>{
@@ -3294,7 +3294,23 @@ function seedGeneticProfile(seed=activeSeed()){
   p.apical=clamp(p.apical,.76,1.24);p.flowerTiming=clamp(p.flowerTiming,-3,3);p.flowerMass=clamp(p.flowerMass,.82,1.24);
   return p;
 }
-function activeGeneticProfile(){return seedGeneticProfile(activeSeed())}
+const DEV_SHAPE_PRESETS={
+  natural:null,
+  narrow:{internode:1.10,branching:.70,stretch:1.10,canopy:.76,leafScale:.96,leafWidth:.92,petiole:.96,branchAngle:.74,stemThickness:.96,apical:1.16},
+  bushy:{internode:.80,branching:1.34,stretch:.88,canopy:1.28,leafScale:1.04,leafWidth:1.05,petiole:1.03,branchAngle:1.24,stemThickness:1.04,apical:.78}
+};
+function devShapePreset(){return gameState?.settings?.devShapePreset||'natural';}
+function applyDevShapePreset(profile){
+  const preset=DEV_SHAPE_PRESETS[devShapePreset()];
+  if(!preset)return profile;
+  const p={...profile};
+  for(const [k,m] of Object.entries(preset))if(Number.isFinite(p[k]))p[k]*=m;
+  p.internode=clamp(p.internode,.68,1.42);p.branching=clamp(p.branching,.50,1.65);p.stretch=clamp(p.stretch,.66,1.45);
+  p.canopy=clamp(p.canopy,.62,1.52);p.leafScale=clamp(p.leafScale,.76,1.26);p.leafWidth=clamp(p.leafWidth,.72,1.30);
+  p.petiole=clamp(p.petiole,.76,1.28);p.branchAngle=clamp(p.branchAngle,.60,1.48);p.stemThickness=clamp(p.stemThickness,.78,1.28);p.apical=clamp(p.apical,.58,1.42);
+  return p;
+}
+function activeGeneticProfile(){return applyDevShapePreset(seedGeneticProfile(activeSeed()))}
 function geneticArchitectureSummary(profile=activeGeneticProfile(),seed=activeSeed()){
   const shape=profile.stretch>1.10?'HOCH & SCHLANK':profile.canopy>1.10?'BREITE KRONE':profile.internode<.90?'KOMPAKT':'BALANCIERT';
   const nodes=profile.internode<.92?'KURZE INTERNODIEN':profile.internode>1.10?'LANGE INTERNODIEN':'MITTLERE INTERNODIEN';
@@ -4094,9 +4110,9 @@ function applyCare(action){
   commitTurnAction(action==='water'?'Gießen':action==='feed'?'Düngen':'Lüften');
   invalidatePlant();requestRender();showGameToast(toast);
 }
-function makeScenario(kind){
+function makeScenario(kind,shapePreset='natural'){
   const bypass=gameState?.settings?.debugBypass||false,targetDay=36;
-  gameState=createGameState();gameState.settings.debugBypass=bypass;
+  gameState=createGameState();gameState.settings.debugBypass=bypass;gameState.settings.devShapePreset=shapePreset;
   // Simulate 35 completed grow days, then display the beginning of day 36.
   for(let d=1;d<targetDay;d++){
     gameState.plant.day=d;
@@ -4122,10 +4138,23 @@ function makeScenario(kind){
   // Settings demo presets must always produce a deterministic visible target view.
   yaw=0;pitch=.16;zoom=1;panX=0;panY=0;
   interactionLOD=false;plantAutoScale=.8;
+
+  // Shape demos describe different pre-training histories at the same perfect-care day.
+  gameState.training={prunes:[],bends:[],defoliations:[]};
+  if(kind==='good'&&shapePreset==='bushy'){
+    const cutDay=16,cutProg=growthAtDay(cutDay).prog;
+    gameState.training.prunes=[{nodeId:'main:n5',axisId:'main',axisNode:5,cutDay,cutProg}];
+    gameState.training.bends=[
+      {axisId:'shoot:main:n5:bud:L',events:[{day:24,amount:.28}]},
+      {axisId:'shoot:main:n5:bud:R',events:[{day:24,amount:.28}]}
+    ];
+  }
+  hydrateTrainingFromGame();
   resetBioPlant();invalidatePlant();worldBgCanvas=null;
   saveGameState();sync();renderMetaPanels();requestRender();
   requestAnimationFrame(()=>{invalidatePlant();requestRender();});
-  showGameToast(kind==='good'?'Tag 36 · perfekte Pflege':'Tag 36 · Stressphase 12-20');
+  const shapeLabel=shapePreset==='narrow'?' · schmal':shapePreset==='bushy'?' · buschig':'';
+  showGameToast(kind==='good'?'Tag 36 · perfekte Pflege'+shapeLabel:'Tag 36 · Stressphase 12-20');
 }
 function makeCareDeficitScenario(kind){
   const bypass=gameState?.settings?.debugBypass||false;gameState=createGameState();gameState.settings.debugBypass=bypass;
@@ -4670,7 +4699,7 @@ function renderMetaPanels(){
 function resetGame(){storageClear();gameState=createGameState();hydrateTrainingFromGame();currentDay=1;resetBioPlant();invalidatePlant();saveGameState();sync();renderMetaPanels();requestRender();showGameToast('Neuer Grow gestartet')}
 
 let quickPlantVariantCounter=0;
-function quickPlantVariant(){
+function quickPlantVariant(saltOverride=null){
   if(!gameState)return null;
   const oldSeed=currentPlantSeed(),day=clamp(Math.round(Number(currentDay||gameState.plant.day)||1),1,84);
   // Preserve exactly what the player is looking at, even in dev/demo day overrides.
@@ -4678,7 +4707,8 @@ function quickPlantVariant(){
   if(gameState.turn)gameState.turn.day=day;
   quickPlantVariantCounter++;
   let salt;
-  if(globalThis.crypto?.getRandomValues){
+  if(Number.isFinite(Number(saltOverride)))salt=Number(saltOverride)>>>0;
+  else if(globalThis.crypto?.getRandomValues){
     const buf=new Uint32Array(1);crypto.getRandomValues(buf);salt=buf[0]>>>0;
   }else salt=seedHash((Date.now()+quickPlantVariantCounter*104729)>>>0,0x71a17);
   let seed=generateRandomSeed(null,'Schnellvariante',salt);
@@ -4697,6 +4727,14 @@ function quickPlantVariant(){
 
   // A new architecture cannot inherit cut/bend IDs from the previous plant.
   gameState.training={prunes:[],bends:[],defoliations:[]};
+  if(devShapePreset()==='bushy'&&day>=18){
+    const cutDay=16,cutProg=growthAtDay(cutDay).prog;
+    gameState.training.prunes=[{nodeId:'main:n5',axisId:'main',axisNode:5,cutDay,cutProg}];
+    gameState.training.bends=[
+      {axisId:'shoot:main:n5:bud:L',events:[{day:24,amount:.28}]},
+      {axisId:'shoot:main:n5:bud:R',events:[{day:24,amount:.28}]}
+    ];
+  }
   hydrateTrainingFromGame();
   activeBendAxis=null;hitNodes=[];hitAxes=[];hitLeaves=[];
   resetBioPlant();invalidatePlant();
@@ -4709,9 +4747,26 @@ function quickPlantVariant(){
     profile:{...gp},architecture:{...arch},day
   };
 }
+function plantArchitectureMetrics(){
+  const P=getPlantCached(),points=P.axes.flatMap(a=>a.pts||[]);
+  if(!points.length)return{axes:0,points:0,height:0,spanX:0,spanZ:0,radial:0};
+  const xs=points.map(p=>p.x),ys=points.map(p=>p.y),zs=points.map(p=>p.z);
+  return{
+    axes:P.axes.length,points:points.length,
+    height:Math.max(...ys)-Math.min(...ys),
+    spanX:Math.max(...xs)-Math.min(...xs),
+    spanZ:Math.max(...zs)-Math.min(...zs),
+    radial:Math.max(...points.map(p=>Math.hypot(p.x,p.z)))
+  };
+}
 window.__GFQUICKPLANT={
   generate:quickPlantVariant,
-  snapshot:()=>({seed:currentPlantSeed(),day:gameState?.plant?.day,genetics:activeSeed()?.genetics,phenotype:activeSeed()?.phenotype,traits:{...(activeSeed()?.traits||{})},profile:{...activeGeneticProfile()}})
+  snapshot:()=>({seed:currentPlantSeed(),day:gameState?.plant?.day,genetics:activeSeed()?.genetics,phenotype:activeSeed()?.phenotype,traits:{...(activeSeed()?.traits||{})},profile:{...activeGeneticProfile()},shapePreset:devShapePreset(),metrics:plantArchitectureMetrics()})
+};
+window.__GFDEVSHAPE={
+  load:(preset='natural')=>makeScenario('good',preset),
+  preset:()=>devShapePreset(),
+  metrics:()=>plantArchitectureMetrics()
 };
 // ---------------------------------------------------------------------------
 function invalidatePlant(){plantCache=null;plantCacheDay=-1;}
@@ -6659,7 +6714,7 @@ syncEquipment2D();
 document.getElementById('devUpgradeDemo')?.addEventListener('click',()=>setUpgradeDemo(!demoVisualState.enabled));
 document.querySelectorAll('#upgradeDemoControls [data-demo-upgrade]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();cycleDemoVisual(btn.dataset.demoUpgrade);}));
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
-document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
+document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good','natural'));document.getElementById('devGoodNarrow')?.addEventListener('click',()=>makeScenario('good','narrow'));document.getElementById('devGoodBushy')?.addEventListener('click',()=>makeScenario('good','bushy'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress','natural'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
 function announceOfflineReturn(){
   const ms=Math.max(0,Number(gameState?.session?.offlineMs)||0);
   if(ms>=TURN_WAIT_MS){
