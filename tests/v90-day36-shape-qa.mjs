@@ -60,7 +60,7 @@ results.assertions={
   allDay36:results.natural.every(x=>x.snapshot.day===36),
   allNaturalPreset:results.natural.every(x=>x.snapshot.shapePreset==='natural'),
   narrowActuallyNarrower:p.narrow.snapshot.metrics.radial<p.natural.snapshot.metrics.radial,
-  bushyActuallyWider:p.bushy.snapshot.metrics.radial>p.natural.snapshot.metrics.radial,
+  bushyActuallyWider:(p.bushy.snapshot.metrics.spanX/p.bushy.snapshot.metrics.height)>(p.natural.snapshot.metrics.spanX/p.natural.snapshot.metrics.height)*1.8,
   bushyHasPriorPrune:(p.bushy.training.prunes||[]).length>=1,
   narrowHasNoTopping:(p.narrow.training.prunes||[]).length===0,
   stemCurvatureVaries:new Set(results.natural.map(x=>Math.round((x.stem?.maxDeviation||0)*10))).size>=5,
