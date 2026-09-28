@@ -5496,17 +5496,20 @@ function buildPlant(){
       const CR=rng(seedHash(shoot.seed^currentPlantSeed()^(gen*0x9e37),0x51e77));
       const phase=CR()*Math.PI*2;
       const leanSign=CR()>.5?1:-1;
-      const leanAmp=gen===0?axisHeight*lerp(.035,.065,CR()):axisHeight*lerp(.010,.025,CR());
-      const curveAmp=gen===0?axisHeight*lerp(.018,.036,CR()):axisHeight*lerp(.008,.018,CR());
-      const depthAmp=gen===0?axisHeight*lerp(.010,.022,CR()):axisHeight*lerp(.006,.014,CR());
+      const sSign=CR()>.5?1:-1;
+      const leanAmp=gen===0?axisHeight*lerp(.022,.042,CR()):axisHeight*lerp(.010,.024,CR());
+      const curveAmp=gen===0?axisHeight*lerp(.038,.058,CR()):axisHeight*lerp(.010,.022,CR());
+      const depthAmp=gen===0?axisHeight*lerp(.012,.026,CR()):axisHeight*lerp(.006,.014,CR());
       pts=pts.map((p,i)=>{
         if(i===0)return p;
         const q=i/(pts.length-1);
         const ease=q*q*(3-2*q);
-        const primary=Math.sin(phase+q*Math.PI*1.55)-Math.sin(phase);
-        const secondary=Math.sin(phase*.57+q*Math.PI*2.25)-Math.sin(phase*.57);
-        const x=leanSign*leanAmp*ease + curveAmp*(primary*.72+secondary*.28)*Math.sin(Math.PI*q);
-        const z=depthAmp*(Math.cos(phase*.81+q*Math.PI*1.35)-Math.cos(phase*.81))*Math.sin(Math.PI*q);
+        // Guaranteed front-view S curve: zero at base/tip, opposite drift through
+        // the lower and upper half. Seed-specific sign, lean and harmonic keep plants unique.
+        const sCurve=sSign*Math.sin(q*Math.PI*2);
+        const harmonic=Math.sin(q*Math.PI*3+phase)*Math.sin(Math.PI*q);
+        const x=leanSign*leanAmp*ease + curveAmp*(sCurve*.82+harmonic*.18);
+        const z=depthAmp*(Math.sin(q*Math.PI*2+phase)-Math.sin(phase))*Math.sin(Math.PI*q);
         return v(p.x+x,p.y,p.z+z);
       });
     }
