@@ -4157,10 +4157,6 @@ function makeScenario(kind,shapePreset='natural'){
   if(kind==='good'&&shapePreset==='bushy'){
     const cutDay=16,cutProg=growthAtDay(cutDay).prog;
     gameState.training.prunes=[{nodeId:'main:n5',axisId:'main',axisNode:5,cutDay,cutProg}];
-    gameState.training.bends=[
-      {axisId:'shoot:main:n5:bud:L',events:[{day:24,amount:.28}]},
-      {axisId:'shoot:main:n5:bud:R',events:[{day:24,amount:.28}]}
-    ];
   }
   hydrateTrainingFromGame();
   resetBioPlant();invalidatePlant();worldBgCanvas=null;
@@ -4752,10 +4748,6 @@ function quickPlantVariant(saltOverride=null){
   if(devShapePreset()==='bushy'&&day>=18){
     const cutDay=16,cutProg=growthAtDay(cutDay).prog;
     gameState.training.prunes=[{nodeId:'main:n5',axisId:'main',axisNode:5,cutDay,cutProg}];
-    gameState.training.bends=[
-      {axisId:'shoot:main:n5:bud:L',events:[{day:24,amount:.28}]},
-      {axisId:'shoot:main:n5:bud:R',events:[{day:24,amount:.28}]}
-    ];
   }
   hydrateTrainingFromGame();
   activeBendAxis=null;hitNodes=[];hitAxes=[];hitLeaves=[];
@@ -4771,14 +4763,27 @@ function quickPlantVariant(saltOverride=null){
 }
 function plantArchitectureMetrics(){
   const P=getPlantCached(),points=P.axes.flatMap(a=>a.pts||[]);
-  if(!points.length)return{axes:0,points:0,height:0,spanX:0,spanZ:0,radial:0};
+  if(!points.length)return{axes:0,points:0,height:0,spanX:0,spanZ:0,radial:0,junctionGapMax:0,promotedLeaderCount:0,promotedLeaderMinRise:null};
   const xs=points.map(p=>p.x),ys=points.map(p=>p.y),zs=points.map(p=>p.z);
+  const nodeById=new Map(P.nodes.map(n=>[n.id,n]));
+  const childAxes=P.axes.filter(a=>a.parentNodeId&&a.pts?.length);
+  const gaps=childAxes.map(a=>{
+    const n=nodeById.get(a.parentNodeId);return n?len(sub(a.pts[0],n.p)):0;
+  });
+  const promoted=P.axes.filter(a=>a.promotedLeader&&a.pts?.length>=2);
+  const promotedRise=promoted.map(a=>{
+    const base=a.pts[0],tip=a.pts[a.pts.length-1],d=sub(tip,base);
+    return d.y/Math.max(.001,len(d));
+  });
   return{
     axes:P.axes.length,points:points.length,
     height:Math.max(...ys)-Math.min(...ys),
     spanX:Math.max(...xs)-Math.min(...xs),
     spanZ:Math.max(...zs)-Math.min(...zs),
-    radial:Math.max(...points.map(p=>Math.hypot(p.x,p.z)))
+    radial:Math.max(...points.map(p=>Math.hypot(p.x,p.z))),
+    junctionGapMax:gaps.length?Math.max(...gaps):0,
+    promotedLeaderCount:promoted.length,
+    promotedLeaderMinRise:promotedRise.length?Math.min(...promotedRise):null
   };
 }
 window.__GFQUICKPLANT={
@@ -5381,6 +5386,7 @@ function ensureChildShoot(parentShoot,node,budEval){
     shoot.vigorBase=vigor;shoot.birthProg=Math.min(shoot.birthProg,activationProg);
     if(shoot.birthDay===null||shoot.birthDay===undefined)shoot.birthDay=inferredBirthDay;
   }
+  if(forced)shoot.promotedLeader=true;
   return shoot;
 }
 function rotateYVec(p,a){const c=Math.cos(a),s=Math.sin(a);return v(p.x*c+p.z*s,p.y,-p.x*s+p.z*c)}
@@ -5570,10 +5576,24 @@ function buildPlant(){
         const target=norm(v((NR()-.5)*.018,1,(NR()-.5)*.014));
         dir=norm(add(mul(dir,.86),mul(target,.14)));
       }else{
-        const micro=(2.0+gen*.45)*(1-rel*.14);
+        const promoted=!!shoot.promotedLeader;
+        const micro=(promoted?1.15:(2.0+gen*.45))*(1-rel*.14);
         const sideways=v(Math.cos(swayAngle)*micro,0,Math.sin(swayAngle)*micro);
-        const target=norm(add(norm(baseDir),mul(sideways,.020)));
-        dir=norm(add(mul(dir,.82),mul(target,.18)));
+        let target=norm(add(norm(baseDir),mul(sideways,promoted?.010:.018)));
+
+        // Lateral shoots do not keep their emergence angle forever. They turn back
+        // toward the light as they extend. Shoots promoted by topping do this much
+        // more strongly because they become the new apical leaders.
+        const photo=promoted
+          ? smoothstep01(clamp((rel-.06)/.68,0,1))
+          : smoothstep01(clamp((rel-.18)/.72,0,1));
+        const upward=promoted?(.22+.98*photo):(.08+.30*photo);
+        target=norm(v(
+          target.x*(1-(promoted?.54:.18)*photo),
+          Math.max(promoted?.28:.12,target.y)+upward,
+          target.z*(1-(promoted?.54:.18)*photo)
+        ));
+        dir=norm(add(mul(dir,promoted?.70:.80),mul(target,promoted?.30:.20)));
       }
       current=add(current,mul(dir,segLen));
       pts.push(current);nodePointIndex.set(node.id,pts.length-1);
@@ -5620,7 +5640,7 @@ function buildPlant(){
     if(G.pts.length<2)return;
     const generationWidth=shoot.generation===0?CFG.stemWidth:5.0*Math.pow(.66,Math.max(0,shoot.generation-1));
     const width=Math.max(shoot.generation===0?2.0:.72,generationWidth*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
-    P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,habit:G.habit?{...G.habit}:null});
+    P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,promotedLeader:!!shoot.promotedLeader,habit:G.habit?{...G.habit}:null});
     P.shootStates.push({id:shoot.id,generation:shoot.generation,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,birthProg:shoot.birthProg,tipActive:G.tipActive,cut:G.cut?{...G.cut}:null,apicalDominance:G.tipActive?shoot.apicalDominance:.10,status:G.tipActive?'growing':'topped'});
 
     const visibleCount=G.visibleNodes.length;
@@ -5640,10 +5660,21 @@ function buildPlant(){
         if(e.state!=='growing')continue;
         const child=ensureChildShoot(shoot,node,e);if(!child)continue;
         const sideDir=e.bud.side<0?mul(ng.ring,-1):ng.ring;
-        const lateral=.86*gp.branchAngle*gp.canopy,rise=(.48+.05*shoot.generation)/Math.sqrt(Math.max(.72,gp.branchAngle));
-        const outward=norm(add(mul(sideDir,lateral),add(mul(ng.tan,.08),v(0,rise,0))));
-        const junctionOffset=Math.max(1.4,3.0*gp.canopy*Math.pow(.84,shoot.generation));
-        const childOrigin=add(ng.p,mul(sideDir,junctionOffset));
+        const promoted=!!child.promotedLeader;
+        const BR=rng(seedHash(currentPlantSeed(),hashString(child.id)^0x6b726e63));
+        const asym=lerp(.93,1.07,BR());
+        const lateral=promoted
+          ? clamp(.58*Math.sqrt(gp.canopy)*gp.branchAngle*asym,.48,.82)
+          : clamp(.62*Math.sqrt(gp.canopy)*gp.branchAngle*asym,.44,1.02);
+        const rise=promoted
+          ? clamp((.94+.12*BR())/Math.sqrt(Math.max(.82,gp.branchAngle)),.78,1.12)
+          : clamp((.62+.06*shoot.generation)/Math.pow(Math.max(.82,gp.branchAngle),.28),.50,.82);
+        const outward=norm(add(mul(sideDir,lateral),add(mul(ng.tan,.10),v(0,rise,0))));
+
+        // The branch is attached at the node itself. Stem thickness supplies the
+        // visual junction, instead of moving the complete child axis away from the
+        // parent and creating a disconnected T shape.
+        const childOrigin=v(ng.p.x,ng.p.y,ng.p.z);
         renderShoot(child,childOrigin,outward,visited);
       }
     }
