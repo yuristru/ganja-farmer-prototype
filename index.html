@@ -6793,7 +6793,8 @@ window.__GFSTEM={
     const branch=P.axes.find(a=>a.depth===1)||null;
     const branchBaseWidth=branch?widthProbe(branch,0):null;
     const branchTipWidth=branch?widthProbe(branch,1):null;
-    const ys=main.pts.map(p=>p.y),height=Math.max(...ys)-Math.min(...ys),tipOffset=Math.hypot(tip.x-base.x,tip.z-base.z);\n    return{points:main.pts.length,height,maxDeviation,totalTurn,visibleXSpan,tipOffset,habit:main.habit?{...main.habit}:null,mainBaseWidth,mainTipWidth,mainTaperRatio:mainTipWidth/mainBaseWidth,branchBaseWidth,branchTipWidth,branchTaperRatio:branchBaseWidth?branchTipWidth/branchBaseWidth:null,base:{...base},tip:{...tip}};
+    const ys=main.pts.map(p=>p.y),height=Math.max(...ys)-Math.min(...ys),tipOffset=Math.hypot(tip.x-base.x,tip.z-base.z);
+    return{points:main.pts.length,height,maxDeviation,totalTurn,visibleXSpan,tipOffset,habit:main.habit?{...main.habit}:null,mainBaseWidth,mainTipWidth,mainTaperRatio:mainTipWidth/mainBaseWidth,branchBaseWidth,branchTipWidth,branchTaperRatio:branchBaseWidth?branchTipWidth/branchBaseWidth:null,base:{...base},tip:{...tip}};
   }
 };
 window.__GFPOT={
