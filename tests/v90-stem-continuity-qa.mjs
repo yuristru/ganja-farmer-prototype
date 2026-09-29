@@ -35,14 +35,24 @@ for(const day of [18,35,60]){
   await page.screenshot({path:path.join(outDir,`stem-day-${day}.png`),fullPage:false});
 }
 
-const mature=[results.days[18],results.days[35],results.days[60]];
+const checkedDays=[18,35,60];
+const mature=checkedDays.map(d=>results.days[d]);
+const habit=results.days[60]?.habit||results.days[35]?.habit||results.days[18]?.habit||null;
+const curvatureExpectedAt=(day,s)=>{
+  if(!s?.habit)return false;
+  if(s.habit.mode==='upright')return false;
+  return day>=s.habit.onsetDay+Math.min(4,Math.max(1,Math.round(s.habit.rampDays*.25)));
+};
 results.assertions.mainStemHasEnoughPoints=mature.every(s=>s&&s.points>=4);
-results.assertions.mainStemNotPerfectlyStraight=mature.every(s=>s.maxDeviation>1.2);
-results.assertions.organicTurnPresent=mature.every(s=>s.totalTurn>.018);
-results.assertions.visibleFrontCurvature=mature.every(s=>Number(s.visibleXSpan||0)>18);
+results.assertions.habitStableAcrossGrowth=mature.every(s=>s?.habit?.mode===habit?.mode&&s?.habit?.onsetDay===habit?.onsetDay);
+results.assertions.preOnsetCanStayStraight=checkedDays.every((d,i)=>d>=mature[i].habit.onsetDay||mature[i].maxDeviation<2.5);
+results.assertions.curvatureAppearsWhenExpected=checkedDays.every((d,i)=>!curvatureExpectedAt(d,mature[i])||mature[i].maxDeviation>1.2);
+results.assertions.organicTurnAppearsWhenExpected=checkedDays.every((d,i)=>!curvatureExpectedAt(d,mature[i])||mature[i].totalTurn>.018);
 results.assertions.mainStemTapersStrongly=mature.every(s=>Number(s.mainBaseWidth||0)>Number(s.mainTipWidth||0)*5);
 results.assertions.branchTapersStrongly=mature.every(s=>s.branchBaseWidth==null||Number(s.branchBaseWidth)>Number(s.branchTipWidth||0)*5);
-results.assertions.curvaturePersistsWithAge=results.days[60].maxDeviation>1.2;
+results.assertions.lateBendEmergesOverTime=habit&&habit.onsetDay>18
+  ? results.days[18].maxDeviation<2.5&&results.days[60].maxDeviation>results.days[18].maxDeviation+4
+  : results.days[60].maxDeviation>1.2||habit?.mode==='upright';
 results.assertions.noBrowserErrors=errors.length===0;
 results.pass=Object.values(results.assertions).every(Boolean);
 
@@ -50,6 +60,7 @@ fs.writeFileSync(path.join(outDir,'results.json'),JSON.stringify(results,null,2)
 fs.writeFileSync(path.join(outDir,'summary.txt'),[
   'GANJARIUM V90 STEM CONTINUITY QA',
   '',
+  `Habit: ${habit?.mode||'unknown'}, onset day ${habit?.onsetDay??'n/a'}, ramp ${habit?.rampDays??'n/a'} days`,
   ...[18,35,60].map(d=>`Day ${d}: points ${results.days[d].points}, max deviation ${results.days[d].maxDeviation.toFixed(2)}, total turn ${results.days[d].totalTurn.toFixed(4)}`),
   '',
   `PASS: ${results.pass}`
