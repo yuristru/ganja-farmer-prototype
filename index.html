@@ -5375,6 +5375,91 @@ function ensureChildShoot(parentShoot,node,budEval){
   return shoot;
 }
 function rotateYVec(p,a){const c=Math.cos(a),s=Math.sin(a);return v(p.x*c+p.z*s,p.y,-p.x*s+p.z*c)}
+function naturalStemHabit(shoot,gen=0){
+  const axisId=shoot?.id||'stem';
+  const salt=(hashString(axisId)^Math.imul(gen+1,0x9e3779b1))>>>0;
+  const R=rng(seedHash(currentPlantSeed(),salt));
+  const roll=R();
+  const mode=roll<.18?'upright':roll<.36?'lean':roll<.54?'arc':roll<.70?'late':roll<.84?'kink':roll<.94?'double':'wander';
+  let amp,startFrac,onsetDay;
+  if(mode==='upright'){
+    amp=lerp(.004,.018,R());startFrac=lerp(.05,.35,R());onsetDay=Math.round(lerp(1,22,R()));
+  }else if(mode==='lean'){
+    amp=lerp(.025,.075,R());startFrac=lerp(.04,.28,R());onsetDay=Math.round(lerp(4,24,R()));
+  }else if(mode==='arc'){
+    amp=lerp(.035,.095,R());startFrac=lerp(.08,.32,R());onsetDay=Math.round(lerp(7,28,R()));
+  }else if(mode==='late'){
+    amp=lerp(.030,.110,R());startFrac=lerp(.40,.70,R());onsetDay=Math.round(lerp(24,44,R()));
+  }else if(mode==='kink'){
+    amp=lerp(.035,.105,R());startFrac=lerp(.10,.42,R());onsetDay=Math.round(lerp(11,34,R()));
+  }else if(mode==='double'){
+    amp=lerp(.030,.085,R());startFrac=lerp(.08,.30,R());onsetDay=Math.round(lerp(9,30,R()));
+  }else{
+    amp=lerp(.025,.080,R());startFrac=lerp(.06,.36,R());onsetDay=Math.round(lerp(6,32,R()));
+  }
+
+  const birthDay=Math.max(1,Math.round(shoot?.birthDay??dayForProgress(shoot?.birthProg||0)));
+  if(gen>0)onsetDay=Math.max(birthDay+Math.round(lerp(1,9,R())),onsetDay);
+  const generationScale=gen===0?1:.72*Math.pow(.60,gen-1);
+  const center1=clamp(lerp(Math.max(startFrac+.10,.22),.64,R()),startFrac+.05,.76);
+  const center2=clamp(lerp(Math.max(center1+.12,.48),.90,R()),center1+.08,.94);
+  return{
+    mode,
+    amp:amp*generationScale,
+    startFrac,
+    onsetDay,
+    rampDays:Math.round(lerp(7,18,R())),
+    center1,
+    center2,
+    width1:lerp(.075,.18,R()),
+    width2:lerp(.065,.16,R()),
+    azimuth:R()*Math.PI*2,
+    secondAzimuth:R()*Math.PI*2,
+    secondarySign:R()<.5?-1:1
+  };
+}
+function naturalStemOffset(habit,q,axisHeight){
+  if(!habit||axisHeight<=0)return v(0,0,0);
+  const time=smoothstep01(clamp((currentDay-habit.onsetDay)/Math.max(1,habit.rampDays),0,1));
+  if(time<=0||q<=habit.startFrac)return v(0,0,0);
+  const u=clamp((q-habit.startFrac)/Math.max(.001,1-habit.startFrac),0,1);
+  const e=smoothstep01(u);
+  const stepAt=(center,width)=>smoothstep01(clamp((q-(center-width))/(Math.max(.001,width*2)),0,1));
+  const bumpAt=(center,width)=>Math.exp(-.5*Math.pow((q-center)/Math.max(.001,width),2))*e;
+  let primary=0,secondary=0;
+
+  if(habit.mode==='upright'){
+    primary=e*.30+Math.sin(u*Math.PI)*.14;
+    secondary=Math.sin(u*Math.PI*1.45)*.07;
+  }else if(habit.mode==='lean'){
+    primary=Math.pow(e,1.08);
+    secondary=Math.sin(u*Math.PI)*.11*(1-u);
+  }else if(habit.mode==='arc'){
+    primary=Math.sin(u*Math.PI*.92)*.88+e*.28;
+    secondary=Math.sin(u*Math.PI*1.62)*.13;
+  }else if(habit.mode==='late'){
+    primary=stepAt(habit.center1,habit.width1);
+    secondary=Math.sin(e*Math.PI)*.10;
+  }else if(habit.mode==='kink'){
+    primary=stepAt(habit.center1,habit.width1)*.88;
+    secondary=habit.secondarySign*stepAt(habit.center2,habit.width2)*.52;
+  }else if(habit.mode==='double'){
+    primary=bumpAt(habit.center1,habit.width1)*.95-bumpAt(habit.center2,habit.width2)*.72+e*.16;
+    secondary=habit.secondarySign*(bumpAt(habit.center2,habit.width2)*.36);
+  }else{
+    primary=bumpAt(habit.center1,habit.width1)*.78+habit.secondarySign*bumpAt(habit.center2,habit.width2)*.58+e*.18;
+    secondary=bumpAt((habit.center1+habit.center2)*.5,(habit.width1+habit.width2)*.72)*.42;
+  }
+
+  const scale=axisHeight*habit.amp*time;
+  const a=primary*scale,b=secondary*scale*.78;
+  return v(
+    Math.cos(habit.azimuth)*a+Math.cos(habit.secondAzimuth)*b,
+    0,
+    Math.sin(habit.azimuth)*a+Math.sin(habit.secondAzimuth)*b
+  );
+}
+
 function buildPlant(){
   initBioPlant();
   const P={axes:[],leaves:[],buds:[],nodes:[],shootStates:[]};
@@ -5493,45 +5578,19 @@ function buildPlant(){
     }else if(pts.length===1&&prog>=shoot.birthProg){
       pts.push(add(current,mul(dir,baseInternode*.20)));
     }
+    const habit=naturalStemHabit(shoot,gen);
     if(pts.length>=3){
       const base=pts[0],top=pts[pts.length-1];
       const axisHeight=Math.max(1,top.y-base.y);
-      const CR=rng(seedHash(shoot.seed^currentPlantSeed()^(gen*0x9e37),0x51e77));
-      const phase=CR()*Math.PI*2;
-      const leanSign=CR()>.5?1:-1;
-      const bendSign=CR()>.5?1:-1;
 
-      // Main stem must read as organic even from the default front camera.
-      // Keep the base rooted, let the lower third drift, counter-bend through the
-      // middle and finish with a smaller apical correction instead of a straight pole.
-      const leanAmp=gen===0?axisHeight*lerp(.050,.078,CR()):axisHeight*lerp(.014,.030,CR());
-      const curveAmp=gen===0?axisHeight*lerp(.060,.090,CR()):axisHeight*lerp(.018,.036,CR());
-      const depthAmp=gen===0?axisHeight*lerp(.018,.034,CR()):axisHeight*lerp(.010,.022,CR());
-      const secondaryAmp=gen===0?axisHeight*lerp(.014,.026,CR()):axisHeight*lerp(.006,.014,CR());
-
+      // Natural posture is plant-specific. Some plants stay almost upright, some
+      // lean, some form one broad arc, some bend high and late, and only a subset
+      // develops a double curve. The profile is deterministic for the seed.
       pts=pts.map((p,i)=>{
         if(i===0)return p;
         const q=i/(pts.length-1);
-        const rootEase=smoothstep01(clamp(q/.16,0,1));
-        const leanEase=smoothstep01(q);
-        const envelope=Math.pow(Math.sin(Math.PI*q),.82);
-
-        // Two broad non-symmetric bends. Using a phase offset prevents the familiar
-        // perfect sine-wave look and ensures the silhouette visibly leaves center.
-        const primary=Math.sin(q*Math.PI*1.62+phase*.16)*envelope;
-        const secondary=Math.sin(q*Math.PI*3.15+phase)*envelope;
-        const lowerBias=Math.sin(clamp(q/.72,0,1)*Math.PI)*Math.pow(1-q,.32);
-
-        const x=rootEase*(
-          leanSign*leanAmp*leanEase +
-          bendSign*curveAmp*(primary*.72+lowerBias*.42) +
-          secondaryAmp*secondary
-        );
-        const z=rootEase*depthAmp*(
-          Math.cos(q*Math.PI*1.45+phase)*envelope +
-          Math.sin(q*Math.PI*2.4+phase*.7)*envelope*.38
-        );
-        return v(p.x+x,p.y,p.z+z);
+        const offset=naturalStemOffset(habit,q,axisHeight);
+        return v(p.x+offset.x,p.y,p.z+offset.z);
       });
     }
     pts=applyAxisBend(shoot.id,pts,gen);
@@ -5543,7 +5602,7 @@ function buildPlant(){
       if(len(ring)<.01)ring=v(1,0,0);
       nodeGeom.set(node.id,{p,tan,ring,pointIndex:pi});
     }
-    return {cut,visibleNodes:allVisible,pts,nodeGeom,tipActive};
+    return {cut,visibleNodes:allVisible,pts,nodeGeom,tipActive,habit};
   }
   function renderShoot(shoot,origin,baseDir,visited){
     if(!shoot||visited.has(shoot.id)||shoot.birthProg>prog+.000001)return;
@@ -5552,7 +5611,7 @@ function buildPlant(){
     if(G.pts.length<2)return;
     const generationWidth=shoot.generation===0?CFG.stemWidth:5.0*Math.pow(.66,Math.max(0,shoot.generation-1));
     const width=Math.max(shoot.generation===0?2.0:.72,generationWidth*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
-    P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId});
+    P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,habit:G.habit?{...G.habit}:null});
     P.shootStates.push({id:shoot.id,generation:shoot.generation,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,birthProg:shoot.birthProg,tipActive:G.tipActive,cut:G.cut?{...G.cut}:null,apicalDominance:G.tipActive?shoot.apicalDominance:.10,status:G.tipActive?'growing':'topped'});
 
     const visibleCount=G.visibleNodes.length;
@@ -5597,7 +5656,7 @@ function buildPlant(){
     const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.34:1;
     const scalePoint=p=>add(origin,mul(sub(p,origin),bridgeScale));
     const bridgePts=G.pts.map(scalePoint);
-    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.64:1)});
+    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.64:1),habit:G.habit?{...G.habit}:null});
     const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.58:.50;
     P.leaves.push({p:add(top,v(-7,-7,0)),dir:norm(v(-1,.18,.10)),size:cotSize,age:1,cot:true,seed:11});
     P.leaves.push({p:add(top,v(7,-7,0)),dir:norm(v(1,.18,-.08)),size:cotSize,age:1,cot:true,seed:12});
@@ -6734,7 +6793,7 @@ window.__GFSTEM={
     const branch=P.axes.find(a=>a.depth===1)||null;
     const branchBaseWidth=branch?widthProbe(branch,0):null;
     const branchTipWidth=branch?widthProbe(branch,1):null;
-    return{points:main.pts.length,maxDeviation,totalTurn,visibleXSpan,mainBaseWidth,mainTipWidth,mainTaperRatio:mainTipWidth/mainBaseWidth,branchBaseWidth,branchTipWidth,branchTaperRatio:branchBaseWidth?branchTipWidth/branchBaseWidth:null,base:{...base},tip:{...tip}};
+    const ys=main.pts.map(p=>p.y),height=Math.max(...ys)-Math.min(...ys),tipOffset=Math.hypot(tip.x-base.x,tip.z-base.z);\n    return{points:main.pts.length,height,maxDeviation,totalTurn,visibleXSpan,tipOffset,habit:main.habit?{...main.habit}:null,mainBaseWidth,mainTipWidth,mainTaperRatio:mainTipWidth/mainBaseWidth,branchBaseWidth,branchTipWidth,branchTaperRatio:branchBaseWidth?branchTipWidth/branchBaseWidth:null,base:{...base},tip:{...tip}};
   }
 };
 window.__GFPOT={
