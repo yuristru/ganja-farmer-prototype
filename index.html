@@ -4712,6 +4712,7 @@ function renderMetaPanels(){
 function resetGame(){storageClear();gameState=createGameState();hydrateTrainingFromGame();currentDay=1;resetBioPlant();invalidatePlant();saveGameState();sync();renderMetaPanels();requestRender();showGameToast('Neuer Grow gestartet')}
 
 let quickPlantVariantCounter=0;
+const quickPlantVariantRecentSeeds=[];
 function quickPlantVariant(saltOverride=null){
   if(!gameState)return null;
   const oldSeed=currentPlantSeed(),day=clamp(Math.round(Number(currentDay||gameState.plant.day)||1),1,84);
@@ -4724,9 +4725,17 @@ function quickPlantVariant(saltOverride=null){
   else if(globalThis.crypto?.getRandomValues){
     const buf=new Uint32Array(1);crypto.getRandomValues(buf);salt=buf[0]>>>0;
   }else salt=seedHash((Date.now()+quickPlantVariantCounter*104729)>>>0,0x71a17);
-  let seed=generateRandomSeed(null,'Schnellvariante',salt);
-  // Extremely unlikely, but guarantee that one click never returns the same plant.
-  if((seed.seed>>>0)===(oldSeed>>>0))seed=generateRandomSeed(null,'Schnellvariante',seedHash(salt,quickPlantVariantCounter+0x55aa));
+  const recent=new Set([oldSeed>>>0,...quickPlantVariantRecentSeeds]);
+  let seed=null,attempt=0;
+  do{
+    const attemptSalt=attempt===0?salt:seedHash(salt,quickPlantVariantCounter+attempt*0x55aa);
+    seed=generateRandomSeed(null,'Schnellvariante',attemptSalt);
+    attempt++;
+  }while(recent.has(seed.seed>>>0)&&attempt<16);
+  // Keep a short session history so repeated taps do not cycle back to a plant
+  // the player just saw. This matters visually even when the collision is rare.
+  quickPlantVariantRecentSeeds.push(seed.seed>>>0);
+  while(quickPlantVariantRecentSeeds.length>12)quickPlantVariantRecentSeeds.shift();
 
   gameState.genetics={
     active:seed.genetics,
