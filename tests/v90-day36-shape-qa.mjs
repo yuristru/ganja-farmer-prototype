@@ -55,6 +55,9 @@ for(const preset of ['natural','narrow','bushy']){
 }
 
 const p=results.presets;
+const curvatureRatios=results.natural.map(x=>x.stem?.height?x.stem.maxDeviation/x.stem.height:0);
+const habitModes=results.natural.map(x=>x.stem?.habit?.mode).filter(Boolean);
+const onsetDays=results.natural.map(x=>Number(x.stem?.habit?.onsetDay)).filter(Number.isFinite);
 results.assertions={
   tenDifferentSeeds:new Set(results.natural.map(x=>x.snapshot.seed)).size===10,
   allDay36:results.natural.every(x=>x.snapshot.day===36),
@@ -64,6 +67,10 @@ results.assertions={
   bushyHasPriorPrune:(p.bushy.training.prunes||[]).length>=1,
   narrowHasNoTopping:(p.narrow.training.prunes||[]).length===0,
   stemCurvatureVaries:new Set(results.natural.map(x=>Math.round((x.stem?.maxDeviation||0)*10))).size>=5,
+  stemHabitModesVary:new Set(habitModes).size>=4,
+  bendOnsetVaries:onsetDays.length===results.natural.length&&(Math.max(...onsetDays)-Math.min(...onsetDays))>=20,
+  hasEarlyAndLateNaturalBends:onsetDays.some(d=>d<=12)&&onsetDays.some(d=>d>=28),
+  curvatureIntensityVaries:(Math.max(...curvatureRatios)-Math.min(...curvatureRatios))>=.02,
   noBrowserErrors:errors.length===0
 };
 results.pass=Object.values(results.assertions).every(Boolean);
@@ -77,6 +84,8 @@ fs.writeFileSync(path.join(outDir,'summary.txt'),[
   'Narrow radial: '+results.presets.narrow.snapshot.metrics.radial.toFixed(1),
   'Bushy radial: '+results.presets.bushy.snapshot.metrics.radial.toFixed(1),
   'Bushy prior prune count: '+results.presets.bushy.training.prunes.length,
+  'Natural stem habits: '+habitModes.join(', '),
+  'Natural bend onset days: '+onsetDays.join(', '),
   'PASS: '+results.pass
 ].join('\n'));
 console.log(JSON.stringify(results,null,2));
