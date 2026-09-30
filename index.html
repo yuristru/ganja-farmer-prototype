@@ -4770,6 +4770,9 @@ function plantArchitectureMetrics(){
   const gaps=childAxes.map(a=>{
     const n=nodeById.get(a.parentNodeId);return n?len(sub(a.pts[0],n.p)):0;
   });
+  const thicknessRatios=childAxes
+    .map(a=>Number(a.parentWidthAtBirth)>0?Number(a.baseWidth)/Number(a.parentWidthAtBirth):null)
+    .filter(Number.isFinite);
   const promoted=P.axes.filter(a=>a.promotedLeader&&a.pts?.length>=2);
   const promotedRise=promoted.map(a=>{
     const base=a.pts[0],tip=a.pts[a.pts.length-1],d=sub(tip,base);
@@ -4782,6 +4785,8 @@ function plantArchitectureMetrics(){
     spanZ:Math.max(...zs)-Math.min(...zs),
     radial:Math.max(...points.map(p=>Math.hypot(p.x,p.z))),
     junctionGapMax:gaps.length?Math.max(...gaps):0,
+    maxChildParentThicknessRatio:thicknessRatios.length?Math.max(...thicknessRatios):0,
+    minChildParentThicknessRatio:thicknessRatios.length?Math.min(...thicknessRatios):0,
     promotedLeaderCount:promoted.length,
     promotedLeaderMinRise:promotedRise.length?Math.min(...promotedRise):null
   };
@@ -5120,36 +5125,40 @@ function fanShapeC148(fingers){
   ];
 }
 let queue=[];
+function defaultStemBaseWidth(depth,nominalWidth){
+  const nominal=Math.max(.18,Number(nominalWidth)||(depth===0?CFG.stemWidth:2.8));
+  if(depth===0)return Math.max(5.0,nominal*.98)*1.26;
+  const depthScale=Math.pow(.70,Math.max(0,depth-1));
+  return Math.max(.42,nominal*depthScale);
+}
+function stemVisualWidthAt(ax,t){
+  const depth=Math.max(0,Number(ax?.depth)||0);
+  const nominal=Math.max(.18,Number(ax?.width)||(depth===0?CFG.stemWidth:2.8));
+  const base=Math.max(.18,Number.isFinite(Number(ax?.baseWidth))?Number(ax.baseWidth):defaultStemBaseWidth(depth,nominal));
+  const end=clamp(Number.isFinite(Number(ax?.taperEnd))?Number(ax.taperEnd):1,.04,1);
+  const q=clamp(t,0,1)*end;
+  if(depth===0){
+    const taper=.105+.895*Math.pow(1-q,.68);
+    const flare=1+.26*Math.exp(-q*13);
+    const upperSoftening=1-.16*smoothstep01(clamp((q-.48)/.52,0,1));
+    const factor=(taper*flare*upperSoftening)/1.26;
+    return Math.max(.62,base*factor);
+  }
+  const taper=.075+.925*Math.pow(1-q,.62);
+  const upperSoftening=1-.18*smoothstep01(clamp((q-.42)/.58,0,1));
+  return Math.max(.20,base*taper*upperSoftening);
+}
 function queueStem(ax,visualState=null){
   const visual=visualState||livePlantVisualState(),pts=ax.pts||[];
   if(pts.length<2)return;
   const screen=pts.map(proj),n=screen.length-1;
   const avgZ=screen.reduce((s,p)=>s+p.z,0)/screen.length;
-  const baseW=Math.max(.6,Number(ax.width)||(ax.depth===0?CFG.stemWidth:2.8));
   const stemFade=clamp(visual.deficiency*.20+visual.drought*.10+visual.stress*.12,0,.34);
   const s0=mixHex(ax.depth===0?'#456633':'#4d6b38','#777044',stemFade);
   const s1=mixHex(ax.depth===0?'#76994d':'#7d9c54','#9d965e',stemFade);
   const s2=mixHex(ax.depth===0?'#a5c56f':'#a7c376','#b3a86c',stemFade);
 
-  const widthAt=t=>{
-    t=clamp(t,0,1);
-    if(ax.depth===0){
-      // Cannabis trunk: visibly strongest at the substrate, then continuously
-      // narrows into a genuinely fine apical stem. No pole-like upper half.
-      const base=Math.max(5.0,baseW*.98);
-      const taper=.105+.895*Math.pow(1-t,.68);
-      const flare=1+.26*Math.exp(-t*13);
-      const upperSoftening=1-.16*smoothstep01(clamp((t-.48)/.52,0,1));
-      return Math.max(.82,base*taper*flare*upperSoftening);
-    }
-    // Lateral shoots obey the same biological rule. Each generation starts finer,
-    // and every individual shoot becomes visibly thin at its distal end.
-    const depthScale=Math.pow(.70,Math.max(0,ax.depth-1));
-    const base=Math.max(1.25,baseW*depthScale);
-    const taper=.075+.925*Math.pow(1-t,.62);
-    const upperSoftening=1-.18*smoothstep01(clamp((t-.42)/.58,0,1));
-    return Math.max(.34,base*taper*upperSoftening);
-  };
+  const widthAt=t=>stemVisualWidthAt(ax,t);
 
   const tangents=screen.map((p,i)=>{
     const a=screen[Math.max(0,i-1)],b=screen[Math.min(screen.length-1,i+1)];
@@ -5633,14 +5642,27 @@ function buildPlant(){
     }
     return {cut,visibleNodes:allVisible,pts,nodeGeom,tipActive,habit};
   }
-  function renderShoot(shoot,origin,baseDir,visited){
+  function renderShoot(shoot,origin,baseDir,visited,inheritedBaseWidth=null,parentWidthAtBirth=null,branchRatio=null){
     if(!shoot||visited.has(shoot.id)||shoot.birthProg>prog+.000001)return;
     visited.add(shoot.id);
     const G=geometryForShoot(shoot,origin,baseDir);
     if(G.pts.length<2)return;
     const generationWidth=shoot.generation===0?CFG.stemWidth:5.0*Math.pow(.66,Math.max(0,shoot.generation-1));
-    const width=Math.max(shoot.generation===0?2.0:.72,generationWidth*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
-    P.axes.push({id:shoot.id,depth:shoot.generation,pts:G.pts,width,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,promotedLeader:!!shoot.promotedLeader,habit:G.habit?{...G.habit}:null});
+    const nominalWidth=Math.max(shoot.generation===0?2.0:.24,generationWidth*gp.stemThickness*clamp(shoot.vigorBase,.60,1.15));
+    const defaultBase=defaultStemBaseWidth(shoot.generation,nominalWidth);
+    const baseWidth=Number.isFinite(Number(inheritedBaseWidth))
+      ? Math.max(.20,Number(inheritedBaseWidth))
+      : defaultBase;
+    const cutNode=G.cut?G.visibleNodes.find(n=>n.id===G.cut.nodeId):null;
+    const taperEnd=G.cut?clamp(Number(cutNode?.positionAlong)||.5,.06,.94):1;
+    const axisRecord={
+      id:shoot.id,depth:shoot.generation,pts:G.pts,width:nominalWidth,baseWidth,taperEnd,
+      parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,
+      parentWidthAtBirth:Number.isFinite(Number(parentWidthAtBirth))?Number(parentWidthAtBirth):null,
+      branchRatio:Number.isFinite(Number(branchRatio))?Number(branchRatio):null,
+      promotedLeader:!!shoot.promotedLeader,habit:G.habit?{...G.habit}:null
+    };
+    P.axes.push(axisRecord);
     P.shootStates.push({id:shoot.id,generation:shoot.generation,parentShootId:shoot.parentShootId,parentNodeId:shoot.parentNodeId,birthProg:shoot.birthProg,tipActive:G.tipActive,cut:G.cut?{...G.cut}:null,apicalDominance:G.tipActive?shoot.apicalDominance:.10,status:G.tipActive?'growing':'topped'});
 
     const visibleCount=G.visibleNodes.length;
@@ -5671,11 +5693,22 @@ function buildPlant(){
           : clamp((.62+.06*shoot.generation)/Math.pow(Math.max(.82,gp.branchAngle),.28),.50,.82);
         const outward=norm(add(mul(sideDir,lateral),add(mul(ng.tan,.10),v(0,rise,0))));
 
-        // The branch is attached at the node itself. Stem thickness supplies the
-        // visual junction, instead of moving the complete child axis away from the
-        // parent and creating a disconnected T shape.
+        // The branch is attached at the node itself. Its thickness is inherited
+        // from the actual local parent thickness at this node. This prevents a
+        // thick branch from appearing out of a fine apical section.
         const childOrigin=v(ng.p.x,ng.p.y,ng.p.z);
-        renderShoot(child,childOrigin,outward,visited);
+        const parentT=G.pts.length>1?clamp(ng.pointIndex/(G.pts.length-1),0,1):0;
+        const parentLocalWidth=stemVisualWidthAt(axisRecord,parentT);
+        const age=clamp((prog-child.birthProg)/.18,0,1);
+        const matureRatio=promoted
+          ? clamp(.707*lerp(.96,1.04,BR()),.67,.74)
+          : clamp(lerp(.42,.56,BR())*clamp(.92+.10*child.vigorBase,.88,1.04),.38,.58);
+        const ageRatio=promoted
+          ? lerp(.46,1,Math.sqrt(age))
+          : lerp(.32,1,Math.sqrt(age));
+        const inheritedRatio=matureRatio*ageRatio;
+        const childBaseWidth=Math.max(.20,parentLocalWidth*inheritedRatio);
+        renderShoot(child,childOrigin,outward,visited,childBaseWidth,parentLocalWidth,inheritedRatio);
       }
     }
 
@@ -5696,7 +5729,10 @@ function buildPlant(){
     const G=geometryForShoot(main,origin,v(0,1,0)),bridgeScale=currentDay===4?1.34:1;
     const scalePoint=p=>add(origin,mul(sub(p,origin),bridgeScale));
     const bridgePts=G.pts.map(scalePoint);
-    P.axes.push({id:'main',depth:0,pts:bridgePts,width:CFG.stemWidth*gp.stemThickness*(currentDay===4?.64:1),habit:G.habit?{...G.habit}:null});
+    {
+      const bridgeNominal=CFG.stemWidth*gp.stemThickness*(currentDay===4?.64:1);
+      P.axes.push({id:'main',depth:0,pts:bridgePts,width:bridgeNominal,baseWidth:defaultStemBaseWidth(0,bridgeNominal),taperEnd:1,habit:G.habit?{...G.habit}:null});
+    }
     const top=bridgePts[bridgePts.length-1],cotSize=currentDay===4?.58:.50;
     P.leaves.push({p:add(top,v(-7,-7,0)),dir:norm(v(-1,.18,.10)),size:cotSize,age:1,cot:true,seed:11});
     P.leaves.push({p:add(top,v(7,-7,0)),dir:norm(v(1,.18,-.08)),size:cotSize,age:1,cot:true,seed:12});
@@ -6813,22 +6849,7 @@ window.__GFSTEM={
       totalTurn+=Math.acos(clamp(a.x*b.x+a.y*b.y+a.z*b.z,-1,1));
     }
     const xs=main.pts.map(p=>p.x),visibleXSpan=Math.max(...xs)-Math.min(...xs);
-    const widthProbe=(ax,t)=>{
-      const baseW=Math.max(.6,Number(ax?.width)||(ax?.depth===0?CFG.stemWidth:2.8));
-      t=clamp(t,0,1);
-      if(ax?.depth===0){
-        const base=Math.max(5.0,baseW*.98);
-        const taper=.105+.895*Math.pow(1-t,.68);
-        const flare=1+.26*Math.exp(-t*13);
-        const upperSoftening=1-.16*smoothstep01(clamp((t-.48)/.52,0,1));
-        return Math.max(.82,base*taper*flare*upperSoftening);
-      }
-      const depthScale=Math.pow(.70,Math.max(0,(ax?.depth||1)-1));
-      const base=Math.max(1.25,baseW*depthScale);
-      const taper=.075+.925*Math.pow(1-t,.62);
-      const upperSoftening=1-.18*smoothstep01(clamp((t-.42)/.58,0,1));
-      return Math.max(.34,base*taper*upperSoftening);
-    };
+    const widthProbe=(ax,t)=>stemVisualWidthAt(ax,t);
     const mainBaseWidth=widthProbe(main,0),mainTipWidth=widthProbe(main,1);
     const branch=P.axes.find(a=>a.depth===1)||null;
     const branchBaseWidth=branch?widthProbe(branch,0):null;
