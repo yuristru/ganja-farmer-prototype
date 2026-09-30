@@ -28,7 +28,7 @@ await page.waitForFunction(()=>window.__GFQUICKPLANT&&window.__GFDEVSHAPE&&windo
 await page.evaluate(()=>window.__GFDEVSHAPE.load('natural'));
 await page.waitForTimeout(250);
 
-const results={natural:[],presets:{},assertions:{}};
+const results={natural:[],bushy:[],presets:{},assertions:{}};
 const salts=[10101,20202,30303,40404,50505,60606,70707,80808,90909,100010];
 
 for(let i=0;i<salts.length;i++){
@@ -38,6 +38,20 @@ for(let i=0;i<salts.length;i++){
   const snap=await page.evaluate(()=>window.__GFQUICKPLANT.snapshot());
   results.natural.push({index:i+1,salt:salts[i],info,snapshot:snap,stem});
   await page.screenshot({path:path.join(outDir,`natural-${String(i+1).padStart(2,'0')}.png`),fullPage:false});
+}
+
+// Exercise the bushy/topped crown across multiple deterministic seeds, not just
+// the single preset screenshot. This catches horizontal T-shaped leaders and
+// disconnected branch origins that can be seed-specific.
+await page.evaluate(()=>window.__GFDEVSHAPE.load('bushy'));
+await page.waitForTimeout(160);
+for(let i=0;i<salts.length;i++){
+  await page.evaluate(s=>window.__GFQUICKPLANT.generate(s),salts[i]);
+  await page.waitForTimeout(180);
+  const snap=await page.evaluate(()=>window.__GFQUICKPLANT.snapshot());
+  const training=await page.evaluate(()=>window.__GFTRAIN.getState());
+  results.bushy.push({index:i+1,salt:salts[i],snapshot:snap,training});
+  await page.screenshot({path:path.join(outDir,`bushy-${String(i+1).padStart(2,'0')}.png`),fullPage:false});
 }
 
 // Same deterministic plant base across all three demo forms.
@@ -69,6 +83,11 @@ results.assertions={
   bushyJunctionsConnected:Number(p.bushy.snapshot.metrics.junctionGapMax||0)<.001,
   bushyPromotedLeadersPresent:Number(p.bushy.snapshot.metrics.promotedLeaderCount||0)>=2,
   bushyPromotedLeadersRise:Number(p.bushy.snapshot.metrics.promotedLeaderMinRise||0)>.48,
+  bushyVariantsAllDay36:results.bushy.every(x=>x.snapshot.day===36),
+  bushyVariantsNoSyntheticBends:results.bushy.every(x=>(x.training.bends||[]).length===0),
+  bushyVariantsConnected:results.bushy.every(x=>Number(x.snapshot.metrics.junctionGapMax||0)<.001),
+  bushyVariantsHaveTwoLeaders:results.bushy.every(x=>Number(x.snapshot.metrics.promotedLeaderCount||0)>=2),
+  bushyVariantsRise:results.bushy.every(x=>Number(x.snapshot.metrics.promotedLeaderMinRise||0)>.48),
   narrowHasNoTopping:(p.narrow.training.prunes||[]).length===0,
   stemCurvatureVaries:new Set(results.natural.map(x=>Math.round((x.stem?.maxDeviation||0)*10))).size>=5,
   stemHabitModesVary:new Set(habitModes).size>=4,
@@ -91,6 +110,7 @@ fs.writeFileSync(path.join(outDir,'summary.txt'),[
   'Bushy synthetic bends: '+results.presets.bushy.training.bends.length,
   'Bushy junction gap max: '+results.presets.bushy.snapshot.metrics.junctionGapMax.toFixed(3),
   'Bushy promoted leader min rise: '+Number(results.presets.bushy.snapshot.metrics.promotedLeaderMinRise||0).toFixed(3),
+  'Bushy variant min rises: '+results.bushy.map(x=>Number(x.snapshot.metrics.promotedLeaderMinRise||0).toFixed(3)).join(', '),
   'Natural stem habits: '+habitModes.join(', '),
   'Natural bend onset days: '+onsetDays.join(', '),
   'PASS: '+results.pass
