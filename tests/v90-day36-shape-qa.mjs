@@ -56,10 +56,11 @@ for(let i=0;i<salts.length;i++){
 
 // Same deterministic plant base across all three demo forms.
 for(const preset of ['natural','narrow','bushy']){
+  // makeScenario/createGameState gives every preset the identical base seed. Do
+  // not call quickPlant here, because its anti-repeat history intentionally
+  // changes a repeated salt and would invalidate an apples-to-apples comparison.
   await page.evaluate(p=>window.__GFDEVSHAPE.load(p),preset);
-  await page.waitForTimeout(120);
-  await page.evaluate(()=>window.__GFQUICKPLANT.generate(424242));
-  await page.waitForTimeout(220);
+  await page.waitForTimeout(260);
   results.presets[preset]={
     snapshot:await page.evaluate(()=>window.__GFQUICKPLANT.snapshot()),
     stem:await page.evaluate(()=>window.__GFSTEM.snapshot()),
