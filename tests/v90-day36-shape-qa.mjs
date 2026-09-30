@@ -89,6 +89,8 @@ results.assertions={
   bushyVariantsConnected:results.bushy.every(x=>Number(x.snapshot.metrics.junctionGapMax||0)<.001),
   bushyVariantsHaveTwoLeaders:results.bushy.every(x=>Number(x.snapshot.metrics.promotedLeaderCount||0)>=2),
   bushyVariantsRise:results.bushy.every(x=>Number(x.snapshot.metrics.promotedLeaderMinRise||0)>.48),
+  bushyBranchesNeverThickerThanParent:results.bushy.every(x=>Number(x.snapshot.metrics.maxChildParentThicknessRatio||0)<=.75),
+  allBranchesNeverThickerThanParent:[...results.bushy,...results.natural].every(x=>Number(x.snapshot.metrics.maxChildParentThicknessRatio||0)<=.75),
   narrowHasNoTopping:(p.narrow.training.prunes||[]).length===0,
   stemCurvatureVaries:new Set(results.natural.map(x=>Math.round((x.stem?.maxDeviation||0)*10))).size>=5,
   stemHabitModesVary:new Set(habitModes).size>=4,
@@ -112,6 +114,7 @@ fs.writeFileSync(path.join(outDir,'summary.txt'),[
   'Bushy junction gap max: '+results.presets.bushy.snapshot.metrics.junctionGapMax.toFixed(3),
   'Bushy promoted leader min rise: '+Number(results.presets.bushy.snapshot.metrics.promotedLeaderMinRise||0).toFixed(3),
   'Bushy variant min rises: '+results.bushy.map(x=>Number(x.snapshot.metrics.promotedLeaderMinRise||0).toFixed(3)).join(', '),
+  'Bushy max child/parent thickness: '+Math.max(...results.bushy.map(x=>Number(x.snapshot.metrics.maxChildParentThicknessRatio||0))).toFixed(3),
   'Natural stem habits: '+habitModes.join(', '),
   'Natural bend onset days: '+onsetDays.join(', '),
   'PASS: '+results.pass
