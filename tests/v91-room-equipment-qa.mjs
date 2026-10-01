@@ -58,7 +58,10 @@ async function loadLevel(level){
 }
 const results={levels:{},errors};
 for(const level of [1,5,10])results.levels[level]=await loadLevel(level);
+const sources=await page.evaluate(()=>window.__GFROOMEQ.sources());
+results.sources=sources;
 results.assertions={
+  usesGeneratedRasterArtwork:['substrate','irrigation','nutrients','sensor'].every(id=>/assets\/equipment\/(substrate|irrigation|nutrients|sensor)\.png\?v=94$/.test(sources[id]||'')),
   assetsPresent:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id]&&!results.levels[l][id].missing)),
   assetsRendered:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id].ready&&results.levels[l][id].alphaPixels>3500)),
   artworkChangesByLevel:['substrate','irrigation','nutrients','sensor'].every(id=>new Set([1,5,10].map(l=>results.levels[l][id].hash)).size===3),
