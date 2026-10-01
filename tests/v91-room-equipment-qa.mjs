@@ -26,17 +26,13 @@ page.on('pageerror',e=>errors.push(String(e)));
 
 async function loadLevel(level){
   await page.goto('http://127.0.0.1:4191/',{waitUntil:'networkidle'});
-  await page.waitForFunction(()=>window.__GFTRAIN&&window.__GFQUICKPLANT);
-  await page.evaluate(lv=>{
-    const key='gf_mobile_game_v1';
-    const s=JSON.parse(localStorage.getItem(key));
-    s.progression=s.progression||{levels:{}};
-    s.progression.levels=s.progression.levels||{};
-    for(const id of ['substrate','irrigation','sensor','nutrients'])s.progression.levels[id]=lv;
-    localStorage.setItem(key,JSON.stringify(s));
+  await page.waitForFunction(()=>window.__GFTRAIN&&window.__GFQUICKPLANT&&window.__GFROOMEQ);
+  await page.evaluate(lv=>window.__GFROOMEQ.setLevel(lv),level);
+  await page.waitForFunction(lv=>{
+    const snap=window.__GFROOMEQ?.snapshot?.();
+    return snap&&['substrate','irrigation','sensor','nutrients'].every(id=>snap[id]===lv)
+      &&document.querySelectorAll('.room-equipment-overlay.ready').length>=3;
   },level);
-  await page.reload({waitUntil:'networkidle'});
-  await page.waitForFunction(()=>window.__GFTRAIN&&document.querySelectorAll('.room-equipment-overlay.ready').length>=3);
   await page.evaluate(()=>window.__GFTRAIN.setDay(36));
   await page.waitForTimeout(450);
   const metrics=await page.evaluate(()=>{
