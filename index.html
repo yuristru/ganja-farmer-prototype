@@ -2559,6 +2559,20 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-eq-irrigation{right:-15px;width:96px!important;height:96px!important}
 }
 </style>
+<style id="v92HdEquipmentArtwork">
+.mobile-game-ui .hd-eq-preview{
+  image-rendering:auto!important;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.42));
+}
+.mobile-game-ui .upgrade-category-v74 .hd-eq-preview,
+.mobile-game-ui .upgrade-state-v74 .hd-eq-preview{
+  transform:scale(1.035);
+  transform-origin:center;
+}
+.mobile-game-ui .room-equipment-overlay.ready{
+  image-rendering:auto!important;
+}
+</style>
 <style id="v74UpgradeShop">
 /* V74: visual upgrade shop. One decision at a time instead of a long level ledger. */
 .mobile-game-ui .upgrade-panel .panel-sub{
@@ -4512,14 +4526,17 @@ function equipmentAssetStyle(id,level){
   const n=equipmentSourceLevel(id,level);
   return '--eq-x:'+(((n-1)/9)*100).toFixed(3)+'%;--eq-scale:1';
 }
+const HD_EQUIPMENT_IDS=new Set(['substrate','irrigation','nutrients','sensor']);
 function equipmentVisualHTML(id,level,context='level'){
   if(id==='pot')return '<canvas class="upgrade-eq-preview '+context+'-preview" data-eq3d="pot" data-eq-level="'+level+'" data-eq-width="'+(context==='category'?106:78)+'" data-eq-height="'+(context==='category'?74:58)+'"></canvas>';
+  if(HD_EQUIPMENT_IDS.has(id))return '<canvas class="upgrade-eq-preview '+context+'-preview hd-eq-preview" data-eq-strip="'+id+'" data-eq-level="'+level+'" aria-label="'+(UPGRADE_CATEGORIES[id]?.name||id)+' Stufe '+level+'"></canvas>';
   return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
 }
 const ROOM_EQUIPMENT_ASSETS={
-  substrate:'assets/equipment/room-substrate.svg?v=91',
-  irrigation:'assets/equipment/room-irrigation.svg?v=91',
-  sensor:'assets/equipment/room-sensor.svg?v=91'
+  substrate:'assets/equipment/room-substrate.svg?v=92',
+  irrigation:'assets/equipment/room-irrigation.svg?v=92',
+  nutrients:'assets/equipment/room-nutrients.svg?v=92',
+  sensor:'assets/equipment/room-sensor.svg?v=92'
 };
 const roomEquipmentStripCache=new Map();
 function roomEquipmentStrip(id){
@@ -4724,6 +4741,7 @@ function renderMetaPanels(){
       grid.querySelectorAll('[data-buy-level]').forEach(b=>b.addEventListener('click',()=>buyUpgradeLevel(id,Number(b.dataset.buyLevel))));
     }
     window.GanjariumEquipment3D?.renderPreviews(grid);
+    renderRoomEquipmentCanvases(grid);
   }
   syncEquipment3D();
   syncEquipment2D();

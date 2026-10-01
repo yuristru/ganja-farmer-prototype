@@ -1,0 +1,322 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="256" viewBox="0 0 2560 256">
+<defs>
+  <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52745a"/><stop offset=".48" stop-color="#244231"/><stop offset="1" stop-color="#12251b"/></linearGradient>
+  <linearGradient id="greenBottle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43a54b"/><stop offset=".48" stop-color="#17602b"/><stop offset="1" stop-color="#0a2d19"/></linearGradient>
+  <linearGradient id="blueBottle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d9fe0"/><stop offset=".5" stop-color="#16578d"/><stop offset="1" stop-color="#082d50"/></linearGradient>
+  <linearGradient id="redBottle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dc654f"/><stop offset=".5" stop-color="#8d2f26"/><stop offset="1" stop-color="#4c1815"/></linearGradient>
+  <linearGradient id="amberBottle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8a83d"/><stop offset=".5" stop-color="#8b621d"/><stop offset="1" stop-color="#49310e"/></linearGradient>
+  <linearGradient id="tray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#334440"/><stop offset=".5" stop-color="#182522"/><stop offset="1" stop-color="#09110f"/></linearGradient>
+  <linearGradient id="controller" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52615f"/><stop offset=".35" stop-color="#263432"/><stop offset="1" stop-color="#0b1413"/></linearGradient>
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<g transform="translate(0 0)">
+    <ellipse cx="128" cy="224" rx="75" ry="9.35" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(67 58)">
+      <path d="M24 20 Q55 10 91 22 L98 151 Q61 165 18 154 Z" fill="url(#bag)" stroke="#273528" stroke-width="4"/>
+      <path d="M31 52 H84 V108 H31 Z" fill="#14251d" opacity=".88"/>
+      <path d="M58 62 c-13 10-13 24 0 35 c13-11 13-25 0-35Z" fill="#7fe66d"/>
+      <path d="M31 128 H83" stroke="#ccb98a" stroke-width="5" opacity=".65"/>
+    </g><path d="M74 220 Q126 198 176 218" stroke="#5c3d24" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+  </g><g transform="translate(256 0)">
+    <ellipse cx="128" cy="224" rx="78" ry="9.7" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    
+    <g transform="translate(56 62)">
+      <ellipse cx="28" cy="144" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="120" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="57" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 63 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(112 76)">
+      <ellipse cx="28" cy="130" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="106" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="51" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 57 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+  </g><g transform="translate(512 0)">
+    <ellipse cx="128" cy="224" rx="81" ry="10.05" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    
+    <g transform="translate(56 62)">
+      <ellipse cx="28" cy="144" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="120" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="57" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 63 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(112 76)">
+      <ellipse cx="28" cy="130" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="106" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="51" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 57 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(164 84)">
+      <ellipse cx="28" cy="122" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="98" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="47" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 53 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+  </g><g transform="translate(768 0)">
+    <ellipse cx="128" cy="224" rx="84" ry="10.4" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    
+    <g transform="translate(56 62)">
+      <ellipse cx="28" cy="144" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="120" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="57" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 63 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(112 76)">
+      <ellipse cx="28" cy="130" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="106" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="51" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 57 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(164 84)">
+      <ellipse cx="28" cy="122" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="98" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="47" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 53 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g><g transform="translate(72 196)"><path d="M0 12 H128" stroke="#58635f" stroke-width="8" stroke-linecap="round"/><circle cx="18" cy="12" r="7" fill="#7dff72"/><circle cx="54" cy="12" r="7" fill="#58bcff"/><circle cx="90" cy="12" r="7" fill="#ff7a62"/></g>
+  </g><g transform="translate(1024 0)">
+    <ellipse cx="128" cy="224" rx="87" ry="10.75" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(39 55)"><rect x="0" y="103" width="176" height="55" rx="13" fill="url(#tray)" stroke="#495b57" stroke-width="3"/></g>
+    <g transform="translate(48 52)">
+      <ellipse cx="28" cy="139" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="115" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="55" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 61 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(94 58)">
+      <ellipse cx="28" cy="133" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="109" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="52" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 58 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(140 64)">
+      <ellipse cx="28" cy="127" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="103" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="50" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 56 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(182 72)">
+      <ellipse cx="28" cy="119" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="95" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="46" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 52 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g>
+  </g><g transform="translate(1280 0)">
+    <ellipse cx="128" cy="224" rx="90" ry="11.1" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(39 55)"><rect x="0" y="103" width="176" height="55" rx="13" fill="url(#tray)" stroke="#495b57" stroke-width="3"/></g>
+    <g transform="translate(48 52)">
+      <ellipse cx="28" cy="139" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="115" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="55" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 61 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(94 58)">
+      <ellipse cx="28" cy="133" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="109" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="52" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 58 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(140 64)">
+      <ellipse cx="28" cy="127" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="103" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="50" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 56 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(182 72)">
+      <ellipse cx="28" cy="119" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="95" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="46" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 52 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g><g transform="translate(78 179)"><rect width="108" height="37" rx="9" fill="#101b1a" stroke="#586b67" stroke-width="3"/><circle cx="24" cy="18" r="7" fill="#75ef78"/><circle cx="53" cy="18" r="7" fill="#4eaaff"/><circle cx="82" cy="18" r="7" fill="#ff795e"/></g>
+  </g><g transform="translate(1536 0)">
+    <ellipse cx="128" cy="224" rx="93" ry="11.45" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(39 55)"><rect x="0" y="103" width="176" height="55" rx="13" fill="url(#tray)" stroke="#495b57" stroke-width="3"/></g>
+    <g transform="translate(48 52)">
+      <ellipse cx="28" cy="139" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="115" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="55" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 61 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(94 58)">
+      <ellipse cx="28" cy="133" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="109" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="52" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 58 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(140 64)">
+      <ellipse cx="28" cy="127" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="103" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="50" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 56 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(182 72)">
+      <ellipse cx="28" cy="119" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="95" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="46" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 52 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g><g transform="translate(78 179)"><rect width="108" height="37" rx="9" fill="#101b1a" stroke="#586b67" stroke-width="3"/><circle cx="24" cy="18" r="7" fill="#75ef78"/><circle cx="53" cy="18" r="7" fill="#4eaaff"/><circle cx="82" cy="18" r="7" fill="#ff795e"/></g><path d="M74 73 C78 32 96 33 100 73 M120 75 C124 28 142 31 146 75 M166 78 C170 35 188 38 192 78" fill="none" stroke="#1f2e2c" stroke-width="7" stroke-linecap="round"/>
+  </g><g transform="translate(1792 0)">
+    <ellipse cx="128" cy="224" rx="96" ry="11.8" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(27 50)">
+      <rect x="0" y="94" width="202" height="75" rx="15" fill="url(#tray)" stroke="#566965" stroke-width="3"/>
+      <rect x="111" y="9" width="82" height="88" rx="14" fill="url(#controller)" stroke="#697b78" stroke-width="4"/>
+      <rect x="123" y="23" width="58" height="43" rx="7" fill="#061614" stroke="#28594d" stroke-width="2"/>
+      <path d="M133 53 C142 33 151 62 160 37 C166 27 172 47 176 35" fill="none" stroke="#79ff68" stroke-width="3"/>
+      <circle cx="131" cy="78" r="5" fill="#5cf26c"/><circle cx="148" cy="78" r="5" fill="#41adff"/><circle cx="165" cy="78" r="5" fill="#ffd55e"/>
+    </g>
+    <g transform="translate(38 60)">
+      <ellipse cx="28" cy="126" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="102" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="49" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 55 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(77 63)">
+      <ellipse cx="28" cy="123" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="99" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="48" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 54 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(116 66)">
+      <ellipse cx="28" cy="120" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="96" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="47" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 53 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(155 70)">
+      <ellipse cx="28" cy="116" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="92" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="45" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 51 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g>
+  </g><g transform="translate(2048 0)">
+    <ellipse cx="128" cy="224" rx="99" ry="12.15" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(27 50)">
+      <rect x="0" y="94" width="202" height="75" rx="15" fill="url(#tray)" stroke="#566965" stroke-width="3"/>
+      <rect x="111" y="9" width="82" height="88" rx="14" fill="url(#controller)" stroke="#697b78" stroke-width="4"/>
+      <rect x="123" y="23" width="58" height="43" rx="7" fill="#061614" stroke="#28594d" stroke-width="2"/>
+      <path d="M133 53 C142 33 151 62 160 37 C166 27 172 47 176 35" fill="none" stroke="#79ff68" stroke-width="3"/>
+      <circle cx="131" cy="78" r="5" fill="#5cf26c"/><circle cx="148" cy="78" r="5" fill="#41adff"/><circle cx="165" cy="78" r="5" fill="#ffd55e"/>
+    </g>
+    <g transform="translate(38 60)">
+      <ellipse cx="28" cy="126" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="102" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="49" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 55 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(77 63)">
+      <ellipse cx="28" cy="123" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="99" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="48" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 54 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(116 66)">
+      <ellipse cx="28" cy="120" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="96" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="47" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 53 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(155 70)">
+      <ellipse cx="28" cy="116" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="92" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="45" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 51 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g><path d="M58 183 C65 211 93 215 114 193 M101 180 C111 211 140 213 157 192 M142 177 C151 205 180 205 198 184" fill="none" stroke="#3f5752" stroke-width="6" stroke-linecap="round"/>
+  </g><g transform="translate(2304 0)">
+    <ellipse cx="128" cy="224" rx="102" ry="12.5" fill="#000" opacity=".28" filter="url(#shadow)"/>
+    <g transform="translate(27 50)">
+      <rect x="0" y="94" width="202" height="75" rx="15" fill="url(#tray)" stroke="#566965" stroke-width="3"/>
+      <rect x="111" y="9" width="82" height="88" rx="14" fill="url(#controller)" stroke="#697b78" stroke-width="4"/>
+      <rect x="123" y="23" width="58" height="43" rx="7" fill="#061614" stroke="#28594d" stroke-width="2"/>
+      <path d="M133 53 C142 33 151 62 160 37 C166 27 172 47 176 35" fill="none" stroke="#79ff68" stroke-width="3"/>
+      <circle cx="131" cy="78" r="5" fill="#5cf26c"/><circle cx="148" cy="78" r="5" fill="#41adff"/><circle cx="165" cy="78" r="5" fill="#ffd55e"/>
+    </g>
+    <g transform="translate(38 60)">
+      <ellipse cx="28" cy="126" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="102" rx="10" fill="url(#greenBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="49" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 55 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#7fff67"/>
+    </g>
+    <g transform="translate(77 63)">
+      <ellipse cx="28" cy="123" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="99" rx="10" fill="url(#blueBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="48" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 54 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#52bcff"/>
+    </g>
+    <g transform="translate(116 66)">
+      <ellipse cx="28" cy="120" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="96" rx="10" fill="url(#redBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="47" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 53 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ff7863"/>
+    </g>
+    <g transform="translate(155 70)">
+      <ellipse cx="28" cy="116" rx="27" ry="7" fill="#000" opacity=".24" filter="url(#shadow)"/>
+      <rect x="7" y="15" width="42" height="92" rx="10" fill="url(#amberBottle)" stroke="#15241f" stroke-width="3"/>
+      <path d="M12 20 H44" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+      <rect x="15" y="0" width="26" height="19" rx="6" fill="#173126" stroke="#536b5e" stroke-width="2"/>
+      <rect x="12" y="45" width="32" height="30" rx="5" fill="#101a18" opacity=".82"/>
+      <path d="M28 51 c-8 7-8 14 0 21 c8-7 8-14 0-21Z" fill="#ffd061"/>
+    </g><path d="M58 183 C65 211 93 215 114 193 M101 180 C111 211 140 213 157 192 M142 177 C151 205 180 205 198 184" fill="none" stroke="#3f5752" stroke-width="6" stroke-linecap="round"/><g transform="translate(193 118)"><rect width="29" height="77" rx="10" fill="#142522" stroke="#5d706b" stroke-width="3"/><rect x="8" y="12" width="13" height="45" rx="5" fill="#153a32"/><path d="M14 20 V50" stroke="#73ff79" stroke-width="4"/></g>
+  </g>
+</svg>
