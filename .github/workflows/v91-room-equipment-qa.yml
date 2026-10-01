@@ -1,0 +1,32 @@
+name: V91 Room Equipment QA
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/equipment/room-*.svg'
+      - 'tests/v91-room-equipment-qa.mjs'
+      - '.github/workflows/v91-room-equipment-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  room-equipment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm install playwright
+          npx playwright install --with-deps chromium
+      - name: Run room equipment QA
+        run: node tests/v91-room-equipment-qa.mjs
+      - name: Upload QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-room-equipment-qa
+          path: qa/v91-room-equipment
