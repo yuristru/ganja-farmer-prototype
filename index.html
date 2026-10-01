@@ -4618,18 +4618,12 @@ function roomEquipmentStrip(id){
     const img=new Image();
     img.onload=()=>{
       try{
-        if(ROOM_EQUIPMENT_ASSETS[id]){
-          // The generated source strips are ten equal cells wide. Their old product
-          // captions live in the top band, so crop that band away while retaining
-          // the actual rendered hardware. This keeps only the image-generated art
-          // visible inside the tent and shop.
+        // Generated PNG strips deliberately continue through the cleanup and
+        // segmentation pass below. It removes the old disconnected product captions
+        // without cropping real hardware. Only legacy SVG strips may use fixed cells.
+        if(ROOM_EQUIPMENT_ASSETS[id]&&/\.svg(?:\?|$)/i.test(ROOM_EQUIPMENT_ASSETS[id])){
           const cellW=img.naturalWidth/10;
-          const cropTop=Math.round(img.naturalHeight*.12);
-          const cellH=img.naturalHeight-cropTop;
-          const segments=Array.from({length:10},(_,i)=>({
-            x:Math.round(i*cellW),y:cropTop,
-            w:Math.round(cellW),h:cellH
-          }));
+          const segments=Array.from({length:10},(_,i)=>({x:Math.round(i*cellW),y:0,w:Math.round(cellW),h:img.naturalHeight}));
           resolve({img,segments});return;
         }
         const scan=document.createElement('canvas');
