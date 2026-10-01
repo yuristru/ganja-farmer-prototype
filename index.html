@@ -4606,132 +4606,39 @@ function equipmentVisualHTML(id,level,context='level'){
  // Do not replace these with simplified SVG redraws: the raster strips are the
  // actual art assets and contain the richer material, lighting and object detail.
 const ROOM_EQUIPMENT_ASSETS={
-  substrate:'assets/equipment/substrate.png?v=94',
-  irrigation:'assets/equipment/irrigation.png?v=94',
-  nutrients:'assets/equipment/nutrients.png?v=94',
-  sensor:'assets/equipment/sensor.png?v=94'
+  substrate:'assets/equipment/hd/substrate.b64?v=95',
+  irrigation:'assets/equipment/hd/irrigation.b64?v=95',
+  nutrients:'assets/equipment/hd/nutrients.b64?v=95',
+  sensor:'assets/equipment/hd/sensor.b64?v=95'
 };
 const roomEquipmentStripCache=new Map();
+async function loadHdEquipmentAtlas(src){
+  const response=await fetch(src,{cache:'force-cache'});
+  if(!response.ok)throw new Error('HD equipment asset '+response.status+': '+src);
+  const b64=(await response.text()).replace(/\s+/g,'');
+  if(!b64)throw new Error('HD equipment asset empty: '+src);
+  const img=new Image();
+  img.decoding='async';
+  await new Promise((resolve,reject)=>{
+    img.onload=resolve;
+    img.onerror=()=>reject(new Error('HD equipment decode failed: '+src));
+    img.src='data:image/webp;base64,'+b64;
+  });
+  return img;
+}
 function roomEquipmentStrip(id){
   if(roomEquipmentStripCache.has(id))return roomEquipmentStripCache.get(id);
-  const promise=new Promise((resolve,reject)=>{
-    const img=new Image();
-    img.onload=()=>{
-      try{
-        // Generated PNG strips deliberately continue through the cleanup and
-        // segmentation pass below. It removes the old disconnected product captions
-        // without cropping real hardware. Only legacy SVG strips may use fixed cells.
-        if(ROOM_EQUIPMENT_ASSETS[id]&&/\.svg(?:\?|$)/i.test(ROOM_EQUIPMENT_ASSETS[id])){
-          const cellW=img.naturalWidth/10;
-          const segments=Array.from({length:10},(_,i)=>({x:Math.round(i*cellW),y:0,w:Math.round(cellW),h:img.naturalHeight}));
-          resolve({img,segments});return;
-        }
-        const scan=document.createElement('canvas');
-        scan.width=img.naturalWidth;scan.height=img.naturalHeight;
-        const sx=scan.getContext('2d',{willReadFrequently:true});
-        sx.clearRect(0,0,scan.width,scan.height);sx.drawImage(img,0,0);
-        const imageData=sx.getImageData(0,0,scan.width,scan.height),px=imageData.data,w=scan.width,h=scan.height;
-
-        // Source atlases contain small product-name captions above some items.
-        // Remove only alpha components that live completely in the caption band.
-        // Hardware that starts high but continues into the scene is preserved.
-        const topH=Math.min(h,72),keepFromY=Math.min(topH-1,64);
-        const topSeen=new Uint8Array(w*topH),stack=[],component=[];
-        for(let y=0;y<topH;y++)for(let x=0;x<w;x++){
-          const seed=y*w+x;
-          if(topSeen[seed]||px[seed*4+3]<24)continue;
-          stack.length=0;component.length=0;stack.push(seed);topSeen[seed]=1;
-          let touchesHardware=false;
-          while(stack.length){
-            const p=stack.pop(),py=Math.floor(p/w),pX=p-py*w;
-            component.push(p);if(py>=keepFromY)touchesHardware=true;
-            for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
-              if(!dx&&!dy)continue;
-              const nx=pX+dx,ny=py+dy;
-              if(nx<0||nx>=w||ny<0||ny>=topH)continue;
-              const np=ny*w+nx;
-              if(topSeen[np]||px[np*4+3]<24)continue;
-              topSeen[np]=1;stack.push(np);
-            }
-          }
-          if(!touchesHardware)for(const p of component)px[p*4+3]=0;
-        }
-
-        const occupied=new Uint8Array(w),separator=new Uint8Array(w);
-        // Some source strips still contain narrow dark divider remnants between items.
-        // Detect columns that are dark and opaque for most of the strip height and erase them
-        // before object segmentation. This keeps those bars out of the room artwork.
-        for(let x=0;x<w;x++){
-          let opaque=0,dark=0;
-          for(let y=0;y<h;y++){
-            const i=(y*w+x)*4,a=px[i+3];
-            if(a>=42){
-              opaque++;
-              if(px[i]<42&&px[i+1]<42&&px[i+2]<42)dark++;
-            }
-          }
-          if(opaque>h*.42&&dark>opaque*.82)separator[x]=1;
-        }
-        for(let x=0;x<w;x++)if(separator[x]){
-          for(let q=Math.max(0,x-2);q<=Math.min(w-1,x+2);q++)for(let y=0;y<h;y++)px[(y*w+q)*4+3]=0;
-        }
-        sx.putImageData(imageData,0,0);
-        for(let x=0;x<w;x++){
-          let hits=0;
-          for(let y=0;y<h;y++){
-            if(px[(y*w+x)*4+3]>=42&&++hits>=3){occupied[x]=1;break;}
-          }
-        }
-        // Ignore small transparent holes inside one object.
-        let gapStart=-1;
-        for(let x=0;x<=w;x++){
-          if(x<w&&!occupied[x]){
-            if(gapStart<0)gapStart=x;
-          }else if(gapStart>=0){
-            const len=x-gapStart;
-            if(gapStart>0&&x<w&&len<=7)for(let q=gapStart;q<x;q++)occupied[q]=1;
-            gapStart=-1;
-          }
-        }
-        let runs=[],start=-1;
-        for(let x=0;x<=w;x++){
-          if(x<w&&occupied[x]&&start<0)start=x;
-          if((x===w||!occupied[x])&&start>=0){
-            if(x-start>=22)runs.push([start,x-1]);
-            start=-1;
-          }
-        }
-        // If glow or tiny gaps produced extra pieces, merge the closest neighbours until 10 remain.
-        while(runs.length>10){
-          let best=0,bestGap=Infinity;
-          for(let i=0;i<runs.length-1;i++){
-            const g=runs[i+1][0]-runs[i][1]-1;
-            if(g<bestGap){bestGap=g;best=i;}
-          }
-          runs.splice(best,2,[runs[best][0],runs[best+1][1]]);
-        }
-        let segments=[];
-        if(runs.length===10){
-          segments=runs.map(([x0,x1])=>{
-            let y0=h,y1=-1;
-            for(let y=0;y<h;y++)for(let x=x0;x<=x1;x++){
-              if(px[(y*w+x)*4+3]>=24){if(y<y0)y0=y;if(y>y1)y1=y;}
-            }
-            if(y1<y0){y0=0;y1=h-1;}
-            const pad=4;
-            return {x:Math.max(0,x0-pad),y:Math.max(0,y0-pad),w:Math.min(w,x1+pad+1)-Math.max(0,x0-pad),h:Math.min(h,y1+pad+1)-Math.max(0,y0-pad)};
-          });
-        }else{
-          // Safe fallback: nominal cells. It keeps the UI functional if browser decoding differs.
-          const cw=w/10;
-          segments=Array.from({length:10},(_,i)=>({x:Math.round(i*cw),y:0,w:Math.round(cw),h}));
-        }
-        resolve({img:scan,segments});
-      }catch(err){reject(err);}
-    };
-    img.onerror=reject;
-    img.src=ROOM_EQUIPMENT_ASSETS[id]||('assets/equipment/'+id+'.png?v=64');
-  });
+  const promise=(async()=>{
+    const src=ROOM_EQUIPMENT_ASSETS[id];
+    if(!src)throw new Error('Missing HD equipment source for '+id);
+    const img=await loadHdEquipmentAtlas(src);
+    const cellW=img.naturalWidth/10,cellH=img.naturalHeight;
+    if(cellW<1024||cellH<1024)throw new Error('HD equipment atlas below 1024px source cells: '+id+' '+img.naturalWidth+'x'+img.naturalHeight);
+    const segments=Array.from({length:10},(_,i)=>({
+      x:Math.round(i*cellW),y:0,w:Math.round(cellW),h:cellH
+    }));
+    return {img,segments,cellWidth:cellW,cellHeight:cellH,source:src};
+  })();
   roomEquipmentStripCache.set(id,promise);
   return promise;
 }
@@ -4784,7 +4691,11 @@ window.__GFROOMEQ={
     return window.__GFROOMEQ.snapshot();
   },
   snapshot:()=>Object.fromEntries(['substrate','irrigation','nutrients','sensor'].map(id=>[id,visualUpgradeLevel(id)])),
-  sources:()=>({...ROOM_EQUIPMENT_ASSETS})
+  sources:()=>({...ROOM_EQUIPMENT_ASSETS}),
+  assetMeta:async()=>Object.fromEntries(await Promise.all(['substrate','irrigation','nutrients','sensor'].map(async id=>{
+    const strip=await roomEquipmentStrip(id);
+    return [id,{width:strip.img.naturalWidth,height:strip.img.naturalHeight,cellWidth:strip.cellWidth,cellHeight:strip.cellHeight,source:strip.source}];
+  })))
 };
 function syncEquipment3D(){return false;}
 function renderMetaPanels(){
