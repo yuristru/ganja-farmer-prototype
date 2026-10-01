@@ -4767,6 +4767,17 @@ function syncEquipment2D(){
   updateUpgradeDemoUI();
   return true;
 }
+window.__GFROOMEQ={
+  setLevel:(level)=>{
+    demoVisualState.enabled=true;
+    const n=Math.max(1,Math.min(10,Number(level)||1));
+    for(const id of ['substrate','irrigation','nutrients','sensor'])demoVisualState.levels[id]=n;
+    roomEquipmentStripCache.clear();
+    syncEquipment2D();
+    return window.__GFROOMEQ.snapshot();
+  },
+  snapshot:()=>Object.fromEntries(['substrate','irrigation','nutrients','sensor'].map(id=>[id,visualUpgradeLevel(id)]))
+};
 function syncEquipment3D(){return false;}
 function renderMetaPanels(){
   if(!gameState)return;document.querySelectorAll('[data-coin-display]').forEach(el=>el.textContent='◉ '+Math.round(gameState.coins));
