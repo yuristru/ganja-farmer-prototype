@@ -5,7 +5,7 @@ import path from 'node:path';
 
 const root=process.cwd(),outDir=path.join(root,'qa','v91-room-equipment');
 fs.mkdirSync(outDir,{recursive:true});
-const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.json':'application/json'};
+const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.json':'application/json','.b64':'text/plain'};
 const server=http.createServer((req,res)=>{
   const clean=decodeURIComponent((req.url||'/').split('?')[0]);
   const rel=clean==='/'?'index.html':clean.replace(/^\//,'');
@@ -59,9 +59,12 @@ async function loadLevel(level){
 const results={levels:{},errors};
 for(const level of [1,5,10])results.levels[level]=await loadLevel(level);
 const sources=await page.evaluate(()=>window.__GFROOMEQ.sources());
+const assetMeta=await page.evaluate(()=>window.__GFROOMEQ.assetMeta());
 results.sources=sources;
+results.assetMeta=assetMeta;
 results.assertions={
-  usesGeneratedRasterArtwork:['substrate','irrigation','nutrients','sensor'].every(id=>/assets\/equipment\/(substrate|irrigation|nutrients|sensor)\.png\?v=94$/.test(sources[id]||'')),
+  usesGeneratedHdArtwork:['substrate','irrigation','nutrients','sensor'].every(id=>/assets\/equipment\/hd\/(substrate|irrigation|nutrients|sensor)\.b64\?v=95$/.test(sources[id]||'')),
+  sourceCellsAre1024:['substrate','irrigation','nutrients','sensor'].every(id=>Number(assetMeta[id]?.cellWidth)>=1024&&Number(assetMeta[id]?.cellHeight)>=1024),
   assetsPresent:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id]&&!results.levels[l][id].missing)),
   assetsRendered:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id].ready&&results.levels[l][id].alphaPixels>3500)),
   artworkChangesByLevel:['substrate','irrigation','nutrients','sensor'].every(id=>new Set([1,5,10].map(l=>results.levels[l][id].hash)).size===3),
