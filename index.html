@@ -3161,6 +3161,76 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-eq-irrigation{right:3px!important;width:106px!important;height:106px!important}
   .mobile-game-ui .room-eq-sensor{right:-4px!important;width:76px!important;height:100px!important}
 }
+</style><style id="v93IntegratedHdRoom">
+/* V93: high-resolution vector upgrade artwork lives in fixed rear-left/rear-right
+   tent positions. Pot and plant remain an independent interactive layer. */
+.mobile-game-ui .room-equipment-overlay{
+  image-rendering:auto!important;
+  opacity:.94!important;
+  transform-origin:50% 100%!important;
+  filter:
+    brightness(.90)
+    saturate(.88)
+    contrast(1.03)
+    drop-shadow(0 8px 8px rgba(0,0,0,.37))
+    drop-shadow(0 2px 2px rgba(0,0,0,.30))!important;
+}
+.mobile-game-ui .room-eq-substrate{
+  left:15px!important;
+  bottom:calc(var(--safe-bottom) + 252px)!important;
+  width:108px!important;
+  height:108px!important;
+  z-index:2!important;
+  opacity:.93!important;
+  transform:rotate(-1deg) scale(.94)!important;
+}
+.mobile-game-ui .room-eq-nutrients{
+  left:-1px!important;
+  bottom:calc(var(--safe-bottom) + 228px)!important;
+  width:82px!important;
+  height:82px!important;
+  z-index:1!important;
+  opacity:.76!important;
+  transform:rotate(1.4deg) scale(.90)!important;
+  filter:brightness(.80) saturate(.82) drop-shadow(0 6px 7px rgba(0,0,0,.31))!important;
+}
+.mobile-game-ui .room-eq-irrigation{
+  right:7px!important;
+  bottom:calc(var(--safe-bottom) + 248px)!important;
+  width:112px!important;
+  height:112px!important;
+  z-index:2!important;
+  opacity:.94!important;
+  transform:rotate(.7deg) scale(.94)!important;
+}
+.mobile-game-ui .room-eq-sensor{
+  right:0!important;
+  top:40.5%!important;
+  width:82px!important;
+  height:106px!important;
+  z-index:2!important;
+  opacity:.94!important;
+  transform:rotate(.3deg) scale(.92)!important;
+}
+.mobile-game-ui .room-equipment-overlay[data-room-level="1"],
+.mobile-game-ui .room-equipment-overlay[data-room-level="2"]{opacity:.88!important}
+.mobile-game-ui .room-equipment-overlay[data-room-level="8"],
+.mobile-game-ui .room-equipment-overlay[data-room-level="9"],
+.mobile-game-ui .room-equipment-overlay[data-room-level="10"]{
+  opacity:.97!important;
+  filter:
+    brightness(.96)
+    saturate(.94)
+    contrast(1.04)
+    drop-shadow(0 9px 9px rgba(0,0,0,.40))
+    drop-shadow(0 0 5px rgba(117,230,133,.08))!important;
+}
+@media(max-width:370px){
+  .mobile-game-ui .room-eq-substrate{left:9px!important;width:100px!important;height:100px!important}
+  .mobile-game-ui .room-eq-nutrients{left:-5px!important;width:75px!important;height:75px!important}
+  .mobile-game-ui .room-eq-irrigation{right:2px!important;width:104px!important;height:104px!important}
+  .mobile-game-ui .room-eq-sensor{right:-4px!important;width:76px!important;height:99px!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -4533,10 +4603,10 @@ function equipmentVisualHTML(id,level,context='level'){
   return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
 }
 const ROOM_EQUIPMENT_ASSETS={
-  substrate:'assets/equipment/room-substrate.svg?v=92',
-  irrigation:'assets/equipment/room-irrigation.svg?v=92',
-  nutrients:'assets/equipment/room-nutrients.svg?v=92',
-  sensor:'assets/equipment/room-sensor.svg?v=92'
+  substrate:'assets/equipment/room-substrate.svg?v=93',
+  irrigation:'assets/equipment/room-irrigation.svg?v=93',
+  nutrients:'assets/equipment/room-nutrients.svg?v=93',
+  sensor:'assets/equipment/room-sensor.svg?v=93'
 };
 const roomEquipmentStripCache=new Map();
 function roomEquipmentStrip(id){
