@@ -3075,6 +3075,78 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .next-grow-banner-v85.v90{padding-bottom:9px!important}
 .mobile-game-ui .next-grow-unlocks-v90{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 .mobile-game-ui .next-grow-unlocks-v90 b{display:inline-flex;align-items:center;min-height:19px;padding:0 7px;border:1px solid rgba(173,255,105,.33);border-radius:7px;background:rgba(127,255,81,.08);color:#cfff8a;font:1000 6px/1 system-ui;letter-spacing:.35px}
+</style><style id="v91IntegratedRoomEquipment">
+/* V91: room-only equipment art. The interactive pot/plant stays completely
+   independent; hardware lives at the rear-left and rear-right edges of the tent. */
+.mobile-game-ui .equipment2d-layer{
+  z-index:5!important;
+  pointer-events:none!important;
+}
+.mobile-game-ui .room-equipment-overlay{
+  opacity:.91!important;
+  transform-origin:50% 100%!important;
+  filter:
+    brightness(.88)
+    saturate(.88)
+    drop-shadow(0 8px 8px rgba(0,0,0,.34))
+    drop-shadow(0 2px 2px rgba(0,0,0,.28))!important;
+}
+.mobile-game-ui .room-eq-substrate{
+  left:12px!important;
+  bottom:calc(var(--safe-bottom) + 246px)!important;
+  width:118px!important;
+  height:118px!important;
+  z-index:2!important;
+  transform:rotate(-1.4deg) scale(.96)!important;
+}
+.mobile-game-ui .room-eq-irrigation{
+  right:7px!important;
+  bottom:calc(var(--safe-bottom) + 242px)!important;
+  width:116px!important;
+  height:116px!important;
+  z-index:2!important;
+  transform:rotate(1deg) scale(.95)!important;
+}
+.mobile-game-ui .room-eq-sensor{
+  right:1px!important;
+  top:39%!important;
+  width:82px!important;
+  height:108px!important;
+  z-index:2!important;
+  transform:rotate(.5deg) scale(.92)!important;
+}
+.mobile-game-ui .room-eq-nutrients{
+  left:-10px!important;
+  bottom:calc(var(--safe-bottom) + 214px)!important;
+  width:74px!important;
+  height:74px!important;
+  opacity:.66!important;
+  z-index:1!important;
+  transform:rotate(2deg) scale(.86)!important;
+  filter:brightness(.72) saturate(.72) drop-shadow(0 6px 7px rgba(0,0,0,.30))!important;
+}
+/* Higher tiers can read a little more clearly, but never become HUD-like. */
+.mobile-game-ui .room-eq-substrate[data-room-level="8"],
+.mobile-game-ui .room-eq-substrate[data-room-level="9"],
+.mobile-game-ui .room-eq-substrate[data-room-level="10"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="8"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="9"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="10"],
+.mobile-game-ui .room-eq-sensor[data-room-level="8"],
+.mobile-game-ui .room-eq-sensor[data-room-level="9"],
+.mobile-game-ui .room-eq-sensor[data-room-level="10"]{
+  opacity:.96!important;
+  filter:
+    brightness(.94)
+    saturate(.94)
+    drop-shadow(0 9px 9px rgba(0,0,0,.38))
+    drop-shadow(0 0 5px rgba(117,230,133,.07))!important;
+}
+@media(max-width:370px){
+  .mobile-game-ui .room-eq-substrate{left:7px!important;width:108px!important;height:108px!important}
+  .mobile-game-ui .room-eq-irrigation{right:3px!important;width:106px!important;height:106px!important}
+  .mobile-game-ui .room-eq-sensor{right:-4px!important;width:76px!important;height:100px!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -4444,6 +4516,11 @@ function equipmentVisualHTML(id,level,context='level'){
   if(id==='pot')return '<canvas class="upgrade-eq-preview '+context+'-preview" data-eq3d="pot" data-eq-level="'+level+'" data-eq-width="'+(context==='category'?106:78)+'" data-eq-height="'+(context==='category'?74:58)+'"></canvas>';
   return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
 }
+const ROOM_EQUIPMENT_ASSETS={
+  substrate:'assets/equipment/room-substrate.svg?v=91',
+  irrigation:'assets/equipment/room-irrigation.svg?v=91',
+  sensor:'assets/equipment/room-sensor.svg?v=91'
+};
 const roomEquipmentStripCache=new Map();
 function roomEquipmentStrip(id){
   if(roomEquipmentStripCache.has(id))return roomEquipmentStripCache.get(id);
@@ -4451,7 +4528,7 @@ function roomEquipmentStrip(id){
     const img=new Image();
     img.onload=()=>{
       try{
-        if(id==='substrate'){
+        if(ROOM_EQUIPMENT_ASSETS[id]){
           const segments=Array.from({length:10},(_,i)=>({x:i*256,y:0,w:256,h:256}));
           resolve({img,segments});return;
         }
@@ -4559,7 +4636,7 @@ function roomEquipmentStrip(id){
       }catch(err){reject(err);}
     };
     img.onerror=reject;
-    img.src=id==='substrate'?'assets/equipment/substrate-v2.svg?v=84':'assets/equipment/'+id+'.png?v=64';
+    img.src=ROOM_EQUIPMENT_ASSETS[id]||('assets/equipment/'+id+'.png?v=64');
   });
   roomEquipmentStripCache.set(id,promise);
   return promise;
@@ -4572,7 +4649,7 @@ function renderRoomEquipmentCanvas(canvas){
     const seg=segments[sourceLevel-1];if(!seg)return;
     const size=512,ctx=canvas.getContext('2d');
     canvas.width=size;canvas.height=size;ctx.clearRect(0,0,size,size);
-    const margin=id==='substrate'?8:id==='light'?22:34;
+    const margin=ROOM_EQUIPMENT_ASSETS[id]?10:id==='light'?22:34;
     const scale=Math.min((size-margin*2)/seg.w,(size-margin*2)/seg.h);
     const dw=seg.w*scale,dh=seg.h*scale,dx=(size-dw)/2,dy=(size-dh)/2;
     ctx.drawImage(img,seg.x,seg.y,seg.w,seg.h,dx,dy,dw,dh);
