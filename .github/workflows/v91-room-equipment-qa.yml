@@ -1,11 +1,13 @@
-name: V91 Room Equipment QA
+name: V98 Room Integration QA
 
 on:
   push:
     paths:
       - 'index.html'
-      - 'assets/equipment/room-*.svg'
+      - 'assets/room-equipment-layout.js'
+      - 'assets/equipment/room-v98/**'
       - 'tests/v91-room-equipment-qa.mjs'
+      - 'tests/v98-room-integration-qa.mjs'
       - '.github/workflows/v91-room-equipment-qa.yml'
   workflow_dispatch:
 
@@ -28,5 +30,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: v91-room-equipment-qa
-          path: qa/v91-room-equipment
+          name: v98-room-integration-qa
+          path: qa/v98-room-integration
