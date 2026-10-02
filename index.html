@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V98 Integrated Room</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V99 Daily Rhythm</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3168,7 +3168,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 </div>
 <div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
-</div><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script>
+</div><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script>
 (()=>{
 const CFG={"stemSway":13.5,"stemFine":4.9,"stemWidth":8.0,"branchLen":1.02,"branchSpread":1.04,"branchUp":0.42,"branchIrreg":0.34,"leafLen":68,"leafWidth":6.4,"leafUp":0.79,"leafScale":1.04,"lowerBoost":1.26,"nodeBulge":1.28,"branchTaper":0.61,"petiole":13.6,"internodeVar":0.18,"sec":0.68};
 const LEAF={"length":82,"width":5.4,"youngSpread":0.15,"matureSpread":1.4,"youngLift":1.21,"matureLift":0.46,"serration":0.103,"sideProjection":0.83,"individualTwist":0.18,"tipCurl":3.6};
@@ -3195,8 +3195,9 @@ let hitNodes=[],hitAxes=[],hitLeaves=[];
 // ---------- GAME STATE V1 ---------------------------------------------------
 // iPhone 16 target viewport: 393 x 852 CSS px. The renderer itself remains fluid.
 const GAME_STORAGE_KEY='gf_mobile_game_v1';
-const TURN_WAIT_MS=60*60*1000;
-const MAX_TURNS_PER_PLANT_DAY=7;
+const TURN_WAIT_MS=window.GanjariumClock.wait;
+const MAX_TURNS_PER_REAL_DAY=window.GanjariumClock.limit;
+const MAX_TURNS_PER_PLANT_DAY=MAX_TURNS_PER_REAL_DAY; // Legacy demo/test compatibility.
 const DAILY_FREE_COINS=50;
 const ECONOMY_V88={
   upgradeGrowth:1.22,
@@ -3608,8 +3609,8 @@ const UPGRADE_CATEGORIES={
 };
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
-function localDayKey(ts=Date.now()){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false,demoAutoCare:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels,unlockedUpgradeLevel:2},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
+function localDayKey(ts=Date.now()){return window.GanjariumClock.dateKey(ts);}
+function createGameState(){const now=Date.now();const levels={};UPGRADE_CATEGORY_ORDER.forEach(id=>levels[id]=1);return{version:1,createdAt:now,plant:{seed:PLANT_SEED,day:1,stress:0,growthPotential:1,harvested:false,conditionMemory:{stressDebt:0,recoveryMomentum:0,lastEvaluatedDay:0}},care:{water:.70,nutrients:.68,ventilation:.62,log:{},cooldowns:{water:0,feed:0,vent:0}},setup:{pot:{id:'pot-l1',name:'Startertopf 7 L',liters:7,waterUse:1,drainage:.10},substrate:{id:'substrate-l1',name:'Basiserde',waterHolding:1,nutrientBuffer:1}},turn:{day:1,turnsToday:0,lastTurnAt:0,lastAction:null},cycle:{dateKey:localDayKey(),advancesToday:0,lastAdvanceAt:now},history:{},training:{prunes:[],bends:[],defoliations:[]},settings:{debugBypass:false,demoAutoCare:false},coins:450,wallet:{lastDailyCoinDate:localDayKey(),dailyCoinAmount:DAILY_FREE_COINS},progression:{owned:[],equipped:{},levels,unlockedUpgradeLevel:2},genetics:{active:'dream',phenotypeSeed:PLANT_SEED,currentSeed:makeSeed('dream',PLANT_SEED,'common','Aktiver Grow')},seedVault:starterSeedVault(),meta:{growNumber:1,completedGrows:0,lastHarvestAt:null,lastGrowStartedAt:now},collection:[],session:{lastSeenAt:now,offlineMs:0},rhythm:window.GanjariumClock.create(now),biography:{perfectDays:0,stressDays:0,severeDays:0,longestStressStreak:0,currentStressStreak:0,phase:{seedling:{sum:0,days:0},veg:{sum:0,days:0},stretch:{sum:0,days:0},flower:{sum:0,days:0}},events:[],defoliationEvents:[]}}}
 function upgradeMaxLevel(id){return id==='light'||id==='vent'?5:10;}
 function upgradeLevel(st,id){return Math.max(1,Math.min(upgradeMaxLevel(id),Number(st?.progression?.levels?.[id]||1)));}
 function completedGrowCount(st=gameState){return Math.max(0,Number(st?.meta?.completedGrows)||0);}
@@ -3719,7 +3720,7 @@ function ensureResourceState(st){
     st.uiMigrations.growRoomFiveTierV70=true;
   }
   if(!st.uiMigrations.sevenTurnLoopV77){
-    st.turn={day:st.plant?.day||1,turnsToday:0,lastTurnAt:0,lastAction:null};
+    // Preserve the existing allowance and cooldown when importing an older save.
     st.uiMigrations.sevenTurnLoopV77=true;
   }
   if(!Number.isFinite(st.turn.day))st.turn.day=st.plant?.day||1;
@@ -3746,6 +3747,7 @@ function ensureResourceState(st){
     st.plant.conditionMemory.lastEvaluatedDay=Math.max(0,Number(st.plant.conditionMemory.lastEvaluatedDay)||0);
   }
   st.session=st.session||{lastSeenAt:Date.now(),offlineMs:0};
+  window.GanjariumClock.migrate(st,Date.now());
   applyEquippedSetup(st);
   return st;
 }
@@ -3776,13 +3778,19 @@ function loadGameState(){
   const daily=claimDailyCoins(st);if(daily)storageSet(JSON.stringify(st));
   return st;
 }
+function clockDemoEnabled(){return !!(gameState?.settings?.debugBypass||gameState?.settings?.demoAutoCare);}
+function syncLegacyTurnFromClock(){
+  const r=gameState.rhythm;gameState.turn.day=gameState.plant.day;
+  gameState.turn.turnsToday=r.used;gameState.turn.lastTurnAt=r.lastTurnAt;
+}
 function normalizeRealDay(){
-  if(!gameState?.turn)return;
-  if(gameState.turn.day!==gameState.plant.day){
-    gameState.turn.day=gameState.plant.day;
-    gameState.turn.turnsToday=0;
-    gameState.turn.lastAction=null;
-    saveGameState();
+  if(!gameState?.turn||clockDemoEnabled())return;
+  const clock=window.GanjariumClock,r=clock.migrate(gameState,Date.now());
+  const result=clock.reconcile(r,Date.now(),used=>completePlantDayCore(used));
+  syncLegacyTurnFromClock();
+  if(result.dateChanged){
+    claimDailyCoins(gameState);gameState.session.offlineGrowthDays=(gameState.session.offlineGrowthDays||0)+result.completed;
+    saveGameState();invalidatePlant();requestRender();
   }
 }
 function persistTrainingToGame(){if(!gameState)return;const defoliations=gameState.training?.defoliations||[];gameState.training={prunes:[...plantEdits.prunes.values()].map(x=>({...x})),bends:[...plantEdits.bends.entries()].map(([axisId,events])=>({axisId,events:events.map(e=>({...e}))})),defoliations:[...defoliations]}}
@@ -4001,37 +4009,45 @@ function gameFlowerQualityFactor(startDay){
   const live=plantResponseAtDay(currentDay),avg=weight?total/weight:(live.vigor*live.growthPotential);
   return clamp((.54+.46*avg)*trainingFlowerFactor(currentDay),.46,1.08);
 }
-function formatCountdown(ms){const sec=Math.max(0,Math.ceil(ms/1000)),m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function formatCountdown(ms){
+  const sec=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
+  return h>0?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
 function turnActionAvailability(){
   normalizeRealDay();
-  const used=Math.max(0,Number(gameState.turn?.turnsToday)||0),remaining=Math.max(0,MAX_TURNS_PER_PLANT_DAY-used);
-  if(gameState.plant.day>=84)return{ok:false,wait:0,remaining,used,label:'GROW FERTIG'};
-  if(remaining<=0)return{ok:false,wait:0,remaining,used,label:'7/7 ZÜGE'};
-  if(gameState.settings.debugBypass)return{ok:true,wait:0,remaining,used,label:'BEREIT'};
-  const last=Number(gameState.turn?.lastTurnAt)||0,wait=last?Math.max(0,TURN_WAIT_MS-(Date.now()-last)):0;
-  return{ok:wait<=0,wait,remaining,used,label:wait>0?formatCountdown(wait):'BEREIT'};
+  const used=Math.max(0,Number(gameState.turn?.turnsToday)||0),remaining=Math.max(0,MAX_TURNS_PER_REAL_DAY-used);
+  if(gameState.plant.day>=84)return{ok:false,wait:0,remaining,used,label:'ERNTE BEREIT',reason:'harvest'};
+  if(clockDemoEnabled())return {ok:remaining>0,wait:0,remaining,used,label:remaining>0?'DEMO BEREIT':'7/7 ZÜGE',reason:remaining>0?'ready':'limit'};
+  const a=window.GanjariumClock.availability(gameState.rhythm,Date.now());
+  return {...a,label:a.reason==='closed'?'TAG BEENDET':a.reason==='limit'?'7/7 HEUTE':a.wait>0?formatCountdown(a.wait):'BEREIT'};
 }
-function careActionAvailability(){return turnActionAvailability()}
+function careActionAvailability(){return turnActionAvailability();}
 function turnBlockedMessage(av){
-  if(gameState?.plant?.day>=84)return'Ernte bereit';
+  if(av?.reason==='harvest')return'Ernte bereit';
+  if(av?.reason==='closed')return'Tag beendet · neue Züge in '+formatCountdown(av.wait);
+  if(av?.reason==='limit')return'7/7 Züge heute · neue Züge in '+formatCountdown(av.wait);
   if(av?.wait>0)return'Nächster Zug in '+formatCountdown(av.wait);
-  if((av?.remaining??0)<=0)return'7/7 Züge · Tag abschließen';
   return av?.label||'Aktion gesperrt';
 }
 function commitTurnAction(label){
   const a=turnActionAvailability();if(!a.ok)return false;
-  gameState.turn.day=gameState.plant.day;
-  gameState.turn.turnsToday=Math.min(MAX_TURNS_PER_PLANT_DAY,(gameState.turn.turnsToday||0)+1);
-  gameState.turn.lastTurnAt=Date.now();
-  gameState.turn.lastAction=label||'Aktion';
-  saveGameState();updateGameHUD();
-  return true;
+  if(clockDemoEnabled()){
+    gameState.turn.turnsToday=Math.min(MAX_TURNS_PER_REAL_DAY,(gameState.turn.turnsToday||0)+1);gameState.turn.lastTurnAt=Date.now();
+  }else{
+    if(!window.GanjariumClock.commit(gameState.rhythm,Date.now()))return false;syncLegacyTurnFromClock();
+  }
+  gameState.turn.day=gameState.plant.day;gameState.turn.lastAction=label||'Aktion';
+  saveGameState();updateGameHUD();return true;
 }
 function plantDayAvailability(){
   normalizeRealDay();
-  if(gameState.plant.day>=84)return{ok:false,label:'GROW FERTIG',sub:'Erntephase erreicht',wait:0};
+  if(gameState.plant.day>=84)return{ok:false,label:'ERNTE BEREIT',sub:'Erntephase erreicht',wait:0};
+  if(!clockDemoEnabled()&&gameState.rhythm.closed){
+    const wait=window.GanjariumClock.availability(gameState.rhythm,Date.now()).wait;
+    return {ok:false,label:'TAG BEENDET',sub:'Neue Züge in '+formatCountdown(wait),wait};
+  }
   const used=Math.max(0,Number(gameState.turn?.turnsToday)||0);
-  return{ok:true,label:'TAG ABSCHLIESSEN',sub:used+'/'+MAX_TURNS_PER_PLANT_DAY+' Züge genutzt',wait:0,remaining:MAX_TURNS_PER_PLANT_DAY-used};
+  return {ok:true,label:'TAG ABSCHLIESSEN',sub:used+'/7 heute · übrige Züge verfallen',wait:0,remaining:MAX_TURNS_PER_REAL_DAY-used};
 }
 const DEMO_CARE_TARGETS={water:.70,nutrients:.68,ventilation:.82};
 function demoAutoCareEnabled(){return !!gameState?.settings?.demoAutoCare;}
@@ -4044,19 +4060,27 @@ function refillDemoCare(){
   if(gameState.turn){gameState.turn.lastTurnAt=0;gameState.turn.lastAction=null;}
   return true;
 }
+function completePlantDayCore(used=0){
+  if(gameState.plant.day>=84||gameState.plant.harvested)return false;
+  currentDay=gameState.plant.day;
+  const day=currentDay,result=simulateCurrentDay();
+  result.turnsUsed=Math.max(0,Number(used)||0);result.unusedTurns=Math.max(0,MAX_TURNS_PER_REAL_DAY-result.turnsUsed);
+  consumeForNextDay(day);gameState.plant.day=Math.min(84,day+1);currentDay=gameState.plant.day;stage=legacyStageForDay(currentDay);
+  gameState.cycle.lastAdvanceAt=Date.now();return true;
+}
 function advancePlantDay(force=false){
-  if(gameState.plant.day>=84)return false;
-  const day=gameState.plant.day,result=simulateCurrentDay();
-  result.turnsUsed=Math.max(0,Number(gameState.turn?.turnsToday)||0);
-  result.unusedTurns=Math.max(0,MAX_TURNS_PER_PLANT_DAY-result.turnsUsed);
-  consumeForNextDay(day);
-  gameState.plant.day=Math.min(84,day+1);currentDay=gameState.plant.day;stage=legacyStageForDay(currentDay);
-  gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=0;gameState.turn.lastAction=null;
-  gameState.cycle.advancesToday=0;gameState.cycle.lastAdvanceAt=Date.now();
-  if(force&&demoAutoCareEnabled())refillDemoCare();
+  const a=plantDayAvailability();if(!a.ok)return false;
+  if(clockDemoEnabled()){
+    if(!completePlantDayCore(gameState.turn.turnsToday||0))return false;
+    gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=0;gameState.turn.lastAction=null;
+    if(force&&demoAutoCareEnabled())refillDemoCare();
+  }else{
+    if(!window.GanjariumClock.close(gameState.rhythm,Date.now(),used=>completePlantDayCore(used)))return false;
+    syncLegacyTurnFromClock();
+  }
   saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();return true;
 }
-function maybeAdvancePlantDay(){return false;}
+function maybeAdvancePlantDay(){normalizeRealDay();}
 function showGameToast(msg){const el=document.getElementById('gameToast');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(gameToastTimer);gameToastTimer=setTimeout(()=>el.classList.remove('show'),1500)}
 function needDescriptor(name,level,score){if(name==='water')return level<.28?'kritisch trocken':level<.42?'zu trocken':level>.92?'überwässert':level>.84?'zu nass':score>.92?'optimal':'beobachten';if(name==='light')return level>.86?'sehr gut':level>.70?'okay':'zu wenig';if(name==='nutrients')return level<.28?'akuter Mangel':level<.42?'niedrig':level>.92?'überdüngt':level>.86?'zu hoch':score>.92?'stabil':'beobachten';return level>.82?'frische Luft':level>.55?'okay':'lüften'}
 function needColor(score){return score>.86?'#69c85b':score>.62?'#e8b65b':'#d8735f'}
@@ -4069,7 +4093,7 @@ function updateGameHUD(){
   $('mobileDay').textContent='WOCHE '+Math.ceil(currentDay/7);
   const dayInWeek=((currentDay-1)%7)+1;
   $('mobilePhase').textContent=phaseForDay(currentDay).toUpperCase();
-  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · '+used+'/7 · '+time;weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.remaining<=0?'Alle 7 Züge verbraucht · Tag abschließen':'Nächster Zug ist bereit';}
+  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · HEUTE '+used+'/7 · '+(ta.closed?'MORGEN':time);weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.closed?'Tag beendet. Neue Züge am nächsten Kalendertag (Europe/Berlin).':ta.remaining<=0?'Alle 7 Züge für heute verbraucht.':'Sieben Züge pro Kalendertag, eine Stunde Abstand. Tageswechsel um 00:00 Uhr (Europe/Berlin).';}
   $('mobileVigor').innerHTML='Vitalität <strong>'+Math.round(vigor*100)+'%</strong><span class="info-dot">i</span>';
   const memory=gameState.plant?.conditionMemory||{};$('mobileVigor').title='Langzeitstress '+Math.round((memory.stressDebt||0)*100)+'% · Erholung '+Math.round((memory.recoveryMomentum||0)*100)+'%';
   const careStress=recentCareState();
@@ -4080,7 +4104,7 @@ function updateGameHUD(){
     $(name+'Fill').style.background=needColor(score);
     $(name+'Status').textContent=needDescriptor(name,level,score);
   }
-  // V16: Wasser, Dünger und Lüften sind eigenständige Aktionen mit je 60 Minuten Cooldown.
+  // Care actions share the real-day allowance and the global one-hour cooldown.
   const waterCard=$('waterCard'),feedCard=$('feedCard'),ventCard=$('ventCard');
   const actionMeta={water:{card:waterCard,level:snap.levels.water,recommended:snap.levels.water<.58,status:'waterStatus'},feed:{card:feedCard,level:snap.levels.nutrients,recommended:snap.levels.nutrients<.55,status:'nutrientsStatus'},vent:{card:ventCard,level:snap.levels.ventilation,recommended:snap.levels.ventilation<.58,status:'climateStatus'}};
   if($('setupChip'))$('setupChip').textContent=(gameState.setup?.pot?.liters||7)+' L · '+(gameState.setup?.substrate?.name||'Erde');
@@ -4104,7 +4128,7 @@ function updateGameHUD(){
     if(action==='feed'){m.card.classList.toggle('need-warning',snap.levels.nutrients<.42);m.card.classList.toggle('need-danger',snap.levels.nutrients<.28);m.card.classList.toggle('over-limit',snap.levels.nutrients>.86);}
     if(action==='vent'){m.card.classList.toggle('need-warning',snap.levels.ventilation<.45);m.card.classList.toggle('need-danger',snap.levels.ventilation<.25);}
     m.card.disabled=!ready;m.card.setAttribute('aria-disabled',String(!ready));
-    if(!ready)$(m.status).textContent=harvested?'ERNTE EINGELAGERT':harvestReady?'ERNTE BEREIT':av.remaining<=0?'TAG ABSCHLIESSEN':av.wait>0?formatCountdown(av.wait):(av.label||'GESPERRT');
+    if(!ready)$(m.status).textContent=harvested?'ERNTE EINGELAGERT':harvestReady?'ERNTE BEREIT':av.reason==='closed'?'MORGEN':av.remaining<=0?'7/7 HEUTE':av.wait>0?formatCountdown(av.wait):(av.label||'GESPERRT');
   }
   if(careStress.waterStreak>=2&&careActionAvailability('water').ok)$('waterStatus').textContent='Mangel '+careStress.waterStreak+'T';
   if(careStress.nutrientStreak>=2&&careActionAvailability('feed').ok)$('nutrientsStatus').textContent='Mangel '+careStress.nutrientStreak+'T';
@@ -4113,15 +4137,18 @@ function updateGameHUD(){
   if($('turnSub'))$('turnSub').textContent=a.sub;
   const eq=$('equipmentBadge');if(eq){const lv=gameState.progression?.levels||{};const total=UPGRADE_CATEGORY_ORDER.reduce((a,id)=>a+Math.max(0,(lv[id]||1)-1),0);eq.textContent=total?'GROW ROOM · '+total+' UPGRADES':'STARTER SETUP';}
   $('devBypass').classList.toggle('on',!!gameState.settings.debugBypass);
+  if(weekProgressLabel&&clockDemoEnabled())weekProgressLabel.textContent='DEMO · TAG '+currentDay+' · '+(gameState.turn.turnsToday||0)+'/7';
   const dots=document.querySelectorAll('#turnDots i');
-  // V77: seven dots are the seven actions available inside the current plant day.
+  // V99: seven dots show the real calendar day allowance, even after an early close.
   const done=Math.max(0,Math.min(MAX_TURNS_PER_PLANT_DAY,Number(gameState.turn?.turnsToday)||0));
   dots.forEach((d,i)=>{
     d.classList.toggle('done',i<done);
     d.classList.toggle('pending',i>=done);
   });
   const skip=$('adminSkip');
-  if(skip)skip.style.display='inline-block';
+  if(skip){const av=turnActionAvailability();skip.style.display='inline-block';skip.disabled=!av.ok;skip.title=av.ok?'Zug ohne Pflege verbrauchen':turnBlockedMessage(av);}
+  const dayButton=$('adminDaySkip');if(dayButton){dayButton.disabled=!a.ok;dayButton.textContent=a.ok?'TAG ✓':harvestReady?'ERNTE':'MORGEN';dayButton.title=a.sub;dayButton.setAttribute('aria-label',a.ok?'Tag abschließen. Ungenutzte Züge verfallen bis morgen.':a.label+'. '+a.sub);}
+
   document.querySelectorAll('[data-coin-display]').forEach(el=>el.textContent='◉ '+Math.round(gameState.coins));
 }
 function logCareDose(action,amount,before,after){
@@ -4333,6 +4360,7 @@ function plantSeedFromVault(seedId){
   const keep={
     coins:gameState.coins,
     wallet:{...(gameState.wallet||{})},
+    rhythm:{...(gameState.rhythm||{})},
     progression:gameState.progression,
     collection:gameState.collection,
     seedVault:{...gameState.seedVault,inventory:gameState.seedVault.inventory.filter((_,i)=>i!==idx),discovered:{...(gameState.seedVault.discovered||{})}},
@@ -4341,7 +4369,7 @@ function plantSeedFromVault(seedId){
     meta:{...(gameState.meta||{})}
   };
   const next=createGameState();
-  next.coins=keep.coins;next.wallet=keep.wallet;next.progression=keep.progression;next.collection=keep.collection;next.seedVault=keep.seedVault;
+  next.coins=keep.coins;next.wallet=keep.wallet;next.rhythm=keep.rhythm;next.progression=keep.progression;next.collection=keep.collection;next.seedVault=keep.seedVault;
   next.settings={...next.settings,...keep.settings};next.uiMigrations=keep.uiMigrations;
   next.meta={...next.meta,...keep.meta,growNumber:Math.max(1,Number(keep.meta.growNumber)||1)+1,lastGrowStartedAt:Date.now()};
   next.genetics={active:seed.genetics,phenotypeSeed:seed.seed,currentSeed:{...seed,revealed:false}};
@@ -4996,7 +5024,7 @@ window.__GFSEEDLING={
 };
 window.__GFTRAININGRULES={
   snapshot:()=>({free:true,turnsToday:Number(gameState?.turn?.turnsToday)||0,lastTurnAt:Number(gameState?.turn?.lastTurnAt)||0,day:currentDay}),
-  primeBlockedCareForQA:()=>{gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=MAX_TURNS_PER_PLANT_DAY;gameState.turn.lastTurnAt=Date.now();gameState.turn.lastAction='QA Pflege';saveGameState();updateGameHUD();return window.__GFTRAININGRULES.snapshot();},
+  primeBlockedCareForQA:()=>{gameState.turn.day=gameState.plant.day;gameState.turn.turnsToday=MAX_TURNS_PER_PLANT_DAY;gameState.turn.lastTurnAt=Date.now();if(!clockDemoEnabled()){gameState.rhythm.used=MAX_TURNS_PER_REAL_DAY;gameState.rhythm.lastTurnAt=Date.now();}gameState.turn.lastAction='QA Pflege';saveGameState();updateGameHUD();return window.__GFTRAININGRULES.snapshot();},
   free:true
 };
 window.__GFTRAIN={
@@ -6853,6 +6881,7 @@ function dayConsequenceLabel(result){
 document.getElementById('adminDaySkip')?.addEventListener('click',()=>{
   if(gameState.plant.day>=84){showGameToast('Grow abgeschlossen');return;}
   const finished=gameState.plant.day,used=gameState.turn.turnsToday||0;
+  if(!plantDayAvailability().ok){showGameToast('Tag bereits beendet · morgen geht es weiter');return;}
   if(advancePlantDay(true)){
     const result=gameState.history?.[String(finished)];
     showGameToast('Tag '+finished+' · '+used+'/7 · '+dayConsequenceLabel(result)+(demoAutoCareEnabled()?' · Autopflege':'') );
@@ -6889,15 +6918,13 @@ document.querySelectorAll('#upgradeDemoControls [data-demo-upgrade]').forEach(bt
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
 document.getElementById('devGood')?.addEventListener('click',()=>makeScenario('good','natural'));document.getElementById('devGoodNarrow')?.addEventListener('click',()=>makeScenario('good','narrow'));document.getElementById('devGoodBushy')?.addEventListener('click',()=>makeScenario('good','bushy'));document.getElementById('devStress')?.addEventListener('click',()=>makeScenario('stress','natural'));document.getElementById('devDry')?.addEventListener('click',()=>makeCareDeficitScenario('water'));document.getElementById('devDef')?.addEventListener('click',()=>makeCareDeficitScenario('nutrient'));document.getElementById('devWet')?.addEventListener('click',()=>makeOvercareScenario('water'));document.getElementById('devBurn')?.addEventListener('click',()=>makeOvercareScenario('nutrient'));document.getElementById('devHarvest')?.addEventListener('click',()=>{gameState.plant.day=84;gameState.cycle.lastAdvanceAt=0;gameState.turn.lastTurnAt=0;currentDay=84;stage=legacyStageForDay(84);document.getElementById('devDrawer')?.classList.remove('open');saveGameState();invalidatePlant();sync();renderMetaPanels();requestRender();showGameToast('Erntetag geladen');});document.getElementById('devCoins')?.addEventListener('click',()=>{gameState.coins+=500;saveGameState();renderMetaPanels();updateGameHUD();showGameToast('+500 Coins');});document.getElementById('devReset')?.addEventListener('click',resetGame);
 function announceOfflineReturn(){
-  const ms=Math.max(0,Number(gameState?.session?.offlineMs)||0);
-  if(ms>=TURN_WAIT_MS){
-    const hours=Math.floor(ms/3600000),ta=turnActionAvailability(),prefix=(hours>=1?hours+' h ':'')+'Offline · ';
-    showGameToast(prefix+(ta.remaining<=0?'7/7 Züge · Tag abschließen':ta.ok?'nächster Zug bereit':'noch '+formatCountdown(ta.wait)));
-  }
-  if(gameState?.session){gameState.session.offlineMs=0;saveGameState();}
+  const days=Math.max(0,Number(gameState?.session?.offlineGrowthDays)||0),ms=Math.max(0,Number(gameState?.session?.offlineMs)||0);
+  if(days>0)showGameToast('Zurück · '+days+' Pflanzentage vergangen'+(currentDay>=84?' · Ernte bereit':''));
+  else if(ms>=TURN_WAIT_MS){const ta=turnActionAvailability();showGameToast(ta.ok?'Zurück · nächster Zug bereit':turnBlockedMessage(ta));}
+  if(gameState?.session){gameState.session.offlineMs=0;gameState.session.offlineGrowthDays=0;saveGameState();}
 }
 addEventListener('pagehide',()=>{if(gameState)saveGameState();});
-addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){if(gameState)saveGameState();}else{updateGameHUD();requestRender();}});
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){if(gameState)saveGameState();}else{updateGameHUD();announceOfflineReturn();requestRender();}});
 renderMetaPanels();
 setTimeout(announceOfflineReturn,350);
 setInterval(()=>{if(document.visibilityState==='visible')updateGameHUD();},1000);
