@@ -60,8 +60,34 @@ async function loadLevel(level){
   }
   return metrics;
 }
-const results={levels:{},errors};
+const results={levels:{},mixed:{},errors};
 for(const level of Array.from({length:10},(_,i)=>i+1))results.levels[level]=await loadLevel(level);
+
+async function loadMixed(name,levels){
+  await page.goto('http://127.0.0.1:4191/',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>window.__GFTRAIN&&window.__GFROOMEQ?.setLevels);
+  await page.evaluate(lv=>window.__GFROOMEQ.setLevels(lv),levels);
+  await page.waitForFunction(lv=>{
+    const snap=window.__GFROOMEQ.snapshot();
+    return Object.entries(lv).every(([id,n])=>snap[id]===n)
+      &&document.querySelectorAll('.room-equipment-overlay.ready').length>=4;
+  },levels);
+  await page.evaluate(()=>window.__GFTRAIN.setDay(41));
+  await page.waitForTimeout(450);
+  const boxes=await page.evaluate(()=>{
+    const out={};
+    for(const id of ['substrate','nutrients','sensor','irrigation']){
+      const r=document.querySelector('.room-eq-'+id)?.getBoundingClientRect();
+      if(r)out[id]={x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom};
+    }
+    return out;
+  });
+  await page.screenshot({path:path.join(outDir,`mixed-${name}.png`),fullPage:false});
+  return {levels,boxes};
+}
+results.mixed.userLike=await loadMixed('user-like',{substrate:1,nutrients:2,sensor:1,irrigation:10});
+results.mixed.heavy=await loadMixed('heavy',{substrate:10,nutrients:10,sensor:5,irrigation:10});
+
 const sources=await page.evaluate(()=>window.__GFROOMEQ.sources());
 const assetMeta=await page.evaluate(()=>window.__GFROOMEQ.assetMeta());
 results.sources=sources;
@@ -76,6 +102,10 @@ results.assertions={
   nutrientsLeft:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].nutrients.x<100),
   irrigationRight:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].irrigation.x>250),
   sensorRight:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].sensor.x>280),
+  mixedKeepsCenterClear:Object.values(results.mixed).every(m=>
+    m.boxes.substrate.right<125&&m.boxes.nutrients.right<130&&
+    m.boxes.sensor.x>280&&m.boxes.irrigation.x>270
+  ),
   noBrowserErrors:errors.length===0
 };
 results.pass=Object.values(results.assertions).every(Boolean);
