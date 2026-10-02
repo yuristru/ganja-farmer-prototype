@@ -4553,12 +4553,20 @@ window.__GFROOMEQ={
   },
   snapshot:()=>Object.fromEntries(window.GanjariumRoomLayout.ids.map(id=>[id,visualUpgradeLevel(id)])),
   sources:()=>({...ROOM_EQUIPMENT_ASSETS}),
-  frame:()=>({width:W,height:H,floorLimit:roomSceneFloorLimit()}),
+  frame:()=>({width:W,height:H,floorLimit:roomSceneFloorLimit(),renderedFloorLimit:worldBgFloorLimit}),
   placements:()=>roomEquipmentPlacements().map(({view,...p})=>p),
   assetMeta:async()=>Object.fromEntries(await Promise.all(window.GanjariumRoomLayout.ids.map(async id=>{
     const strip=await roomEquipmentStrip(id);return [id,{width:strip.img.naturalWidth,height:strip.img.naturalHeight,segments:strip.segments,source:strip.source}];
   })))
 };
+// HUD safe-area/viewport changes animate for 220ms. Reframe once they settle,
+// even if the plant is idle and no further animation frame was requested.
+const roomHudWrap=document.querySelector('.bottom-wrap');
+roomHudWrap?.addEventListener('transitionend',event=>{
+  if(event.target===roomHudWrap&&['top','bottom','left','right'].includes(event.propertyName)){
+    worldBgCanvas=null;layoutRoomEquipmentHits();requestRender();
+  }
+});
 function syncEquipment3D(){return false;}
 function renderMetaPanels(){
   if(!gameState)return;document.querySelectorAll('[data-coin-display]').forEach(el=>el.textContent='◉ '+Math.round(gameState.coins));
@@ -6555,7 +6563,7 @@ function applyPrune(node){
 // --- Static Grow Room game world -------------------------------------------------
 // Rendered once per resize into an offscreen canvas. This keeps the game-world
 // atmosphere rich without adding work to plant interaction frames.
-let worldBgCanvas=null,worldBgW=0,worldBgH=0;
+let worldBgCanvas=null,worldBgW=0,worldBgH=0,worldBgFloorLimit=null;
 function roundedRectPath(g,x,y,w,h,r){
   r=Math.min(r,w*.5,h*.5);g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();
 }
@@ -6597,7 +6605,7 @@ function buildWorldBackgroundFallback(){
   g.strokeStyle='rgba(146,182,154,.08)';g.lineWidth=1;g.beginPath();g.ellipse(0,11,pr*.82,pr*.13,0,0,Math.PI*2);g.stroke();g.restore();
   // vignette for UI readability
   let vig=g.createRadialGradient(W*.5,H*.43,H*.18,W*.5,H*.45,H*.72);vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(.65,'rgba(0,0,0,.05)');vig.addColorStop(1,'rgba(0,0,0,.48)');g.fillStyle=vig;g.fillRect(0,0,W,H);
-  worldBgCanvas=c;worldBgW=W;worldBgH=H;
+  worldBgCanvas=c;worldBgW=W;worldBgH=H;worldBgFloorLimit=roomSceneFloorLimit();
 }
 function buildWorldBackground(){
   if(!W||!H)return;
@@ -6613,12 +6621,12 @@ function buildWorldBackground(){
     vig.addColorStop(.72,'rgba(0,0,0,.015)');
     vig.addColorStop(1,'rgba(0,0,0,.20)');
     g.fillStyle=vig;g.fillRect(0,0,W,H);
-    worldBgCanvas=c;worldBgW=W;worldBgH=H;
+    worldBgCanvas=c;worldBgW=W;worldBgH=H;worldBgFloorLimit=roomSceneFloorLimit();
     return;
   }
   buildWorldBackgroundFallback();
 }
-function drawWorldBackground(){if(!worldBgCanvas||worldBgW!==W||worldBgH!==H)buildWorldBackground();if(worldBgCanvas)ctx.drawImage(worldBgCanvas,0,0,W,H)}
+function drawWorldBackground(){if(!worldBgCanvas||worldBgW!==W||worldBgH!==H||worldBgFloorLimit!==roomSceneFloorLimit())buildWorldBackground();if(worldBgCanvas)ctx.drawImage(worldBgCanvas,0,0,W,H)}
 
 function render(){
   updateViewTrig();

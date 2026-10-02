@@ -27,6 +27,6 @@ Common prompt constraints: premium realistic CGI, fine material detail, upright 
 
 ## Verification
 
-`node tests/v98-room-integration-qa.mjs` runs 560 geometry checks, screenshots all ten tiers and mixed setups on four phone sizes, checks native DPR 3 detail, crop boundaries, substrate/shelf clearance, floor contact, actual pole contact, alignment of demo hit areas after resize, demo cycling, gallery loading and browser errors. `tests/v91-room-equipment-qa.mjs` delegates to the current suite to preserve the historical CI entry point.
+`node tests/v98-room-integration-qa.mjs` runs 560 geometry checks, screenshots all ten tiers and mixed setups on four phone sizes plus iPhone safe-area insets, checks native DPR 3 detail, crop boundaries, substrate/shelf clearance, floor contact, actual pole contact, alignment of demo hit areas and the rendered camera after resize and HUD transitions, demo cycling, gallery loading and browser errors. `tests/v91-room-equipment-qa.mjs` delegates to the current suite to preserve the historical CI entry point.
 
 Local headless Chromium may be selected with `CHROMIUM_PATH`. GitHub Actions installs Chromium through Playwright and uploads the screenshots and JSON evidence as `v98-room-integration-qa`.

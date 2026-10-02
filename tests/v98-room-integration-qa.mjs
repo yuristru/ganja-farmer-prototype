@@ -38,7 +38,8 @@ try{
  async function capture(name,levels){
   await page.evaluate(lv=>{window.__GFROOMEQ.setLevels(lv);window.__GFTRAIN.setDay(41);},levels);
   await page.waitForFunction(lv=>Object.entries(lv).every(([id,n])=>window.__GFROOMEQ.snapshot()[id]===n),levels);
-  await page.waitForTimeout(150);
+  await page.waitForTimeout(350);
+  const frame=await page.evaluate(()=>window.__GFROOMEQ.frame());assert.equal(frame.renderedFloorLimit,frame.floorLimit,'Rendered room camera differs from current HUD frame');
   const state=await page.evaluate(()=>({placements:window.__GFROOMEQ.placements(),overlays:document.querySelectorAll('.room-equipment-overlay,.room-equipment-mount').length,needs:document.querySelector('.bottom-wrap').getBoundingClientRect().top,canvas:document.getElementById('c').getBoundingClientRect().toJSON()}));
   assert.equal(state.overlays,0,'Legacy scene overlays returned');assert.equal(state.placements.length,4);
   for(const p of state.placements){assert(p.y+p.height<state.needs,`${p.id} bottom ${p.y+p.height} behind HUD ${state.needs}`);assert(p.width>10&&p.height>10);}
@@ -52,6 +53,11 @@ try{
   await capture(size.width+'-mixed-user',{substrate:1,nutrients:2,sensor:1,irrigation:10});
   await capture(size.width+'-mixed-heavy',{substrate:10,nutrients:10,sensor:5,irrigation:10});
  }
+ await page.setViewportSize(sizes[2]);
+ await page.evaluate(()=>{const ui=document.getElementById('mobileGameUI');ui.style.setProperty('--safe-top','44px');ui.style.setProperty('--safe-bottom','34px');});
+ await capture('393-iphone-safe-area',{substrate:1,nutrients:2,sensor:1,irrigation:10});
+ await page.evaluate(()=>{const ui=document.getElementById('mobileGameUI');ui.style.removeProperty('--safe-top');ui.style.removeProperty('--safe-bottom');});
+ await page.waitForTimeout(350);
  // Browser output must match the pure cover transform after resize.
  for(const size of sizes){await page.setViewportSize(size);await page.waitForTimeout(80);const frame=await page.evaluate(()=>window.__GFROOMEQ.frame());const placed=await page.evaluate(()=>window.__GFROOMEQ.placements());
   for(const p of placed){const expected=layout.placement(p.id,p.level,art[p.id].segments[p.level-1],706,1255,frame.width,frame.height,frame.floorLimit);assert(Math.abs(expected.x-p.x)<.01&&Math.abs(expected.y-p.y)<.01,'Background/equipment resize mismatch');}
