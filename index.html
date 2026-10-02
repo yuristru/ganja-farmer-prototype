@@ -3231,6 +3231,156 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .room-eq-irrigation{right:2px!important;width:104px!important;height:104px!important}
   .mobile-game-ui .room-eq-sensor{right:-4px!important;width:76px!important;height:99px!important}
 }
+</style><style id="v96SemanticEquipmentPlacement">
+/* Placement follows the physical type of each upgrade, not only its category.
+   Hand tools stay low, hose systems are wall-mounted, tanks stay on the floor,
+   and fixed controllers remain on the right tent wall. */
+.mobile-game-ui .room-equipment-mount{
+  position:absolute!important;
+  display:block!important;
+  pointer-events:none!important;
+  z-index:1!important;
+  box-sizing:border-box!important;
+}
+
+/* Water L1-L3: portable floor tools in the rear-right corner. */
+.mobile-game-ui .room-eq-irrigation[data-room-level="1"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="2"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="3"]{
+  right:5px!important;
+  top:auto!important;
+  bottom:calc(var(--safe-bottom) + 246px)!important;
+  width:100px!important;
+  height:100px!important;
+  transform:rotate(-1deg) scale(.90)!important;
+}
+
+/* Water L4-L5: hose/drip hardware is stored on a wall bracket, not on the floor. */
+.mobile-game-ui .irrigation-hose-dock{
+  right:7px!important;
+  top:50.5%!important;
+  width:88px!important;
+  height:58px!important;
+  border-radius:11px!important;
+  border:1px solid rgba(112,151,141,.32)!important;
+  background:
+    linear-gradient(90deg,rgba(18,31,28,.72),rgba(29,48,42,.48)),
+    linear-gradient(180deg,rgba(255,255,255,.06),transparent)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 7px 10px rgba(0,0,0,.34)!important;
+  transform:perspective(220px) rotateY(-8deg)!important;
+}
+.mobile-game-ui .irrigation-hose-dock:before,
+.mobile-game-ui .irrigation-hose-dock:after{
+  content:"";
+  position:absolute;
+  top:-8px;
+  width:8px;
+  height:13px;
+  border-radius:3px;
+  background:#263c35;
+  border:1px solid rgba(123,156,145,.35);
+}
+.mobile-game-ui .irrigation-hose-dock:before{left:17px}
+.mobile-game-ui .irrigation-hose-dock:after{right:17px}
+.mobile-game-ui .room-eq-irrigation[data-room-level="4"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="5"]{
+  right:-1px!important;
+  top:47.8%!important;
+  bottom:auto!important;
+  width:104px!important;
+  height:104px!important;
+  z-index:2!important;
+  transform:rotate(-2deg) scale(.86)!important;
+  filter:brightness(.84) saturate(.86) drop-shadow(0 6px 6px rgba(0,0,0,.36))!important;
+}
+
+/* Water L6-L7: reservoirs belong on the floor and can carry more visual mass. */
+.mobile-game-ui .room-eq-irrigation[data-room-level="6"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="7"]{
+  right:3px!important;
+  top:auto!important;
+  bottom:calc(var(--safe-bottom) + 238px)!important;
+  width:122px!important;
+  height:122px!important;
+  transform:rotate(.2deg) scale(.96)!important;
+}
+
+/* Water L8-L10: complete stations sit against the rear-right wall on the floor. */
+.mobile-game-ui .room-eq-irrigation[data-room-level="8"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="9"],
+.mobile-game-ui .room-eq-irrigation[data-room-level="10"]{
+  right:1px!important;
+  top:auto!important;
+  bottom:calc(var(--safe-bottom) + 232px)!important;
+  width:132px!important;
+  height:132px!important;
+  transform:rotate(.1deg) scale(.98)!important;
+}
+
+/* Sensor L1/L3/L4 and L6-L10 are wall devices. */
+.mobile-game-ui .room-eq-sensor[data-room-level="1"],
+.mobile-game-ui .room-eq-sensor[data-room-level="3"],
+.mobile-game-ui .room-eq-sensor[data-room-level="4"],
+.mobile-game-ui .room-eq-sensor[data-room-level="6"],
+.mobile-game-ui .room-eq-sensor[data-room-level="7"],
+.mobile-game-ui .room-eq-sensor[data-room-level="8"],
+.mobile-game-ui .room-eq-sensor[data-room-level="9"],
+.mobile-game-ui .room-eq-sensor[data-room-level="10"]{
+  right:-1px!important;
+  top:38.5%!important;
+  bottom:auto!important;
+  transform:rotate(.2deg) scale(.88)!important;
+}
+
+/* Sensor L2/L5 contain probes. They sit in a small wall dock so the probes have
+   a believable resting place instead of floating like a mounted display. */
+.mobile-game-ui .sensor-probe-dock{
+  right:8px!important;
+  top:42.8%!important;
+  width:58px!important;
+  height:82px!important;
+  border-radius:9px 9px 13px 13px!important;
+  border:1px solid rgba(112,151,141,.28)!important;
+  background:
+    linear-gradient(180deg,rgba(25,44,38,.70),rgba(10,22,19,.45))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 7px 10px rgba(0,0,0,.32)!important;
+  transform:perspective(220px) rotateY(-8deg)!important;
+}
+.mobile-game-ui .sensor-probe-dock:after{
+  content:"";
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:9px;
+  height:20px;
+  border-radius:6px;
+  border:1px solid rgba(116,152,140,.24);
+  background:rgba(4,12,10,.38);
+}
+.mobile-game-ui .room-eq-sensor[data-room-level="2"],
+.mobile-game-ui .room-eq-sensor[data-room-level="5"]{
+  right:-2px!important;
+  top:39.8%!important;
+  bottom:auto!important;
+  width:78px!important;
+  height:104px!important;
+  z-index:2!important;
+  transform:rotate(1.2deg) scale(.82)!important;
+  filter:brightness(.83) saturate(.84) drop-shadow(0 6px 7px rgba(0,0,0,.34))!important;
+}
+
+@media(max-width:370px){
+  .mobile-game-ui .irrigation-hose-dock{right:2px!important;top:51%!important;width:82px!important}
+  .mobile-game-ui .room-eq-irrigation[data-room-level="4"],
+  .mobile-game-ui .room-eq-irrigation[data-room-level="5"]{right:-7px!important;width:98px!important;height:98px!important}
+  .mobile-game-ui .sensor-probe-dock{right:2px!important;width:54px!important}
+  .mobile-game-ui .room-eq-sensor[data-room-level="2"],
+  .mobile-game-ui .room-eq-sensor[data-room-level="5"]{right:-7px!important;width:72px!important;height:98px!important}
+}
 </style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
@@ -4672,7 +4822,10 @@ function syncEquipment2D(){
   ];
   layer.innerHTML=sceneEquipment.map(([id,cls])=>{
     const level=visualUpgradeLevel(id);
-    return '<canvas class="room-equipment-overlay '+cls+'" data-eq-strip="'+id+'" data-eq-level="'+level+'" data-room-level="'+level+'" data-demo-upgrade="'+id+'" aria-label="'+UPGRADE_CATEGORIES[id].name+' Demo"></canvas>';
+    let mount='';
+    if(id==='sensor'&&(level===2||level===5))mount='<span class="room-equipment-mount sensor-probe-dock" data-room-level="'+level+'" aria-hidden="true"></span>';
+    if(id==='irrigation'&&(level===4||level===5))mount='<span class="room-equipment-mount irrigation-hose-dock" data-room-level="'+level+'" aria-hidden="true"></span>';
+    return mount+'<canvas class="room-equipment-overlay '+cls+'" data-eq-strip="'+id+'" data-eq-level="'+level+'" data-room-level="'+level+'" data-demo-upgrade="'+id+'" aria-label="'+UPGRADE_CATEGORIES[id].name+' Demo"></canvas>';
   }).join('')+(demoVisualState.enabled?'<button type="button" class="room-demo-pot-hotspot" data-demo-upgrade="pot" aria-label="Topf Demo"></button>':'');
   renderRoomEquipmentCanvases(layer);
   if(demoVisualState.enabled)layer.querySelectorAll('[data-demo-upgrade]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();cycleDemoVisual(el.dataset.demoUpgrade);}));
