@@ -53,11 +53,15 @@ async function loadLevel(level){
     }
     return out;
   });
-  await page.screenshot({path:path.join(outDir,`room-level-${level}.png`),fullPage:false});
+  await page.screenshot({path:path.join(outDir,`room-level-${String(level).padStart(2,'0')}.png`),fullPage:false});
+  for(const id of ['sensor','irrigation']){
+    const el=page.locator('.room-eq-'+id);
+    if(await el.count())await el.screenshot({path:path.join(outDir,`${id}-level-${String(level).padStart(2,'0')}.png`),omitBackground:true});
+  }
   return metrics;
 }
 const results={levels:{},errors};
-for(const level of [1,5,10])results.levels[level]=await loadLevel(level);
+for(const level of Array.from({length:10},(_,i)=>i+1))results.levels[level]=await loadLevel(level);
 const sources=await page.evaluate(()=>window.__GFROOMEQ.sources());
 const assetMeta=await page.evaluate(()=>window.__GFROOMEQ.assetMeta());
 results.sources=sources;
@@ -65,13 +69,13 @@ results.assetMeta=assetMeta;
 results.assertions={
   usesGeneratedHdArtwork:['substrate','irrigation','nutrients','sensor'].every(id=>/assets\/equipment\/hd\/(substrate|irrigation|nutrients|sensor)\.b64\?v=95$/.test(sources[id]||'')),
   sourceCellsAre1024:['substrate','irrigation','nutrients','sensor'].every(id=>Number(assetMeta[id]?.cellWidth)>=1024&&Number(assetMeta[id]?.cellHeight)>=1024),
-  assetsPresent:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id]&&!results.levels[l][id].missing)),
-  assetsRendered:[1,5,10].every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id].ready&&results.levels[l][id].alphaPixels>3500)),
-  artworkChangesByLevel:['substrate','irrigation','nutrients','sensor'].every(id=>new Set([1,5,10].map(l=>results.levels[l][id].hash)).size===3),
-  substrateLeft:[1,5,10].every(l=>results.levels[l].substrate.x<150),
-  nutrientsLeft:[1,5,10].every(l=>results.levels[l].nutrients.x<100),
-  irrigationRight:[1,5,10].every(l=>results.levels[l].irrigation.x>250),
-  sensorRight:[1,5,10].every(l=>results.levels[l].sensor.x>280),
+  assetsPresent:Array.from({length:10},(_,i)=>i+1).every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id]&&!results.levels[l][id].missing)),
+  assetsRendered:Array.from({length:10},(_,i)=>i+1).every(l=>['substrate','irrigation','nutrients','sensor'].every(id=>results.levels[l][id].ready&&results.levels[l][id].alphaPixels>3500)),
+  artworkChangesByLevel:['substrate','irrigation','nutrients','sensor'].every(id=>new Set(Array.from({length:10},(_,i)=>results.levels[i+1][id].hash)).size===10),
+  substrateLeft:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].substrate.x<150),
+  nutrientsLeft:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].nutrients.x<100),
+  irrigationRight:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].irrigation.x>250),
+  sensorRight:Array.from({length:10},(_,i)=>i+1).every(l=>results.levels[l].sensor.x>280),
   noBrowserErrors:errors.length===0
 };
 results.pass=Object.values(results.assertions).every(Boolean);
