@@ -1,0 +1,32 @@
+name: V102 Launch Cultivars QA
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/cultivars.js'
+      - 'assets/flower-art.js'
+      - 'assets/flowers/**'
+      - 'tests/v102-cultivar-qa.mjs'
+      - '.github/workflows/v102-cultivar-qa.yml'
+  workflow_dispatch:
+jobs:
+  launch-cultivars:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Check launch cultivars and harvest lifecycle
+        run: node tests/v102-cultivar-qa.mjs
+      - name: Upload visual results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v102-launch-cultivars
+          path: qa/v102/

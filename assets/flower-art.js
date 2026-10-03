@@ -1,20 +1,29 @@
-/* V101: photorealistic flower material sources with deterministic seed expression.
+/* V102: cultivar-specific material sources with deterministic seed expression.
  * Generation produces the material; seed/family/traits and packing stay in the game. */
 (function(root){
 'use strict';
-const assets=new Map(),families=['dream','comet','violet'];
+const assets=new Map(),pending=new Map(),catalog=root.GanjariumCultivars.catalog,families=Object.keys(catalog);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const api={loaded:false,ready:null,render};
-api.ready=Promise.all(families.flatMap(id=>['hero'].map(form=>new Promise((resolve,reject)=>{
- const image=new Image();image.onload=()=>{assets.set(id+'-'+form,image);resolve();};image.onerror=()=>reject(new Error('Flower material missing: '+id+'-'+form));image.src='assets/flowers/v101/'+id+'-'+form+'.webp';
-})))).then(()=>{api.loaded=true;});
+const api={loaded:false,ready:null,render,load,has:id=>assets.has((catalog[id]?id:'dream')+'-hero')};
+function load(id){
+ id=catalog[id]?id:'dream';
+ if(assets.has(id+'-hero'))return Promise.resolve(assets.get(id+'-hero'));
+ if(pending.has(id))return pending.get(id);
+ const promise=new Promise((resolve,reject)=>{
+  const image=new Image();image.onload=()=>{assets.set(id+'-hero',image);resolve(image);root.dispatchEvent(new CustomEvent('ganjarium-flower-material',{detail:{id}}));};
+  image.onerror=()=>reject(new Error('Flower material missing: '+id));image.src=catalog[id].material;
+ });
+ pending.set(id,promise);return promise;
+}
+// Preserve fast initial loading. Additional cultivars load when a seed is displayed.
+api.ready=Promise.all(['dream','comet','violet'].map(load)).then(()=>{api.loaded=true;});
 function random(seed){let s=seed>>>0;return()=>{s+=0x6D2B79F5;let t=Math.imul(s^s>>>15,1|s);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};}
 function render(seed,profile,compact=false,variant=0){
  const id=families.includes(seed.genetics)?seed.genetics:'dream';
  const salt=((Number(seed.seed)||58317)^Math.imul(variant+1,0x9e3779b1))>>>0,R=random(salt);
  const source=assets.get(id+'-hero');
  const out=document.createElement('canvas');
- if(!source){out.width=1;out.height=1;return out;}
+ if(!source){load(id).catch(error=>console.error(error));out.width=1;out.height=1;return out;}
  // Source photographs are material maps. Their complete silhouette is never drawn.
  const size=1024;out.width=size;out.height=size;const c=out.getContext('2d');
  const density=clamp(profile.density||.8,.5,1.2),frost=clamp(profile.frost||.3,.08,1),gp=profile.gp||{};
@@ -27,7 +36,7 @@ function render(seed,profile,compact=false,variant=0){
  const points=[];for(let i=0;i<=40;i++){const t=i/40;points.push({t,x:center(t),y:bottom-t*height,r:radius(t)});}
  // Connected organic support mass underneath overlapping irregular surface clusters.
  c.beginPath();points.forEach((p,i)=>{if(i===0)c.moveTo(p.x-p.r,p.y);else c.lineTo(p.x-p.r,p.y);});for(let i=points.length-1;i>=0;i--)c.lineTo(points[i].x+points[i].r,points[i].y);c.closePath();
- const hue=id==='violet'?275:id==='comet'?85:100;
+ const hue=catalog[id].palette.purple||catalog[id].palette.hue;
  const base=c.createLinearGradient(280,0,730,0);base.addColorStop(0,`hsl(${hue},20%,17%)`);base.addColorStop(.38,`hsl(${hue},23%,31%)`);base.addColorStop(1,`hsl(${hue},18%,12%)`);c.fillStyle=base;c.fill();
  const stamp=document.createElement('canvas');stamp.width=160;stamp.height=160;const sc=stamp.getContext('2d');
  const feather=sc.createRadialGradient(80,80,42,80,80,80);feather.addColorStop(0,'rgba(255,255,255,1)');feather.addColorStop(.65,'rgba(255,255,255,.92)');feather.addColorStop(1,'rgba(255,255,255,0)');
