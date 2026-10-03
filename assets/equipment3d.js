@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const API={version:1};
-const PREVIEW_SIZE={w:220,h:150};
+const PREVIEW_SIZE={w:660,h:450};
 const previewCache=new Map();
 let previewRenderer=null,previewScene=null,previewCamera=null;
 let roomRenderer=null,roomScene=null,roomCamera=null,roomRoot=null,roomCanvas=null,roomSignature='',raf=0;
@@ -136,13 +136,16 @@ function renderMaster(category,level){
   const key=previewKey(category,level);if(previewCache.has(key))return previewCache.get(key);if(!initPreview())return null;
   const obj=buildModel(category,level);const scale=obj.userData.previewScale||1;obj.scale.setScalar(scale);obj.rotation.y=-.55;obj.rotation.x=.12;previewScene.add(obj);previewRenderer.render(previewScene,previewCamera);
   const c=document.createElement('canvas');c.width=PREVIEW_SIZE.w;c.height=PREVIEW_SIZE.h;c.getContext('2d').drawImage(previewRenderer.domElement,0,0);
-  previewScene.remove(obj);disposeObject(obj);previewCache.set(key,c);return c;
+  previewScene.remove(obj);disposeObject(obj);
+  const data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let left=c.width,top=c.height,right=0,bottom=0;
+  for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(data[(y*c.width+x)*4+3]>4){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
+  const cropped=document.createElement('canvas');cropped.width=Math.max(1,right-left+1);cropped.height=Math.max(1,bottom-top+1);cropped.getContext('2d').drawImage(c,left,top,cropped.width,cropped.height,0,0,cropped.width,cropped.height);previewCache.set(key,cropped);return cropped;
 }
 API.renderPreview=function(canvas,category,level){
   if(!canvas)return;const master=renderMaster(category,level);if(!master)return;
-  const dpr=Math.min(2,window.devicePixelRatio||1),w=Number(canvas.dataset.eqWidth||canvas.clientWidth||96),h=Number(canvas.dataset.eqHeight||canvas.clientHeight||62);
+  const dpr=Math.min(2,window.devicePixelRatio||1),w=Number(canvas.clientWidth||canvas.dataset.eqWidth||96),h=Number(canvas.clientHeight||canvas.dataset.eqHeight||62);
   canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
-  const sc=Math.min(w/master.width,h/master.height)*1.22,dw=master.width*sc,dh=master.height*sc;c.drawImage(master,(w-dw)/2,(h-dh)/2,dw,dh);
+  const sc=Math.min(w*.86/master.width,h*.86/master.height),dw=master.width*sc,dh=master.height*sc;c.drawImage(master,(w-dw)/2,(h-dh)/2,dw,dh);
 };
 API.renderPreviews=function(root=document){root.querySelectorAll('canvas[data-eq3d]').forEach(c=>API.renderPreview(c,c.dataset.eq3d,Number(c.dataset.eqLevel||1)));};
 

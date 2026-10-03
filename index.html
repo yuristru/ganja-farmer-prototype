@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V104 Flower Comparison</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V105 Upgrade Store</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -1146,7 +1146,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   .mobile-game-ui .grow-light-fixture{top:calc(var(--safe-top) + 58px)}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script><script src="assets/equipment3d.js"></script>
+<script src="assets/three-r128.min.js"></script><script src="assets/equipment3d.js?v=105"></script>
 <style id="v45ThreeEquipmentCatalog">
 .mobile-game-ui .equipment3d-layer{
   position:absolute!important;
@@ -3205,6 +3205,20 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
+<style id="v105StoreStyles">
+.mobile-game-ui .upgrade-category-v74{min-height:152px!important;background:linear-gradient(145deg,#123e45,#092d31)!important;border-color:#3d6770!important;padding:9px!important}
+.mobile-game-ui .upgrade-category-art-v74{height:86px!important;border:0!important;background:radial-gradient(ellipse at 50% 50%,rgba(117,167,147,.17),transparent 74%)!important}
+.mobile-game-ui .upgrade-state-art-v74{height:126px!important;background:radial-gradient(ellipse at 50% 50%,rgba(117,167,147,.16),transparent 74%)!important}
+.mobile-game-ui .upgrade-category-copy-v74 strong{font-size:11px!important;line-height:1.15!important}
+.mobile-game-ui .upgrade-category-copy-v74 small{white-space:normal!important;line-height:1.25!important;min-height:18px!important}
+.mobile-game-ui .upgrade-category-footer-v105{display:flex;gap:4px;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px solid #2e5055;color:#9bbfb8;font:750 6px/1.2 system-ui}
+.mobile-game-ui .upgrade-category-footer-v105 b{font-weight:900;color:#d4e9b9;text-align:right}
+.mobile-game-ui .upgrade-level-chip-v74{top:0!important;right:0!important;font-size:6px!important;background:#09271f!important}
+.mobile-game-ui canvas[data-store-eq]{transform:none!important;opacity:1!important;filter:drop-shadow(0 5px 5px rgba(0,0,0,.28))!important;object-fit:contain!important}
+.mobile-game-ui .upgrade-state-v74{padding:9px!important;background:linear-gradient(145deg,#103a40,#08282d)!important}
+.mobile-game-ui .upgrade-state-v74.next{border-color:#a18c39!important}
+@media(max-width:370px){.mobile-game-ui .upgrade-category-v74{padding:7px!important;min-height:144px!important}.mobile-game-ui .upgrade-category-art-v74{height:78px!important}.mobile-game-ui .upgrade-state-art-v74{height:112px!important}}
+</style>
 <style id="v104FlowerSheetStyles">
 #flowerTestPage{position:fixed;inset:0;z-index:10000;background:#061710;color:#ebffe9;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;box-sizing:border-box;padding:0 12px max(20px,env(safe-area-inset-bottom));}
 #flowerTestPage[hidden]{display:none}
@@ -3228,7 +3242,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 <div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devFlowerSheet">100 Blüten vergleichen</button><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script src="assets/cultivars.js?v=102"></script>
-<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script>
+<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script src="assets/equipment/store-v105/manifest.js?v=105"></script><script src="assets/store-equipment.js?v=105"></script><script>
 (()=>{
 const CFG={"stemSway":13.5,"stemFine":4.9,"stemWidth":8.0,"branchLen":1.02,"branchSpread":1.04,"branchUp":0.42,"branchIrreg":0.34,"leafLen":68,"leafWidth":6.4,"leafUp":0.79,"leafScale":1.04,"lowerBoost":1.26,"nodeBulge":1.28,"branchTaper":0.61,"petiole":13.6,"internodeVar":0.18,"sec":0.68};
 const LEAF={"length":82,"width":5.4,"youngSpread":0.15,"matureSpread":1.4,"youngLift":1.21,"matureLift":0.46,"serration":0.103,"sideProjection":0.83,"individualTwist":0.18,"tipCurl":3.6};
@@ -3627,9 +3641,9 @@ const UPGRADE_CATEGORIES={
   substrate:{id:'substrate',name:'Substrat',icon:'▰',need:'Wasser + Dünger',accent:'dual',baseCost:60,names:['Basiserde','Erde + Perlit','Light Mix','Bio Mix','Living Mix I','Living Mix II','Living Mix III','Living Soil','Living Soil Pro','Living Soil Ultra']},
   light:{id:'light',name:'Licht',icon:'☀',need:'Licht',accent:'light',baseCost:80,names:['Hängelampe 40 W','Hängelampe 80 W','Grow Panel S','Grow Panel L','Sun Engine X']},
   vent:{id:'vent',name:'Lüftung',icon:'✣',need:'Lüften',accent:'vent',baseCost:65,names:['Raumluft','Rohrlüfter S','Rohrlüfter M','Airflow L','Climate Core']},
-  irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Feuchtigkeitsstab','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
+  irrigation:{id:'irrigation',name:'Bewässerung',icon:'⌁',need:'Wasser',accent:'water',baseCost:75,names:['Gießkanne','Dosierkanne','Drucksprüher','Drip Line','Drip Kit','Tank 5 L','Tank 10 L','Auto Drip','Smart Irrigation','Hydro Control']},
   nutrients:{id:'nutrients',name:'Nährstoffe',icon:'◆',need:'Dünger',accent:'feed',baseCost:70,names:['Basisdünger','Grow Feed','Grow + Bloom','Mineral Duo','Bio Feed','Precision Feed','Dose Kit','Smart Dose','Nutrient Lab','Nutrient Core']},
-  sensor:{id:'sensor',name:'Sensorik',icon:'⌬',need:'Analyse',accent:'sensor',baseCost:50,names:['Augenmaß','Feuchteanzeige','Thermometer','Hygrometer','Soil Meter','Multi Sensor','Grow Monitor','Grow Hub','Grow Hub Pro','Grow AI Core']}
+  sensor:{id:'sensor',name:'Sensorik',icon:'⌬',need:'Analyse',accent:'sensor',baseCost:50,names:['Analoganzeige','Feuchteanzeige','Thermometer','Hygrometer','Soil Meter','Multi Sensor','Grow Monitor','Grow Hub','Grow Hub Pro','Grow AI Core']}
 };
 const UPGRADE_CATEGORY_ORDER=['pot','substrate','light','vent','irrigation','nutrients','sensor'];
 let selectedUpgradeCategory=null;
@@ -4636,11 +4650,9 @@ function equipmentAssetStyle(id,level){
   const n=equipmentSourceLevel(id,level);
   return '--eq-x:'+(((n-1)/9)*100).toFixed(3)+'%;--eq-scale:1';
 }
-const HD_EQUIPMENT_IDS=new Set(['substrate','irrigation','nutrients','sensor']);
 function equipmentVisualHTML(id,level,context='level'){
   if(id==='pot')return '<canvas class="upgrade-eq-preview '+context+'-preview" data-eq3d="pot" data-eq-level="'+level+'" data-eq-width="'+(context==='category'?106:78)+'" data-eq-height="'+(context==='category'?74:58)+'"></canvas>';
-  if(HD_EQUIPMENT_IDS.has(id))return '<canvas class="upgrade-eq-preview '+context+'-preview hd-eq-preview" data-eq-strip="'+id+'" data-eq-level="'+level+'" aria-label="'+(UPGRADE_CATEGORIES[id]?.name||id)+' Stufe '+level+'"></canvas>';
-  return '<span class="upgrade-eq-preview '+context+'-preview eq2d-sprite" data-eq2d="'+id+'" data-eq-level="'+level+'" style="'+equipmentAssetStyle(id,level)+'"></span>';
+  return '<canvas class="upgrade-eq-preview '+context+'-preview hd-eq-preview" data-store-eq="'+id+'" data-eq-level="'+level+'" role="img" aria-label="'+(UPGRADE_CATEGORIES[id]?.name||id)+' · '+(UPGRADE_CATEGORIES[id]?.names[level-1]||'Stufe '+level)+'"></canvas>';
 }
 // Artwork and geometry share one camera. Room props are baked BEHIND the plant;
 // DOM elements are invisible demo hit areas, never a second rendered scene.
@@ -4753,7 +4765,7 @@ function renderMetaPanels(){
         const cat=UPGRADE_CATEGORIES[id],lv=upgradeLevel(gameState,id),max=upgradeMaxLevel(id),nextLevel=lv<max?lv+1:null,next=nextLevel?upgradePrice(id,nextLevel):0,locked=nextLevel&&!isUpgradeLevelUnlocked(id,nextLevel,gameState);
         return '<button type="button" class="upgrade-category-v74 '+cat.accent+(locked?' economy-locked':'')+'" data-upgrade-category="'+id+'">'+
           '<span class="upgrade-category-art-v74">'+equipmentVisualHTML(id,lv,'category')+'<i class="upgrade-level-chip-v74">LV '+lv+'/'+max+'</i></span>'+
-          '<span class="upgrade-category-copy-v74"><strong>'+cat.name+'</strong><span class="upgrade-category-price-v74 '+(lv>=max?'max':'')+'">'+(lv>=max?'MAX':locked?'LOCK · GROW '+upgradeUnlockGrow(nextLevel):'◉ '+next)+'</span><small>'+cat.names[lv-1]+'</small></span>'+
+          '<span class="upgrade-category-copy-v74"><strong>'+cat.name+'</strong><span class="upgrade-category-price-v74 '+(lv>=max?'max':'')+'">'+(lv>=max?'MAX':locked?'LOCK · GROW '+upgradeUnlockGrow(nextLevel):'◉ '+next)+'</span><small>'+cat.names[lv-1]+'</small></span><span class="upgrade-category-footer-v105"><span>'+cat.need+'</span><b>'+(lv>=max?'Voll ausgebaut':locked?'Nach Grow '+upgradeUnlockGrow(nextLevel):'Nächste Stufe')+'</b></span>'+
         '</button>';
       }).join('');
       grid.querySelectorAll('[data-upgrade-category]').forEach(b=>b.addEventListener('click',()=>{selectedUpgradeCategory=b.dataset.upgradeCategory;renderMetaPanels();}));
@@ -4784,7 +4796,7 @@ function renderMetaPanels(){
       grid.querySelectorAll('[data-buy-level]').forEach(b=>b.addEventListener('click',()=>buyUpgradeLevel(id,Number(b.dataset.buyLevel))));
     }
     window.GanjariumEquipment3D?.renderPreviews(grid);
-    renderRoomEquipmentCanvases(grid);
+    renderRoomEquipmentCanvases(grid);window.GanjariumStoreEquipment?.renderPreviews(grid);
   }
   syncEquipment3D();
   syncEquipment2D();
