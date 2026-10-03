@@ -3158,26 +3158,26 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   #mobileGameUI .ganjarium-wordmark{left:8px!important;width:calc(50% - 104px);}
 }
 </style>
-<style id="v108FloatingHeader">
+<style id="v109FloatingHeader">
 /* Compact floating status pills leave the room hardware visible. */
-#mobileGameUI .ganjarium-wordmark{left:10px!important;top:calc(var(--safe-top) + 10px)!important;width:100px!important}
+#mobileGameUI .ganjarium-wordmark{left:10px!important;top:calc(var(--safe-top) + 10px)!important;width:94px!important}
 #mobileGameUI .day-console{
- left:122px!important;right:10px!important;top:calc(var(--safe-top) + 10px)!important;
+ left:40.5%!important;right:8px!important;top:calc(var(--safe-top) + 10px)!important;
  width:auto!important;height:auto!important;min-height:0!important;padding:0!important;
  display:block!important;transform:none!important;border:0!important;border-radius:0!important;
  background:none!important;box-shadow:none!important;backdrop-filter:none!important;
 }
-#mobileGameUI .day-mid{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);grid-template-rows:23px 17px;gap:4px 6px;min-width:0!important;width:100%!important}
+#mobileGameUI .day-mid{display:grid!important;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.35fr);grid-template-rows:23px 12px;gap:4px 4px;min-width:0!important;width:100%!important}
 #mobileGameUI #mobileDay,#mobileGameUI #mobilePhase,#mobileGameUI #weekProgressLabel{
  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
- min-width:0;margin:0!important;padding:3px 6px;border:1px solid rgba(98,168,188,.75);
+ min-width:0;margin:0!important;padding:3px 3px;border:1px solid rgba(98,168,188,.75);
  border-radius:999px;background:linear-gradient(180deg,rgba(12,47,62,.9),rgba(3,23,30,.88));
  box-shadow:inset 0 1px 0 rgba(205,247,255,.09),0 2px 4px #0005;
  white-space:nowrap;letter-spacing:.02em!important;text-shadow:0 1px 2px #0008;
 }
-#mobileGameUI #mobileDay{grid-column:1;grid-row:1;font-size:11px!important;line-height:1!important}
-#mobileGameUI #mobilePhase{grid-column:2;grid-row:1;font-size:8px!important;line-height:1!important;color:#b6dbe7}
-#mobileGameUI #weekProgressLabel{grid-column:2;grid-row:2;font-size:6.5px!important;line-height:1!important;padding:2px 4px;color:#c9e3e9}
+#mobileGameUI #mobileDay{grid-column:1;grid-row:1;font-size:10px!important;line-height:1!important}
+#mobileGameUI #mobilePhase{grid-column:2;grid-row:1;font-size:6.5px!important;line-height:1!important;color:#b6dbe7}
+#mobileGameUI #weekProgressLabel{grid-column:3;grid-row:1;font-size:7px!important;line-height:1!important;padding:2px 4px;color:#c9e3e9}
 #mobileGameUI #turnDots{grid-column:1;grid-row:2;align-self:center;justify-content:center;gap:4px!important;margin:0!important}
 #mobileGameUI #turnDots i{width:5px!important;height:5px!important;box-shadow:none}
 #mobileGameUI .upgrade-demo-controls{inset:0!important;pointer-events:none}
@@ -3185,12 +3185,12 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 #mobileGameUI .upgrade-demo-controls [data-demo-upgrade="light"]{left:calc(50% - 80px)}
 #mobileGameUI .upgrade-demo-controls [data-demo-upgrade="vent"]{right:10px}
 @media(max-width:350px){
- #mobileGameUI .ganjarium-wordmark{left:8px!important;width:83px!important}
- #mobileGameUI .day-console{left:101px!important;right:8px!important}
- #mobileGameUI .day-mid{column-gap:4px;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr)}
- #mobileGameUI #mobileDay{font-size:10px!important}
+ #mobileGameUI .ganjarium-wordmark{left:8px!important;width:82px!important}
+ #mobileGameUI #mobileDay{font-size:8px!important}
+ #mobileGameUI #mobilePhase{font-size:5.5px!important}
  #mobileGameUI #weekProgressLabel{font-size:6px!important}
 }
+#mobileGameUI #turnDots i.pending{background:#234e5f;border-color:#3a6877}
 </style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
@@ -4205,7 +4205,7 @@ function updateGameHUD(){
   $('mobileDay').textContent='WOCHE '+Math.ceil(currentDay/7);
   const dayInWeek=((currentDay-1)%7)+1;
   $('mobilePhase').textContent=phaseForDay(currentDay).toUpperCase();
-  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · '+used+'/7 · '+(ta.closed?'MORGEN':time);weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.closed?'Tag beendet. Neue Züge am nächsten Kalendertag (Europe/Berlin).':ta.remaining<=0?'Alle 7 Züge für heute verbraucht.':'Sieben Züge pro Kalendertag, eine Stunde Abstand. Tageswechsel um 00:00 Uhr (Europe/Berlin).';}
+  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · '+used+'/7';weekProgressLabel.setAttribute('aria-label','Tag '+currentDay+', '+used+' von 7 Zügen, '+(ta.closed?'MORGEN':time));weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.closed?'Tag beendet. Neue Züge am nächsten Kalendertag (Europe/Berlin).':ta.remaining<=0?'Alle 7 Züge für heute verbraucht.':'Sieben Züge pro Kalendertag, eine Stunde Abstand. Tageswechsel um 00:00 Uhr (Europe/Berlin).';}
   $('mobileVigor').innerHTML='Vitalität <strong>'+Math.round(vigor*100)+'%</strong><span class="info-dot">i</span>';
   const memory=gameState.plant?.conditionMemory||{};$('mobileVigor').title='Langzeitstress '+Math.round((memory.stressDebt||0)*100)+'% · Erholung '+Math.round((memory.recoveryMomentum||0)*100)+'%';
   const careStress=recentCareState();
@@ -4249,7 +4249,7 @@ function updateGameHUD(){
   if($('turnSub'))$('turnSub').textContent=a.sub;
   const eq=$('equipmentBadge');if(eq){const lv=gameState.progression?.levels||{};const total=UPGRADE_CATEGORY_ORDER.reduce((a,id)=>a+Math.max(0,(lv[id]||1)-1),0);eq.textContent=total?'GROW ROOM · '+total+' UPGRADES':'STARTER SETUP';}
   $('devBypass').classList.toggle('on',!!gameState.settings.debugBypass);
-  if(weekProgressLabel&&clockDemoEnabled())weekProgressLabel.textContent='DEMO · TAG '+currentDay+' · '+(gameState.turn.turnsToday||0)+'/7';
+  if(weekProgressLabel&&clockDemoEnabled())weekProgressLabel.textContent='TAG '+currentDay+' · '+(gameState.turn.turnsToday||0)+'/7';
   const dots=document.querySelectorAll('#turnDots i');
   // V99: seven dots show the real calendar day allowance, even after an early close.
   const done=Math.max(0,Math.min(MAX_TURNS_PER_PLANT_DAY,Number(gameState.turn?.turnsToday)||0));
