@@ -5,6 +5,7 @@ on:
       - 'index.html'
       - 'assets/room-hardware.js'
       - 'assets/growroom/hybrid-v111/**'
+      - 'assets/growroom/hybrid-v112/**'
       - 'assets/equipment/store-v105/**'
       - 'tests/v110-independent-hardware-qa.cjs'
       - '.github/workflows/v110-independent-hardware-qa.yml'

@@ -1,7 +1,15 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const {chromium}=require('playwright');
 const root=process.cwd(),out=path.join(root,'qa/v110');fs.mkdirSync(out,{recursive:true});
-const hook=`window.__ROOM110={capture:()=>{buildWorldBackground();const c=worldBgCanvas,p=roomEquipmentPlacements();const hash=data=>{let h=2166136261;for(const b of data)h=Math.imul(h^b,16777619);return h>>>0;};const layers={};for(const id of ['light']){const a=p.find(p=>p.id===id),strip=roomEquipmentLoaded.get(id),seg=strip.segments[a.level-1],layer=document.createElement('canvas');layer.width=c.width;layer.height=c.height;const g=layer.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);if(id==='light')window.GanjariumRoomHardware.drawLight(g,a);window.GanjariumRoomHardware.draw(g,a,strip.img,seg);layers[id]=hash(g.getImageData(0,0,layer.width,layer.height).data);}const bg=document.createElement('canvas');bg.width=c.width;bg.height=c.height;const bgc=bg.getContext('2d');bgc.setTransform(DPR,0,0,DPR,0,0);drawImageCover(bgc,readyGrowRoomBackgroundImage().img,0,0,W,H);layers.vent=hash(bgc.getImageData(0,0,bg.width,bg.height).data);return{ready:ensureGrowRoomBackgroundImage().loaded,source:growRoomBackgroundPath(),layers,placements:p.map(({view,...a})=>a),world:hash(c.getContext('2d').getImageData(0,0,c.width,c.height).data),state:JSON.stringify({plant:gameState.plant,care:gameState.care,setup:gameState.setup,turn:gameState.turn,progression:gameState.progression,coins:gameState.coins,training:gameState.training})};}};`;
+const hook=`window.__ROOM110={capture:()=>{buildWorldBackground();const c=worldBgCanvas,p=roomEquipmentPlacements();const hash=data=>{let h=2166136261;for(const b of data)h=Math.imul(h^b,16777619);return h>>>0;};const layers={};for(const id of ['light']){const a=p.find(p=>p.id===id),strip=roomEquipmentLoaded.get(id),seg=strip.segments[a.level-1],layer=document.createElement('canvas');layer.width=c.width;layer.height=c.height;const g=layer.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);if(id==='light')window.GanjariumRoomHardware.drawLight(g,a);window.GanjariumRoomHardware.draw(g,a,strip.img,seg);layers[id]=hash(g.getImageData(0,0,layer.width,layer.height).data);}const bg=document.createElement('canvas');bg.width=c.width;bg.height=c.height;const bgc=bg.getContext('2d');bgc.setTransform(DPR,0,0,DPR,0,0);drawImageCover(bgc,readyGrowRoomBackgroundImage().img,0,0,W,H);layers.vent=hash(bgc.getImageData(0,0,bg.width,bg.height).data);return{ready:ensureGrowRoomBackgroundImage().loaded,source:growRoomBackgroundPath(),layers,placements:p.map(({view,...a})=>a),world:hash(c.getContext('2d').getImageData(0,0,c.width,c.height).data),state:JSON.stringify({plant:gameState.plant,care:gameState.care,setup:gameState.setup,turn:gameState.turn,progression:gameState.progression,coins:gameState.coins,training:gameState.training})};}};window.__ROOM110.beamCheck=()=>{
+ const p=roomEquipmentPlacements().find(x=>x.id==='light'),b=window.GanjariumRoomHardware.beamGeometry(p);
+ const c=document.createElement('canvas');c.width=Math.ceil(W);c.height=Math.ceil(H);const g=c.getContext('2d');
+ window.GanjariumRoomHardware.drawLight(g,p);const hash=data=>{let h=2166136261;for(const x of data)h=Math.imul(h^x,16777619);return h>>>0;};const normal=hash(g.getImageData(0,0,c.width,c.height).data);
+ const sampleY=Math.round(b.top+p.height*.4),center=g.getImageData(Math.round(b.cx),sampleY,1,1).data[3],edge=g.getImageData(Math.round(b.cx+p.width*.4),sampleY,1,1).data[3];
+ g.clearRect(0,0,c.width,c.height);Object.defineProperty(g,'filter',{get:()=> 'none',set:()=>{}});
+ window.GanjariumRoomHardware.drawLight(g,p);const filterless=hash(g.getImageData(0,0,c.width,c.height).data);
+ return {normal,filterless,center,edge,top:b.top,lampBottom:p.y+p.height*.9};
+};`;
 const mime={'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.json':'application/json','.svg':'image/svg+xml','.b64':'text/plain'};
 const server=http.createServer((req,res)=>{const rel=decodeURIComponent(req.url.split('?')[0]),file=path.resolve(root,rel==='/'?'index.html':'.'+rel);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end();return;}if(file.endsWith('index.html'))data=Buffer.from(data.toString().replace('resize();\n})();','resize();\n'+hook+'\n})();'));res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(data);});});
 (async()=>{await new Promise(r=>server.listen(4110,'127.0.0.1',r));let browser;
@@ -15,19 +23,37 @@ await page.evaluate(()=>window.__GFROOMEQ.setLevels({vent:2}));
 const pending=await page.evaluate(()=>window.__ROOM110.capture());assert.equal(pending.ready,false);assert.equal(pending.world,base.world,'Loading flashed a fallback tent');
 await page.waitForFunction(()=>window.__ROOM110.capture().ready);await page.unroute('**/hybrid-v111/vent-2.webp');
 const lampHashes=new Map(),ventHashes=new Map(),worldHashes=new Set();
-for(let light=1;light<=5;light++)for(let vent=1;vent<=5;vent++){
-await page.evaluate(levels=>window.__GFROOMEQ.setLevels(levels),{light,vent});await page.waitForFunction(()=>window.__ROOM110.capture().ready);const s=await page.evaluate(()=>window.__ROOM110.capture());
-assert.equal(s.source,'assets/growroom/hybrid-v111/vent-'+vent+'.webp','Background must depend only on ventilation');assert.equal(s.state,base.state,'Demo mutated game state');
+for(let variant=0;variant<2;variant++)for(let light=1;light<=5;light++)for(let vent=1;vent<=5;vent++){
+await page.evaluate(levels=>window.__GFROOMEQ.setLevels(levels),{light,vent,ventVariant:variant});await page.waitForFunction(()=>window.__ROOM110.capture().ready);const s=await page.evaluate(()=>window.__ROOM110.capture());
+assert.equal(s.source,variant?'assets/growroom/hybrid-v112/vent-'+vent+'-b.webp':'assets/growroom/hybrid-v111/vent-'+vent+'.webp','Background must depend only on ventilation');assert.equal(s.state,base.state,'Demo mutated game state');
 if(lampHashes.has(light))assert.equal(s.layers.light,lampHashes.get(light),'Vent changed lamp or light cone');else lampHashes.set(light,s.layers.light);
-if(ventHashes.has(vent))assert.equal(s.layers.vent,ventHashes.get(vent),'Lamp changed ventilation');else ventHashes.set(vent,s.layers.vent);
-worldHashes.add(s.world);await page.screenshot({path:path.join(out,`l${light}-v${vent}.png`)});
+const ventKey=variant+':'+vent;if(ventHashes.has(ventKey))assert.equal(s.layers.vent,ventHashes.get(ventKey),'Lamp changed ventilation');else ventHashes.set(ventKey,s.layers.vent);
+worldHashes.add(s.world);await page.screenshot({path:path.join(out,`l${light}-v${vent}-${variant?'b':'a'}.png`)});
 }
-assert.equal(new Set(lampHashes.values()).size,5);assert.equal(new Set(ventHashes.values()).size,5);assert.equal(worldHashes.size,25);
+assert.equal(new Set(lampHashes.values()).size,5);assert.equal(new Set(ventHashes.values()).size,10);assert.equal(worldHashes.size,50);
 // Exercise real demo controls rather than only the debug setter.
-await page.evaluate(()=>window.__GFROOMEQ.setLevels({light:2,vent:2}));await page.waitForFunction(()=>window.__ROOM110.capture().ready);let before=await page.evaluate(()=>window.__ROOM110.capture());
+await page.evaluate(()=>window.__GFROOMEQ.setLevels({light:2,vent:2,ventVariant:0}));await page.waitForFunction(()=>window.__ROOM110.capture().ready);let before=await page.evaluate(()=>window.__ROOM110.capture());
 await page.click('#upgradeDemoControls [data-demo-upgrade="vent"]');await page.waitForFunction(()=>window.__ROOM110.capture().ready);let after=await page.evaluate(()=>window.__ROOM110.capture());assert.equal(before.layers.light,after.layers.light);assert.notEqual(before.layers.vent,after.layers.vent);
 before=after;await page.click('#upgradeDemoControls [data-demo-upgrade="light"]');after=await page.evaluate(()=>window.__ROOM110.capture());assert.equal(before.layers.vent,after.layers.vent);assert.notEqual(before.layers.light,after.layers.light);
+// All ten ventilation designs are reachable through the actual V control.
+await page.evaluate(()=>window.__GFROOMEQ.setLevels({light:4,vent:1,ventVariant:0}));
+const reached=new Set();
+for(let i=0;i<10;i++){
+ await page.waitForFunction(()=>window.__ROOM110.capture().ready);
+ const s=await page.evaluate(()=>window.__ROOM110.capture());reached.add(s.source);
+ assert.equal(s.layers.light,lampHashes.get(4),'Variant cycling changed lamp');assert.equal(s.state,base.state);
+ await page.click('#upgradeDemoControls [data-demo-upgrade="vent"]');
+}
+assert.equal(reached.size,10);assert.equal(await page.evaluate(()=>window.__GFROOMEQ.ventVariant()),0);
+// Safari's lack of a canvas filter must not change the light at all.
+for(let level=1;level<=5;level++){
+ await page.evaluate(level=>window.__GFROOMEQ.setLevels({light:level}),level);
+ const result=await page.evaluate(()=>window.__ROOM110.beamCheck());
+ assert.deepEqual(result.normal,result.filterless,'Light depends on unsupported Safari canvas blur');
+ assert(result.top<result.lampBottom,'Light starts below the lamp');
+ assert(result.center>0&&result.edge>0&&result.edge<result.center,'Light edges are not feathered');
+}
 for(const width of [320,370,393,430]){await page.setViewportSize({width,height:Math.round(width*852/393)});await page.waitForTimeout(350);await page.evaluate(()=>window.__GFROOMEQ.setLevels({light:5,vent:5}));const s=await page.evaluate(()=>window.__ROOM110.capture());for(const p of s.placements.filter(p=>['light','vent'].includes(p.id))){assert(p.x>=0&&p.x+p.width<=width,'Hardware cropped');assert(p.y>=0,'Hardware above viewport');}await page.screenshot({path:path.join(out,`mobile-${width}.png`)});}
 assert(!requests.some(u=>/growroom-l\d-v\d/.test(u)),'Legacy combination backgrounds requested');assert.deepEqual(errors,[]);
-console.log('V110 passed: 25 unique combinations, five integrated ventilation backgrounds, pixel-identical independent lamps and light effects, real demo controls, unchanged game state, four mobile sizes.');
+console.log('V112 passed: 50 unique combinations, ten integrated ventilation backgrounds, Safari-compatible feathered light, pixel-identical independent lamps and light effects, real demo controls, unchanged game state, four mobile sizes.');
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exit(1)});

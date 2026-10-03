@@ -18,25 +18,46 @@
     return {id,level:n,surface:'overhead',x:anchorX-width/2,
       y:anchorY-height,width,height,anchorX,anchorY,scale,view};
   };
+  // Precomputed alpha gives the same feathered light on iOS Safari, where
+  // CanvasRenderingContext2D.filter cannot be relied on for blur.
+  const beamCache=new Map();
+  function beamGeometry(p){
+    const v=p.view;
+    return {cx:p.x+p.width*.51,top:p.y+p.height*.46,
+      length:v.height*.61,sigma:p.width*.23,spread:v.width*(.155+p.level*.008)};
+  }
+  function beamTexture(p){
+    const b=beamGeometry(p),key=[p.level,p.width,p.height,p.view.width,p.view.height].map(n=>n.toFixed(2)).join(':');
+    if(beamCache.has(key))return beamCache.get(key);
+    const width=(b.sigma+b.spread)*7.2,height=b.length;
+    const canvas=document.createElement('canvas');
+    const scale=Math.min(1,768/height,768/width);
+    canvas.width=Math.max(2,Math.ceil(width*scale));canvas.height=Math.max(2,Math.ceil(height*scale));
+    const g=canvas.getContext('2d'),pixels=g.createImageData(canvas.width,canvas.height);
+    for(let y=0;y<canvas.height;y++){
+      const dy=y/canvas.height*height,t=dy/height;
+      const sigma=b.sigma+b.spread*t;
+      // Rise underneath the LED plane, then dissolve gradually toward the floor.
+      const alpha=(.23+p.level*.012)*(1-Math.exp(-dy/Math.max(1,p.height*.09)))*Math.pow(1-t,1.7);
+      for(let x=0;x<canvas.width;x++){
+        const dx=(x/canvas.width-.5)*width,offset=(y*canvas.width+x)*4;
+        pixels.data[offset]=255;pixels.data[offset+1]=241;pixels.data[offset+2]=193;
+        pixels.data[offset+3]=Math.round(255*alpha*Math.exp(-.5*dx*dx/(sigma*sigma)));
+      }
+    }
+    g.putImageData(pixels,0,0);
+    const texture={canvas,width,height};
+    if(beamCache.size>=20)beamCache.delete(beamCache.keys().next().value);
+    beamCache.set(key,texture);return texture;
+  }
   function drawLight(g,p){
     if(!p)return;
-    const v=p.view,cx=p.anchorX,sy=p.anchorY-p.height*.13;
-    const length=v.height*.52,half=v.width*(.19+p.level*.012);
-    g.save();
-    // A feathered cone and floor reflection belong only to the lamp level.
-    const glow=g.createLinearGradient(0,sy,0,sy+length);
-    const strength=.24+p.level*.020;
-    glow.addColorStop(0,'rgba(255,239,179,'+strength+')');
-    glow.addColorStop(.35,'rgba(249,240,187,'+(strength*.75)+')');
-    glow.addColorStop(1,'rgba(242,238,195,0)');
-    g.fillStyle=glow;g.filter='blur('+Math.max(8,v.width*.028)+'px)';
-    g.beginPath();g.moveTo(cx-p.width*.27,sy);g.lineTo(cx+p.width*.27,sy);
-    g.lineTo(cx+half,sy+length);g.quadraticCurveTo(cx,sy+length*1.07,cx-half,sy+length);g.closePath();g.fill();
-    g.filter='none';
+    const v=p.view,b=beamGeometry(p),texture=beamTexture(p);
+    g.save();g.drawImage(texture.canvas,b.cx-texture.width/2,b.top,texture.width,texture.height);
     const floorY=v.y+v.height*.78,rx=v.width*(.13+p.level*.008),ry=v.height*.024;
-    g.translate(cx,floorY);g.scale(1,ry/rx);
+    g.translate(b.cx,floorY);g.scale(1,ry/rx);
     const pool=g.createRadialGradient(0,0,0,0,0,rx);
-    pool.addColorStop(0,'rgba(255,243,187,'+(strength*.6)+')');pool.addColorStop(1,'rgba(255,243,187,0)');
+    pool.addColorStop(0,'rgba(255,243,187,'+(.12+p.level*.012)+')');pool.addColorStop(1,'rgba(255,243,187,0)');
     g.fillStyle=pool;g.beginPath();g.arc(0,0,rx,0,Math.PI*2);g.fill();g.restore();
   }
   function supports(g,p){
@@ -60,5 +81,5 @@
     g.shadowOffsetY=3*p.view.scale;g.filter=p.id==='light'?'brightness(.96) saturate(.90)':'brightness(.90) saturate(.75)';
     g.drawImage(img,seg.x,seg.y,seg.w,seg.h,p.x,p.y,p.width,p.height);g.restore();
   }
-  root.GanjariumRoomHardware={drawLight,draw};
+  root.GanjariumRoomHardware={drawLight,draw,beamGeometry};
 })(typeof window==='undefined'?globalThis:window);
