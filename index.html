@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V99 Daily Rhythm</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V100 Harvest Glass</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3096,7 +3096,22 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 @media(max-height:760px){
 .mobile-game-ui .tool-rail{top:calc(var(--safe-top) + 22vh)!important}
 }
-</style></head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
+</style>
+<style id="v100HarvestGlass">
+.mobile-game-ui .virtual-jar{width:216px;height:250px;filter:drop-shadow(0 14px 15px rgba(0,0,0,.35))}
+.mobile-game-ui .jar-lid{left:27px;right:27px;height:32px;top:2px;border:1px solid #b5c4bb;border-radius:10px 10px 5px 5px;background:repeating-linear-gradient(90deg,transparent 0 5px,rgba(7,13,11,.5) 5px 7px),linear-gradient(180deg,#a9b6ad 0%,#61716a 15%,#273932 52%,#56655e 85%,#111e18 100%);box-shadow:inset 0 2px 2px rgba(255,255,255,.6),inset 0 -2px 2px #15251b,0 3px 4px #08130d}
+.mobile-game-ui .jar-glass{left:17px;right:17px;top:31px;border:2px solid rgba(197,231,219,.62);border-radius:24px 24px 34px 34px;background:linear-gradient(90deg,rgba(207,240,230,.17),rgba(161,214,194,.035) 17%,rgba(4,17,11,.10) 68%,rgba(195,233,219,.13));box-shadow:inset 3px 0 3px rgba(235,255,244,.23),inset -4px 0 5px rgba(214,245,231,.17),inset 0 -7px 3px rgba(221,248,233,.23),inset 0 -11px 8px rgba(0,9,4,.5)}
+.mobile-game-ui .jar-glass:before{content:"";position:absolute;z-index:3;inset:8px 8px 9px;border-radius:20px 20px 25px 25px;background:linear-gradient(102deg,transparent 2%,rgba(255,255,255,.42) 4%,rgba(239,255,248,.17) 8%,transparent 15%,transparent 79%,rgba(225,251,239,.20) 89%,transparent 95%);pointer-events:none}
+.mobile-game-ui .jar-glass:after{content:"";position:absolute;z-index:3;left:18%;right:18%;bottom:6px;height:5px;border-radius:50%;background:rgba(209,244,225,.20);box-shadow:0 -2px 5px rgba(227,255,237,.13);pointer-events:none}
+.mobile-game-ui .jar-buds{inset:21px 5px 12px!important;z-index:1}
+.mobile-game-ui .jar-label{z-index:4;left:20px;right:20px;bottom:19px;border-color:rgba(194,214,155,.6);border-radius:7px;background:linear-gradient(120deg,#1e3327,#0e2218);box-shadow:0 2px 4px rgba(0,0,0,.45),inset 0 1px rgba(244,255,225,.12)}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art{overflow:visible!important;border:2px solid rgba(185,220,205,.58)!important;border-top:0!important;border-radius:13px 13px 22px 22px!important;background:linear-gradient(90deg,rgba(211,249,232,.14),rgba(191,228,207,.02) 20%,rgba(0,14,7,.12) 70%,rgba(210,238,223,.12))!important;box-shadow:inset 3px 0 3px rgba(241,255,247,.17),inset -3px 0 4px rgba(233,255,240,.16),inset 0 -5px 2px rgba(212,240,222,.24),0 7px 9px rgba(0,0,0,.32)!important}
+.mobile-game-ui .collection-jar-art:before{left:-2px!important;right:-2px!important;top:-4px!important;height:13px!important;border-color:#a0b0a5!important;border-radius:6px 6px 3px 3px!important;background:repeating-linear-gradient(90deg,transparent 0 4px,rgba(4,15,8,.45) 4px 5px),linear-gradient(#b0bbb1,#52665a 30%,#25392e 70%,#7e9083)!important;box-shadow:inset 0 1px rgba(255,255,255,.6),0 2px 2px #07120b!important}
+.mobile-game-ui .collection-jar-art:after{inset:13px 4px 5px!important;background:linear-gradient(101deg,transparent 1%,rgba(243,255,249,.35) 4%,rgba(233,255,242,.15) 9%,transparent 18%,transparent 76%,rgba(223,250,234,.19) 89%,transparent 96%)!important;border:0!important;border-radius:9px 9px 17px 17px!important;box-shadow:inset 0 -3px 1px rgba(222,247,231,.16)!important}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art canvas[data-jar-buds]{left:4px!important;top:14px!important;width:calc(100% - 8px)!important;height:calc(100% - 19px)!important;filter:none!important}
+.mobile-game-ui .collection-item-card.jar .collection-jar-art i{z-index:4;bottom:10px!important;height:9px;background:linear-gradient(#274330,#10251a);border-color:rgba(201,225,174,.5);box-shadow:0 1px 3px #06140a}
+</style>
+</head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><a class="reload-top-btn" id="reloadPageButton" href="./" aria-label="Seite neu laden" title="Seite neu laden">↻</a><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
@@ -3431,10 +3446,10 @@ function jarBudSeed(j){
 /* Shared Flower Lab preview.
    This deliberately calls drawBud(), the same renderer used by P.buds in render().
    Pack, Vault, Collection and the live plant therefore cannot drift into different bud styles. */
-function renderCoreBudMaster(seed){
-  const key=[seed.seed,seed.genetics,seed.phenotype,seed.rarity,JSON.stringify(seed.traits||{})].join('|');
+function renderCoreBudMaster(seed,compact=false){
+  const key=[seed.seed,seed.genetics,seed.phenotype,seed.rarity,JSON.stringify(seed.traits||{}),compact].join('|');
   if(budCoreCache.has(key))return budCoreCache.get(key);
-  const size=768,base=196,renderScale=size/base,c=document.createElement('canvas');c.width=size;c.height=size;
+  const size=1536,base=196,renderScale=size/base,c=document.createElement('canvas');c.width=size;c.height=size;
   const pctx=c.getContext('2d'),profile=seedBudVisualProfile(seed);
   pctx.clearRect(0,0,size,size);
   const previewQueue=[];
@@ -3454,12 +3469,19 @@ function renderCoreBudMaster(seed){
     maturity:.96,stage:'mature',terminal:true
   },{
     ctx:pctx,proj:previewProj,queue:previewQueue,quality,
-    genetics:GENETICS[seed.genetics]||GENETICS.dream,interactionLOD:false
+    genetics:GENETICS[seed.genetics]||GENETICS.dream,interactionLOD:false,compactHarvest:compact
   });
   previewQueue.sort((a,b)=>a.z-b.z).forEach(o=>o.draw());
-  budCoreCache.set(key,c);
+  // Trim transparent padding so every consumer fits the actual flower, not the old square.
+  const pixels=pctx.getImageData(0,0,size,size).data;
+  let left=size,top=size,right=0,bottom=0;
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(pixels[(y*size+x)*4+3]>8){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
+  const pad=8;left=Math.max(0,left-pad);top=Math.max(0,top-pad);right=Math.min(size-1,right+pad);bottom=Math.min(size-1,bottom+pad);
+  const trimmed=document.createElement('canvas');trimmed.width=right-left+1;trimmed.height=bottom-top+1;
+  trimmed.getContext('2d').drawImage(c,left,top,trimmed.width,trimmed.height,0,0,trimmed.width,trimmed.height);
+  budCoreCache.set(key,trimmed);
   if(budCoreCache.size>40)budCoreCache.delete(budCoreCache.keys().next().value);
-  return c;
+  return trimmed;
 }
 function drawSeedBudPreview(canvas,seed){
   if(!canvas||!seed)return;
@@ -3469,54 +3491,43 @@ function drawSeedBudPreview(canvas,seed){
   const cssH=Math.max(1,Math.round(rect.height||canvas.clientHeight||Number(canvas.dataset.h)||82));
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const c=canvas.getContext('2d');c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
-  // Pack reveal and collection cards are macro crops: the flower deliberately
-  // exceeds the preview viewport so the card itself becomes the crop mask.
-  const macro=canvas.classList.contains('pack-bud-preview')||canvas.classList.contains('seed-bud-thumb');
-  const zoom=macro?2.72:1.16;
-  const scale=Math.max(cssW/master.width,cssH/master.height)*zoom;
+  const scale=Math.min(cssW/master.width,cssH/master.height)*.92;
   const w=master.width*scale,h=master.height*scale;
-  const focusY=macro?.54:.50;
-  c.drawImage(master,(cssW-w)/2,cssH*focusY-h*.50,w,h);
+  c.drawImage(master,(cssW-w)/2,(cssH-h)/2,w,h);
 }
 function drawJarBudPile(canvas,seed){
   if(!canvas||!seed)return;
-  const master=renderCoreBudMaster(seed),dpr=Math.min(2,window.devicePixelRatio||1);
-  const cssW=Number(canvas.dataset.w||canvas.clientWidth||92),cssH=Number(canvas.dataset.h||canvas.clientHeight||82);
+  const master=renderCoreBudMaster(seed,true),dpr=Math.min(3,window.devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect(),cssW=Math.max(1,rect.width||Number(canvas.dataset.w)||92),cssH=Math.max(1,rect.height||Number(canvas.dataset.h)||82);
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,cssW,cssH);
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   const salt=Number(canvas.dataset.jarSalt||0),R=rng(seedHash((Number(seed.seed)||58317)^salt,0x6a6172));
-  const inCollection=!!canvas.closest?.('.collection-item-card.jar');
-  // Every jar looks genuinely packed. Harvest quality only controls how high the pile reaches.
-  // Collection jars use fewer, much larger flowers so the actual bud morphology is readable on mobile.
-  const quality=clamp(Number(canvas.dataset.jarQuality||70)/100,.35,1),grams=Math.max(10,Number(canvas.dataset.jarGrams||55));
+  const quality=clamp(Number(canvas.dataset.jarQuality||70)/100,.35,1);
+  const grams=Math.max(10,Number(canvas.dataset.jarGrams||55));
   const fill=clamp(Number(canvas.dataset.jarFill||(.50+Math.min(1,grams/100)*.32+quality*.13)),.56,.98);
-  const requestedCount=Math.max(12,Number(canvas.dataset.jarCount||Math.round(12+Math.min(1,grams/100)*18+quality*8)));
-  const count=inCollection?Math.min(17,Math.max(9,Math.round(requestedCount*.48))):requestedCount;
-  const left=cssW*.11,right=cssW*.89,bottom=cssH*.92;
-  const pileTop=bottom-cssH*(.72*fill);
-  const usableH=Math.max(20,bottom-pileTop),pieces=[];
-  for(let i=0;i<count;i++){
-    const depth=R();
-    // Layered packing: lower rows are wider, upper rows form an irregular natural surface.
-    const rowT=(i+R()*.72)/count;
-    const y=bottom-rowT*usableH;
-    const topness=(bottom-y)/usableH;
-    const sideInset=cssW*(.01+topness*.025);
-    const x=(left+sideInset)+R()*Math.max(4,(right-left)-sideInset*2);
-    const baseScale=(inCollection?(.205+quality*.055+R()*.070):(.112+quality*.030+R()*.052))*(cssW/86)*(1-depth*.06);
-    const w=master.width*baseScale,h=master.height*baseScale*(.80+R()*.17);
-    const rot=(R()-.5)*1.45;
-    pieces.push({depth,w,h,x,y,rot});
+  const requestedCount=Math.max(12,Number(canvas.dataset.jarCount||24));
+  const rows=Math.max(3,Math.min(5,Math.round(requestedCount/7))),cols=3;
+  const left=cssW*.08,right=cssW*.92,bottom=cssH*.94,top=bottom-cssH*.76*fill;
+  const rowStep=(bottom-top)/(rows+.25),pieces=[];
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
+    const rot=(R()-.5)*1.65,w=(right-left)/cols*(1.17+R()*.22),h=rowStep*(2.60+R()*.30);
+    const scale=Math.min(w/master.width,h/master.height);
+    const bw=master.width*scale,bh=master.height*scale;
+    const extent=(Math.abs(Math.sin(rot))*bw+Math.abs(Math.cos(rot))*bh)/2;
+    const x=left+(col+.5)*(right-left)/cols+(R()-.5)*cssW*.045+(row%2?.035:-.035)*cssW;
+    const y=bottom-row*rowStep-extent;
+    pieces.push({x,y,w:bw,h:bh,rot,row});
   }
-  pieces.sort((a,b)=>a.depth-b.depth);
-  c.save();
-  // Keep all flowers inside the visible body of the jar.
-  c.beginPath();c.roundRect(cssW*.10,cssH*.12,cssW*.80,cssH*.80,cssW*.12);c.clip();
+  c.save();c.beginPath();c.roundRect(left,cssH*.04,right-left,bottom-cssH*.04,cssW*.13);c.clip();
+  const shade=c.createLinearGradient(0,top,0,bottom);shade.addColorStop(0,'rgba(13,27,12,0)');shade.addColorStop(1,'rgba(8,18,9,.38)');
+  c.fillStyle=shade;c.fillRect(left,top,right-left,bottom-top);
+  // Paint upper/back rows first, then foreground flowers resting on the base.
+  pieces.sort((a,b)=>b.row-a.row);
   for(const p of pieces){
     c.save();c.translate(p.x,p.y);c.rotate(p.rot);
-    c.globalAlpha=.91+p.depth*.09;
-    c.drawImage(master,-p.w/2,-p.h/2,p.w,p.h);
-    c.restore();
+    c.filter='brightness('+(1-p.row*.045)+')';
+    c.drawImage(master,-p.w/2,-p.h/2,p.w,p.h);c.restore();
   }
   c.restore();
 }
@@ -4289,8 +4300,8 @@ function drawHarvestBud(result){
   glow.addColorStop(0,'rgba(132,255,94,.18)');glow.addColorStop(1,'rgba(0,0,0,0)');
   x.fillStyle=glow;x.fillRect(0,0,cssW,cssH);
   x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
-  const zoom=2.55,scale=Math.max(cssW/master.width,cssH/master.height)*zoom,w=master.width*scale,h=master.height*scale;
-  x.drawImage(master,(cssW-w)/2,cssH*.58-h*.50,w,h);
+  const scale=Math.min(cssW*.86/master.width,cssH*.88/master.height),w=master.width*scale,h=master.height*scale;
+  x.drawImage(master,(cssW-w)/2,(cssH-h)/2,w,h);
 }
 function populateHarvestResult(result){
   document.getElementById('harvestBudTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);document.getElementById('harvestJarTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);
@@ -6184,7 +6195,7 @@ function drawBud(b,renderEnv=null){
     frost:clamp(frostFrac*(terminal?1.00:.86),0,1),
     pistils:clamp((stageName==='stacking'?.80:stageName==='swelling'?.66:.50)*(.90+.10*ql.ripeness),.38,.86)
   };
-  const matureLenWorld=b.r*(terminal?(1.18+.44*m):(.78+.26*m));
+  const matureLenWorld=b.r*(terminal?(1.18+.44*m):(.78+.26*m))*(renderEnv?.compactHarvest?.45:1);
   const mp0=dproj(add(b.p,mul(axis,-matureLenWorld*.10)));
   const mp1=dproj(add(b.p,mul(axis,matureLenWorld*.92)));
   const mdx=mp1.x-mp0.x,mdy=mp1.y-mp0.y,mdl=Math.hypot(mdx,mdy)||1;
@@ -6285,6 +6296,17 @@ function drawBud(b,renderEnv=null){
   }
 
   dqueue.push({z:mz+.14,draw(){
+    // Continuous calyx core: shrinking terminal sites must remain attached.
+    // Follow the same asymmetric centers as the detailed lobes, all the way to the cap.
+    const violetCore=dgenetics.id==='violet'&&ql.color>.35;
+    const core=dctx.createLinearGradient(mp0.x+mpx*maxR,mp0.y+mpy*maxR,mp0.x-mpx*maxR,mp0.y-mpy*maxR);
+    core.addColorStop(0,violetCore?'#514057':'#344a2c');
+    core.addColorStop(.45,violetCore?'#79647f':'#708353');
+    core.addColorStop(1,violetCore?'#493e50':'#3d512e');
+    dctx.fillStyle=core;dctx.beginPath();
+    sites.forEach((s,i)=>{const w=Math.max(maxR*.032,s.radius*.70);const x=s.cx+mpx*w,y=s.cy+mpy*w;if(i===0)dctx.moveTo(x,y);else dctx.lineTo(x,y);});
+    for(let i=sites.length-1;i>=0;i--){const s=sites[i],w=Math.max(maxR*.032,s.radius*.70);dctx.lineTo(s.cx-mpx*w,s.cy-mpy*w);}
+    dctx.closePath();dctx.fill();
     // Hidden central stem. Only a hint remains in airier lateral flowers.
     if(!terminal&&FL6.separation>.30){
       dctx.strokeStyle='rgba(83,116,64,.34)';dctx.lineWidth=Math.max(.7,maxR*.10);dctx.lineCap='round';dctx.beginPath();dctx.moveTo(mp0.x,mp0.y);dctx.lineTo(mp1.x,mp1.y);dctx.stroke();
@@ -6369,8 +6391,8 @@ function drawBud(b,renderEnv=null){
     if(FL6.foxtail>.04&&terminal){
       const top=sites[sites.length-1],n=Math.round(2+FL6.foxtail*6);
       for(let i=0;i<n;i++){
-        const cx=top.cx+mux*i*maxR*.13+mpx*(R()-.5)*maxR*.10;
-        const cy=top.cy+muy*i*maxR*.13+mpy*(R()-.5)*maxR*.10;
+        const cx=top.cx+mux*i*maxR*.085+mpx*(R()-.5)*maxR*.025;
+        const cy=top.cy+muy*i*maxR*.085+mpy*(R()-.5)*maxR*.025;
         const L=maxR*(.16+.07*R());
         fl6Drop(cx,cy,L,L*.30,Math.atan2(muy,mux)+(R()-.5)*.5,'#708851','#91a66b',.96);
         for(let p=0;p<2+Math.round(FL6.pistils*2);p++)fl6Pistil(cx,cy,Math.atan2(muy,mux)+(R()-.5)*.7,L*(.70+.40*R()),(R()-.5)*.9,R()<brownFrac,.50);
