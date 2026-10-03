@@ -4,7 +4,7 @@ on:
     paths:
       - 'index.html'
       - 'assets/room-hardware.js'
-      - 'assets/growroom/independent-v110/**'
+      - 'assets/growroom/hybrid-v111/**'
       - 'assets/equipment/store-v105/**'
       - 'tests/v110-independent-hardware-qa.cjs'
       - '.github/workflows/v110-independent-hardware-qa.yml'

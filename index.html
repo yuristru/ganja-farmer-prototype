@@ -3314,7 +3314,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 <div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devFlowerSheet">100 Blüten vergleichen</button><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+50.000 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script src="assets/cultivars.js?v=102"></script>
-<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script src="assets/equipment/store-v105/manifest.js?v=105"></script><script src="assets/room-hardware.js?v=110"></script><script src="assets/store-equipment.js?v=105"></script><script>
+<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script src="assets/equipment/store-v105/manifest.js?v=105"></script><script src="assets/room-hardware.js?v=111"></script><script src="assets/store-equipment.js?v=105"></script><script>
 (()=>{
 const CFG={"stemSway":13.5,"stemFine":4.9,"stemWidth":8.0,"branchLen":1.02,"branchSpread":1.04,"branchUp":0.42,"branchIrreg":0.34,"leafLen":68,"leafWidth":6.4,"leafUp":0.79,"leafScale":1.04,"lowerBoost":1.26,"nodeBulge":1.28,"branchTaper":0.61,"petiole":13.6,"internodeVar":0.18,"sec":0.68};
 const LEAF={"length":82,"width":5.4,"youngSpread":0.15,"matureSpread":1.4,"youngLift":1.21,"matureLift":0.46,"serration":0.103,"sideProjection":0.83,"individualTwist":0.18,"tipCurl":3.6};
@@ -4637,7 +4637,12 @@ const GROWROOM_BACKGROUND_BASE='assets/growroom/backgrounds/';
 const GROWROOM_VISUAL_TIERS=5;
 const growRoomBackgroundImages=new Map();
 let growRoomMatrixPreloadStarted=false;
-function preloadGrowRoomBackgroundMatrix(){} // One permanent tent, no combination preloading.
+function preloadGrowRoomBackgroundMatrix(){} // Ventilation is integrated into five tent images; lamps stay independent.
+let lastReadyGrowRoomBackground=null;
+function readyGrowRoomBackgroundImage(){
+  const selected=ensureGrowRoomBackgroundImage();
+  return selected.loaded?selected:lastReadyGrowRoomBackground||selected;
+}
 function growRoomVisualTier(level){
   return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Number(level)||1));
 }
@@ -4648,7 +4653,7 @@ function growRoomBackgroundLevels(){
   };
 }
 function growRoomBackgroundPath(){
-  return 'assets/growroom/independent-v110/tent.webp';
+  return 'assets/growroom/hybrid-v111/vent-'+growRoomVisualTier(visualUpgradeLevel('vent'))+'.webp';
 }
 function ensureGrowRoomBackgroundImage(){
   const src=growRoomBackgroundPath();
@@ -4657,7 +4662,7 @@ function ensureGrowRoomBackgroundImage(){
   const img=new Image();
   rec={img,loaded:false,failed:false};
   growRoomBackgroundImages.set(src,rec);
-  img.onload=()=>{rec.loaded=true;worldBgCanvas=null;syncEquipment2D();requestRender();preloadGrowRoomBackgroundMatrix();};
+  img.onload=()=>{rec.loaded=true;if(src===growRoomBackgroundPath())lastReadyGrowRoomBackground=rec;worldBgCanvas=null;syncEquipment2D();requestRender();preloadGrowRoomBackgroundMatrix();};
   img.onerror=()=>{rec.failed=true;worldBgCanvas=null;syncEquipment2D();requestRender();};
   img.src=src;
   return rec;
@@ -4727,7 +4732,7 @@ function renderRoomEquipmentCanvas(canvas){
 }
 function renderRoomEquipmentCanvases(root=document){root.querySelectorAll('canvas[data-eq-strip]').forEach(renderRoomEquipmentCanvas);}
 function roomEquipmentPlacements(w=W,h=H){
-  const rec=ensureGrowRoomBackgroundImage();if(!rec?.loaded&&!rec?.failed)return [];
+  const rec=readyGrowRoomBackgroundImage();if(!rec?.loaded&&!rec?.failed)return [];
   return window.GanjariumRoomLayout.ids.flatMap(id=>{
     const strip=roomEquipmentLoaded.get(id);if(!strip)return [];
     const level=visualUpgradeLevel(id),seg=strip.segments[level-1];
@@ -4765,17 +4770,18 @@ function syncEquipment2D(){
   if(demoVisualState.enabled)layer.querySelectorAll('[data-demo-upgrade]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();cycleDemoVisual(el.dataset.demoUpgrade);}));
   ui?.classList.add('baked-growroom-ready');ui?.classList.remove('hybrid-equipment-ready');updateUpgradeDemoUI();requestRender();return true;
 }
+const roomDemoUpgradeIds=[...window.GanjariumRoomLayout.ids,"vent"];
 window.__GFROOMEQ={
-  setLevel:level=>window.__GFROOMEQ.setLevels(Object.fromEntries(window.GanjariumRoomLayout.ids.map(id=>[id,level]))),
+  setLevel:level=>window.__GFROOMEQ.setLevels(Object.fromEntries(roomDemoUpgradeIds.map(id=>[id,level]))),
   setLevels:(levels={})=>{
     demoVisualState.enabled=true;
-    for(const id of window.GanjariumRoomLayout.ids){
+    for(const id of roomDemoUpgradeIds){
       if(levels[id]!==undefined)demoVisualState.levels[id]=Math.max(1,Math.min(10,Number(levels[id])||1));
       else if(!Number.isFinite(Number(demoVisualState.levels[id])))demoVisualState.levels[id]=upgradeLevel(gameState,id);
     }
     syncEquipment2D();return window.__GFROOMEQ.snapshot();
   },
-  snapshot:()=>Object.fromEntries(window.GanjariumRoomLayout.ids.map(id=>[id,visualUpgradeLevel(id)])),
+  snapshot:()=>Object.fromEntries(roomDemoUpgradeIds.map(id=>[id,visualUpgradeLevel(id)])),
   sources:()=>({...ROOM_EQUIPMENT_ASSETS}),
   frame:()=>({width:W,height:H,floorLimit:roomSceneFloorLimit(),renderedFloorLimit:worldBgFloorLimit}),
   placements:()=>roomEquipmentPlacements().map(({view,...p})=>p),
@@ -6851,7 +6857,7 @@ function buildWorldBackgroundFallback(){
 }
 function buildWorldBackground(){
   if(!W||!H)return;
-  const rec=ensureGrowRoomBackgroundImage();
+  const rec=readyGrowRoomBackgroundImage();
   if(rec?.loaded&&rec.img?.naturalWidth){
     const c=document.createElement('canvas');
     c.width=Math.max(1,Math.round(W*DPR));c.height=Math.max(1,Math.round(H*DPR));

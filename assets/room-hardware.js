@@ -1,21 +1,21 @@
-/* Independent room hardware. Every placement is anchored in the tent camera. */
+/* Independent lamp above integrated ventilation backgrounds. */
 (function(root){
   'use strict';
   const layout=root.GanjariumRoomLayout,originalPlacement=layout.placement;
   const art=root.GanjariumStoreArtManifest;
-  for(const id of ['light','vent']){
+  for(const id of ['light']){
     root.GanjariumRoomArt[id]=art[id];
     if(!layout.ids.includes(id))layout.ids.push(id);
   }
   layout.placement=function(id,level,segment,iw,ih,w,h,floorLimit){
-    if(id!=='light'&&id!=='vent')return originalPlacement(id,level,segment,iw,ih,w,h,floorLimit);
+    if(id!=='light')return originalPlacement(id,level,segment,iw,ih,w,h,floorLimit);
     const view=layout.cover(iw,ih,w,h,floorLimit),n=Math.max(1,Math.min(5,Number(level)||1));
-    const lamp=id==='light',maxW=lamp?[.30,.32,.34,.36,.38][n-1]:[.15,.18,.19,.20,.22][n-1];
-    const maxH=lamp?.10:.14;
+    const maxW=[.30,.32,.34,.36,.38][n-1];
+    const maxH=.10;
     const scale=Math.min(iw*maxW/segment.w,ih*maxH/segment.h)*view.scale;
     const width=segment.w*scale,height=segment.h*scale;
-    const anchorX=view.x+view.width*(lamp?.50:.90),anchorY=view.y+view.height*(lamp?.20:.155);
-    return {id,level:n,surface:'overhead',x:lamp?anchorX-width/2:anchorX-width,
+    const anchorX=view.x+view.width*.50,anchorY=view.y+view.height*.20;
+    return {id,level:n,surface:'overhead',x:anchorX-width/2,
       y:anchorY-height,width,height,anchorX,anchorY,scale,view};
   };
   function drawLight(g,p){
@@ -42,28 +42,17 @@
   function supports(g,p){
     const v=p.view;
     if(p.id==='light'){
-      const railY=v.y+v.height*.078;
+      // The lamp hangs in the tent's middle, from the unseen ceiling above
+      // the camera. Never attach it to the rear wall crossbar.
+      const railY=Math.min(0,v.y)-20;
       g.save();g.strokeStyle='#57645d';g.lineWidth=Math.max(1,v.width*.0025);
-      for(const side of [-1,1]){
-        const x=p.anchorX+side*p.width*.26;
-        g.beginPath();g.moveTo(x,railY);g.lineTo(x,p.y+p.height*.16);g.stroke();
-        g.strokeStyle='#a4a79b';g.lineWidth=Math.max(.7,v.width*.0015);
-        g.beginPath();g.arc(x,railY+3,3,0,Math.PI*1.7);g.stroke();g.strokeStyle='#57645d';
+      const anchors=[[[.25,0],[.80,0]],[[.22,.04],[.78,0]],[[.15,.12],[.77,0]],[[.25,.12],[.74,0]],[[.22,.17],[.77,0]]][p.level-1];
+      for(const [ax,ay] of anchors){
+        const x=p.x+p.width*ax;
+        g.beginPath();g.moveTo(x,railY);g.lineTo(x,p.y+p.height*ay);g.stroke();
       }
       g.restore();return;
     }
-    if(p.level===1)return;
-    // Dark corrugated duct joins the fan to the ceiling behind its own asset.
-    const x=p.x+p.width*.70,y=p.y+p.height*.34,top=v.y+v.height*.086;
-    const radius=Math.max(8,p.width*.13);
-    g.save();g.lineCap='round';g.strokeStyle='#071310';g.lineWidth=radius*2;
-    g.beginPath();g.moveTo(x,y);g.bezierCurveTo(x,y-radius*2,x-radius*2,top,x-radius*2,top);g.stroke();
-    g.strokeStyle='#43504a';g.lineWidth=1;
-    for(let i=0;i<9;i++){
-      const t=i/8,dy=top+(y-top)*t;
-      g.beginPath();g.ellipse(x-radius*2*(1-t),dy,radius,radius*.24,-.25,0,Math.PI);g.stroke();
-    }
-    g.restore();
   }
   function draw(g,p,img,seg){
     supports(g,p);
