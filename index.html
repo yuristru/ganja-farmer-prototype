@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V102 Launch Cultivars</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V103 Harvest Demo</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3173,8 +3173,23 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 
+<style id="v103HarvestDemoStyles">
+.mobile-game-ui .harvest-demo-controls{display:flex;align-items:center;gap:6px;margin:7px 0;min-height:30px}
+.mobile-game-ui .harvest-demo-controls button{border:1px solid #53734b;border-radius:9px;background:#123226;color:#d9ffab;padding:8px 10px;font:900 9px/1 system-ui;min-height:32px;cursor:pointer}
+.mobile-game-ui .harvest-demo-controls button[aria-pressed="true"]{background:#d4ff8e;color:#12321d}
+.mobile-game-ui .harvest-demo-controls button:disabled{opacity:.55;cursor:wait}
+.mobile-game-ui .harvest-demo-controls [hidden]{display:none}
+.mobile-game-ui .harvest-demo-info{flex:1;min-width:0;font:800 8px/1.35 system-ui;color:#bad1bf}
+.mobile-game-ui .harvest-results .harvest-step{height:calc(100% - 79px)}
+.mobile-game-ui .harvest-results.demo-active .harvest-step{height:calc(100% - 95px)}
+.mobile-game-ui .harvest-results.demo-active .harvest-demo-controls{flex-wrap:wrap}
+.mobile-game-ui .harvest-results.demo-active .harvest-demo-info{flex-basis:100%;min-height:16px}
+.mobile-game-ui .harvest-results.demo-active .bud-stage{flex-shrink:1;min-height:160px}
+@media(max-height:700px){.mobile-game-ui .harvest-results.demo-active .virtual-jar{transform:scale(.85);transform-origin:top center;margin-bottom:-35px;flex-shrink:0}}
+</style>
   <div class="harvest-results" id="harvestResults" aria-hidden="true">
     <div class="harvest-result-top"><span class="harvest-kicker">GROW ABGESCHLOSSEN</span><button type="button" id="harvestResultClose" aria-label="Ergebnis schließen">×</button></div>
+    <div class="harvest-demo-controls"><button type="button" id="harvestDemoToggle" aria-pressed="false">DEMO ANSEHEN</button><button type="button" id="harvestDemoNext" hidden>NEUE VARIANTE ↻</button><span class="harvest-demo-info" id="harvestDemoInfo" role="status" aria-live="polite"></span></div>
     <section class="harvest-step active" id="harvestStepBud">
       <div class="harvest-title"><small>DEIN BESTER BUD</small><h2 id="harvestBudTitle">Garden Dream</h2></div>
       <div class="bud-stage"><canvas id="harvestBudCanvas" width="320" height="310"></canvas><div class="rating-badge" id="harvestRatingBadge">SEHR GUT</div></div>
@@ -4245,6 +4260,68 @@ function chooseGenetics(id){
 }
 function harvestScores(){const hs=Object.values(gameState.history||{}),avg=key=>hs.length?hs.reduce((a,h)=>a+(h[key]??1),0)/hs.length:1,vigor=avg('vigor'),potential=gameState.plant.growthPotential||1,stress=gameState.plant.stress||0,g=activeGenetics(),gp=activeGeneticProfile(),bio=biographySummary(),t=bio.training,ti=t.impact||trainingImpactModel(84),trainingQuality=clamp(.18+ti.canopyBonus*1.70+ti.lateralBoost*.75+ti.styleBonus*.65-ti.recoveryCost*.55-ti.lateRisk*.95,0,.72),cleanRun=clamp(1-bio.severeDays/12-bio.longestStressStreak/18,0,1),trainingYield=clamp(1+ti.canopyBonus*.24+ti.flowerBonus*.18-ti.recoveryCost*.10-ti.lateRisk*.12,.86,1.09),size=Math.round(clamp((.46*vigor+.40*potential+.14*bio.veg)*lerp(.94,1.05,g.growth)*trainingYield,0,1)*100),fq=liveFlowerQuality(),st=activeSeedTraits(),density=Math.round(clamp((.38*vigor+.20*(1-stress)+.28*fq.density+.14*bio.flower)*lerp(.94,1.05,g.flower)+(st.density||0)/260+trainingQuality*.035+ti.flowerBonus*.08,0,1)*100),potency=Math.round(clamp(.34*vigor+.20*potential+.10*g.flower+.24*fq.resin+.12*bio.flower+(st.potency||0)/260-ti.lateRisk*.025,0,1)*100),aroma=Math.round(clamp(.24*vigor+.20*g.flower+.12*cleanRun+.30*fq.aroma+.14*bio.flower+(st.aroma||0)/260-ti.lateRisk*.018,0,1)*100),style=Math.round(clamp(.30*g.style+.18*trainingQuality+.20*potential+.17*gp.colorExpression+.15*cleanRun+ti.styleBonus*.12,0,1)*100),total=Math.round(size*.22+density*.24+potency*.20+aroma*.18+style*.16);return{size,density,potency,aroma,style,total}}
 let pendingHarvestResult=null;
+
+// Independent preview fixtures: never advance the clock or mutate the saved grow.
+const harvestDemo={enabled:false,realResult:null,counter:0,token:0,salt:(Date.now()>>>0)||1};
+const HARVEST_DEMO_CONDITIONS=[
+  {label:'Optimale Pflege',vigor:1,potential:1,light:1,nutrients:1,climate:1,airflow:.9,stress:0,damage:0,debt:0},
+  {label:'Trockenstress',vigor:.63,potential:.65,light:.95,nutrients:.64,climate:.8,airflow:.8,stress:.65,damage:.23,debt:.35},
+  {label:'Wenig Licht',vigor:.73,potential:.6,light:.38,nutrients:.85,climate:.9,airflow:.75,stress:.22,damage:.05,debt:.15},
+  {label:'Überdüngung',vigor:.62,potential:.69,light:.9,nutrients:.38,climate:.82,airflow:.7,stress:.55,damage:.3,debt:.28},
+  {label:'Schwache Belüftung',vigor:.76,potential:.8,light:.86,nutrients:.9,climate:.55,airflow:.25,stress:.38,damage:.14,debt:.2},
+  {label:'Erholt nach Stress',vigor:.88,potential:.84,light:.94,nutrients:.9,climate:.9,airflow:.85,stress:.15,damage:.08,debt:.18}
+];
+function buildHarvestDemoResult(index){
+  const ids=Object.keys(GENETICS),g=GENETICS[ids[index%ids.length]];
+  const seedNumber=seedHash(harvestDemo.salt,index+1)||index+1,seed=makeSeed(g.id,seedNumber,['common','rare','epic'][index%3],'Demo');
+  seed.revealed=true;
+  // Six care histories are independent of the 15-family cycle, so a family
+  // appears under different conditions on each pass through the catalog.
+  const c=HARVEST_DEMO_CONDITIONS[(index+Math.floor(index/ids.length))%HARVEST_DEMO_CONDITIONS.length],gp=seedGeneticProfile(seed);
+  const {vigor,potential,light,nutrients,climate,airflow,stress,damage,debt}=c;
+  // Same mature flower response equations as liveFlowerQuality(), applied to
+  // explicit synthetic averages rather than temporarily modifying gameState.
+  const density=clamp((.30+.30*vigor+.18*potential+.13*light+.09*nutrients-.18*damage-.08*debt)*lerp(.94,1.06,g.flower),.32,1.05);
+  const resin=clamp((.28+.24*vigor+.18*potential+.15*light+.10*airflow+.10*g.flower-.15*damage-.08*stress)*gp.resin,.22,1.08);
+  const aroma=clamp((.26+.22*vigor+.16*potential+.18*climate+.14*airflow+.12*g.flower-.14*damage-.08*stress)*gp.aroma,.22,1.08);
+  const color=clamp(.18+.28*g.style+.28*gp.colorExpression+.16+.10*(1-stress),.18,1);
+  const flowerQuality={density,resin,aroma,color,damage,airflow,light,stress,debt,ripeness:1,leafiness:clamp(.22+(1-density)*.32+(1-light)*.18+damage*.12,.18,.62),foxtail:clamp(.035+(1-climate)*.18+(1-light)*.08+damage*.08,.03,.24)};
+  const score=value=>Math.round(clamp(value*100,0,100));
+  const scores={size:score(.58*vigor+.32*potential+.1*(1-damage)),density:score(density),potency:score(resin),aroma:score(aroma),style:score(color*(1-damage*.4))};
+  scores.total=Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/5);
+  const grams=Math.max(10,Math.round(8+82*clamp(scores.size*.004+scores.density*.003+density*.18+potential*.12,.24,1.04)));
+  return{demo:true,previewSeed:seed,condition:c.label,scores,g,seed:seed.seed,phenotype:seed.phenotype,geneticProfile:gp,flowerQuality,grams,reward:0,jarFill:clamp(.50+grams/110*.32+scores.density/100*.13,.56,.97),budCount:Math.round(12+grams/110*18+scores.density/100*8),rating:harvestRating(scores.total),signature:[{label:c.label,warn:stress>.3},{label:seed.phenotype}],biography:{}};
+}
+function syncHarvestDemoControls(){
+  const on=harvestDemo.enabled,overlay=document.getElementById('harvestResults');overlay.classList.toggle('demo-active',on);
+  const toggle=document.getElementById('harvestDemoToggle');toggle.setAttribute('aria-pressed',String(on));toggle.textContent=on?'ECHTE ERNTE':'DEMO ANSEHEN';
+  document.getElementById('harvestDemoNext').hidden=!on;
+  document.getElementById('harvestDemoInfo').textContent=on&&pendingHarvestResult?.demo?'DEMO · '+pendingHarvestResult.condition+' · '+pendingHarvestResult.previewSeed.phenotype+' · Seed '+pendingHarvestResult.seed:'';
+  document.querySelector('.harvest-kicker').textContent=on?'DEMO · NICHT GESPEICHERT':'GROW ABGESCHLOSSEN';
+  document.getElementById('harvestFinish').innerHTML=on?'ZUR ECHTEN ERNTE <b>›</b>':'IN SAMMLUNG LEGEN <b>›</b>';
+}
+function restoreRealHarvest(){
+  if(pendingHarvestResult?.demo)budPreviewRegistry.delete('harvest-jar-'+pendingHarvestResult.seed);
+  harvestDemo.token++;harvestDemo.enabled=false;
+  if(harvestDemo.realResult)pendingHarvestResult=harvestDemo.realResult;
+  harvestDemo.realResult=null;document.getElementById('harvestDemoNext').disabled=false;
+  if(pendingHarvestResult)populateHarvestResult(pendingHarvestResult);
+  syncHarvestDemoControls();
+}
+async function nextHarvestDemo(){
+  if(!pendingHarvestResult||!document.getElementById('harvestResults').classList.contains('open'))return;
+  if(!harvestDemo.enabled){harvestDemo.realResult=pendingHarvestResult;harvestDemo.enabled=true;}
+  const token=++harvestDemo.token,result=buildHarvestDemoResult(harvestDemo.counter++),button=document.getElementById('harvestDemoNext');
+  syncHarvestDemoControls();button.disabled=true;document.getElementById('harvestDemoInfo').textContent='HD-Blüte wird geladen …';
+  try{
+    await window.GanjariumFlowerArt.load(result.g.id);
+    if(token!==harvestDemo.token||!harvestDemo.enabled)return;
+    if(pendingHarvestResult?.demo)budPreviewRegistry.delete('harvest-jar-'+pendingHarvestResult.seed);
+    pendingHarvestResult=result;populateHarvestResult(result);syncHarvestDemoControls();
+  }catch(error){if(token===harvestDemo.token){restoreRealHarvest();showGameToast('Demo-Bild konnte nicht geladen werden');}console.warn('Harvest demo material failed',error);}
+  finally{if(token===harvestDemo.token)button.disabled=false;}
+}
+
 function harvestRating(score){if(score>=92)return{label:'EXZELLENT',cls:'excellent'};if(score>=82)return{label:'SEHR GUT',cls:'verygood'};if(score>=70)return{label:'GUT',cls:'good'};if(score>=55)return{label:'SOLIDE',cls:'solid'};return{label:'MÄSSIG',cls:'moderate'};}
 function buildHarvestResult(){
   const scores=harvestScores(),g=activeGenetics(),flowerQuality=liveFlowerQuality(),biography=biographySummary(),geneticProfile=activeGeneticProfile(),signature=growSignature(scores);
@@ -4263,6 +4340,7 @@ function buildHarvestResult(){
   return{scores,g,reward,grams,jarFill,budCount,flowerQuality,yieldBase,yieldTraining,yieldFactor,performanceBonus,techUnlock,rating:harvestRating(scores.total),seed:gameState.genetics.phenotypeSeed,biography,geneticProfile,signature,phenotype:activeSeed()?.phenotype||'Unknown'};
 }
 function harvestPreviewSeed(result){
+  if(result?.demo&&result.previewSeed)return{...result.previewSeed,traits:{...result.previewSeed.traits},harvestArt:result.flowerQuality};
   const current=activeSeed(),rarity=current?.rarity||'common';
   const seed=makeSeed(result?.g?.id||'dream',Number(result?.seed)||PLANT_SEED,rarity,'Harvest Preview');
   seed.phenotype=result?.phenotype||current?.phenotype||seed.phenotype;
@@ -4286,7 +4364,7 @@ function drawHarvestBud(result){
 }
 function populateHarvestResult(result){
   document.getElementById('harvestBudTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);document.getElementById('harvestJarTitle').textContent=result.g.name+' #'+String(result.seed).slice(-5);
-  document.getElementById('harvestTotalScore').textContent=result.scores.total;document.getElementById('jarAmount').textContent=result.grams+' g';document.getElementById('harvestReward').textContent='+'+result.reward+' COINS'+(result.techUnlock?' · TECH LV '+result.techUnlock:'');
+  document.getElementById('harvestTotalScore').textContent=result.scores.total;document.getElementById('jarAmount').textContent=result.grams+' g';document.getElementById('harvestReward').textContent=result.demo?'DEMO · KEINE COINS ODER SAMMLUNGSEINTRÄGE':'+'+result.reward+' COINS'+(result.techUnlock?' · TECH LV '+result.techUnlock:'');
   for(const id of ['harvestRatingBadge','harvestFinalRating']){const el=document.getElementById(id);el.textContent=result.rating.label;el.className=(id==='harvestRatingBadge'?'rating-badge ':'')+'rating-'+result.rating.cls;}
   const labels={size:'GRÖSSE',density:'DICHTE',potency:'POTENZ',aroma:'AROMA',style:'STYLE'};document.getElementById('harvestMetrics').innerHTML=Object.entries(labels).map(([k,l])=>'<div><span>'+l+'</span><b>'+result.scores[k]+'</b><i><em style="width:'+result.scores[k]+'%"></em></i></div>').join('');const sig=document.getElementById('harvestSignature');if(sig)sig.innerHTML=(result.signature||[]).map(x=>'<span class="'+(x.warn?'warn':x.rare?'rare':'')+'">'+x.label+'</span>').join('');
   const jb=document.getElementById('jarBuds');
@@ -4299,11 +4377,12 @@ function populateHarvestResult(result){
   try{renderSeedBudPreviews(jb);}catch(err){console.warn('Harvest jar preview failed',err);}
 }
 function openHarvestResults(){
+  if(harvestDemo.enabled)restoreRealHarvest();
   if(gameState.plant.day<84){showGameToast('Grow noch nicht abgeschlossen');return;}if(gameState.plant.harvested){const last=gameState.collection?.[0];if(!last){showGameToast('Bereits geerntet');return;}pendingHarvestResult={scores:last.scores,g:GENETICS[last.genetics]||activeGenetics(),reward:last.reward,grams:last.grams||Math.max(10,Math.round(8+(last.scores.size*.0042+last.scores.density*.0032+.30)*82)),jarFill:last.jarFill,budCount:last.budCount,flowerQuality:last.flowerQuality||liveFlowerQuality(),rating:harvestRating(last.score),seed:last.seed,signature:last.signature||[],biography:last.biography||biographySummary(),geneticProfile:last.geneticProfile||activeGeneticProfile(),phenotype:last.phenotype||'Unknown',committed:true};}else pendingHarvestResult=buildHarvestResult();
-  populateHarvestResult(pendingHarvestResult);document.getElementById('harvestStepBud').classList.add('active');document.getElementById('harvestStepJar').classList.remove('active');const overlay=document.getElementById('harvestResults');overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+  populateHarvestResult(pendingHarvestResult);document.getElementById('harvestStepBud').classList.add('active');document.getElementById('harvestStepJar').classList.remove('active');const overlay=document.getElementById('harvestResults');overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');syncHarvestDemoControls();
 }
 function commitHarvestResult(){
-  if(!pendingHarvestResult||pendingHarvestResult.committed)return;const r=pendingHarvestResult;
+  if(harvestDemo.enabled||pendingHarvestResult?.demo||!pendingHarvestResult||pendingHarvestResult.committed)return;const r=pendingHarvestResult;
   const currentSeed=gameState.genetics.currentSeed;
   const harvestSeed=rollHarvestSeed(r);harvestSeed.acquiredAt=Date.now();
   const jar={id:'jar-'+(currentSeed?.id||r.seed),seedId:currentSeed?.id||null,harvestSeedId:harvestSeed.id,acquiredAt:currentSeed?.acquiredAt||Date.now(),name:r.g.name+' #'+String(r.seed).slice(-5),genetics:r.g.id,seed:r.seed,score:r.scores.total,scores:r.scores,reward:r.reward,grams:r.grams,jarFill:r.jarFill,budCount:r.budCount,flowerQuality:r.flowerQuality,rating:r.rating.label,day:gameState.plant.day,growNumber:Math.max(1,Number(gameState.meta?.growNumber)||1),phenotype:r.phenotype,rarity:currentSeed?.rarity||'common',traits:{...(currentSeed?.traits||{})},signature:r.signature||[],biography:r.biography||biographySummary(),geneticProfile:r.geneticProfile||activeGeneticProfile(),createdAt:Date.now()};
@@ -6918,8 +6997,10 @@ document.getElementById('harvestReadyBox')?.addEventListener('click',()=>{
   renderMetaPanels();
 });
 document.getElementById('harvestToJar')?.addEventListener('click',()=>{if(!pendingHarvestResult)return;document.getElementById('harvestStepBud').classList.remove('active');document.getElementById('harvestStepJar').classList.add('active');});
-document.getElementById('harvestFinish')?.addEventListener('click',()=>{commitHarvestResult();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');const drop=pendingHarvestResult?.harvestSeed;showGameToast('Ernte eingelagert · +'+(pendingHarvestResult?.reward||0)+' Coins'+(drop?' · neuer '+SEED_RARITY[drop.rarity].label+' Seed':''));setMainPanel('collection');renderMetaPanels();});
-document.getElementById('harvestResultClose')?.addEventListener('click',()=>{document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');});
+document.getElementById('harvestFinish')?.addEventListener('click',()=>{if(harvestDemo.enabled){restoreRealHarvest();document.getElementById('harvestStepJar').classList.remove('active');document.getElementById('harvestStepBud').classList.add('active');return;}commitHarvestResult();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');const drop=pendingHarvestResult?.harvestSeed;showGameToast('Ernte eingelagert · +'+(pendingHarvestResult?.reward||0)+' Coins'+(drop?' · neuer '+SEED_RARITY[drop.rarity].label+' Seed':''));setMainPanel('collection');renderMetaPanels();});
+document.getElementById('harvestDemoToggle')?.addEventListener('click',()=>{if(harvestDemo.enabled)restoreRealHarvest();else nextHarvestDemo();});
+document.getElementById('harvestDemoNext')?.addEventListener('click',nextHarvestDemo);
+document.getElementById('harvestResultClose')?.addEventListener('click',()=>{if(harvestDemo.enabled)restoreRealHarvest();document.getElementById('harvestResults').classList.remove('open');document.getElementById('harvestResults').setAttribute('aria-hidden','true');});
 
 syncEquipment3D();
 syncEquipment2D();

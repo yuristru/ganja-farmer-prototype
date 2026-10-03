@@ -1,0 +1,32 @@
+name: V103 Harvest Demo QA
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/cultivars.js'
+      - 'assets/flower-art.js'
+      - 'assets/flowers/**'
+      - 'tests/v103-harvest-demo-qa.mjs'
+      - '.github/workflows/v103-harvest-demo-qa.yml'
+  workflow_dispatch:
+jobs:
+  harvest-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Check independent harvest demo and save protection
+        run: node tests/v103-harvest-demo-qa.mjs
+      - name: Upload visual results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v103-harvest-demo
+          path: qa/v103/
