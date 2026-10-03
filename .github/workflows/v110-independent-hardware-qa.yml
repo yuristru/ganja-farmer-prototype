@@ -1,0 +1,31 @@
+name: V110 Independent Hardware QA
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/room-hardware.js'
+      - 'assets/growroom/independent-v110/**'
+      - 'assets/equipment/store-v105/**'
+      - 'tests/v110-independent-hardware-qa.cjs'
+      - '.github/workflows/v110-independent-hardware-qa.yml'
+  workflow_dispatch:
+jobs:
+  independent-hardware:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm install playwright
+          npx playwright install --with-deps chromium
+      - name: Verify all hardware combinations
+        run: node tests/v110-independent-hardware-qa.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v110-independent-hardware
+          path: qa/v110

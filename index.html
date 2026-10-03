@@ -3091,7 +3091,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .mobile-game-ui .next-grow-unlocks-v90 b{display:inline-flex;align-items:center;min-height:19px;padding:0 7px;border:1px solid rgba(173,255,105,.33);border-radius:7px;background:rgba(127,255,81,.08);color:#cfff8a;font:1000 6px/1 system-ui;letter-spacing:.35px}
 </style><style id="v98SceneEquipment">
 .mobile-game-ui .equipment2d-layer{z-index:5!important;pointer-events:none!important;overflow:hidden!important}
-.mobile-game-ui .room-equipment-hit{position:absolute;display:block;border:0;background:transparent;box-shadow:none;padding:0;pointer-events:none;transform:none;opacity:1}
+.mobile-game-ui .room-equipment-hit{position:absolute;display:block;border:0;background:transparent;box-shadow:none;padding:0;pointer-events:none;transform:none;opacity:1;color:transparent;font-size:0}
 .mobile-game-ui.upgrade-demo-active .room-equipment-hit{pointer-events:auto;cursor:pointer;touch-action:manipulation}
 @media(max-height:760px){
 .mobile-game-ui .tool-rail{top:calc(var(--safe-top) + 22vh)!important}
@@ -3314,7 +3314,7 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 <div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devFlowerSheet">100 Blüten vergleichen</button><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+50.000 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script src="assets/cultivars.js?v=102"></script>
-<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script src="assets/equipment/store-v105/manifest.js?v=105"></script><script src="assets/store-equipment.js?v=105"></script><script>
+<script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script src="assets/equipment/store-v105/manifest.js?v=105"></script><script src="assets/room-hardware.js?v=110"></script><script src="assets/store-equipment.js?v=105"></script><script>
 (()=>{
 const CFG={"stemSway":13.5,"stemFine":4.9,"stemWidth":8.0,"branchLen":1.02,"branchSpread":1.04,"branchUp":0.42,"branchIrreg":0.34,"leafLen":68,"leafWidth":6.4,"leafUp":0.79,"leafScale":1.04,"lowerBoost":1.26,"nodeBulge":1.28,"branchTaper":0.61,"petiole":13.6,"internodeVar":0.18,"sec":0.68};
 const LEAF={"length":82,"width":5.4,"youngSpread":0.15,"matureSpread":1.4,"youngLift":1.21,"matureLift":0.46,"serration":0.103,"sideProjection":0.83,"individualTwist":0.18,"tipCurl":3.6};
@@ -4637,37 +4637,7 @@ const GROWROOM_BACKGROUND_BASE='assets/growroom/backgrounds/';
 const GROWROOM_VISUAL_TIERS=5;
 const growRoomBackgroundImages=new Map();
 let growRoomMatrixPreloadStarted=false;
-function preloadGrowRoomBackgroundMatrix(){
-  if(growRoomMatrixPreloadStarted)return;
-  growRoomMatrixPreloadStarted=true;
-  const levels=growRoomBackgroundLevels();
-  const ordered=[];
-  for(let radius=1;radius<=4;radius++){
-    for(let l=1;l<=5;l++)for(let v=1;v<=5;v++){
-      if(Math.max(Math.abs(l-levels.light),Math.abs(v-levels.vent))!==radius)continue;
-      ordered.push([l,v]);
-    }
-  }
-  let cursor=0;
-  const loadBatch=deadline=>{
-    let loaded=0;
-    while(cursor<ordered.length&&loaded<4&&(!deadline||deadline.timeRemaining()>2)){
-      const [l,v]=ordered[cursor++],src=GROWROOM_BACKGROUND_BASE+'growroom-l'+l+'-v'+v+'.webp?v=78sharp';
-      if(growRoomBackgroundImages.has(src))continue;
-      const img=new Image(),rec={img,loaded:false,failed:false};
-      growRoomBackgroundImages.set(src,rec);
-      img.onload=()=>{rec.loaded=true;};
-      img.onerror=()=>{rec.failed=true;};
-      img.src=src;loaded++;
-    }
-    if(cursor<ordered.length){
-      if('requestIdleCallback' in window)requestIdleCallback(loadBatch,{timeout:2200});
-      else setTimeout(()=>loadBatch(null),650);
-    }
-  };
-  if('requestIdleCallback' in window)requestIdleCallback(loadBatch,{timeout:1400});
-  else setTimeout(()=>loadBatch(null),450);
-}
+function preloadGrowRoomBackgroundMatrix(){} // One permanent tent, no combination preloading.
 function growRoomVisualTier(level){
   return Math.max(1,Math.min(GROWROOM_VISUAL_TIERS,Number(level)||1));
 }
@@ -4678,8 +4648,7 @@ function growRoomBackgroundLevels(){
   };
 }
 function growRoomBackgroundPath(){
-  const t=growRoomBackgroundLevels();
-  return GROWROOM_BACKGROUND_BASE+'growroom-l'+t.light+'-v'+t.vent+'.webp?v=78sharp';
+  return 'assets/growroom/independent-v110/tent.webp';
 }
 function ensureGrowRoomBackgroundImage(){
   const src=growRoomBackgroundPath();
@@ -4758,11 +4727,11 @@ function renderRoomEquipmentCanvas(canvas){
 }
 function renderRoomEquipmentCanvases(root=document){root.querySelectorAll('canvas[data-eq-strip]').forEach(renderRoomEquipmentCanvas);}
 function roomEquipmentPlacements(w=W,h=H){
-  const rec=ensureGrowRoomBackgroundImage();if(!rec?.loaded)return [];
+  const rec=ensureGrowRoomBackgroundImage();if(!rec?.loaded&&!rec?.failed)return [];
   return window.GanjariumRoomLayout.ids.flatMap(id=>{
     const strip=roomEquipmentLoaded.get(id);if(!strip)return [];
     const level=visualUpgradeLevel(id),seg=strip.segments[level-1];
-    return [window.GanjariumRoomLayout.placement(id,level,seg,rec.img.naturalWidth,rec.img.naturalHeight,w,h,roomSceneFloorLimit())];
+    return [window.GanjariumRoomLayout.placement(id,level,seg,rec.img.naturalWidth||900,rec.img.naturalHeight||1600,w,h,roomSceneFloorLimit())];
   });
 }
 function layoutRoomEquipmentHits(){
@@ -4774,8 +4743,10 @@ function layoutRoomEquipmentHits(){
 }
 function drawIntegratedRoomEquipment(g){
   const placements=roomEquipmentPlacements();
+  window.GanjariumRoomHardware.drawLight(g,placements.find(p=>p.id==='light'));
   for(const p of placements){
     const {img,segments}=roomEquipmentLoaded.get(p.id),seg=segments[p.level-1];
+    if(p.surface==='overhead'){window.GanjariumRoomHardware.draw(g,p,img,seg);continue;}
     if(p.surface==='shelf')window.GanjariumRoomLayout.shelf(g,p);
     window.GanjariumRoomLayout.shadow(g,p);
     g.save();g.filter='brightness(.86) saturate(.82)';
@@ -6896,6 +6867,7 @@ function buildWorldBackground(){
     return;
   }
   buildWorldBackgroundFallback();
+  if(worldBgCanvas){const g=worldBgCanvas.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);drawIntegratedRoomEquipment(g);}
 }
 function drawWorldBackground(){if(!worldBgCanvas||worldBgW!==W||worldBgH!==H||worldBgFloorLimit!==roomSceneFloorLimit())buildWorldBackground();if(worldBgCanvas)ctx.drawImage(worldBgCanvas,0,0,W,H)}
 

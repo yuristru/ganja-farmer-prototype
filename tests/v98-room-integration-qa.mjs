@@ -32,7 +32,7 @@ try{
  const context=await browser.newContext({viewport:sizes[2],deviceScaleFactor:3});const page=await context.newPage();
  page.on('pageerror',e=>results.errors.push(String(e)));
  page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1:4198')&&r.status()>=400)results.requests.push({url:r.url(),status:r.status()});});
- await page.goto('http://127.0.0.1:4198',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.__GFROOMEQ?.placements().length===4);
+ await page.goto('http://127.0.0.1:4198',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.__GFROOMEQ?.placements().length===6);
  const meta=await page.evaluate(()=>window.__GFROOMEQ.assetMeta());
  for(const id of ids){assert.equal(meta[id].width,art[id].width);assert.equal(meta[id].height,art[id].height);assert.equal(meta[id].segments.length,10);}
  async function capture(name,levels){
@@ -41,7 +41,7 @@ try{
   await page.waitForTimeout(350);
   const frame=await page.evaluate(()=>window.__GFROOMEQ.frame());assert.equal(frame.renderedFloorLimit,frame.floorLimit,'Rendered room camera differs from current HUD frame');
   const state=await page.evaluate(()=>({placements:window.__GFROOMEQ.placements(),overlays:document.querySelectorAll('.room-equipment-overlay,.room-equipment-mount').length,needs:document.querySelector('.bottom-wrap').getBoundingClientRect().top,canvas:document.getElementById('c').getBoundingClientRect().toJSON()}));
-  assert.equal(state.overlays,0,'Legacy scene overlays returned');assert.equal(state.placements.length,4);
+  assert.equal(state.overlays,0,'Legacy scene overlays returned');assert.equal(state.placements.length,6);
   for(const p of state.placements){assert(p.y+p.height<state.needs,`${p.id} bottom ${p.y+p.height} behind HUD ${state.needs}`);assert(p.width>10&&p.height>10);}
   const hitBoxes=await page.evaluate(()=>Array.from(document.querySelectorAll('.room-equipment-hit')).map(el=>({id:el.dataset.demoUpgrade,...el.getBoundingClientRect().toJSON()})));
   for(const p of state.placements){const b=hitBoxes.find(b=>b.id===p.id);assert(Math.abs(b.x-state.canvas.x-p.x)<.05&&Math.abs(b.y-state.canvas.y-p.y)<.05,'Demo hit area drifts from artwork '+JSON.stringify({p,b}));}
@@ -60,7 +60,7 @@ try{
  await page.waitForTimeout(350);
  // Browser output must match the pure cover transform after resize.
  for(const size of sizes){await page.setViewportSize(size);await page.waitForTimeout(80);const frame=await page.evaluate(()=>window.__GFROOMEQ.frame());const placed=await page.evaluate(()=>window.__GFROOMEQ.placements());
-  for(const p of placed){const expected=layout.placement(p.id,p.level,art[p.id].segments[p.level-1],706,1255,frame.width,frame.height,frame.floorLimit);assert(Math.abs(expected.x-p.x)<.01&&Math.abs(expected.y-p.y)<.01,'Background/equipment resize mismatch');}
+  for(const p of placed.filter(p=>!['light','vent'].includes(p.id))){const expected=layout.placement(p.id,p.level,art[p.id].segments[p.level-1],706,1255,frame.width,frame.height,frame.floorLimit);assert(Math.abs(expected.x-p.x)<.01&&Math.abs(expected.y-p.y)<.01,'Background/equipment resize mismatch');}
  }
  // Tap the actual controller in demo mode; preview must cycle one category only.
  const before=await page.evaluate(()=>window.__GFROOMEQ.snapshot());await page.locator('.room-equipment-hit[data-demo-upgrade="sensor"]').click();
