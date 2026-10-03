@@ -3158,6 +3158,40 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   #mobileGameUI .ganjarium-wordmark{left:8px!important;width:calc(50% - 104px);}
 }
 </style>
+<style id="v108FloatingHeader">
+/* Compact floating status pills leave the room hardware visible. */
+#mobileGameUI .ganjarium-wordmark{left:10px!important;top:calc(var(--safe-top) + 10px)!important;width:100px!important}
+#mobileGameUI .day-console{
+ left:122px!important;right:10px!important;top:calc(var(--safe-top) + 10px)!important;
+ width:auto!important;height:auto!important;min-height:0!important;padding:0!important;
+ display:block!important;transform:none!important;border:0!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;backdrop-filter:none!important;
+}
+#mobileGameUI .day-mid{display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);grid-template-rows:23px 17px;gap:4px 6px;min-width:0!important;width:100%!important}
+#mobileGameUI #mobileDay,#mobileGameUI #mobilePhase,#mobileGameUI #weekProgressLabel{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ min-width:0;margin:0!important;padding:3px 6px;border:1px solid rgba(98,168,188,.75);
+ border-radius:999px;background:linear-gradient(180deg,rgba(12,47,62,.9),rgba(3,23,30,.88));
+ box-shadow:inset 0 1px 0 rgba(205,247,255,.09),0 2px 4px #0005;
+ white-space:nowrap;letter-spacing:.02em!important;text-shadow:0 1px 2px #0008;
+}
+#mobileGameUI #mobileDay{grid-column:1;grid-row:1;font-size:11px!important;line-height:1!important}
+#mobileGameUI #mobilePhase{grid-column:2;grid-row:1;font-size:8px!important;line-height:1!important;color:#b6dbe7}
+#mobileGameUI #weekProgressLabel{grid-column:2;grid-row:2;font-size:6.5px!important;line-height:1!important;padding:2px 4px;color:#c9e3e9}
+#mobileGameUI #turnDots{grid-column:1;grid-row:2;align-self:center;justify-content:center;gap:4px!important;margin:0!important}
+#mobileGameUI #turnDots i{width:5px!important;height:5px!important;box-shadow:none}
+#mobileGameUI .upgrade-demo-controls{inset:0!important;pointer-events:none}
+#mobileGameUI .upgrade-demo-controls button{position:absolute;top:calc(var(--safe-top) + 135px);width:32px;height:28px;border-radius:9px;background:rgba(3,25,31,.72);box-shadow:none;font-size:8px;pointer-events:auto}
+#mobileGameUI .upgrade-demo-controls [data-demo-upgrade="light"]{left:calc(50% - 80px)}
+#mobileGameUI .upgrade-demo-controls [data-demo-upgrade="vent"]{right:10px}
+@media(max-width:350px){
+ #mobileGameUI .ganjarium-wordmark{left:8px!important;width:83px!important}
+ #mobileGameUI .day-console{left:101px!important;right:8px!important}
+ #mobileGameUI .day-mid{column-gap:4px;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr)}
+ #mobileGameUI #mobileDay{font-size:10px!important}
+ #mobileGameUI #weekProgressLabel{font-size:6px!important}
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark"><img src="assets/brand/ganjarium-glow-02.webp" alt="Ganjarium" width="800" height="290" decoding="async" fetchpriority="high"></div>
@@ -4171,7 +4205,7 @@ function updateGameHUD(){
   $('mobileDay').textContent='WOCHE '+Math.ceil(currentDay/7);
   const dayInWeek=((currentDay-1)%7)+1;
   $('mobilePhase').textContent=phaseForDay(currentDay).toUpperCase();
-  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · HEUTE '+used+'/7 · '+(ta.closed?'MORGEN':time);weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.closed?'Tag beendet. Neue Züge am nächsten Kalendertag (Europe/Berlin).':ta.remaining<=0?'Alle 7 Züge für heute verbraucht.':'Sieben Züge pro Kalendertag, eine Stunde Abstand. Tageswechsel um 00:00 Uhr (Europe/Berlin).';}
+  const weekProgressLabel=$('weekProgressLabel');if(weekProgressLabel){const ta=turnActionAvailability(),used=ta.used||0,time=gameState.plant.day>=84?'ERNTE':ta.wait>0?formatCountdown(ta.wait):ta.remaining<=0?'VOLL':'JETZT';weekProgressLabel.textContent='TAG '+currentDay+' · '+used+'/7 · '+(ta.closed?'MORGEN':time);weekProgressLabel.title=ta.wait>0?'Nächster Zug in '+formatCountdown(ta.wait):ta.closed?'Tag beendet. Neue Züge am nächsten Kalendertag (Europe/Berlin).':ta.remaining<=0?'Alle 7 Züge für heute verbraucht.':'Sieben Züge pro Kalendertag, eine Stunde Abstand. Tageswechsel um 00:00 Uhr (Europe/Berlin).';}
   $('mobileVigor').innerHTML='Vitalität <strong>'+Math.round(vigor*100)+'%</strong><span class="info-dot">i</span>';
   const memory=gameState.plant?.conditionMemory||{};$('mobileVigor').title='Langzeitstress '+Math.round((memory.stressDebt||0)*100)+'% · Erholung '+Math.round((memory.recoveryMomentum||0)*100)+'%';
   const careStress=recentCareState();
@@ -5263,7 +5297,7 @@ function rotX(p){return v(p.x,p.y*pitchC-p.z*pitchS,p.y*pitchS+p.z*pitchC)}
 const OBJECT_PIVOT=v(0,-54,0);
 function viewPoint(p){const local=sub(p,OBJECT_PIVOT);return add(rotX(rotY(local)),OBJECT_PIVOT)}
 const ROOM_PLANT_FLOOR_SHIFT=14;
-let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(96,(dayRect?dayRect.bottom-appRect.top:82)+72);/* V81: keep the full pot/plant assembly slightly lower so it sits on the grow-room floor in perspective. */const bottomLimit=Math.min(H-136,H-196);const worldSpan=Math.max(280,(maxY+62)-minY);const earlyBoost=currentDay<=7?1.20:currentDay<=14?1.11:currentDay<=24?1.05:1;plantAutoScale=clamp(((bottomLimit-topLimit)/worldSpan)*earlyBoost,.50,1.18);plantAutoCy=bottomLimit+ROOM_PLANT_FLOOR_SHIFT+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
+let plantAutoScale=.8,plantAutoCy=H*.62;function updatePlantViewport(P){let maxY=80;for(const ax of P.axes||[])for(const p of ax.pts||[])maxY=Math.max(maxY,p.y);const minY=-125;const appRect=document.getElementById('app').getBoundingClientRect();const dayRect=document.querySelector('.day-console')?.getBoundingClientRect();const topLimit=Math.max(164,(dayRect?dayRect.bottom-appRect.top:82)+72);/* V81: keep the full pot/plant assembly slightly lower so it sits on the grow-room floor in perspective. */const bottomLimit=Math.min(H-136,H-196);const worldSpan=Math.max(280,(maxY+62)-minY);const earlyBoost=currentDay<=7?1.20:currentDay<=14?1.11:currentDay<=24?1.05:1;plantAutoScale=clamp(((bottomLimit-topLimit)/worldSpan)*earlyBoost,.50,1.18);plantAutoCy=bottomLimit+ROOM_PLANT_FLOOR_SHIFT+minY*plantAutoScale;}function proj(p){let q=viewPoint(p);const base=plantAutoScale*zoom;const topView=Math.abs(pitch)>1.36;const persp=topView?1:clamp(1/(1-q.z/1700),.72,1.45);const scale=base*persp;const cy=topView?(H*.50):plantAutoCy;return{x:W/2+panX+q.x*scale,y:cy+panY-q.y*scale,z:q.z,scale}}
 function rng(seed){let s=seed|0;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return((s>>>0)%100000)/100000}}
 function axisDir(pts,i){const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];return norm(sub(b,a))}
 function leafPoly(L,Wd,maturity=1,serration=.085){
