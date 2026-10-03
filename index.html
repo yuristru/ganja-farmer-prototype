@@ -3763,7 +3763,9 @@ function loadGameState(){
     }
   }catch(e){st=createGameState()}
   st.session=st.session||{};st.session.offlineMs=offlineMs;st.session.lastSeenAt=Date.now();
-  const daily=claimDailyCoins(st);if(daily)storageSet(JSON.stringify(st));
+  claimDailyCoins(st);
+  // Persist normalized saves immediately; migration must not depend on a later toast timer.
+  storageSet(JSON.stringify(st));
   return st;
 }
 function clockDemoEnabled(){return !!(gameState?.settings?.debugBypass||gameState?.settings?.demoAutoCare);}
