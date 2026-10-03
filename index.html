@@ -3120,6 +3120,25 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
 .cultivar-catalog-list{display:grid;gap:7px}.cultivar-catalog-row{display:flex;align-items:center;gap:10px;padding:9px;border-radius:11px;background:#12322c;min-width:0}
 .cultivar-swatch{flex:0 0 24px;width:24px;height:24px;border-radius:50%;box-shadow:inset -4px -4px 7px #0006,inset 2px 2px 5px #ffffff45}.cultivar-catalog-copy{min-width:0;flex:1}.cultivar-catalog-copy b{display:block;font-size:12px}.cultivar-catalog-copy small{display:block;margin-top:3px;font-size:10px;color:#9db9ac;line-height:1.4}.cultivar-catalog-row>span:last-child{font-size:8px;color:#ceec9a;flex:0 0 50px;text-align:right;letter-spacing:.6px}
 </style>
+<style id="v106LowerHudControls">
+/* Settings and reload share the SKIP baseline above the permanent main dock. */
+#mobileGameUI .top-actions{
+  left:12px!important;right:auto!important;top:auto!important;bottom:calc(var(--safe-bottom) + 186px)!important;
+  display:flex!important;flex-direction:row-reverse!important;align-items:center!important;gap:7px!important;
+  z-index:48!important;
+}
+#mobileGameUI .top-actions .gear-btn,#mobileGameUI .top-actions .reload-top-btn{
+  position:static!important;width:34px!important;height:34px!important;flex:0 0 34px!important;
+  border-radius:11px!important;font-size:18px!important;
+}
+#mobileGameUI .top-coin-badge{
+  left:50%!important;right:auto!important;top:auto!important;bottom:calc(var(--safe-bottom) + 186px)!important;
+  box-sizing:border-box!important;width:90px!important;min-width:90px!important;max-width:90px!important;height:34px!important;padding:0 5px!important;
+  transform:translateX(-50%)!important;font-size:10px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;
+  z-index:48!important;white-space:nowrap!important;
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
   <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
