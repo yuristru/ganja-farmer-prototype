@@ -1,0 +1,31 @@
+name: V101 Flower Material QA
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/flower-art.js'
+      - 'assets/flowers/v101/**'
+      - 'tests/v101-flower-material-qa.mjs'
+      - '.github/workflows/v101-flower-material-qa.yml'
+  workflow_dispatch:
+jobs:
+  harvest-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Check flower connectivity and mobile harvest art
+        run: node tests/v101-flower-material-qa.mjs
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v101-flower-material
+          path: qa/v101/
