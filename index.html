@@ -3139,9 +3139,28 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
   z-index:48!important;white-space:nowrap!important;
 }
 </style>
+<style id="v107GlowWordmark">
+/* Approved glow wordmark; reserve the centered week card's full outer width. */
+#mobileGameUI .ganjarium-wordmark{
+  left:10px!important;
+  top:calc(var(--safe-top) + 15px)!important;
+  width:min(148px,calc(50% - 112px));
+  height:auto;
+  transform:none!important;
+  font-size:0!important;
+  line-height:0;
+  text-shadow:none;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.55));
+  pointer-events:none;
+}
+#mobileGameUI .ganjarium-wordmark img{display:block;width:100%;height:auto;}
+@media(max-width:370px){
+  #mobileGameUI .ganjarium-wordmark{left:8px!important;width:calc(50% - 104px);}
+}
+</style>
 </head><body><div id="app"><canvas id="c"></canvas><div class="nav" id="nav"><div class="timeline-head"><b id="dayTitle">Tag 18</b><span id="phaseLabel">Wuchs</span></div><input id="daySlider" class="timeline-range" type="range" min="1" max="84" step="1" value="18" aria-label="Pflanzenalter in Tagen"><div class="phasebands" id="phasebands"></div></div><div class="rot" id="rot">0° · 0° · 100%</div><div class="hint">Objekt ziehen = 360° drehen und bis zur Draufsicht kippen · Mausrad oder Pinch = Zoom</div><div class="name"><span id="phase">Wuchs · Tag 18</span><b>Garden Dream #48291</b></div><div class="camnav" id="camnav"><div class="row"><button data-cam="front">Front</button><button data-cam="left">Links</button><button data-cam="right">Rechts</button></div><div class="row"><button data-cam="tiltfront">Zu mir</button><button data-cam="top">Drauf</button><button data-cam="reset">Reset</button></div></div><div class="toolhint" id="toolhint">Drehen: Pflanze ziehen</div><div class="tools" id="tools"><button data-tool="orbit" class="active">Drehen</button><button data-tool="bend">Biegen</button><button data-tool="prune">Beschnitt</button><button data-tool="reset" class="danger">Training reset</button></div>
 <div class="mobile-game-ui" id="mobileGameUI"><div class="equipment2d-layer" id="equipment2dLayer" aria-hidden="true"></div>
-  <div class="ganjarium-wordmark" aria-label="Ganjarium">Ganjarium</div>
+  <div class="ganjarium-wordmark"><img src="assets/brand/ganjarium-glow-02.webp" alt="Ganjarium" width="800" height="290" decoding="async" fetchpriority="high"></div>
   <div class="top-actions"><button class="photo-top-btn" id="cameraButton" aria-label="Foto-Modus">📷</button><a class="reload-top-btn" id="reloadPageButton" href="./" aria-label="Seite neu laden" title="Seite neu laden">↻</a><button class="gear-btn" id="devToggle" aria-label="Einstellungen">⚙</button></div>
   <div class="top-coin-badge" id="topCoinBadge" data-coin-display aria-label="Coins">◉ 0</div>
   <div class="upgrade-demo-controls" id="upgradeDemoControls" aria-label="Upgrade Demo">
