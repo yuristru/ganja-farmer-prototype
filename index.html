@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V103 Harvest Demo</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ganjarium V104 Flower Comparison</title><style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;color:#eef6ec;touch-action:none}#app{position:relative;width:100%;height:100%}canvas{display:block;width:100%;height:100%}.nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:min(690px,92vw);padding:10px 14px 9px;border:1px solid rgba(210,240,210,.14);border-radius:15px;background:rgba(8,18,13,.86);backdrop-filter:blur(12px);z-index:12}.timeline-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}.timeline-head b{font-size:13px;color:#f0f7ef}.timeline-head span{font-size:10px;color:#9cab9e}.timeline-range{width:100%;accent-color:#66bb58;margin:0;height:20px}.phasebands{position:relative;height:18px;margin:0 3px}.phasebands span{position:absolute;transform:translateX(-50%);font-size:8px;color:#809083;white-space:nowrap;bottom:0}.phasebands span:first-child{transform:none}.phasebands span:last-child{transform:translateX(-100%)}.rot{position:absolute;right:12px;top:84px;padding:7px 10px;border-radius:12px;background:rgba(8,18,13,.74);border:1px solid rgba(210,240,210,.12);font-size:10px;color:#b8c5ba}.hint{position:absolute;top:84px;left:12px;font-size:10px;color:#86968a}.name{position:absolute;left:14px;top:112px}.name b{display:block;font-size:20px}.name span{font-size:9px;color:#8fa092;letter-spacing:.12em;text-transform:uppercase}.camnav{position:absolute;right:12px;top:116px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:rgba(8,18,13,.78);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.camnav .row{display:flex;gap:4px}.camnav button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:6px 7px;font-size:9px;min-width:34px}.camnav button:hover{background:rgba(255,255,255,.10)}.tools{position:absolute;left:12px;bottom:14px;z-index:10;display:flex;gap:5px;padding:6px;border-radius:12px;background:rgba(8,18,13,.80);border:1px solid rgba(210,240,210,.12);backdrop-filter:blur(12px)}.tools button{border:0;background:rgba(255,255,255,.06);color:#dbe8da;border-radius:8px;padding:7px 9px;font-size:10px}.tools button.active{background:#66bb58;color:#fff}.tools button.danger{color:#efc4b3}.toolhint{position:absolute;left:12px;bottom:56px;z-index:9;color:#9aab9d;font-size:10px;background:rgba(8,18,13,.64);padding:6px 8px;border-radius:8px;pointer-events:none}
 
 /* V8 CTA: match the chunky lime game button reference */
@@ -3205,7 +3205,27 @@ html,body{min-width:100%;min-height:100%;display:flex;align-items:center;justify
     </section>
   </div>
 </div>
-<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
+<style id="v104FlowerSheetStyles">
+#flowerTestPage{position:fixed;inset:0;z-index:10000;background:#061710;color:#ebffe9;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;box-sizing:border-box;padding:0 12px max(20px,env(safe-area-inset-bottom));}
+#flowerTestPage[hidden]{display:none}
+.flower-test-head{position:sticky;top:0;z-index:2;background:rgba(6,23,16,.97);padding:max(12px,env(safe-area-inset-top)) 0 12px;border-bottom:1px solid #345139;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.flower-test-head h2{font:900 18px/1.2 system-ui;margin:0;flex:1;min-width:160px}
+.flower-test-head button{padding:10px 12px;border:1px solid #7eac65;border-radius:10px;color:#dfffad;background:#173622;font:900 12px/1.2 system-ui;cursor:pointer}
+#flowerTestProgress{flex-basis:100%;font:12px/1.4 system-ui;color:#bad0b5;margin:0}
+.flower-test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-top:12px}
+.flower-test-card{border:1px solid #34513d;border-radius:14px;background:radial-gradient(ellipse at 50% 25%,#153724,#092015 65%);overflow:hidden;min-width:0;padding:8px;box-sizing:border-box}
+#flowerTestPage .flower-test-card canvas{display:block;width:100%!important;height:auto!important;aspect-ratio:256/340;object-fit:contain}
+.flower-test-card h3{font:900 12px/1.3 system-ui;margin:5px 0;color:#e5ffd3;overflow-wrap:anywhere}
+.flower-test-card p{font:11px/1.4 system-ui;color:#b7cdb8;margin:3px 0;overflow-wrap:anywhere}
+.flower-test-card .flower-test-score{color:#d7ff93;font-weight:900}
+@media(min-width:650px){.flower-test-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1100px){.flower-test-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+</style>
+<section id="flowerTestPage" hidden aria-label="Demo-Testseite mit 100 Blütenvarianten">
+  <header class="flower-test-head"><h2>100 BLÜTENVARIANTEN</h2><button type="button" id="flowerTestNew">100 NEUE</button><button type="button" id="flowerTestClose" aria-label="Testseite schließen">SCHLIESSEN ×</button><p id="flowerTestProgress" role="status" aria-live="polite"></p></header>
+  <div class="flower-test-grid" id="flowerTestGrid"></div>
+</section>
+<div class="dev-drawer" id="devDrawer"><div class="dev-head"><strong>Entwicklungsmodus</strong><button id="devClose">×</button></div><div class="dev-grid"><button id="devFlowerSheet">100 Blüten vergleichen</button><button id="devUpgradeDemo">Upgrade-Demo</button><button id="devBypass">Wartezeit umgehen</button><button id="devGood">Tag 36 perfekt</button><button id="devGoodNarrow">Tag 36 perfekt (schmal)</button><button id="devGoodBushy">Tag 36 buschig</button><button id="devStress">Tag 36 mit Stress</button><button id="devDry">7 Tage trocken</button><button id="devDef">7 Tage N-Mangel</button><button id="devWet">5 Tage zu nass</button><button id="devBurn">5 Tage überdüngt</button><button id="devHarvest">Zum Erntetag</button><button id="devCoins">+500 Coins</button><button id="devReset">Spiel reset</button></div></div>
 <div class="toast" id="gameToast"></div>
 </div><script src="assets/cultivars.js?v=102"></script>
 <script src="assets/flower-art.js?v=102"></script><script src="assets/game-clock.js?v=99"></script><script src="assets/room-equipment-layout.js?v=98"></script><script src="assets/equipment/room-v98/manifest.js?v=98"></script><script>
@@ -3465,13 +3485,13 @@ function jarBudSeed(j){
 }
 /* Shared harvested flower material. Seed architecture and actual harvested condition
    drive a unique composite; source materials are never shown as complete fixed buds. */
-function renderCoreBudMaster(seed,compact=false,variant=0){
+function renderCoreBudMaster(seed,compact=false,variant=0,cache=true){
   const key=[seed.seed,seed.genetics,seed.phenotype,seed.rarity,JSON.stringify(seed.traits||{}),JSON.stringify(seed.harvestArt||{}),compact,variant].join('|');
-  if(budCoreCache.has(key))return budCoreCache.get(key);
+  if(cache&&budCoreCache.has(key))return budCoreCache.get(key);
   const profile=seedBudVisualProfile(seed),condition=seed.harvestArt;
   if(condition){if(Number.isFinite(Number(condition.density)))profile.density=clamp(Number(condition.density),.5,1.2);if(Number.isFinite(Number(condition.resin)))profile.frost=clamp(Number(condition.resin),.08,1);}
   const art=window.GanjariumFlowerArt.render(seed,profile,compact,variant);
-  if(window.GanjariumFlowerArt.has(seed.genetics))budCoreCache.set(key,art);
+  if(cache&&window.GanjariumFlowerArt.has(seed.genetics))budCoreCache.set(key,art);
   if(budCoreCache.size>64)budCoreCache.delete(budCoreCache.keys().next().value);
   return art;
 }
@@ -4320,6 +4340,56 @@ async function nextHarvestDemo(){
     pendingHarvestResult=result;populateHarvestResult(result);syncHarvestDemoControls();
   }catch(error){if(token===harvestDemo.token){restoreRealHarvest();showGameToast('Demo-Bild konnte nicht geladen werden');}console.warn('Harvest demo material failed',error);}
   finally{if(token===harvestDemo.token)button.disabled=false;}
+}
+
+
+const flowerTest={token:0,batch:0,returnFocus:null};
+function clearFlowerTest(){
+  const grid=document.getElementById('flowerTestGrid');
+  for(const canvas of grid.querySelectorAll('canvas')){canvas.width=1;canvas.height=1;}
+  grid.replaceChildren();
+}
+function closeFlowerTest(){
+  flowerTest.token++;document.getElementById('flowerTestPage').hidden=true;clearFlowerTest();
+  flowerTest.returnFocus?.focus();flowerTest.returnFocus=null;
+}
+async function openFlowerTest(){
+  const page=document.getElementById('flowerTestPage'),grid=document.getElementById('flowerTestGrid'),status=document.getElementById('flowerTestProgress');
+  if(page.hidden)flowerTest.returnFocus=document.activeElement;
+  devDrawer.classList.remove('open');page.hidden=false;page.scrollTop=0;
+  const token=++flowerTest.token,offset=flowerTest.batch++*100;clearFlowerTest();
+  document.getElementById('flowerTestClose').focus();
+  const rows=[];
+  for(let i=0;i<100;i++){
+    const result=buildHarvestDemoResult(offset+i),card=document.createElement('article'),canvas=document.createElement('canvas');
+    card.className='flower-test-card';card.dataset.seed=result.seed;card.dataset.cultivar=result.g.id;card.dataset.condition=result.condition;
+    canvas.width=256;canvas.height=340;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',result.g.name+' · '+result.condition+' · Seed '+result.seed);
+    const title=document.createElement('h3');title.textContent=(i+1)+'. '+result.g.name;
+    const seed=document.createElement('p');seed.textContent='Seed '+result.seed+' · '+result.phenotype;
+    const care=document.createElement('p');care.textContent=result.condition;
+    const score=document.createElement('p');score.className='flower-test-score';score.textContent=result.scores.total+'/100 · '+result.grams+' g';
+    card.append(canvas,title,seed,care,score);grid.append(card);rows.push({result,canvas,card});
+  }
+  let failed=0;
+  status.textContent='DEMO · 0/100 geladen · 15 Sorten · 6 Pflegeprofile · Spielstand bleibt unverändert';
+  for(let i=0;i<rows.length;i++){
+    if(token!==flowerTest.token)return;
+    const {result,canvas,card}=rows[i];
+    try{
+      await window.GanjariumFlowerArt.load(result.g.id);
+      if(token!==flowerTest.token)return;
+      // Keep only small comparison thumbnails, not 100 full-resolution masters.
+      // The production renderer is identical; bypass its gameplay cache here.
+      const master=renderCoreBudMaster(harvestPreviewSeed(result),false,0,false),ctx=canvas.getContext('2d');
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      const scale=Math.min(236/master.width,320/master.height);
+      ctx.drawImage(master,(256-master.width*scale)/2,(340-master.height*scale)/2,master.width*scale,master.height*scale);
+      master.width=1;master.height=1;card.dataset.ready='true';
+    }catch(error){failed++;card.dataset.ready='error';const note=document.createElement('p');note.textContent='Bild nicht geladen';card.append(note);console.warn('Flower comparison material failed',error);}
+    status.textContent='DEMO · '+(i+1)+'/100 geladen · 15 Sorten · 6 Pflegeprofile'+(failed?' · '+failed+' Bildfehler':'')+' · Spielstand bleibt unverändert';
+    // Yield after every flower so scrolling, closing and starting a new batch work.
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+  }
 }
 
 function harvestRating(score){if(score>=92)return{label:'EXZELLENT',cls:'excellent'};if(score>=82)return{label:'SEHR GUT',cls:'verygood'};if(score>=70)return{label:'GUT',cls:'good'};if(score>=55)return{label:'SOLIDE',cls:'solid'};return{label:'MÄSSIG',cls:'moderate'};}
@@ -7004,6 +7074,10 @@ document.getElementById('harvestResultClose')?.addEventListener('click',()=>{if(
 
 syncEquipment3D();
 syncEquipment2D();
+document.getElementById('devFlowerSheet')?.addEventListener('click',openFlowerTest);
+document.getElementById('flowerTestNew')?.addEventListener('click',openFlowerTest);
+document.getElementById('flowerTestClose')?.addEventListener('click',closeFlowerTest);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.getElementById('flowerTestPage').hidden)closeFlowerTest();});
 document.getElementById('devUpgradeDemo')?.addEventListener('click',()=>setUpgradeDemo(!demoVisualState.enabled));
 document.querySelectorAll('#upgradeDemoControls [data-demo-upgrade]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();cycleDemoVisual(btn.dataset.demoUpgrade);}));
 document.getElementById('devBypass')?.addEventListener('click',()=>{gameState.settings.debugBypass=!gameState.settings.debugBypass;saveGameState();updateGameHUD();showGameToast(gameState.settings.debugBypass?'DEV Cooldowns aus':'Echte Cooldowns aktiv')});
