@@ -24,25 +24,27 @@
   function beamGeometry(p){
     const v=p.view;
     return {cx:p.x+p.width*.51,top:p.y+p.height*.46,
-      length:v.height*.61,sigma:p.width*.23,spread:v.width*(.155+p.level*.008)};
+      length:v.height*.61,sigma:p.width*.40,spread:v.width*(.13+p.level*.006)};
   }
   function beamTexture(p){
     const b=beamGeometry(p),key=[p.level,p.width,p.height,p.view.width,p.view.height].map(n=>n.toFixed(2)).join(':');
     if(beamCache.has(key))return beamCache.get(key);
-    const width=(b.sigma+b.spread)*7.2,height=b.length;
+    const width=(b.sigma+b.spread)*2.5,height=b.length;
+    const smooth=(a,z,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(z-a)));return t*t*(3-2*t);};
     const canvas=document.createElement('canvas');
     const scale=Math.min(1,768/height,768/width);
     canvas.width=Math.max(2,Math.ceil(width*scale));canvas.height=Math.max(2,Math.ceil(height*scale));
     const g=canvas.getContext('2d'),pixels=g.createImageData(canvas.width,canvas.height);
     for(let y=0;y<canvas.height;y++){
       const dy=y/canvas.height*height,t=dy/height;
-      const sigma=b.sigma+b.spread*t;
-      // Rise underneath the LED plane, then dissolve gradually toward the floor.
-      const alpha=(.23+p.level*.012)*(1-Math.exp(-dy/Math.max(1,p.height*.09)))*Math.pow(1-t,1.7);
+      const halfWidth=b.sigma+b.spread*t;
+      const feather=p.view.width*.016+halfWidth*.13;
+      // Preserve a visible cone core. Feather only its sides and final floor fade.
+      const alpha=(.34+p.level*.012)*(1-Math.exp(-dy/Math.max(1,p.height*.07)))*(1-.38*t)*(1-smooth(.70,1,t));
       for(let x=0;x<canvas.width;x++){
         const dx=(x/canvas.width-.5)*width,offset=(y*canvas.width+x)*4;
         pixels.data[offset]=255;pixels.data[offset+1]=241;pixels.data[offset+2]=193;
-        pixels.data[offset+3]=Math.round(255*alpha*Math.exp(-.5*dx*dx/(sigma*sigma)));
+        pixels.data[offset+3]=Math.round(255*alpha*(1-smooth(halfWidth-feather,halfWidth+feather,Math.abs(dx))));
       }
     }
     g.putImageData(pixels,0,0);

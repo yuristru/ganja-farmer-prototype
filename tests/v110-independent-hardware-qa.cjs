@@ -8,7 +8,8 @@ const hook=`window.__ROOM110={capture:()=>{buildWorldBackground();const c=worldB
  const sampleY=Math.round(b.top+p.height*.4),center=g.getImageData(Math.round(b.cx),sampleY,1,1).data[3],edge=g.getImageData(Math.round(b.cx+p.width*.4),sampleY,1,1).data[3];
  g.clearRect(0,0,c.width,c.height);Object.defineProperty(g,'filter',{get:()=> 'none',set:()=>{}});
  window.GanjariumRoomHardware.drawLight(g,p);const filterless=hash(g.getImageData(0,0,c.width,c.height).data);
- return {normal,filterless,center,edge,top:b.top,lampBottom:p.y+p.height*.9};
+ const middle=g.getImageData(Math.round(b.cx),Math.round(b.top+b.length*.45),1,1).data[3];
+ return {normal,filterless,center,edge,middle,top:b.top,lampBottom:p.y+p.height*.9};
 };`;
 const mime={'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.json':'application/json','.svg':'image/svg+xml','.b64':'text/plain'};
 const server=http.createServer((req,res)=>{const rel=decodeURIComponent(req.url.split('?')[0]),file=path.resolve(root,rel==='/'?'index.html':'.'+rel);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end();return;}if(file.endsWith('index.html'))data=Buffer.from(data.toString().replace('resize();\n})();','resize();\n'+hook+'\n})();'));res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(data);});});
@@ -51,6 +52,7 @@ for(let level=1;level<=5;level++){
  const result=await page.evaluate(()=>window.__ROOM110.beamCheck());
  assert.deepEqual(result.normal,result.filterless,'Light depends on unsupported Safari canvas blur');
  assert(result.top<result.lampBottom,'Light starts below the lamp');
+ assert(result.middle>=60,'Visible cone core faded into an indistinct glow');
  assert(result.center>0&&result.edge>0&&result.edge<result.center,'Light edges are not feathered');
 }
 for(const width of [320,370,393,430]){await page.setViewportSize({width,height:Math.round(width*852/393)});await page.waitForTimeout(350);await page.evaluate(()=>window.__GFROOMEQ.setLevels({light:5,vent:5}));const s=await page.evaluate(()=>window.__ROOM110.capture());for(const p of s.placements.filter(p=>['light','vent'].includes(p.id))){assert(p.x>=0&&p.x+p.width<=width,'Hardware cropped');assert(p.y>=0,'Hardware above viewport');}await page.screenshot({path:path.join(out,`mobile-${width}.png`)});}
