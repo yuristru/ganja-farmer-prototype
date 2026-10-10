@@ -148,7 +148,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       assert(!inCanal||(mover.kind==='car'&&roadCell(y)),'Traffic must cross the canal only on bridges.');
     }
     console.log('Time and depth passed: real pause, normal/3x/6x speed, live clock, traffic depth and safe canal crossings.');
-    await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
+    await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=0;app.ticker.stop();},corePath);
 
     await page.click('#restaurantBtn');assert.equal(await page.locator('[data-tool="chair"]').count(),0);
     const restaurantModule=fs.readFileSync(path.join(root,'pizza.js'),'utf8').match(/from ['"](.\/pizza-restaurant\.js[^'"]*)['"]/)[1].replace('./','/');
@@ -178,6 +178,11 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await page.click('#undoBtn');assert.equal((await snapshot(page)).balance,beforeBuy.balance-1040);
     await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).items,beforeBuy.items);assert.equal((await snapshot(page)).balance,beforeBuy.balance);
     await selectTool(page,'arcade');await placeCell(page,5,0);assert((await snapshot(page)).items.some(p=>p.type==='arcade'&&p.paid===2800));await page.click('#undoBtn');
+    await page.click('#resetBtn');
+    const budget=(await snapshot(page)).balance;
+    await page.evaluate(async source=>{const {state,updateMoney}=await import(source);state.balance=0;updateMoney();},corePath);
+    await selectTool(page,'oven');await tapCell(page,6,0);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/Nicht genügend/);
+    await page.evaluate(async ({source,budget})=>{const {state,updateMoney}=await import(source);state.balance=budget;updateMoney();},{source:corePath,budget});
     await page.click('#resetBtn');
     // Each capacity is one sprite and one placement, including its chairs.
     for(const [seats,x,y]of [[2,0,2],[4,5,2],[6,5,0],[8,0,5]]){
@@ -228,7 +233,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     current=await snapshot(page);const occupied=new Set(current.items.flatMap(model.occupiedCells));
     for(const actor of current.movers.filter(actor=>actor.visible)){assert(!occupied.has(`${Math.round(actor.x)},${Math.round(actor.y)}`),'Guest walked through furniture.');assert(model.guestCell(Math.round(actor.x),Math.round(actor.y)),'Guest entered the separate kitchen.');}
     await page.click('[data-speed="0"]');await page.click('#resetBtn');
-    await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
+    await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=0;app.ticker.stop();},corePath);
     console.log('Restaurant passed: combined 2D table sprites, all capacities, touch preview/confirm/cancel, kitchen/entrance/overlap checks, rotation, deletion, undo/reset, reload and guest paths.');
 
     for(const {width,height} of [{width:320,height:568},{width:393,height:852},{width:430,height:932},{width:768,height:1024},{width:1280,height:720},{width:844,height:390}]){
@@ -240,7 +245,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
         const base=root.getBoundingClientRect();
         const tools=document.querySelector('#tools').getBoundingClientRect(),nav=document.querySelector('.bottomnav').getBoundingClientRect(),hint=document.querySelector('#placementHint').getBoundingClientRect();
         const head=document.querySelector('#restaurantHead').getBoundingClientRect(),headerOverflow=[...document.querySelectorAll('#restaurantHead strong,#restaurantHead span')].filter(e=>e.getClientRects().length).some(e=>{const r=e.getBoundingClientRect();return r.top<head.top+2||r.bottom>head.bottom-2;});
-        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},headerOverflow,toolbarOverlap:tools.bottom>nav.top+1,hintOverlap:root.dataset.compact==='landscape'&&hint.bottom>tools.top+1,uiClipped:visible.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),buttonOverflow:visible.filter(element=>element.scrollWidth>element.clientWidth+1).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
+        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},headerOverflow,toolbarOverlap:tools.bottom>nav.top+1,hintOverlap:root.dataset.compact==='landscape'&&hint.bottom>tools.top+1,uiClipped:visible.filter(element=>{let rect=element.getBoundingClientRect();const scroller=element.closest('.catalogOptions');if(scroller){const clip=scroller.getBoundingClientRect();rect={left:Math.max(rect.left,clip.left),right:Math.min(rect.right,clip.right),top:Math.max(rect.top,clip.top),bottom:Math.min(rect.bottom,clip.bottom)};if(rect.right<=rect.left||rect.bottom<=rect.top)return false;}return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),buttonOverflow:visible.filter(element=>element.scrollWidth>element.clientWidth+1).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
       },corePath);
       assert.equal(geometry.uiClipped.length,0,JSON.stringify({width,height,...geometry}));assert(!geometry.moneyOverflow,'Account text overflow at '+width);
       assert.equal(geometry.buttonOverflow.length,0,JSON.stringify({width,height,buttonOverflow:geometry.buttonOverflow}));
