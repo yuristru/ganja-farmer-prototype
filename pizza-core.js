@@ -1,6 +1,6 @@
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010p';
-import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010p';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010q';
+import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010q';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -120,9 +120,9 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010p');
-  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010p');
-  const {loadIngredientArt}=await import('./pizza-ingredient-art.js?v=20261010p');
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010q');
+  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010q');
+  const {loadIngredientArt}=await import('./pizza-ingredient-art.js?v=20261010q');
   await Promise.all([loadCityArt(),loadRestaurantArt(),loadIngredientArt()]);
   if(!state.cityArt.buildings) await loadCityAtlas();
   loading.hidden=true;

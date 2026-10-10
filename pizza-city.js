@@ -1,7 +1,7 @@
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010p';
-import {citySprite} from './pizza-city-art.js?v=20261010p';
-import {personSprite} from './pizza-sprites.js?v=20261010p';
-import {carSprite} from './pizza-city-traffic.js?v=20261010p';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010q';
+import {citySprite} from './pizza-city-art.js?v=20261010q';
+import {personSprite} from './pizza-sprites.js?v=20261010q';
+import {carSprite} from './pizza-city-traffic.js?v=20261010q';
 
 const DEFAULT_VIEW={x:0,y:432,zoom:.88};
 function roadCell(value){const m=((value%8)+8)%8;return m<2;}
@@ -78,7 +78,7 @@ function pizzaBadge(g,x){
 function building(objects,labels,x,y,index=0,name=null,player=false){
   let object=citySprite('buildings',index);
   if(!object){const type=index>=4?'small':index%2?'medium':'big',textures=state.cityTex[type];object=new Sprite(textures[Math.floor(hash(x,y)*textures.length)]);object.anchor.set(.5,1);object.scale.set(2);}
-  const p=iso(x,y);place(objects,object,x,y);object.label=player?'player-restaurant':'city-building';
+  const p=iso(x,y);place(objects,object,x,y);object.label=player?'player-restaurant':'city-building';object.buildingVariant=index;
   if(player){object.eventMode='static';object.cursor='pointer';object.on('pointertap',openRestaurant);}
   if(name){
     const tablePositions=[[-.55,.4],[.65,.2]];
@@ -119,12 +119,15 @@ function block(objects,labels,bx,by){
     [[3.0,5.3],[5.4,3.0],[1.0,2.7]].forEach(([x,y])=>place(objects,bench(),ox+x,oy+y));
     decorateCorners(objects,ox,oy);return;
   }
-  const variant=Math.floor(hash(bx,by)*4);
+  const pool=[0,1,2,3,7];
+  for(let i=8;i<(state.cityArt.buildings?.length||8);i++)pool.push(i);
+  const variants=[0,1,2,3].map(slot=>pool[Math.floor(hash(bx*4+slot,by,94117)*pool.length)]);
+  const variant=variants[0];
   building(objects,labels,ox+2.35,oy+2.35,variant);
-  building(objects,labels,ox+5.2,oy+2.35,(variant+1)%4);
+  building(objects,labels,ox+5.2,oy+2.35,variants[1]);
   if(bx===1&&by===1)building(objects,labels,ox+2.5,oy+4.6,4,'Mamma Mia',true);
   else if(bx===2&&by===1)building(objects,labels,ox+2.2,oy+4.6,5,"Luigi's");
-  else{building(objects,labels,ox+2.35,oy+5.2,(variant+2)%4);if((bx+by)%2===0)building(objects,labels,ox+5.2,oy+5.2,7);}
+  else{building(objects,labels,ox+2.35,oy+5.2,variants[2]);if((bx+by)%2===0)building(objects,labels,ox+5.2,oy+5.2,variants[3]);}
   if(bx!==1||by!==1)place(objects,tree((bx+by+6)%4,.8),ox+5.25,oy+5.25);
   else place(objects,tree(3,.86),ox+5.2,oy+5.1);
   decorateCorners(objects,ox,oy);
