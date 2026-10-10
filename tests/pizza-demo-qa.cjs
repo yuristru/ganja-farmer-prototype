@@ -34,6 +34,10 @@ async function nodePoint(page,label){
   },{modulePath:corePath,label});
 }
 async function tapCell(page,x,y){await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.render();},corePath);const point=await nodePoint(page,`floor-${x}-${y}`);await page.mouse.click(point.x,point.y);}
+async function capture(page,name){
+  await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.render();},corePath);
+  await page.screenshot({path:path.join(out,name),style:'#toast { visibility: hidden; }'});
+}
 async function loaded(page,url){await page.goto(url);await page.waitForSelector('#loading',{state:'hidden',timeout:15000});}
 
 (async()=>{
@@ -62,7 +66,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,0);assert.equal((await snapshot(page)).worldChildren,1);
     assert.match(await page.locator('#gameDate').innerText(),/Do\./);
     await page.click('[data-speed="0"]');
-    await page.screenshot({path:path.join(out,'city-393.png')});
+    await capture(page,'city-393.png');
 
     // Dragging an interactive sign must pan without opening the restaurant.
     const sign=await nodePoint(page,'restaurant-sign');
@@ -103,7 +107,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await page.click('[data-tool="bar"]');await page.click('#rotateBtn');assert.equal((await snapshot(page)).rotation,1);
     await tapCell(page,7,5);assert.equal((await snapshot(page)).items.length,count+1);assert.match(await page.locator('#toast').innerText(),/Eingang/);
     await tapCell(page,7,4);assert((await snapshot(page)).items.some(item=>item.type==='bar'&&item.x===7&&item.y===4&&item.r===1));
-    await page.screenshot({path:path.join(out,'custom-furniture.png')});
+    await capture(page,'custom-furniture.png');
     await page.click('#deleteBtn');assert.equal(await page.locator('.toolbtn.active').count(),0);
     await tapCell(page,5,2);assert(!(await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
     await page.click('#undoBtn');assert((await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
@@ -117,6 +121,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     current=await snapshot(page);const occupied=new Set(current.items.flatMap(model.occupiedCells));
     for(const actor of current.movers.filter(actor=>actor.visible)){assert(!occupied.has(`${Math.round(actor.x)},${Math.round(actor.y)}`),'Guest walked through furniture.');assert(actor.y>=2&&actor.x>=0&&actor.x<model.ROOM.w&&actor.y<model.ROOM.h);}
     await page.click('[data-speed="0"]');await page.click('#resetBtn');
+    await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
     console.log('Restaurant passed: placement, kitchen/entrance/overlap checks, rotated counter, deletion, undo/reset, reload and guest paths.');
 
     for(const {width,height} of [{width:320,height:568},{width:393,height:852},{width:430,height:932},{width:768,height:1024},{width:1280,height:720},{width:844,height:390}]){
@@ -126,14 +131,15 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
         const {root,world,app,sceneViewport}=await import(modulePath),area=sceneViewport(true),room=world.children[0].getBounds();
         const visible=[...document.querySelectorAll('#app button')].filter(element=>element.getClientRects().length&&getComputedStyle(element).visibility!=='hidden');
         const base=root.getBoundingClientRect();
-        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},uiClipped:visible.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
+        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},uiClipped:visible.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),buttonOverflow:visible.filter(element=>element.scrollWidth>element.clientWidth+1).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
       },corePath);
       assert.equal(geometry.uiClipped.length,0,JSON.stringify({width,height,...geometry}));assert(!geometry.moneyOverflow,'Account text overflow at '+width);
+      assert.equal(geometry.buttonOverflow.length,0,JSON.stringify({width,height,buttonOverflow:geometry.buttonOverflow}));
       assert.equal(geometry.screen.width,geometry.base.width);assert.equal(geometry.screen.height,geometry.base.height);
       assert(geometry.room.left>=geometry.area.left-2&&geometry.room.right<=geometry.area.right+2&&geometry.room.top>=geometry.area.top-2&&geometry.room.bottom<=geometry.area.bottom+2,JSON.stringify({width,height,...geometry}));
-      await page.screenshot({path:path.join(out,`restaurant-${width}x${height}.png`)});
+      await capture(page,`restaurant-${width}x${height}.png`);
       await page.click('[data-tool="plant"]');await tapCell(page,7,3);assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===7&&item.y===3));await page.click('#undoBtn');
-      await page.click('#cityBtn');await page.screenshot({path:path.join(out,`city-${width}x${height}.png`)});
+      await page.click('#cityBtn');await capture(page,`city-${width}x${height}.png`);
     }
     console.log('Responsive views passed: 320, 393, 430, tablet, desktop and landscape, including real placement after resize.');
 
