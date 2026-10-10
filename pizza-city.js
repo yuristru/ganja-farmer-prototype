@@ -1,10 +1,11 @@
-import {districtOrder,nextCitySeed} from './pizza-city-layout.js?v=20261011a';
-import {PROPERTIES,PROPERTY_SIZES} from './pizza-properties.js?v=20261011a';
-import {openProperty} from './pizza-properties-ui.js?v=20261011a';
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport,saveLayout,notify} from './pizza-core.js?v=20261011a';
-import {citySprite} from './pizza-city-art.js?v=20261011a';
-import {personSprite} from './pizza-sprites.js?v=20261011a';
-import {carSprite} from './pizza-city-traffic.js?v=20261011a';
+import {cityGround} from './pizza-city-ground.js?v=20261011b';
+import {districtOrder,nextCitySeed} from './pizza-city-layout.js?v=20261011b';
+import {PROPERTIES,PROPERTY_SIZES} from './pizza-properties.js?v=20261011b';
+import {openProperty} from './pizza-properties-ui.js?v=20261011b';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport,saveLayout,notify} from './pizza-core.js?v=20261011b';
+import {citySprite} from './pizza-city-art.js?v=20261011b';
+import {personSprite} from './pizza-sprites.js?v=20261011b';
+import {carSprite} from './pizza-city-traffic.js?v=20261011b';
 
 let districts=districtOrder();
 function cityHash(x,y,s=0){return hash(x,y,(state.citySeed+s)>>>0);}
@@ -17,20 +18,11 @@ function roadCell(value){const m=((value%8)+8)%8;return m<2;}
 function road(x,y){return roadCell(x)||roadCell(y);}
 function water(x,y){return x>=24&&x<26&&y>=12;}
 function bridge(x,y){return water(x,y)&&roadCell(y);}
-function sidewalk(x,y){return !road(x,y)&&(road(x-1,y)||road(x+1,y)||road(x,y-1)||road(x,y+1));}
 function park(x,y){
   const bx=Math.floor((x-2)/8),by=Math.floor((y-2)/8),[sx,sy]=sourceBlock(bx,by),lx=x-(2+bx*8),ly=y-(2+by*8);
   return sx===2&&sy===2&&lx>=0&&lx<6&&ly>=0&&ly<6&&!(lx<3&&ly>2);
 }
 function fountainCell(x,y){const lx=((x-2)%8+8)%8,ly=((y-2)%8+8)%8;return lx>=3&&lx<=4&&ly>=3&&ly<=4;}
-function groundColor(x,y){
-  if(water(x,y)&&!bridge(x,y))return hash(x,y)>.5?0x39798d:0x3c8093;
-  if(bridge(x,y))return 0xafa68e;
-  if(road(x,y))return hash(x,y)>.55?0x555b5c:0x515759;
-  if(park(x,y)&&!sidewalk(x,y)&&!fountainCell(x,y))return hash(x,y)>.5?0x6e8854:0x78915b;
-  return hash(x,y)>.5?0xb9b29a:0xc1b9a1;
-}
-function tile(g,x,y,color){const p=iso(x,y);g.poly([p.x,p.y-TH/2,p.x+TW/2,p.y,p.x,p.y+TH/2,p.x-TW/2,p.y]).fill(color);}
 function place(layer,object,x,y){const p=iso(x,y);object.position.set(p.x,p.y);object.zIndex=p.y;layer.addChild(object);return object;}
 
 function fallbackTree(){const g=new Graphics();g.ellipse(0,0,12,4).fill({color:0,alpha:.16});g.rect(-2,-20,4,20).fill(0x78553a);g.poly([-17,-23,-15,-41,-7,-52,8,-54,18,-43,20,-27,7,-19]).fill(0x426641);g.poly([-15,-33,-10,-47,2,-51,12,-39,1,-27]).fill(0x6a8b4d);return g;}
@@ -41,31 +33,8 @@ function planter(){return citySprite('props',6)||new Graphics().rect(-5,-9,10,9)
 function patioTable(){const g=citySprite('props',7)||new Graphics().poly([-13,-16,0,-23,13,-16,0,-10]).fill(0xb94832).rect(-1,-10,2,10).fill(0x78593a);g.label='city-terrace';return g;}
 function fountain(){return citySprite('props',4)||new Graphics().ellipse(0,-5,36,18).fill(0xb4b096).ellipse(0,-6,30,13).fill(0x598d9e).rect(-3,-25,6,21).fill(0xcac2a8);}
 
-function paving(g,x,y){
-  for(let a=0;a<3;a++)for(let b=0;b<3;b++){
-    const p=iso(x-.35+a*.35,y-.35+b*.35),shade=cityHash(x*9+a,y*9+b);
-    g.poly([p.x,p.y-4.5,p.x+9,p.y,p.x,p.y+4.5,p.x-9,p.y]).fill({color:shade>.5?0xe0d6bc:0x847d6b,alpha:shade>.5?.24:.13});
-  }
-}
-function roadDetail(g,x,y){
-  const p=iso(x,y),ix=roadCell(x),iy=roadCell(y);
-  if(ix&&iy)return;
-  if(ix&&x%8===0&&y%3===0)g.poly([p.x-13,p.y-2,p.x-10,p.y-4,p.x+8,p.y+5,p.x+5,p.y+7]).fill(0xc3c5b9);
-  if(iy&&y%8===0&&x%3===0)g.poly([p.x+13,p.y-2,p.x+10,p.y-4,p.x-8,p.y+5,p.x-5,p.y+7]).fill(0xc3c5b9);
-  if(ix&&y%8===2)for(let i=0;i<5;i++){const q=iso(x-.48+i*.23,y-.42);g.poly([q.x-3,q.y-1.5,q.x,q.y-3,q.x+17,q.y+5.5,q.x+14,q.y+7]).fill(0xdcd9c9);}
-  if(iy&&x%8===2)for(let i=0;i<5;i++){const q=iso(x-.42,y-.48+i*.23);g.poly([q.x+3,q.y-1.5,q.x,q.y-3,q.x-17,q.y+5.5,q.x-14,q.y+7]).fill(0xdcd9c9);}
-}
-function waterDetail(g,x,y){
-  for(let i=0;i<4;i++){
-    const p=iso(x-.35+cityHash(x,y,i)*.7,y-.35+cityHash(y,x,i+9)*.7);
-    g.poly([p.x-5,p.y,p.x+4,p.y-4,p.x+10,p.y-1,p.x+1,p.y+3]).fill({color:i%2?0x8ca8a5:0x235e78,alpha:.4});
-  }
-}
-function bridges(g,objects){
+function bridges(objects){
   for(const y of [16,24]){
-    const points=[[23.5,y-.5],[26.5,y-.5],[26.5,y+1.5],[23.5,y+1.5]].map(([x,gy])=>iso(x,gy));
-    g.poly(points.flatMap(p=>[p.x,p.y])).fill(0xbab299).stroke({color:0xe3d8bd,width:2});
-    for(let x=24;x<=26;x++)for(let gy=y;gy<=y+1;gy++)paving(g,x,gy);
     for(const edge of [y-.52,y+1.52]){
       const wall=new Graphics(),a=iso(23.5,edge),b=iso(26.5,edge);
       wall.poly([0,-9,b.x-a.x,b.y-a.y-9,b.x-a.x,b.y-a.y,0,0]).fill(0x8c836c).stroke({color:0xd6cbb0,width:2});
@@ -233,16 +202,10 @@ export function showCity(){
   districts=districtOrder(state.citySeed);
   clearWorld();state.scene='city';sceneUI('city');
   state.camera=new Container();world.addChild(state.camera);
-  const ground=new Graphics(),markings=new Graphics(),objects=new Container(),labels=new Container();
+  const ground=cityGround({road,roadCell,water,bridge,park,fountainCell},state.citySeed),markings=new Container(),objects=new Container(),labels=new Container();
   ground.label='city-ground';objects.label='city-objects';objects.sortableChildren=true;labels.sortableChildren=true;
   state.camera.addChild(ground,markings,objects,labels);
-  for(let y=-8;y<CITY_N+8;y++) for(let x=-8;x<CITY_N+8;x++){
-    tile(ground,x,y,groundColor(x,y));
-    if(water(x,y)&&!bridge(x,y))waterDetail(markings,x,y);
-    else if(!road(x,y)||bridge(x,y))paving(markings,x,y);
-    else roadDetail(markings,x,y);
-  }
-  bridges(markings,objects);waterfront(objects);
+  bridges(objects);waterfront(objects);
   for(let by=-1;by<4;by++) for(let bx=-1;bx<4;bx++) block(objects,labels,bx,by);
   [[7,4],[18,6],[7,13],[18,12],[7,21],[15,22],[22,15]].forEach(([x,y],i)=>place(objects,tree(i%4,.78),x,y));
   const lanes=[.12,1.12,8.12,9.12,16.12,17.12,24.12,25.12];

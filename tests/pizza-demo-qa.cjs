@@ -96,14 +96,15 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,0);assert.equal((await snapshot(page)).worldChildren,1);
     const cityArt=await page.evaluate(async modulePath=>{
-      const {state,Sprite}=await import(modulePath),objects=state.camera.children.find(c=>c.label==='city-objects');
-      return {projected:[...state.cityArt.buildings.slice(8),...state.cityArt.buildingTypes].map(a=>({projection:a.projection,anchor:a.anchor})),atlases:Object.fromEntries(Object.entries(state.cityArt).map(([key,frames])=>[key,frames.length])),properties:objects.children.filter(c=>c.label==='city-property').map(c=>c.propertyId),types:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildingTypes').map(c=>c.buildingVariant))],variants:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildings').map(c=>c.buildingVariant))],buildings:objects.children.filter(c=>c.label==='city-building').length,
+      const {state,Sprite}=await import(modulePath),objects=state.camera.children.find(c=>c.label==='city-objects'),ground=state.camera.children.find(c=>c.label==='city-ground');
+      return {ground:{sprite:ground instanceof Sprite,pixelScale:ground.pixelScale,details:ground.groundDetails,sampling:ground.texture.source.scaleMode},projected:[...state.cityArt.buildings.slice(8),...state.cityArt.buildingTypes].map(a=>({projection:a.projection,anchor:a.anchor})),atlases:Object.fromEntries(Object.entries(state.cityArt).map(([key,frames])=>[key,frames.length])),properties:objects.children.filter(c=>c.label==='city-property').map(c=>c.propertyId),types:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildingTypes').map(c=>c.buildingVariant))],variants:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildings').map(c=>c.buildingVariant))],buildings:objects.children.filter(c=>c.label==='city-building').length,
         landmarks:objects.children.filter(c=>['city-colosseum','city-cathedral'].includes(c.label)).map(c=>({label:c.label,sprite:c instanceof Sprite})),
         traffic:state.movers.map(m=>({sprite:m.g instanceof Sprite,scaleX:m.g.scale.x,scaleY:m.g.scale.y})),
         terraces:objects.children.filter(c=>c.label==='city-terrace').map(c=>({sprite:c instanceof Sprite,x:(c.x/32+c.y/16)/2,y:(c.y/16-c.x/32)/2}))};
     },corePath);
     assert.deepEqual(cityArt.atlases,{buildings:16,buildingTypes:8,landmarks:2,props:8});assert(cityArt.buildings>=30);
     assert(cityArt.variants.filter(i=>i>=8).length>=6);
+    assert(cityArt.ground.sprite);assert.equal(cityArt.ground.pixelScale,2);assert.equal(cityArt.ground.sampling,'nearest');assert(cityArt.ground.details.asphalt>500&&cityArt.ground.details.crossings>0&&cityArt.ground.details.curbs>0&&cityArt.ground.details.manholes>0);
     assert.equal(cityArt.projected.length,16);assert(cityArt.projected.every(a=>a.projection&&a.anchor.x>0&&a.anchor.x<1&&a.anchor.y>0&&a.anchor.y<=1));
     assert.equal(cityArt.properties.length,9);assert.equal(new Set(cityArt.properties).size,9);
     assert(cityArt.types.length>=4);
