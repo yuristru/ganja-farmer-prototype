@@ -1,6 +1,6 @@
-import {state,saveLayout,updateMoney,notify} from './pizza-core.js?v=20261010s';
-import {money} from './pizza-catalog.js?v=20261010s';
-import {PROPERTIES,PROPERTY_SIZES,property,buyProperty,propertyPurchaseIssue} from './pizza-properties.js?v=20261010s';
+import {state,saveLayout,updateMoney,notify} from './pizza-core.js?v=20261011a';
+import {money} from './pizza-catalog.js?v=20261011a';
+import {PROPERTIES,PROPERTY_SIZES,property,buyProperty,propertyPurchaseIssue} from './pizza-properties.js?v=20261011a';
 const el=id=>document.getElementById(id);
 let selected=null,filter='small';
 function render(){

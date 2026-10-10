@@ -11,6 +11,7 @@ on:
       - 'tests/pizza-recipe-qa.mjs'
       - 'tests/pizza-properties-qa.mjs'
       - 'tests/pizza-city-layout-qa.mjs'
+      - 'tests/pizza-isometric-art-qa.mjs'
       - '.github/workflows/pizza-demo-qa.yml'
   workflow_dispatch:
 jobs:
@@ -32,6 +33,7 @@ jobs:
           node tests/pizza-recipe-qa.mjs
           node tests/pizza-properties-qa.mjs
           node tests/pizza-city-layout-qa.mjs
+          node tests/pizza-isometric-art-qa.mjs
           node tests/pizza-demo-qa.cjs
       - name: Upload screenshots
         if: always()
