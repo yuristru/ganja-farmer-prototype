@@ -1,32 +1,306 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Pizza City</title><style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171318;touch-action:none}#app{width:100vw;height:100dvh;display:grid;place-items:center}canvas{display:block;width:min(100vw,430px);height:auto;max-height:100dvh;aspect-ratio:215/466;image-rendering:pixelated;image-rendering:crisp-edges;box-shadow:0 0 0 1px #4d3939,0 12px 40px #000a}</style></head><body><div id="app"></div><script type="module">
-import{Application,Container,Graphics,Text,Rectangle}from'https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.mjs';
-const W=215,H=466,TW=24,TH=12,C={bg:0x171318,panel:0x261c1f,panel2:0x39292c,border:0x725348,cream:0xf0d69b,gold:0xe0ac45,red:0xb84b37,road:0x55535b,road2:0x424148,walk:0x998b70,grass:0x62734d,skin:0xd29b6b};
-const app=new Application();await app.init({width:W,height:H,background:'#171318',antialias:false,resolution:1,preference:'webgl'});document.querySelector('#app').appendChild(app.canvas);app.stage.eventMode='static';app.stage.hitArea=new Rectangle(0,0,W,H);
-const world=new Container(),ui=new Container();app.stage.addChild(world,ui);let ticks=[],tool='table',rot=0;
-let furniture=[{type:'oven',x:0,y:1,rot:0},{type:'table',x:3,y:4,rot:0},{type:'chair',x:3,y:3,rot:0},{type:'chair',x:3,y:6,rot:2},{type:'arcade',x:7,y:1,rot:0}];
-function clear(){ticks=[];world.removeChildren().forEach(x=>x.destroy({children:true}));ui.removeChildren().forEach(x=>x.destroy({children:true}))}
-function text(s,x,y,n=7,col='#f5e8c8',ax=0,ay=0){const t=new Text({text:s,style:{fontFamily:'monospace',fontSize:n,fill:col,fontWeight:'700'}});t.x=x|0;t.y=y|0;t.anchor.set(ax,ay);return t}
-function box(x,y,w,h,fill=C.panel,border=C.border){const g=new Graphics();g.rect(x,y,w,h).fill(fill).stroke({color:border,width:1});return g}
-function btn(s,x,y,w,h,fn,on=false){const c=new Container();c.x=x;c.y=y;c.eventMode='static';c.cursor='pointer';c.hitArea=new Rectangle(0,0,w,h);c.addChild(box(0,0,w,h,on?C.gold:C.panel2,on?0xffdd78:C.border));c.addChild(text(s,w/2,h/2,6,on?'#171318':'#f5e8c8',.5,.5));c.on('pointertap',fn);return c}
-function head(title,sub){ui.addChild(box(5,5,205,34));ui.addChild(text(title,12,10,9,'#f0d69b'));ui.addChild(text(sub,12,24,5,'#b9a385'));ui.addChild(text('€18.420',203,11,7,'#e0ac45',1,0))}
-function iso(x,y,ox=0,oy=0){return{x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2}}
-function diamond(x,y,fill,stroke){const g=new Graphics(),p=[x,y-6,x+12,y,x,y+6,x-12,y];g.poly(p).fill(fill);if(stroke)g.poly(p).stroke({color:stroke,width:1});return g}
-function prism(x,y,w,d,h,col,ox=0,oy=0){const a=iso(x,y,ox,oy),b=iso(x+w,y,ox,oy),c=iso(x+w,y+d,ox,oy),e=iso(x,y+d,ox,oy),g=new Graphics();g.poly([e.x,e.y-h,c.x,c.y-h,c.x,c.y,e.x,e.y]).fill(col.l);g.poly([b.x,b.y-h,c.x,c.y-h,c.x,c.y,b.x,b.y]).fill(col.r);g.poly([a.x,a.y-h,b.x,b.y-h,c.x,c.y-h,e.x,e.y-h]).fill(col.t);return g}
-function hash(x,y,s=1){let n=(x*374761393+y*668265263+s*1442695041)>>>0;n=(n^(n>>13))*1274126177;return((n^(n>>16))>>>0)/4294967295}
-function building(gx,gy,bx,by,special=false){const r=hash(bx,by,91),pal=[{t:0x9c7353,l:0x7c523f,r:0x604039},{t:0xa18e66,l:0x7c6b50,r:0x5b5141},{t:0x74837c,l:0x586a64,r:0x445650},{t:0x986158,l:0x744843,r:0x5c3936}],p=special?{t:0xc75c3d,l:0x934031,r:0x713025}:pal[(r*pal.length)|0],h=special?31:23+(r*18|0),c=new Container();c.addChild(prism(gx,gy,2.65,2.65,h,p));const mid=iso(gx+1.3,gy+1.3),win=new Graphics();for(let f=0;f<Math.max(1,h/10|0);f++){win.rect(mid.x+8,mid.y-h+7+f*9,5,3).fill(0xd2c27f);win.rect(mid.x-13,mid.y-h+10+f*9,5,3).fill(0x87aaa2)}c.addChild(win);if(special){const sg=new Graphics();sg.rect(mid.x-18,mid.y-h-14,36,10).fill(0x351516).stroke({color:C.gold,width:1});c.addChild(sg,text('MAMMA MIA',mid.x,mid.y-h-9,5,'#ffe17a',.5,.5));const aw=new Graphics();aw.rect(mid.x+8,mid.y-18,21,5).fill(0xecd398);for(let i=0;i<3;i++)aw.rect(mid.x+8+i*8,mid.y-18,4,5).fill(C.red);c.addChild(aw)}c.zIndex=mid.y+100;return c}
-function tree(x,y){const p=iso(x,y),c=new Container(),g=new Graphics();g.ellipse(p.x,p.y+1,8,3).fill({color:0,alpha:.25});g.rect(p.x-1,p.y-10,3,11).fill(0x694432);g.rect(p.x-6,p.y-20,12,8).fill(0x4f683f);g.rect(p.x-4,p.y-24,9,6).fill(0x6b824f);c.addChild(g);c.zIndex=p.y+70;return c}
-function person(col){const c=new Container(),g=new Graphics();g.ellipse(0,1,4,2).fill({color:0,alpha:.25});g.rect(-2,-7,4,6).fill(col);g.rect(-1,-10,3,3).fill(C.skin);c.addChild(g);return c}
-function car(col,axis){const c=new Container(),g=new Graphics();g.rect(-6,1,12,3).fill({color:0,alpha:.2});if(!axis){g.rect(-7,-3,14,6).fill(col);g.rect(-2,-5,6,3).fill(0x9fb4b0)}else{g.rect(-5,-5,10,8).fill(col);g.rect(-3,-7,6,3).fill(0x9fb4b0)}c.addChild(g);return c}
-function city(){clear();head('ROM','SA 16:42  ·  23°C');const m=new Container();m.sortableChildren=true;m.scale.set(.88);m.x=W/2;m.y=92;world.addChild(m);const N=20;
-for(let s=0;s<38;s++)for(let x=0;x<N;x++){const y=s-x;if(y<0||y>=N)continue;const p=iso(x,y),road=x%4===0||y%4===0,edge=!road&&(x%4===1||x%4===3||y%4===1||y%4===3),d=diamond(p.x,p.y,road?((x+y)&1?C.road:C.road2):edge?C.walk:C.grass,road?0x343339:0x4b503d);d.zIndex=p.y;m.addChild(d);if(road&&(x+y)%3===0){const q=new Graphics();q.rect(p.x-2,p.y,4,1).fill(0xb3a57b);q.zIndex=p.y+2;m.addChild(q)}}
-for(let bx=0;bx<5;bx++)for(let by=0;by<5;by++){const gx=bx*4+1.18,gy=by*4+1.18,special=bx===2&&by===2,r=hash(bx,by,1701);if(!special&&r<.18){m.addChild(tree(gx+.6,gy+.7),tree(gx+1.8,gy+1.8))}else{m.addChild(building(gx,gy,bx,by,special));if(special){const p=iso(gx+1.35,gy+1.35),h=new Graphics();h.rect(p.x-27,p.y-52,54,56).fill({color:0xffffff,alpha:.001});h.eventMode='static';h.cursor='pointer';h.zIndex=p.y+500;h.on('pointertap',restaurant);m.addChild(h)}}}
-const cars=[],cols=[0xc5523c,0x4f7793,0xd0a243,0x75905d,0xb3a698];for(let i=0;i<10;i++){const axis=i%2,g=car(cols[i%5],axis);m.addChild(g);cars.push({g,axis,lane:[0,4,8,12,16][i%5]+(i%2?.16:-.16),t:(i*2.1+1)%19.5,dir:i%3?-1:1,spd:.42+(i%3)*.08})}
-const ppl=[];for(let i=0;i<22;i++){const axis=i%2,g=person([C.red,C.gold,0x5a7887,0x7d6a8b,0x6d8a5b][i%5]);m.addChild(g);ppl.push({g,axis,lane:[1,3,5,7,9,11,13,15,17,19][i%10],t:(i*.83+.5)%19,dir:i%4<2?1:-1,spd:.10+(i%4)*.015})}
-ticks.push(dt=>{const st=dt*.032;for(const o of cars){o.t+=o.spd*st*o.dir;if(o.t>19.4)o.t=.2;if(o.t<.2)o.t=19.4;const p=iso(o.axis?o.lane:o.t,o.axis?o.t:o.lane);o.g.x=p.x|0;o.g.y=(p.y-2)|0;o.g.zIndex=p.y+110}for(const o of ppl){o.t+=o.spd*st*o.dir;if(o.t>19.2)o.t=.3;if(o.t<.3)o.t=19.2;const side=o.lane%4===1?.52:-.52,p=iso(o.axis?o.lane+side:o.t,o.axis?o.t:o.lane+side);o.g.x=p.x|0;o.g.y=p.y|0;o.g.zIndex=p.y+140}});
-ui.addChild(box(6,358,203,43));ui.addChild(text('MAMMA MIA',13,364,7,'#f0d69b'));ui.addChild(text('Umsatz heute  €1.284',13,376,5,'#c5b397'));ui.addChild(text('Gäste 67   Ruf ★★★★☆',13,387,5,'#9d8d7a'));ui.addChild(btn('RESTAURANT',135,366,67,25,restaurant,true));ui.addChild(box(6,408,203,40,0x21191c,0x513c39));ui.addChild(text('22 PASSANTEN   10 AUTOS',14,415,5,'#a79580'));ui.addChild(text('25 prozedurale Blocks · Straßen · Parks',14,429,5,'#776b62'));ui.addChild(text('PIXEL DEMO V3',W/2,458,5,'#695d59',.5,.5))}
-const R={cols:8,rows:8,ox:W/2,oy:86},defs={table:[2,2],chair:[1,1],oven:[2,1],arcade:[1,1]};function dims(o,r=rot){const t=typeof o==='string'?o:o.type,rr=typeof o==='string'?r:o.rot,[w,h]=defs[t];return rr%2?{w:h,h:w}:{w,h}}function cells(o){const d=dims(o),a=[];for(let x=0;x<d.w;x++)for(let y=0;y<d.h;y++)a.push(`${o.x+x},${o.y+y}`);return a}function occupied(){return new Set(furniture.flatMap(cells))}function can(type,x,y,r){const o={type,x,y,rot:r},d=dims(o),set=occupied();return x>=0&&y>=0&&x+d.w<=R.cols&&y+d.h<=R.rows&&cells(o).every(k=>!set.has(k))}
-function furn(o){const c=new Container(),d=dims(o),mid=iso(o.x+d.w/2,o.y+d.h/2,R.ox,R.oy);if(o.type==='table'){c.addChild(prism(o.x+.15,o.y+.15,d.w-.3,d.h-.3,7,{t:0xa66a42,l:0x70452f,r:0x583626},R.ox,R.oy))}if(o.type==='chair'){c.addChild(prism(o.x+.18,o.y+.18,.64,.64,5,{t:0x995d3b,l:0x633a2a,r:0x4e2f24},R.ox,R.oy));const g=new Graphics();g.rect(mid.x-4,mid.y-13,7,2).fill(0x8f5838);g.rect(mid.x-4,mid.y-12,2,8).fill(0x68402e);c.addChild(g)}if(o.type==='oven'){c.addChild(prism(o.x+.05,o.y+.05,d.w-.1,d.h-.1,20,{t:0x9b9689,l:0x6d6963,r:0x555451},R.ox,R.oy));const g=new Graphics();g.rect(mid.x+3,mid.y-14,12,8).fill(0x2b2829);g.rect(mid.x+5,mid.y-12,8,4).fill(0xd56a36);c.addChild(g)}if(o.type==='arcade'){c.addChild(prism(o.x+.12,o.y+.12,.76,.76,24,{t:0x7a4657,l:0x5b3343,r:0x442634},R.ox,R.oy));const g=new Graphics();g.rect(mid.x+1,mid.y-18,8,7).fill(0x18262d);g.rect(mid.x+2,mid.y-17,6,4).fill(0x55a3a6);c.addChild(g)}c.zIndex=mid.y+100;return c}
-function restaurant(){clear();head('MAMMA MIA','EINRICHTEN  ·  TAP ZUM PLATZIEREN');const r=new Container();r.sortableChildren=true;world.addChild(r);const a=iso(0,0,R.ox,R.oy),b=iso(8,0,R.ox,R.oy),d=iso(0,8,R.ox,R.oy),w=new Graphics();w.poly([a.x,a.y,b.x,b.y,b.x,b.y-42,a.x,a.y-42]).fill(0x816b52);w.poly([a.x,a.y,d.x,d.y,d.x,d.y-42,a.x,a.y-42]).fill(0x655546);r.addChild(w);const deco=new Graphics();deco.rect(128,50,19,15).fill(0x5f7f86).stroke({color:0xd3b97b,width:1});deco.rect(70,50,17,14).fill(0x4b6a72).stroke({color:0xcaaa70,width:1});r.addChild(deco,text('PIZZERIA',107,58,6,'#f1cf6d',.5,.5));for(let s=0;s<15;s++)for(let x=0;x<8;x++){const y=s-x;if(y<0||y>=8)continue;const p=iso(x+.5,y+.5,R.ox,R.oy),g=diamond(p.x,p.y,(x+y)&1?0xb98d56:0xc9a166,0x7a5a3d);g.eventMode='static';g.cursor='pointer';g.zIndex=p.y+5;g.on('pointertap',()=>{if(tool==='delete'){const i=furniture.findIndex(o=>cells(o).includes(`${x},${y}`));if(i>=0)furniture.splice(i,1);restaurant()}else if(can(tool,x,y,rot)){furniture.push({type:tool,x,y,rot});restaurant()}});r.addChild(g)}furniture.forEach(o=>r.addChild(furn(o)));
-ui.addChild(box(6,278,203,37,0x21191c,0x513c39));ui.addChild(text('BETRIEB',13,285,5,'#e0ac45'));ui.addChild(text('3 Gäste · 2 Bestellungen · Wartezeit 4m',13,298,5,'#9d8d7a'));ui.addChild(box(6,320,203,128));ui.addChild(text('MÖBEL',13,327,6,'#e0ac45'));[['table','TISCH'],['chair','STUHL'],['oven','OFEN'],['arcade','ARCADE']].forEach((t,i)=>ui.addChild(btn(t[1],11+i*49,339,44,24,()=>{tool=t[0];restaurant()},tool===t[0])));ui.addChild(btn('DREHEN',11,369,44,22,()=>{rot=(rot+1)%4;restaurant()}));ui.addChild(btn('LÖSCHEN',60,369,44,22,()=>{tool='delete';restaurant()},tool==='delete'));ui.addChild(btn('RESET',109,369,44,22,()=>{furniture=[{type:'oven',x:0,y:1,rot:0},{type:'table',x:3,y:4,rot:0},{type:'chair',x:3,y:3,rot:0},{type:'chair',x:3,y:6,rot:2},{type:'arcade',x:7,y:1,rot:0}];tool='table';restaurant()}));ui.addChild(btn('STADT',158,369,44,22,city,true));ui.addChild(text(`AUSWAHL: ${tool.toUpperCase()}  ·  ${rot*90}°`,12,402,5,'#c5b397'));ui.addChild(text(`${furniture.length} OBJEKTE PLATZIERT`,12,416,5,'#8d7f73'));ui.addChild(text('Tische, Stühle, Ofen und Arcade frei setzen.',12,430,5,'#72665f'));ui.addChild(text('PIXEL DEMO V3',W/2,458,5,'#695d59',.5,.5))}
-app.ticker.add(t=>ticks.forEach(fn=>fn(t.deltaTime)));city();
-</script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#181315">
+<title>Pizza City Prototype</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#181315;touch-action:none;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff3d4}
+  #app{position:fixed;inset:0;background:#181315;overflow:hidden}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+  .hud{position:absolute;z-index:5;left:10px;right:10px;top:max(10px,env(safe-area-inset-top));height:66px;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(37,27,27,.94);border:2px solid #72554a;box-shadow:0 3px 0 #0c090a;pointer-events:none}
+  .hud .title{font-weight:900;font-size:17px;letter-spacing:.07em;line-height:1.05;text-shadow:1px 1px 0 #000}
+  .hud .sub{font-size:10px;margin-top:6px;color:#c8b596;letter-spacing:.08em;font-weight:800}
+  .hud .money{font:900 16px ui-monospace,SFMono-Regular,Menlo,monospace;color:#e4b957;text-shadow:1px 1px 0 #000}
+  .card{position:absolute;z-index:6;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(37,27,27,.96);border:2px solid #72554a;box-shadow:0 4px 0 #0c090a;padding:10px}
+  .city-actions{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+  .eyebrow{font-size:10px;font-weight:900;color:#e4b957;letter-spacing:.11em;text-transform:uppercase}
+  .info{font-size:11px;color:#c8b596;margin-top:4px;line-height:1.35}
+  button{appearance:none;border:2px solid #8f6a4f;background:#382a29;color:#fff1cf;min-height:43px;padding:0 14px;font:900 11px system-ui,-apple-system,sans-serif;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 2px 0 #140e0e;border-radius:2px}
+  button:active{transform:translateY(1px);box-shadow:0 1px 0 #140e0e}
+  button.primary{background:#bd653f;border-color:#e4b16c;color:#fff7de}
+  button.active{background:#e1aa43;color:#261b19;border-color:#ffe19a}
+  #restaurantTools{display:none}
+  .tools-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+  .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .tools button{padding:0 4px;min-height:40px}
+  .tools2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+  .hint{position:absolute;z-index:4;left:50%;top:88px;transform:translateX(-50%);padding:6px 9px;background:rgba(24,19,21,.85);border:1px solid #5f4942;font-size:9px;font-weight:800;color:#cbb99c;white-space:nowrap;pointer-events:none}
+  @media (min-width:700px){#app{width:430px;height:932px;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 20px 80px #000}.hud{top:10px}.card{bottom:12px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hud" class="hud">
+    <div><div id="hudTitle" class="title">PIZZA CITY</div><div id="hudSub" class="sub">ROM · SA · 16:42</div></div>
+    <div id="hudMoney" class="money">€ 18.420</div>
+  </div>
+  <div id="hint" class="hint">Ziehen: Stadt bewegen · Pizzeria antippen</div>
+  <div id="cityTools" class="card city-actions">
+    <div><div class="eyebrow">Mamma Mia</div><div class="info">Deine erste Pizzeria · Innenstadt · 4 Tische</div></div>
+    <button id="enterBtn" class="primary">Betreten</button>
+  </div>
+  <div id="restaurantTools" class="card">
+    <div class="tools-label"><div><div class="eyebrow">Einrichtung</div><div id="toolInfo" class="info">Tisch ausgewählt</div></div><button id="cityBtn">← Stadt</button></div>
+    <div class="tools">
+      <button data-tool="table" class="active">Tisch</button>
+      <button data-tool="chair">Stuhl</button>
+      <button data-tool="oven">Ofen</button>
+      <button data-tool="arcade">Automat</button>
+    </div>
+    <div class="tools2">
+      <button id="rotateBtn">Drehen</button>
+      <button data-tool="delete">Löschen</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </div>
+</div>
+<script type="module">
+import { Application, Container, Graphics, Sprite, Texture, Text, Rectangle } from 'https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.mjs';
+
+const root = document.querySelector('#app');
+const app = new Application();
+await app.init({
+  resizeTo: root,
+  background: '#181315',
+  antialias: false,
+  autoDensity: true,
+  resolution: Math.min(window.devicePixelRatio || 1, 2),
+  preference: 'webgl'
+});
+root.prepend(app.canvas);
+app.stage.eventMode = 'static';
+
+const world = new Container();
+world.sortableChildren = true;
+app.stage.addChild(world);
+
+const hudTitle = document.querySelector('#hudTitle');
+const hudSub = document.querySelector('#hudSub');
+const hint = document.querySelector('#hint');
+const cityTools = document.querySelector('#cityTools');
+const restaurantTools = document.querySelector('#restaurantTools');
+const toolInfo = document.querySelector('#toolInfo');
+
+const TW = 48;
+const TH = 24;
+const CITY_N = 18;
+const ROAD_EVERY = 5;
+const CITY_SEED = 3407;
+let scene = 'city';
+let selectedTool = 'table';
+let rotation = 0;
+let movers = [];
+let camera = null;
+let restaurantState = [
+  {type:'oven',x:1,y:1,r:0},
+  {type:'table',x:4,y:4,r:0},
+  {type:'chair',x:3,y:4,r:0},
+  {type:'chair',x:6,y:4,r:2}
+];
+
+function iso(x,y,ox=0,oy=0){return {x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2}}
+function hash(x,y,s=CITY_SEED){let n=(x*374761393+y*668265263+s*69069)>>>0;n=(n^(n>>13))*1274126177;return ((n^(n>>16))>>>0)/4294967295}
+function shade(hex,f){const r=(hex>>16)&255,g=(hex>>8)&255,b=hex&255;return (Math.max(0,Math.min(255,r*f))<<16)|(Math.max(0,Math.min(255,g*f))<<8)|Math.max(0,Math.min(255,b*f))}
+function diamond(cx,cy,fill,stroke=0){const g=new Graphics();g.poly([cx,cy-TH/2,cx+TW/2,cy,cx,cy+TH/2,cx-TW/2,cy]).fill(fill);if(stroke)g.poly([cx,cy-TH/2,cx+TW/2,cy,cx,cy+TH/2,cx-TW/2,cy]).stroke({color:stroke,width:1});return g}
+function label(text,size=11,color='#fff0cf'){return new Text({text,style:{fontFamily:'monospace',fontSize:size,fill:color,fontWeight:'900'}})}
+
+function lowResCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;return [c,ctx]}
+function texFromCanvas(c){const t=Texture.from(c);t.source.scaleMode='nearest';return t}
+
+const BUILDING_PALETTES=[
+  {wall:0xc98d62,roof:0x8e3f37,trim:0xf0c17f,glass:0x729aa0},
+  {wall:0xd2aa72,roof:0x6e5946,trim:0xf1d49a,glass:0x6d9295},
+  {wall:0xa8a476,roof:0x574d43,trim:0xd8ce98,glass:0x678f91},
+  {wall:0xb97d6e,roof:0x693d48,trim:0xe1b2a1,glass:0x6a9597},
+  {wall:0xb8a17a,roof:0x6c5537,trim:0xe3cf9e,glass:0x769b9a}
+];
+
+function makeBuildingTexture(idx=0,shop=false,pizza=false){
+  const p=BUILDING_PALETTES[idx%BUILDING_PALETTES.length];
+  const [c,ctx]=lowResCanvas(56,78);
+  const col=n=>`#${n.toString(16).padStart(6,'0')}`;
+  ctx.clearRect(0,0,56,78);
+  ctx.fillStyle='rgba(0,0,0,.22)';ctx.fillRect(14,67,34,5);
+  ctx.fillStyle=col(shade(p.wall,.78));ctx.beginPath();ctx.moveTo(6,25);ctx.lineTo(28,37);ctx.lineTo(28,69);ctx.lineTo(6,57);ctx.closePath();ctx.fill();
+  ctx.fillStyle=col(p.wall);ctx.beginPath();ctx.moveTo(28,37);ctx.lineTo(50,25);ctx.lineTo(50,57);ctx.lineTo(28,69);ctx.closePath();ctx.fill();
+  ctx.fillStyle=col(shade(p.roof,.8));ctx.beginPath();ctx.moveTo(4,23);ctx.lineTo(28,8);ctx.lineTo(28,36);ctx.lineTo(6,27);ctx.closePath();ctx.fill();
+  ctx.fillStyle=col(p.roof);ctx.beginPath();ctx.moveTo(28,8);ctx.lineTo(52,23);ctx.lineTo(50,27);ctx.lineTo(28,36);ctx.closePath();ctx.fill();
+  ctx.fillStyle=col(shade(p.roof,1.17));for(let x=10;x<48;x+=7){ctx.fillRect(x,21-(Math.abs(28-x)>>1),4,2)}
+  for(let floor=0;floor<2;floor++){
+    const yy=37+floor*14;
+    ctx.fillStyle=col(shade(p.trim,.9));ctx.fillRect(10,yy,7,7);ctx.fillRect(20,yy+5,6,7);ctx.fillRect(32,yy+5,7,7);ctx.fillRect(42,yy,6,7);
+    ctx.fillStyle=col(p.glass);ctx.fillRect(11,yy+1,5,5);ctx.fillRect(21,yy+6,4,5);ctx.fillRect(33,yy+6,5,5);ctx.fillRect(43,yy+1,4,5);
+  }
+  ctx.fillStyle='#563a31';ctx.fillRect(36,58,7,8);ctx.fillStyle='#d9ad55';ctx.fillRect(41,62,1,1);
+  if(shop||pizza){
+    ctx.fillStyle=pizza?'#8f2728':'#3f4a39';ctx.fillRect(28,51,21,6);
+    for(let x=29;x<49;x+=5){ctx.fillStyle=x%10===9?'#f1d7b1':pizza?'#d95543':'#7f9b65';ctx.fillRect(x,57,4,4)}
+    ctx.fillStyle='#272322';ctx.fillRect(31,62,14,4);ctx.fillStyle=col(p.glass);ctx.fillRect(32,62,12,3);
+  }
+  if(pizza){
+    ctx.fillStyle='#f4d06d';ctx.fillRect(34,46,11,4);ctx.fillStyle='#9b3030';ctx.fillRect(35,47,9,2);
+    ctx.fillStyle='#f4bf48';ctx.fillRect(18,45,7,7);ctx.fillStyle='#c74434';ctx.fillRect(20,47,2,2);ctx.fillRect(22,49,1,1);
+  }
+  return texFromCanvas(c);
+}
+
+const buildingTextures=[];
+for(let i=0;i<BUILDING_PALETTES.length;i++){
+  buildingTextures.push(makeBuildingTexture(i,false,false));
+  buildingTextures.push(makeBuildingTexture(i,true,false));
+}
+const pizzaTexture=makeBuildingTexture(0,true,true);
+
+function makeTreeTexture(v=0){const [c,ctx]=lowResCanvas(18,28);ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(5,24,10,3);ctx.fillStyle='#65442e';ctx.fillRect(8,14,3,12);ctx.fillStyle=v?'#667d43':'#497043';ctx.fillRect(3,6,12,13);ctx.fillRect(5,2,8,8);ctx.fillStyle=v?'#7d9550':'#5e8750';ctx.fillRect(6,4,5,5);ctx.fillRect(2,10,5,5);return texFromCanvas(c)}
+const treeTextures=[makeTreeTexture(0),makeTreeTexture(1)];
+function makeCarTexture(color){const [c,ctx]=lowResCanvas(16,9);const col=`#${color.toString(16).padStart(6,'0')}`;ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(2,7,12,2);ctx.fillStyle=col;ctx.fillRect(1,4,14,4);ctx.fillRect(5,2,7,3);ctx.fillStyle='#8fb1b3';ctx.fillRect(6,2,5,2);ctx.fillStyle='#222';ctx.fillRect(3,7,3,2);ctx.fillRect(11,7,3,2);return texFromCanvas(c)}
+const carTextures=[0xc84e3e,0x527fa6,0xd0a342,0x6b8e62,0xe0d0b7].map(makeCarTexture);
+function makePersonTexture(color){const [c,ctx]=lowResCanvas(7,14);ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(1,12,5,2);ctx.fillStyle='#d39a70';ctx.fillRect(2,1,3,3);ctx.fillStyle=`#${color.toString(16).padStart(6,'0')}`;ctx.fillRect(1,4,5,6);ctx.fillStyle='#262226';ctx.fillRect(1,10,2,3);ctx.fillRect(4,10,2,3);return texFromCanvas(c)}
+const peopleTextures=[0xbd553f,0x597f9d,0x678a55,0xd1a345,0x8b6084].map(makePersonTexture);
+
+function resetWorld(){movers=[];world.removeChildren().forEach(c=>c.destroy({children:true}));}
+function isRoad(x,y){return x%ROAD_EVERY===0||y%ROAD_EVERY===0}
+function isNearRoad(x,y){return isRoad(x-1,y)||isRoad(x+1,y)||isRoad(x,y-1)||isRoad(x,y+1)}
+
+function addCityBuilding(layer,x,y,pizza=false){
+  const pos=iso(x,y);
+  const r=hash(x,y,8801);
+  const texture=pizza?pizzaTexture:buildingTextures[Math.floor(r*buildingTextures.length)%buildingTextures.length];
+  const s=new Sprite(texture);s.anchor.set(.5,1);s.scale.set(2);s.x=pos.x;s.y=pos.y+TH/2+6;s.zIndex=s.y+80;
+  if(pizza){s.eventMode='static';s.cursor='pointer';s.on('pointertap',()=>showRestaurant())}
+  layer.addChild(s);
+  if(pizza){
+    const tag=new Container();tag.zIndex=s.zIndex+100;tag.x=pos.x;tag.y=pos.y-108;
+    const bg=new Graphics();bg.roundRect(-45,-15,90,28,4).fill(0x2b2020).stroke({color:0xe2b160,width:2});
+    const t=label('MAMMA MIA',10,'#ffe2a0');t.anchor.set(.5);t.y=-1;tag.addChild(bg,t);layer.addChild(tag);
+  }
+}
+
+function showCity(){
+  scene='city';resetWorld();
+  hudTitle.textContent='PIZZA CITY';hudSub.textContent='ROM · SA · 16:42';hint.textContent='Ziehen: Stadt bewegen · Pizzeria antippen';
+  cityTools.style.display='grid';restaurantTools.style.display='none';
+  const city=new Container();city.sortableChildren=true;world.addChild(city);camera=city;
+  const floor=new Container();const props=new Container();props.sortableChildren=true;city.addChild(floor,props);
+  const pizzaPos={x:8,y:7};
+
+  for(let sum=0;sum<CITY_N*2;sum++){
+    for(let x=0;x<CITY_N;x++){
+      const y=sum-x;if(y<0||y>=CITY_N)continue;
+      const p=iso(x,y);
+      let fill=0x8d865f;
+      if(isRoad(x,y))fill=((x+y)&1)?0x505159:0x585962;
+      else if(isNearRoad(x,y))fill=((x+y)&1)?0xa69a76:0x9b916f;
+      else fill=((x+y)&1)?0x7f875b:0x778054;
+      const tile=diamond(p.x,p.y,fill,isRoad(x,y)?0x44454b:0x71694f);tile.zIndex=p.y;floor.addChild(tile);
+      if(isRoad(x,y)&&((x+y)%3===0)){
+        const line=new Graphics();line.rect(p.x-4,p.y-1,8,2).fill(0xb8b08e);line.zIndex=p.y+1;floor.addChild(line);
+      }
+    }
+  }
+
+  for(let x=1;x<CITY_N-1;x+=2){
+    for(let y=1;y<CITY_N-1;y+=2){
+      if(isRoad(x,y)||isRoad(x+1,y)||isRoad(x,y+1))continue;
+      if(x===pizzaPos.x||y===pizzaPos.y)continue;
+      const r=hash(x,y,111);
+      const p=iso(x,y);
+      if(r<.19){
+        for(let i=0;i<3;i++){
+          const tr=new Sprite(treeTextures[(i+Math.floor(r*10))%2]);tr.anchor.set(.5,1);tr.scale.set(2);tr.x=p.x+(i-1)*15;tr.y=p.y+10+i*6;tr.zIndex=tr.y+50;props.addChild(tr);
+        }
+      }else addCityBuilding(props,x,y,false);
+    }
+  }
+  addCityBuilding(props,pizzaPos.x,pizzaPos.y,true);
+
+  for(let x=1;x<CITY_N;x+=3){for(let y=1;y<CITY_N;y+=4){if(!isRoad(x,y)&&isNearRoad(x,y)&&hash(x,y,999)>.45){const p=iso(x,y);const tr=new Sprite(treeTextures[(x+y)%2]);tr.anchor.set(.5,1);tr.scale.set(1.6);tr.x=p.x;tr.y=p.y+7;tr.zIndex=tr.y+40;props.addChild(tr)}}}
+
+  const roadLines=[0,5,10,15];
+  for(let i=0;i<11;i++){
+    const axis=i%2;const lane=roadLines[i%roadLines.length];const sprite=new Sprite(carTextures[i%carTextures.length]);sprite.anchor.set(.5,1);sprite.scale.set(2);props.addChild(sprite);
+    movers.push({kind:'car',sprite,axis,lane,t:(i*1.45)%CITY_N,dir:i%3?1:-1,speed:.95+(i%4)*.11});
+  }
+  for(let i=0;i<26;i++){
+    const axis=i%2;const lane=roadLines[(i+1)%roadLines.length];const sprite=new Sprite(peopleTextures[i%peopleTextures.length]);sprite.anchor.set(.5,1);sprite.scale.set(2);props.addChild(sprite);
+    movers.push({kind:'person',sprite,axis,lane,t:(i*.71)%CITY_N,dir:i%4<2?1:-1,speed:.22+(i%5)*.025,offset:i%2?.46:-.46});
+  }
+
+  const focus=iso(pizzaPos.x,pizzaPos.y);
+  city.x=Math.round(app.screen.width/2-focus.x);
+  city.y=Math.round(app.screen.height*.44-focus.y);
+
+  let dragging=false,lastX=0,lastY=0;
+  app.stage.hitArea=new Rectangle(0,0,app.screen.width,app.screen.height);
+  app.stage.removeAllListeners();
+  app.stage.on('pointerdown',e=>{dragging=true;lastX=e.global.x;lastY=e.global.y});
+  app.stage.on('pointermove',e=>{if(!dragging||scene!=='city')return;const dx=e.global.x-lastX,dy=e.global.y-lastY;city.x+=dx;city.y+=dy;lastX=e.global.x;lastY=e.global.y;clampCity(city)});
+  app.stage.on('pointerup',()=>dragging=false);app.stage.on('pointerupoutside',()=>dragging=false);
+}
+
+function clampCity(c){
+  const b=c.getLocalBounds();const pad=80;
+  const minX=app.screen.width-(b.x+b.width)-pad,maxX=-b.x+pad;
+  const minY=130-(b.y+b.height),maxY=app.screen.height*.55-b.y;
+  c.x=Math.max(minX,Math.min(maxX,c.x));c.y=Math.max(minY,Math.min(maxY,c.y));
+}
+
+function roomIso(x,y,ox,oy){return {x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2}}
+const room={cols:9,rows:9};
+const itemDef={table:{w:2,h:2},chair:{w:1,h:1},oven:{w:2,h:1},arcade:{w:1,h:1}};
+function dims(item){const d=itemDef[item.type];return (item.r%2)?{w:d.h,h:d.w}:{w:d.w,h:d.h}}
+function cells(item){const d=dims(item),a=[];for(let x=0;x<d.w;x++)for(let y=0;y<d.h;y++)a.push(`${item.x+x},${item.y+y}`);return a}
+function canPlace(type,x,y,r){if(type==='delete')return true;const t={type,x,y,r},d=dims(t);if(x<0||y<0||x+d.w>room.cols||y+d.h>room.rows)return false;const occ=new Set(restaurantState.flatMap(cells));return cells(t).every(k=>!occ.has(k))}
+function deleteAt(x,y){const i=restaurantState.findIndex(it=>cells(it).includes(`${x},${y}`));if(i>=0)restaurantState.splice(i,1)}
+
+function drawFurniture(layer,item,ox,oy){
+  const p=roomIso(item.x,item.y,ox,oy);const c=new Container();c.zIndex=p.y+100;
+  if(item.type==='table'){
+    const center=roomIso(item.x+.5,item.y+.5,ox,oy);const g=new Graphics();g.poly([center.x,center.y-16,center.x+31,center.y,center.x,center.y+16,center.x-31,center.y]).fill(0xa9653f).stroke({color:0x5f3828,width:2});g.rect(center.x-18,center.y+5,5,14).fill(0x5f3828);g.rect(center.x+13,center.y+5,5,14).fill(0x5f3828);c.addChild(g)
+  }else if(item.type==='chair'){
+    const g=new Graphics();g.rect(p.x-8,p.y-13,16,9).fill(0x8d5739).stroke({color:0x543326,width:2});g.rect(p.x-7,p.y-23,4,11).fill(0x543326);g.rect(p.x+3,p.y-23,4,11).fill(0x543326);c.addChild(g)
+  }else if(item.type==='oven'){
+    const g=new Graphics();g.poly([p.x,p.y-12,p.x+28,p.y+2,p.x,p.y+16,p.x-28,p.y+2]).fill(0x8b8b83);g.rect(p.x-23,p.y-26,46,28).fill(0x73736e).stroke({color:0x4b4948,width:2});g.rect(p.x+3,p.y-19,15,10).fill(0x242426);g.rect(p.x+6,p.y-17,9,5).fill(0xd45c35);c.addChild(g)
+  }else if(item.type==='arcade'){
+    const g=new Graphics();g.rect(p.x-10,p.y-35,20,35).fill(0x6f3b59).stroke({color:0x442739,width:2});g.rect(p.x-7,p.y-29,14,10).fill(0x202629);g.rect(p.x-5,p.y-27,10,6).fill(0x4ba4a3);g.rect(p.x-5,p.y-14,3,3).fill(0xe4b957);c.addChild(g)
+  }
+  layer.addChild(c)
+}
+
+function showRestaurant(){
+  scene='restaurant';resetWorld();
+  hudTitle.textContent='MAMMA MIA';hudSub.textContent='EINRICHTUNG · TAP ZUM PLATZIEREN';hint.textContent='Objekt wählen und auf den Boden tippen';
+  cityTools.style.display='none';restaurantTools.style.display='block';
+  const roomC=new Container();roomC.sortableChildren=true;world.addChild(roomC);
+  const ox=app.screen.width/2,oy=Math.max(175,app.screen.height*.27);
+  const wall=new Graphics();
+  const a=roomIso(0,0,ox,oy),b=roomIso(room.cols-1,0,ox,oy),c=roomIso(0,room.rows-1,ox,oy);
+  wall.poly([a.x,a.y-12,b.x,b.y-12,b.x,b.y-92,a.x,a.y-92]).fill(0x77664d);wall.poly([a.x,a.y-12,c.x,c.y-12,c.x,c.y-92,a.x,a.y-92]).fill(0x645645);roomC.addChild(wall);
+  const floor=new Container();const items=new Container();items.sortableChildren=true;roomC.addChild(floor,items);
+  for(let sum=0;sum<room.cols+room.rows;sum++)for(let x=0;x<room.cols;x++){const y=sum-x;if(y<0||y>=room.rows)continue;const p=roomIso(x,y,ox,oy);const t=diamond(p.x,p.y,((x+y)&1)?0xcaa269:0xb98d58,0x80613f);t.eventMode='static';t.cursor='pointer';t.on('pointertap',()=>{if(selectedTool==='delete'){deleteAt(x,y);showRestaurant();return}if(canPlace(selectedTool,x,y,rotation)){restaurantState.push({type:selectedTool,x,y,r:rotation});showRestaurant()}else flashHint('Hier ist kein Platz')});floor.addChild(t)}
+  restaurantState.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y)).forEach(it=>drawFurniture(items,it,ox,oy));
+  const spots=[[6.4,6.2],[2.1,5.8],[5.2,2.3],[7.1,4.2]];
+  spots.forEach((s,i)=>{const sp=new Sprite(peopleTextures[i%peopleTextures.length]);sp.anchor.set(.5,1);sp.scale.set(2.3);const p=roomIso(s[0],s[1],ox,oy);sp.x=p.x;sp.y=p.y;sp.zIndex=p.y+160;items.addChild(sp)});
+}
+
+function flashHint(s){const old=hint.textContent;hint.textContent=s;setTimeout(()=>{if(scene==='restaurant')hint.textContent='Objekt wählen und auf den Boden tippen';else hint.textContent=old},700)}
+
+app.ticker.add(t=>{
+  if(scene!=='city')return;const dt=t.deltaTime;
+  for(const m of movers){m.t+=m.speed*dt*.025*m.dir;if(m.t>CITY_N-.2)m.t=.2;if(m.t<.2)m.t=CITY_N-.2;const x=m.axis===0?m.t:m.lane+(m.offset||0),y=m.axis===0?m.lane+(m.offset||0):m.t;const p=iso(x,y);m.sprite.x=Math.round(p.x);m.sprite.y=Math.round(p.y+6);m.sprite.zIndex=m.sprite.y+(m.kind==='person'?120:100)}
+});
+
+document.querySelector('#enterBtn').onclick=showRestaurant;
+document.querySelector('#cityBtn').onclick=showCity;
+document.querySelector('#rotateBtn').onclick=()=>{rotation=(rotation+1)%4;toolInfo.textContent=`${selectedTool.toUpperCase()} · ${rotation*90}°`};
+document.querySelector('#resetBtn').onclick=()=>{restaurantState=[{type:'oven',x:1,y:1,r:0},{type:'table',x:4,y:4,r:0},{type:'chair',x:3,y:4,r:0},{type:'chair',x:6,y:4,r:2}];showRestaurant()};
+document.querySelectorAll('[data-tool]').forEach(btn=>btn.onclick=()=>{selectedTool=btn.dataset.tool;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b===btn));toolInfo.textContent=`${btn.textContent} ausgewählt`});
+
+window.addEventListener('resize',()=>{setTimeout(()=>scene==='city'?showCity():showRestaurant(),60)});
+showCity();
+</script>
+</body>
+</html>
