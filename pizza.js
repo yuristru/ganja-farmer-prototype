@@ -1,11 +1,11 @@
-import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010j';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010j';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010j';
+import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010l';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010l';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010l';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010j';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010l';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
-import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010j';
+import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010l';
 mountCatalog(()=>{if(restaurantView().panMode)toggleRestaurantPan();cancelPlacement();syncEditUI();});
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
 document.querySelector('#cityBtn').onclick=showCity;
@@ -15,6 +15,7 @@ function syncEditUI(){
   rotateBtn.textContent=`Drehen ${state.rotation*90}°`;
   rotateBtn.setAttribute('aria-label',`Möbelstück um 90 Grad drehen. Aktuell ${state.rotation*90} Grad.`);
   deleteBtn.classList.toggle('active',state.deleteMode);deleteBtn.setAttribute('aria-pressed',String(state.deleteMode));
+  rotateBtn.disabled=['floor','renovation'].includes(state.selectedTool);
   renderCatalog();
   document.querySelector('#undoBtn').disabled=!state.history.length;
   updatePlacementPreview();resizeRestaurant();

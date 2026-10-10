@@ -86,3 +86,8 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 @media(max-height:640px){.categorybtn{height:30px}.catalogBreadcrumb{height:22px}.catalogCard{height:62px;font-size:9px}.catalogCard .furnitureIcon{height:23px}.tools .toolactions button{height:40px}.roomcontrols{grid-template-columns:repeat(2,32px)}}
 @media(max-height:540px) and (min-width:500px){.catalogCard{font-size:9px}.catalogOptions{grid-auto-columns:90px}.roomcontrols{right:266px}.tools{top:120px}}
 @media(max-height:540px) and (min-width:500px){.catalogCard{height:56px}.tools .toolactions button{height:32px}}
+
+.catalogCategories{grid-template-columns:repeat(5,minmax(0,1fr))}.categorybtn{font-size:9px}
+.finishSwatch{width:34px;height:24px;flex:none;border:1px solid #795b3a;background:repeating-conic-gradient(var(--finish-a) 0% 25%,var(--finish-b) 0% 50%) 0 0/12px 12px;transform:skewY(-10deg)}
+.finishSwatch.wallSwatch{background:linear-gradient(var(--finish-a) 70%,#754b33 70%);transform:none}
+@media(max-height:640px){.finishSwatch{height:20px}.categorybtn{font-size:8px}}

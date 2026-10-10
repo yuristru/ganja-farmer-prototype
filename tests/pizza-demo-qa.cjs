@@ -20,7 +20,7 @@ const server=http.createServer((req,res)=>{
 async function snapshot(page){
   return page.evaluate(async modulePath=>{
     const {app,state,world,root}=await import(modulePath);
-    return {scene:state.scene,balance:state.balance,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,seats:state.selectedSeats,pending:state.pendingPlacement,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
+    return {scene:state.scene,finishes:state.finishes,balance:state.balance,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,seats:state.selectedSeats,pending:state.pendingPlacement,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
   },corePath);
 }
 
@@ -169,6 +169,35 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert((await getRoomView()).zoom>1.4,'Two-finger zoom must enlarge the restaurant.');
     assert.equal((await snapshot(page)).pending,null);assert.deepEqual((await snapshot(page)).items,itemsBeforePan);
     await page.click('#roomCenterBtn');
+
+    // Room finishes are whole-room purchases, with no grid placement.
+    const finishBudget=(await snapshot(page)).balance,finishItems=(await snapshot(page)).items;
+    await page.click('[data-category="finish"]');assert.equal(await page.locator('[data-finish]').count(),7);
+    assert(!await page.locator('#placeBtn').isEnabled());
+    for(const [id,price]of [['stone',3200],['checker',4200],['parquet',5600]]){
+      await page.click(`[data-finish="${id}"]`);const before=(await snapshot(page)).balance;
+      assert(await page.locator('#placeBtn').isEnabled());await page.click('#placeBtn');
+      assert.equal((await snapshot(page)).finishes.floor,id);assert.equal((await snapshot(page)).balance,before-price);
+      assert.deepEqual((await snapshot(page)).items,finishItems);assert(!await page.locator('#placeBtn').isEnabled());
+    }
+    await page.click('[data-finish="restore"]');assert(!await page.locator('#placeBtn').isEnabled());assert.match(await page.locator('#placementStatus').innerText(),/vorherige/);
+    for(const [id,level,price]of [['paint',1,1200],['renovate',2,3600],['restore',3,8500]]){
+      await page.click(`[data-finish="${id}"]`);const before=(await snapshot(page)).balance;
+      await page.click('#placeBtn');assert.equal((await snapshot(page)).finishes.renovation,level);assert.equal((await snapshot(page)).balance,before-price);
+    }
+    const finished=await snapshot(page);await capture(page,'restaurant-renovated.png');
+    await page.reload();await page.waitForSelector('#loading',{state:'hidden',timeout:15000});
+    assert.deepEqual((await snapshot(page)).finishes,finished.finishes);assert.equal((await snapshot(page)).balance,finished.balance);
+    await page.click('#restaurantBtn');await page.evaluate(async source=>{const {app}=await import(source);app.ticker.stop();app.render();},corePath);
+    const surfaces=await page.evaluate(async source=>{const {world}=await import(source);return world.children[0].children.filter(c=>['restaurant-floor','restaurant-walls'].includes(c.label)).map(c=>({label:c.label,finish:c.finish,renovation:c.renovation}));},corePath);
+    assert(surfaces.some(c=>c.finish==='parquet'));assert(surfaces.some(c=>c.renovation===3));
+    await page.click('#resetBtn');assert.deepEqual((await snapshot(page)).finishes,{floor:'terracotta',renovation:0});assert.equal((await snapshot(page)).balance,finishBudget);
+    await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).finishes,finished.finishes);assert.equal((await snapshot(page)).balance,finished.balance);
+    await page.click('[data-category="finish"]');await page.click('[data-finish="stone"]');
+    await page.evaluate(async source=>{const {state}=await import(source);state.balance=0;},corePath);
+    await page.click('[data-finish="stone"]');assert(!await page.locator('#placeBtn').isEnabled());assert.match(await page.locator('#placementStatus').innerText(),/Geld/);
+    await page.click('#resetBtn');
+    console.log('Room upgrades passed: floor purchases, three sequential renovation levels, duplicate/funds guards, visual surfaces, reload and undo/reset.');
 
     await page.click('[data-category="table"]');assert.equal(await page.locator('[data-quality]').count(),3);
     await page.click('[data-quality="premium"]');assert.equal(await page.locator('[data-seats]').count(),4);

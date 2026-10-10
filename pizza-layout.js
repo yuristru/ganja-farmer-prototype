@@ -1,4 +1,4 @@
-import {product,itemPrice} from './pizza-catalog.js?v=20261010j';
+import {product,itemPrice} from './pizza-catalog.js?v=20261010l';
 export const ROOM = {w:12,h:10};
 export const KITCHEN = {x:8,y:0,w:4,h:4};
 export const KITCHEN_DOOR = {x:9,y:4};
@@ -74,7 +74,7 @@ export function copyLayout(layout=DEFAULT_LAYOUT){
 }
 
 export function upgradeLayout(value,version){
-  if(!Array.isArray(value)||![1,2,3].includes(version))return null;
+  if(!Array.isArray(value)||![1,2,3,4].includes(version))return null;
   const items=version===1?value.filter(item=>item?.type!=='chair').map(item=>item?.type==='table'?{...item,seats:4}:item):value;
   return validLayout(items)?copyLayout(items):null;
 }
