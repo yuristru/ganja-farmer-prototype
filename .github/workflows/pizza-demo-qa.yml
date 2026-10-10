@@ -1,0 +1,32 @@
+name: Pizza Demo QA
+on:
+  push:
+    paths:
+      - 'pizza*.html'
+      - 'pizza*.js'
+      - 'pizza*.css'
+      - 'assets/pizza/**'
+      - 'tests/pizza-demo-qa.cjs'
+      - '.github/workflows/pizza-demo-qa.yml'
+  workflow_dispatch:
+jobs:
+  pizza-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Check the city, restaurant controls and responsive views
+        run: node tests/pizza-demo-qa.cjs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pizza-demo-qa
+          path: qa/pizza/
