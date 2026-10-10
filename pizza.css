@@ -124,3 +124,5 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 @media(max-height:640px){#propertyDialog{max-height:calc(100dvh - 30px)}#propertyPreview{width:130px;height:130px}#propertyName{font-size:20px}}
 
 #randomCityBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}#randomCityBtn svg{width:21px;height:21px}#randomCityBtn span{font-size:7px;line-height:9px;text-transform:none}
+
+@media(max-height:540px) and (min-width:500px){.citycontrols{display:grid;grid-template-columns:repeat(3,44px)}#randomCityBtn{grid-column:3;grid-row:2}#propertiesBtn{grid-column:1;grid-row:2}}
