@@ -1,9 +1,9 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010d';
-import {project} from './pizza-layout.js?v=20261010d';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010f';
+import {project} from './pizza-layout.js?v=20261010f';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
-const COLORS={wood:{top:'#e5c88f',x:'#ad7c49',y:'#c3955a'},legs:{top:'#ba9257',x:'#805634',y:'#a37945'},cabinet:{top:'#d8c496',x:'#ad875e',y:'#c5a374'},metal:{top:'#e7eee3',x:'#aabfba',y:'#c8d8cf'}};
+const COLORS={wood:{top:'#966338',x:'#593a24',y:'#75492b'},legs:{top:'#996438',x:'#4c3020',y:'#71492b'},cabinet:{top:'#d8c496',x:'#ad875e',y:'#c5a374'},metal:{top:'#e7eee3',x:'#aabfba',y:'#c8d8cf'}};
 
 function bitmap(key,rotation,draw){
   const id=key+':'+rotation;if(cache.has(id))return cache.get(id);
@@ -65,6 +65,7 @@ function cabinet(a,cx=0,type='bar'){
 function drawChair(a){
     a.shadow(.65,.65);legs(a,.25,.25,17);
     a.box(-.35,-.34,.7,.68,17,4,COLORS.wood);
+    a.box(-.29,-.28,.58,.56,21,2,{top:'#b73929',x:'#70271f',y:'#943127'});
     a.box(-.33,-.31,.08,.08,20,28,COLORS.legs);a.box(-.33,.23,.08,.08,20,28,COLORS.legs);
     a.box(-.35,-.32,.09,.64,32,13,COLORS.wood);
 }
@@ -91,15 +92,64 @@ function drawTableGroup(a,seats){
   for(const [x,y,r]of chairs.filter(p=>front(p)<0))drawChair(shifted(a,x,y,r));
   a.shadow(width-.12,depth-.1);legs(a,width/2-.12,.25,29);
   a.box(-width/2,-depth/2,width,depth,29,4,COLORS.wood);
-  a.line([[-width/2+.08,-.19,33],[width/2-.08,-.19,33]],'#d9bb82');
+  // The cloth uses the same projected plane as the table, in every fixed view.
+  const step=.14,x0=-width/2,y0=-depth/2;
+  for(let i=0;i<Math.ceil(width/step);i++)for(let j=0;j<Math.ceil(depth/step);j++){
+    const x=x0+i*step,y=y0+j*step,w=Math.min(step,width-i*step),d=Math.min(step,depth-j*step);
+    a.surface([[x,y],[x+w,y],[x+w,y+d],[x,y+d]],34,(i+j)%2?'#f3dfbe':'#b43d2c');
+  }
+  for(let i=0;i<Math.ceil(width/step);i++){
+    const x=x0+i*step,w=Math.min(step,width-i*step),color=i%2?'#dbc9a9':'#8e3025';
+    for(const y of [y0,y0+depth])a.polygon([a.point(x,y,34),a.point(x+w,y,34),a.point(x+w,y,27),a.point(x,y,27)],color);
+  }
+  a.disc(0,0,.095,35,'#664127');a.disc(0,0,.065,40,'#b88b49');
+  a.line([[0,0,40],[0,0,48]],'#38643b',2);
+  a.disc(-.035,0,.065,45,'#547c3b');a.disc(.045,0,.055,47,'#78934a');
+  if(seats>=6)for(const x of [-width*.3,width*.3]){a.disc(x,0,.13,35,'#f0e6cc');a.disc(x,0,.085,36,'#d6cbb3');}
   for(const [x,y,r]of chairs.filter(p=>front(p)>=0))drawChair(shifted(a,x,y,r));
 }
 
 function drawFurniture(type,a,seats){
   if(type==='table')drawTableGroup(a,seats);
   else if(type==='bar'){
-    a.shadow(1.85,.83);cabinet(a,-.5);cabinet(a,.5);
-  }else if(type==='oven'||type==='sink'){
+    a.shadow(1.85,.83);
+    a.box(-.94,-.4,1.88,.8,0,34,COLORS.wood);
+    for(const x of [-.88,-.42,.04,.5]){
+      a.box(x,.405,.035,.02,3,28,COLORS.legs);
+      a.line([[x,-.39,5],[x,-.39,30]],'#ba8650');
+    }
+    a.box(-.98,-.44,1.96,.88,34,4,{top:'#b8814a',x:'#68412a',y:'#87532f'});
+    for(const x of [-.55,.5]){a.disc(x,0,.14,39,'#ede3ca');a.disc(x,0,.1,40,'#c9bca0');}
+    a.box(-.12,.04,.13,.13,38,9,{top:'#78834a',x:'#33452b',y:'#4b6237'});
+  }else if(type==='oven'){
+    a.shadow(.95,.94);
+    a.box(-.46,-.44,.92,.88,0,25,{top:'#a59680',x:'#6e6557',y:'#938775'});
+    a.box(-.49,-.47,.98,.94,25,5,{top:'#c6b69a',x:'#8b7b63',y:'#ab9679'});
+    // Stacked projected brick courses form a baked bitmap, not a scene mesh.
+    const radii=[.44,.43,.4,.35,.28,.18,.06];
+    for(let level=0;level<6;level++){
+      const z=30+level*7,r0=radii[level],r1=radii[level+1];
+      const segments=Array.from({length:16},(_,i)=>{
+        const angle=i*Math.PI/8,next=(i+1)*Math.PI/8;
+        const p=[Math.cos(angle),Math.sin(angle)],q=[Math.cos(next),Math.sin(next)];
+        return {p,q,depth:a.point(p[0]*r0,p[1]*r0,0)[1]+a.point(q[0]*r0,q[1]*r0,0)[1]};
+      }).sort((p,q)=>p.depth-q.depth);
+      for(const {p,q} of segments){
+        const color=(a.point(p[0],p[1],0)[0]>128)?'#9a4930':'#bb603b';
+        a.polygon([a.point(p[0]*r0,p[1]*r0,z),a.point(q[0]*r0,q[1]*r0,z),a.point(q[0]*r1,q[1]*r1,z+7),a.point(p[0]*r1,p[1]*r1,z+7)],color);
+        a.line([[p[0]*r0,p[1]*r0,z],[q[0]*r0,q[1]*r0,z]],'#dda47a');
+        a.line([[p[0]*r0,p[1]*r0,z],[p[0]*r1,p[1]*r1,z+7]],'#d69268');
+      }
+    }
+    a.box(-.12,-.12,.24,.24,72,12,{top:'#754934',x:'#563525',y:'#6b4030'});
+    const opening=[a.point(.44,-.25,30),a.point(.44,.25,30),a.point(.44,.25,44),a.point(.44,.12,53),a.point(.44,-.12,53),a.point(.44,-.25,44)];
+    if(a.rotation===0||a.rotation===1){
+      a.polygon(opening,'#e5b77b');
+      a.front(.445,-.19,.19,31,44,'#30251e');
+      a.polygon([a.point(.45,-.17,31),a.point(.45,.17,31),a.point(.45,.11,40),a.point(.45,.03,36),a.point(.45,-.04,47),a.point(.45,-.1,37)],'#ed782b');
+      a.front(.455,-.06,.06,32,39,'#ffd37b');
+    }
+  }else if(type==='sink'){
     a.shadow(.86,.8);cabinet(a,0,type);
   }else if(type==='fridge'){
     a.shadow(.82,.82);a.box(-.4,-.41,.8,.82,0,80,COLORS.metal);

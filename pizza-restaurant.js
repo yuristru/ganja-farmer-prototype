@@ -1,6 +1,6 @@
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010d';
-import {ROOM,GRID,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010d';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010d';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010f';
+import {ROOM,GRID,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010f';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010f';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
 const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze'};
@@ -155,10 +155,55 @@ function movePointer(event){
   hoverCell=next;updatePlacementPreview();
 }
 
+function wallPanel(layer,x,y,right,width,z0,z1,color,outline=0x65452d){
+  const a=project(x,y),b=project(x+(right?width:0),y+(right?0:width)),g=new Graphics();
+  g.poly([a.x,a.y-z1,b.x,b.y-z1,b.x,b.y-z0,a.x,a.y-z0]).fill(color).stroke({color:outline,width:1});layer.addChild(g);return g;
+}
+
 function wallWindow(layer,x,y,right=true){
-  const start=project(x,y),end=project(x+(right?1:0),y+(right?0:1)),middle=project(x+(right?.5:0),y+(right?0:.5)),g=new Graphics();
-  g.poly([start.x,start.y-78,end.x,end.y-78,end.x,end.y-52,start.x,start.y-52]).fill(0x749397).stroke({color:0xf0dfbc,width:2});
-  g.moveTo(middle.x,middle.y-78).lineTo(middle.x,middle.y-52).stroke({color:0xf0dfbc,width:2});layer.addChild(g);
+  wallPanel(layer,x-.08*(right?1:0),y-.08*(right?0:1),right,1.16,46,83,0x956637);
+  wallPanel(layer,x,y,right,1,49,80,0x88a6a0,0xe8cea0);
+  for(const offset of [-.28,1.04]){
+    const sx=x+(right?offset:0),sy=y+(right?0:offset);
+    wallPanel(layer,sx,sy,right,.23,48,81,0x456440);
+    for(let z=51;z<80;z+=5)wallPanel(layer,sx,sy,right,.23,z,z+1,0x7e8d52);
+  }
+  wallPanel(layer,x+(right?.48:0),y+(right?0:.48),right,.045,49,80,0xe9d6af);
+  wallPanel(layer,x,y,right,1,39,47,0x7b4d2e);
+  const flowers=new Graphics();
+  for(let i=0;i<8;i++){
+    const p=project(x+(right?i/8:0),y+(right?0:i/8));
+    flowers.rect(p.x-2,p.y-47,4,5).fill(0x54713a);
+    flowers.rect(p.x-1,p.y-49,2,2).fill(i%2?0xd69a44:0xaf3d2c);
+  }
+  layer.addChild(flowers);
+}
+
+function wallDetails(layer){
+  for(const right of [true,false]){
+    const length=right?ROOM.w:ROOM.h;
+    for(let i=0;i<length;i++){
+      wallPanel(layer,right?i-.5:-.5,right?-.5:i-.5,right,.025,2,30,0xbd8950);
+      wallPanel(layer,right?i-.5:-.5,right?-.5:i-.5,right,1,30,33,0xb88852);
+      const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
+      g.rect(p.x,p.y-90,2,1).fill({color:0xf2dec0,alpha:.4});layer.addChild(g);
+    }
+    for(const i of [1,3.8,6]){
+      if(i>length-.6)continue;
+      const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
+      g.circle(p.x,p.y-62,8).fill({color:0xf8c264,alpha:.12});
+      g.rect(p.x-2,p.y-67,4,11).fill(0x644831);
+      g.rect(p.x-2,p.y-65,4,6).fill(0xf4c264);layer.addChild(g);
+    }
+  }
+  wallPanel(layer,-.5,.45,false,.55,53,73,0xb58847);
+  wallPanel(layer,-.5,.51,false,.43,56,70,0x61764a);
+  wallPanel(layer,6.2,-.5,true,1,51,56,0x855530);
+  for(let i=0;i<5;i++){
+    const p=project(6.25+i*.18,-.5),g=new Graphics();
+    g.rect(p.x-2,p.y-65,3,9).fill(i%2?0x64733c:0x893f2c);
+    g.rect(p.x-1,p.y-68,1,3).fill(0x543d2b);layer.addChild(g);
+  }
 }
 
 export function resizeRestaurant(){
@@ -182,13 +227,14 @@ export function showRestaurant(){
   wall.poly([a.x,a.y-32,b.x,b.y-32,b.x,b.y,a.x,a.y]).fill(0x8a5b3d);
   wall.poly([a.x,a.y-32,c.x,c.y-32,c.x,c.y,a.x,a.y]).fill(0x774b36);
   roomLayer.addChild(wall);wallWindow(roomLayer,2,-.5);wallWindow(roomLayer,5,-.5);wallWindow(roomLayer,-.5,2,false);wallWindow(roomLayer,-.5,4.5,false);
+  wallDetails(roomLayer);
   roomLayer.addChild(floor,objects,preview);
   for(let y=0;y<ROOM.h;y++)for(let x=0;x<ROOM.w;x++){
     const p=project(x,y),kitchen=y<2,entrance=x===ROOM.w-1&&y===ROOM.h-1,g=new Graphics();
-    const color=entrance?0xd1bc8a:kitchen?((x+y)%2?0xb89c77:0xc7aa82):((x+y)%2?0xb56d47:0xc77c50);
+    const color=entrance?0xd1bc8a:kitchen?((x+y)%2?0x999c91:0xb6b5a5):((x+y)%2?0xb56d47:0xc77c50);
     tile(g,x,y,color);
     // A light, continuous 2:1 grid stays readable underneath the preview.
-    g.poly([p.x,p.y-RTH/2,p.x+RTW/2,p.y,p.x,p.y+RTH/2,p.x-RTW/2,p.y]).stroke({color:0xf2d8aa,alpha:.3,width:1});
+    g.poly([p.x,p.y-RTH/2,p.x+RTW/2,p.y,p.x,p.y+RTH/2,p.x-RTW/2,p.y]).stroke({color:0xf2d8aa,alpha:.5,width:1});
     if(entrance)g.poly([p.x-9,p.y+1,p.x,p.y-4,p.x+9,p.y+1,p.x+3,p.y+1,p.x+3,p.y+6,p.x-3,p.y+6,p.x-3,p.y+1]).fill(0x776c42);
     g.label=`floor-${x}-${y}`;g.eventMode='static';g.cursor='pointer';g.on('pointertap',()=>{if(state.deleteMode)removeAt(x,y);});floor.addChild(g);
   }

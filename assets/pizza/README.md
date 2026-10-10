@@ -14,3 +14,9 @@ The city preserves dragging, pinch/wheel zoom, camera position and the tappable 
 The restaurant's floor, walls, sprite artwork and pointer snapping share the 64 by 32 pixel projection in `pizza-layout.js`. Table sprites include all chairs. The 2- and 4-seat groups reserve 2 by 2 grid cells, the 6-seat group 3 by 2, and the 8-seat group 4 by 2; odd quarter turns swap width and height. A snapped preview becomes part of the saved layout only after pressing Setzen or Enter.
 
 Saved layouts now use version 2. Version 1 tables become 4-seat groups; separate legacy chairs are removed because seating is part of the table sprite. Invalid saves revert to the starting layout, while a deliberately empty room remains empty.
+
+Restaurant furniture is generated as cached flat Canvas pixel bitmaps in
+`pizza-sprites.js`, with four fixed isometric views. Gingham cloth, red seat
+cushions, dark wood and the brick oven share the 64x32 floor projection.
+Each table bitmap contains all 2, 4, 6 or 8 chairs. Wall shutters, flower boxes,
+lamps and paneling use that same projection in `pizza-restaurant.js`.

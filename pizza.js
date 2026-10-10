@@ -1,6 +1,6 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010d';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010d';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010d';
+import {app,root,state,loadAssets} from './pizza-core.js?v=20261010f';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010f';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010f';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
 const toolButtons=[...document.querySelectorAll('.toolbtn')];
