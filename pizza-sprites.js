@@ -3,7 +3,7 @@ import {project} from './pizza-layout.js?v=20261010c';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
-const COLORS={wood:{top:'#e5c88f',x:'#ad7c49',y:'#c3955a'},legs:{top:'#ba9257',x:'#805634',y:'#a37945'},cabinet:{top:'#d8c496',x:'#ad875e',y:'#c5a374'},metal:{top:'#e7eee3',x:'#aabfba',y:'#c8d8cf'},person:{top:'#648353',x:'#386048',y:'#527b53'}};
+const COLORS={wood:{top:'#e5c88f',x:'#ad7c49',y:'#c3955a'},legs:{top:'#ba9257',x:'#805634',y:'#a37945'},cabinet:{top:'#d8c496',x:'#ad875e',y:'#c5a374'},metal:{top:'#e7eee3',x:'#aabfba',y:'#c8d8cf'}};
 
 function bitmap(key,rotation,draw){
   const id=key+':'+rotation;if(cache.has(id))return cache.get(id);
@@ -81,11 +81,11 @@ function shifted(a,cx,cy,r,scale=.75){
 }
 
 function drawTableGroup(a,seats){
-  const width=seats<=4?.84:seats===6?1.88:2.68,depth=.8;
+  const width=seats<=4?.84:seats===6?2.65:3.65,depth=.8;
   let chairs;
   if(seats===2)chairs=[[0,-.7,1],[0,.7,3]];
   else if(seats===4)chairs=[[-.7,0,0],[.7,0,2],[0,-.7,1],[0,.7,3]];
-  else{const xs=seats===6?[-.68,0,.68]:[-1.05,-.35,.35,1.05];chairs=xs.flatMap(x=>[[x,-.7,1],[x,.7,3]]);}
+  else{const xs=seats===6?[-.95,0,.95]:[-1.45,-.48,.48,1.45];chairs=xs.flatMap(x=>[[x,-.7,1],[x,.7,3]]);}
   const front=([x,y])=>a.rotation===1?x-y:a.rotation===2?-x-y:a.rotation===3?y-x:x+y;
   chairs.sort((p,q)=>front(p)-front(q));
   for(const [x,y,r]of chairs.filter(p=>front(p)<0))drawChair(shifted(a,x,y,r));
@@ -118,10 +118,11 @@ export function furnitureSprite(type,rotation=0,seats=4){
 }
 
 export function personSprite(index,rotation=0){
-  const color=['#efe6ce','#a94b39','#427c94','#58834f'][index%4],art=bitmap('person-'+index,rotation,a=>{
+  const shirt=[{top:'#efe6ce',x:'#b6b9a7',y:'#ded8bf'},{top:'#c56349',x:'#803b30',y:'#a94b39'},{top:'#5b93a4',x:'#315f73',y:'#427c94'},{top:'#729563',x:'#3d613c',y:'#58834f'}][index%4],art=bitmap('person-'+index,rotation,a=>{
     a.shadow(.35,.32);
     for(const y of [-.095,.095]){a.box(-.11,y-.055,.22,.11,0,3,{top:'#5a4d3c',x:'#302b24',y:'#403a2e'});a.box(-.08,y-.045,.13,.09,3,19,{top:'#584d3a',x:'#3c3930',y:'#514a38'});}
-    a.box(-.12,-.13,.24,.26,22,22,{top:color,x:color,y:color});
+    a.box(-.12,-.14,.24,.28,22,22,shirt);
+    for(const y of [-.22,.14]){a.box(-.1,y,.16,.08,23,19,shirt);a.box(-.1,y,.16,.08,19,4,{top:'#d9ac78',x:'#b8855d',y:'#c99869'});}
     a.box(-.06,-.09,.12,.18,44,3,{top:'#d9ac78',x:'#b8855d',y:'#c99869'});
     a.box(-.09,-.11,.18,.22,47,11,{top:'#d2a16e',x:'#b68457',y:'#d0a16e'});
     a.box(-.095,-.115,.19,.23,58,3,{top:index===0?'#f1ead5':'#634a31',x:'#765335',y:'#906a44'});

@@ -127,6 +127,8 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert((await snapshot(page)).items.some(item=>item.seats===8&&item.r===1&&item.x===6&&item.y===2));await capture(page,'table-8-rotated.png');await page.click('#undoBtn');
     await page.click('#resetBtn');await page.click('[data-tool="plant"]');await tapCell(page,0,3);
     assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);await page.click('#cancelBtn');assert.equal((await snapshot(page)).pending,null);
+    await tapCell(page,0,3);await page.keyboard.press('Escape');assert.equal((await snapshot(page)).pending,null);assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);
+    await tapCell(page,0,3);await page.keyboard.press('Enter');assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===0&&item.y===3));await page.click('#undoBtn');
     // A touch drag moves only the snapped preview until Setzen is pressed.
     const start=await nodePoint(page,'floor-0-2'),end=await nodePoint(page,'floor-0-3');
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start.x,y:start.y,id:1}]});
@@ -142,7 +144,13 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await placeCell(page,7,4);assert((await snapshot(page)).items.some(item=>item.type==='bar'&&item.x===7&&item.y===4&&item.r===1));
     await capture(page,'custom-furniture.png');
     await page.click('#deleteBtn');assert.equal(await page.locator('.toolbtn.active').count(),0);
-    await tapCell(page,5,2);assert(!(await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
+    const chairPoint=await page.evaluate(async modulePath=>{
+      const {world,root,app}=await import(modulePath);app.render();
+      const group=world.children[0].children.find(c=>c.label==='restaurant-objects').children.find(c=>c.label==='placed-furniture'&&c.position.x===96&&c.position.y===128);
+      const sprite=group.children[0];if(!sprite.hitArea.contains(-30,-54))throw new Error('Chair pixel is not opaque.');
+      const point=sprite.toGlobal({x:-30,y:-54}),base=root.getBoundingClientRect();return {x:point.x+base.left,y:point.y+base.top};
+    },corePath);
+    await page.mouse.click(chairPoint.x,chairPoint.y);assert(!(await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2),'Tapping a baked chair must remove its whole table group.');
     await page.click('#undoBtn');assert((await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
     const custom=(await snapshot(page)).items;await page.click('#resetBtn');current=await snapshot(page);
     assert.deepEqual(current.items,model.DEFAULT_LAYOUT);assert.equal(current.rotation,0);assert.equal(current.deleteMode,false);assert.equal(current.tool,'table');
@@ -164,10 +172,14 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
         const {root,world,app,sceneViewport}=await import(modulePath),area=sceneViewport(true),room=world.children[0].getBounds();
         const visible=[...document.querySelectorAll('#app button')].filter(element=>element.getClientRects().length&&getComputedStyle(element).visibility!=='hidden');
         const base=root.getBoundingClientRect();
-        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},uiClipped:visible.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),buttonOverflow:visible.filter(element=>element.scrollWidth>element.clientWidth+1).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
+        const tools=document.querySelector('#tools').getBoundingClientRect(),nav=document.querySelector('.bottomnav').getBoundingClientRect(),hint=document.querySelector('#placementHint').getBoundingClientRect();
+        const head=document.querySelector('#restaurantHead').getBoundingClientRect(),headerOverflow=[...document.querySelectorAll('#restaurantHead strong,#restaurantHead span')].filter(e=>e.getClientRects().length).some(e=>{const r=e.getBoundingClientRect();return r.top<head.top+2||r.bottom>head.bottom-2;});
+        return {area,room:{left:room.x,right:room.x+room.width,top:room.y,bottom:room.y+room.height},screen:{width:app.screen.width,height:app.screen.height},base:{width:base.width,height:base.height},headerOverflow,toolbarOverlap:tools.bottom>nav.top+1,hintOverlap:root.dataset.compact==='landscape'&&hint.bottom>tools.top+1,uiClipped:visible.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<base.left-.5||rect.right>base.right+.5||rect.top<base.top-.5||rect.bottom>base.bottom+.5;}).map(element=>element.id||element.innerText),buttonOverflow:visible.filter(element=>element.scrollWidth>element.clientWidth+1).map(element=>element.id||element.innerText),moneyOverflow:document.querySelector('.money').scrollWidth>document.querySelector('.money').clientWidth+1};
       },corePath);
       assert.equal(geometry.uiClipped.length,0,JSON.stringify({width,height,...geometry}));assert(!geometry.moneyOverflow,'Account text overflow at '+width);
       assert.equal(geometry.buttonOverflow.length,0,JSON.stringify({width,height,buttonOverflow:geometry.buttonOverflow}));
+      assert(!geometry.toolbarOverlap&&!geometry.hintOverlap,'Editor controls overlap at '+width+'x'+height);
+      assert(!geometry.headerOverflow,'Restaurant title overflows at '+width+'x'+height);
       assert.equal(geometry.screen.width,geometry.base.width);assert.equal(geometry.screen.height,geometry.base.height);
       assert(geometry.room.left>=geometry.area.left-2&&geometry.room.right<=geometry.area.right+2&&geometry.room.top>=geometry.area.top-2&&geometry.room.bottom<=geometry.area.bottom+2,JSON.stringify({width,height,...geometry}));
       await capture(page,`restaurant-${width}x${height}.png`);

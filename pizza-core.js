@@ -57,7 +57,8 @@ export function localRect(element){
 }
 
 export function sceneViewport(restaurant=false){
-  const top=localRect(document.querySelector(restaurant?'#placementHint':'#cityHint')).bottom+12;
+  const topElement=restaurant?(root.dataset.compact==='landscape'?'#restaurantHead':'#placementHint'):'#cityHint';
+  const top=localRect(document.querySelector(topElement)).bottom+12;
   const nav=localRect(document.querySelector('#cityBtn').closest('.bottomnav'));
   let right=app.screen.width-12,bottom=nav.top-12;
   if(restaurant){
