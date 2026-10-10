@@ -1,6 +1,6 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010i';
-import {restaurantSprite,restaurantIcon} from './pizza-restaurant-art.js?v=20261010i';
-import {project} from './pizza-layout.js?v=20261010i';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010j';
+import {restaurantSprite,restaurantIcon} from './pizza-restaurant-art.js?v=20261010j';
+import {project} from './pizza-layout.js?v=20261010j';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
@@ -42,7 +42,7 @@ function legs(a,spreadX,spreadY,height){
   const positions=[[-spreadX,-spreadY],[spreadX,-spreadY],[-spreadX,spreadY],[spreadX,spreadY]];
   const rotated=([x,y])=>a.rotation===1?-y+x:a.rotation===2?-x-y:a.rotation===3?y-x:x+y;
   positions.sort((p,q)=>rotated(p)-rotated(q));
-  for(const [x,y] of positions)a.box(x-.045,y-.045,.09,.09,0,height,COLORS.legs);
+  for(const [x,y] of positions)a.box(x-.045,y-.045,.09,.09,0,height,a.chairStyle?.legs||COLORS.legs);
 }
 
 function cabinet(a,cx=0,type='bar'){
@@ -66,11 +66,12 @@ function cabinet(a,cx=0,type='bar'){
 }
 
 function drawChair(a){
+    const style=a.chairStyle||{wood:COLORS.wood,legs:COLORS.legs,cushion:{top:'#b73929',x:'#70271f',y:'#943127'}};
     a.shadow(.65,.65);legs(a,.25,.25,17);
-    a.box(-.35,-.34,.7,.68,17,4,COLORS.wood);
-    a.box(-.29,-.28,.58,.56,21,2,{top:'#b73929',x:'#70271f',y:'#943127'});
-    a.box(-.33,-.31,.08,.08,20,28,COLORS.legs);a.box(-.33,.23,.08,.08,20,28,COLORS.legs);
-    a.box(-.35,-.32,.09,.64,32,13,COLORS.wood);
+    a.box(-.35,-.34,.7,.68,17,4,style.wood);
+    a.box(-.29,-.28,.58,.56,21,2,style.cushion);
+    a.box(-.33,-.31,.08,.08,20,28,style.legs);a.box(-.33,.23,.08,.08,20,28,style.legs);
+    a.box(-.35,-.32,.09,.64,32,13,style.wood);
 }
 
 function shifted(a,cx,cy,r,scale=.75){
@@ -84,7 +85,9 @@ function shifted(a,cx,cy,r,scale=.75){
   };
 }
 
-function drawTableGroup(a,seats){
+function drawTableGroup(a,seats,variant){
+  if(variant==='plastic')a.chairStyle={wood:{top:'#ecead6',x:'#b4b5a4',y:'#d4d5c2'},legs:{top:'#e1e2ce',x:'#a7aa9b',y:'#cbd0be'},cushion:{top:'#e7e8d7',x:'#b2b9a7',y:'#d1d6c2'}};
+  if(variant==='premium')a.chairStyle={wood:{top:'#663b2a',x:'#362219',y:'#4e2b20'},legs:{top:'#79543a',x:'#3e2b20',y:'#62422e'},cushion:{top:'#d7ba83',x:'#91774d',y:'#b89a64'}};
   const width=seats<=4?.84:seats===6?2.65:3.65,depth=.8;
   let chairs;
   if(seats===2)chairs=[[0,-.7,1],[0,.7,3]];
@@ -99,10 +102,10 @@ function drawTableGroup(a,seats){
   const step=.14,x0=-width/2,y0=-depth/2;
   for(let i=0;i<Math.ceil(width/step);i++)for(let j=0;j<Math.ceil(depth/step);j++){
     const x=x0+i*step,y=y0+j*step,w=Math.min(step,width-i*step),d=Math.min(step,depth-j*step);
-    a.surface([[x,y],[x+w,y],[x+w,y+d],[x,y+d]],34,(i+j)%2?'#f3dfbe':'#b43d2c');
+    a.surface([[x,y],[x+w,y],[x+w,y+d],[x,y+d]],34,variant==='plastic'?'#e2e5d0':(i+j)%2?'#f3dfbe':variant==='premium'?'#7b302b':'#b43d2c');
   }
   for(let i=0;i<Math.ceil(width/step);i++){
-    const x=x0+i*step,w=Math.min(step,width-i*step),color=i%2?'#dbc9a9':'#8e3025';
+    const x=x0+i*step,w=Math.min(step,width-i*step),color=variant==='plastic'?'#c7cbb8':i%2?'#dbc9a9':variant==='premium'?'#632521':'#8e3025';
     for(const y of [y0,y0+depth])a.polygon([a.point(x,y,34),a.point(x+w,y,34),a.point(x+w,y,27),a.point(x,y,27)],color);
   }
   a.disc(0,0,.095,35,'#664127');a.disc(0,0,.065,40,'#b88b49');
@@ -112,22 +115,31 @@ function drawTableGroup(a,seats){
   for(const [x,y,r]of chairs.filter(p=>front(p)>=0))drawChair(shifted(a,x,y,r));
 }
 
-function drawFurniture(type,a,seats){
-  if(type==='table')drawTableGroup(a,seats);
-  else if(type==='bar'||type==='wine'){
+function drawFurniture(type,a,seats,variant){
+  if(type==='table')drawTableGroup(a,seats,variant);
+  else if(type==='arcade'){
+    a.shadow(.8,.8);a.box(-.36,-.32,.72,.64,0,59,{top:variant==='deluxe'?'#4b72a0':'#9b4032',x:'#293c4a',y:'#3b4b59'});
+    a.box(-.4,-.35,.8,.7,59,5,{top:'#e8b953',x:'#956235',y:'#b68b46'});
+    if(a.rotation===0||a.rotation===1){
+      a.front(.365,-.27,.27,31,52,'#121d2b');a.front(.37,-.19,.19,34,48,variant==='deluxe'?'#60b6ad':'#7881bb');
+      for(const [y,z] of [[-.1,39],[.08,44],[.15,37]])a.front(.375,y,y+.055,z,z+3,'#eccc69');
+      a.front(.38,-.28,.28,24,29,'#dda65a');a.line([[.385,-.1,29],[.385,-.1,34]],'#e9ded0',2);
+    }
+  }else if(type==='bar'||type==='wine'){
     a.shadow(1.85,.83);
     a.box(-.94,-.4,1.88,.8,0,34,COLORS.wood);
     for(const x of [-.88,-.42,.04,.5]){
       a.box(x,.405,.035,.02,3,28,COLORS.legs);
       a.line([[x,-.39,5],[x,-.39,30]],'#ba8650');
     }
-    a.box(-.98,-.44,1.96,.88,34,4,{top:'#b8814a',x:'#68412a',y:'#87532f'});
+    a.box(-.98,-.44,1.96,.88,34,4,variant==='marble'?{top:'#e7dbc5',x:'#b0a58e',y:'#cdc1a5'}:variant==='tiled'?{top:'#708b79',x:'#405d50',y:'#5d7763'}:{top:'#b8814a',x:'#68412a',y:'#87532f'});
     for(const x of [-.55,.5]){a.disc(x,0,.14,39,'#ede3ca');a.disc(x,0,.1,40,'#c9bca0');}
     a.box(-.12,.04,.13,.13,38,9,{top:'#78834a',x:'#33452b',y:'#4b6237'});
   }else if(type==='jukebox'){
     a.shadow(.7,.7);a.box(-.32,-.32,.64,.64,0,53,{top:'#b34329',x:'#713523',y:'#952c22'});
     a.box(-.22,-.22,.44,.44,53,6,{top:'#d8a44d',x:'#8b6033',y:'#b6853e'});
     if(a.rotation===0||a.rotation===1){a.front(.325,-.25,.25,5,49,'#deaa46');a.front(.33,-.19,.19,9,45,'#573c28');a.front(.335,-.16,.16,28,39,'#f0d393');}
+  }else if(type==='oven'&&variant==='electric'){a.shadow(.86,.8);cabinet(a,0,'oven');
   }else if(type==='oven'){
     a.shadow(.95,.94);
     a.box(-.46,-.44,.92,.88,0,25,{top:'#a59680',x:'#6e6557',y:'#938775'});
@@ -174,16 +186,22 @@ function drawFurniture(type,a,seats){
       a.disc(x,y,.19,h,'#355e37');a.disc(x-.025,y-.04,.135,h+2,'#648744');
       a.disc(x+.04,y+.02,.07,h+3,'#8d9c50');
     }
+    if(variant==='palm')for(const [x,y] of [[-.4,0],[.4,0],[0,-.4],[0,.4]])a.polygon([a.point(0,0,65),a.point(x,y,53),a.point(x*.9,y*.9,42),a.point(0,0,60)],'#518044');
+
   }
 }
 
 function sprite(art,label){const result=new Sprite(art.texture);result.anchor.set(art.anchor.x,art.anchor.y);result.label=label;return result;}
-export function furnitureSprite(type,rotation=0,seats=4){
-  const detailed=restaurantSprite(type,rotation);if(detailed)return detailed;
-  const art=bitmap(type==='table'?'table-'+seats:type,rotation,a=>drawFurniture(type,a,seats)),result=sprite(art,'furniture-sprite');result.hitArea=art.hitArea;return result;
+function furnitureArt(type,rotation,seats,variant){
+  return bitmap((type==='table'?'table-'+seats:type)+':'+(variant||'default'),rotation,a=>drawFurniture(type,a,seats,variant));
 }
-
-export function furnitureIcon(type,seats=4){return restaurantIcon(type)||bitmap(type==='table'?'table-'+seats:type,0,a=>drawFurniture(type,a,seats)).icon;}
+function detailedVariant(type,variant){return (type==='oven'&&(!variant||variant==='brick'||variant==='professional'))||(type==='plant'&&(!variant||variant==='olive'))||(type==='jukebox'&&(!variant||variant==='vintage'))||type==='wine';}
+export function furnitureSprite(type,rotation=0,seats=4,variant){
+  const detailed=detailedVariant(type,variant)?restaurantSprite(type,rotation):null;
+  if(detailed){if(variant==='professional')detailed.tint=0xdde4ec;return detailed;}
+  const art=furnitureArt(type,rotation,seats,variant),result=sprite(art,'furniture-sprite');result.hitArea=art.hitArea;return result;
+}
+export function furnitureIcon(type,seats=4,variant){return (detailedVariant(type,variant)&&restaurantIcon(type))||furnitureArt(type,0,seats,variant).icon;}
 
 export function personSprite(index,rotation=0){
   const shirt=[{top:'#efe6ce',x:'#b6b9a7',y:'#ded8bf'},{top:'#c56349',x:'#803b30',y:'#a94b39'},{top:'#5b93a4',x:'#315f73',y:'#427c94'},{top:'#729563',x:'#3d613c',y:'#58834f'}][index%4],art=bitmap('person-'+index,rotation,a=>{

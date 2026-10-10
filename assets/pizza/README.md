@@ -27,3 +27,14 @@ layouts remain compatible. Guests only route through dining-room cells.
 Restaurant zoom, fit view, hand-mode panning and two-finger zoom use the same
 floor coordinates as placement. The kitchen's low cutaway walls preserve the
 view of the appliances and keep the one-cell doorway visible.
+
+The furniture catalog (`pizza-catalog.js`) groups ovens, counters, decoration
+and tables. Tables contain their chairs: choose plastic, wood or upholstery,
+then 2/4/6/8 places. There are 25 purchasable product/size combinations.
+The UI displays a price before placement. Only confirmed valid placement
+charges the account; canceling or moving a preview costs nothing. Selling
+returns half the original paid price. Undo restores furniture and balance
+atomically. Version 3 saves both; older layouts retain their furniture and
+start with the existing demo balance. Reset restores the demo layout and
+account, and can be undone. Fixed decorations and old free furniture have
+no sale proceeds.

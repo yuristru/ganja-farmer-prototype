@@ -1,3 +1,4 @@
+import {product,itemPrice} from './pizza-catalog.js?v=20261010j';
 export const ROOM = {w:12,h:10};
 export const KITCHEN = {x:8,y:0,w:4,h:4};
 export const KITCHEN_DOOR = {x:9,y:4};
@@ -11,7 +12,7 @@ export const GRID = {width:64,height:32};
 
 export function project(x,y){return {x:(x-y)*GRID.width/2,y:(x+y)*GRID.height/2};}
 export function gridCell(point){return {x:Math.floor(point.x/GRID.width+point.y/GRID.height+.5),y:Math.floor(point.y/GRID.height-point.x/GRID.width+.5)};}
-export const TOOL_TYPES = ['table','oven','bar','plant'];
+export const TOOL_TYPES = ['table','oven','bar','plant','jukebox','arcade'];
 export const TABLE_SEATS = [2,4,6,8];
 export const TABLE_SIZES = {2:{w:2,h:2},4:{w:2,h:2},6:{w:3,h:2},8:{w:4,h:2}};
 export const DEFAULT_LAYOUT = [
@@ -41,6 +42,8 @@ export function occupiedCells(item){
 export function placementIssue(item,layout=[]){
   if(!item||!TOOL_TYPES.includes(item.type)||![item.x,item.y,item.r].every(Number.isInteger)||item.r<0||item.r>3) return 'Ungültige Einrichtung.';
   if(item.type==='table'&&!TABLE_SEATS.includes(item.seats))return 'Bitte einen Tisch für 2, 4, 6 oder 8 Personen wählen.';
+  if(item.variant!==undefined&&!product(item))return 'Ungültige Möbelvariante.';
+  if(item.paid!==undefined&&(!Number.isInteger(item.paid)||item.paid!==itemPrice(item)))return 'Ungültiger Kaufpreis.';
   const cells=occupiedCells(item);
   for(const cell of cells){
     const [x,y]=cell.split(',').map(Number);
@@ -67,11 +70,11 @@ export function validLayout(value){
 }
 
 export function copyLayout(layout=DEFAULT_LAYOUT){
-  return layout.map(({type,seats,x,y,r})=>type==='table'?{type,seats,x,y,r}:{type,x,y,r});
+  return layout.map(({type,seats,x,y,r,variant,paid})=>({...((type==='table')?{type,seats,x,y,r}:{type,x,y,r}),...(variant!==undefined?{variant}:{}),...(paid!==undefined?{paid}:{})}));
 }
 
 export function upgradeLayout(value,version){
-  if(!Array.isArray(value)||![1,2].includes(version))return null;
+  if(!Array.isArray(value)||![1,2,3].includes(version))return null;
   const items=version===1?value.filter(item=>item?.type!=='chair').map(item=>item?.type==='table'?{...item,seats:4}:item):value;
   return validLayout(items)?copyLayout(items):null;
 }

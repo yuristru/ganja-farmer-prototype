@@ -1,16 +1,12 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010i';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010i';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan} from './pizza-restaurant.js?v=20261010i';
+import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010j';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010j';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010j';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010i';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010j';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
-const toolButtons=[...document.querySelectorAll('.toolbtn')];
-function updateFurnitureIcons(){for(const button of toolButtons){
-  const image=document.createElement('img');image.src=furnitureIcon(button.dataset.tool,Number(button.dataset.seats)||4);image.alt='';image.className='furnitureIcon';
-  button.querySelector('b,img').replaceWith(image);
-}}
-updateFurnitureIcons();
+import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010j';
+mountCatalog(()=>{if(restaurantView().panMode)toggleRestaurantPan();cancelPlacement();syncEditUI();});
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
 document.querySelector('#cityBtn').onclick=showCity;
 document.querySelector('#restaurantBtn').onclick=showRestaurant;
@@ -19,21 +15,18 @@ function syncEditUI(){
   rotateBtn.textContent=`Drehen ${state.rotation*90}°`;
   rotateBtn.setAttribute('aria-label',`Möbelstück um 90 Grad drehen. Aktuell ${state.rotation*90} Grad.`);
   deleteBtn.classList.toggle('active',state.deleteMode);deleteBtn.setAttribute('aria-pressed',String(state.deleteMode));
-  for(const button of toolButtons){
-    const active=!state.deleteMode&&button.dataset.tool===state.selectedTool&&(state.selectedTool!=='table'||Number(button.dataset.seats)===state.selectedSeats);
-    button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
-  }
+  renderCatalog();
   document.querySelector('#undoBtn').disabled=!state.history.length;
   updatePlacementPreview();resizeRestaurant();
 }
 state.onEditChange=syncEditUI;
 rotateBtn.onclick=()=>{state.rotation=(state.rotation+1)%4;state.deleteMode=false;syncEditUI();};
 deleteBtn.onclick=()=>{state.deleteMode=!state.deleteMode;cancelPlacement();syncEditUI();};
-document.querySelector('#resetBtn').onclick=resetRestaurant;
+document.querySelector('#resetBtn').onclick=()=>{showCatalogSizes();resetRestaurant();};
 document.querySelector('#undoBtn').onclick=undoRestaurant;
 document.querySelector('#placeBtn').onclick=confirmPlacement;
 document.querySelector('#cancelBtn').onclick=cancelPlacement;
-for(const button of toolButtons) button.onclick=()=>{state.selectedTool=button.dataset.tool;if(button.dataset.seats)state.selectedSeats=Number(button.dataset.seats);state.deleteMode=false;cancelPlacement();syncEditUI();};
+
 
 for(const button of document.querySelectorAll('[data-speed]')) button.onclick=()=>{
   state.speed=Number(button.dataset.speed);
@@ -63,7 +56,7 @@ function updateClock(){
   document.querySelector('#gameDate').textContent=dateFormat.format(date);
   document.querySelector('#gameTime').textContent=timeFormat.format(date);
 }
-updateClock();syncEditUI();
+updateClock();updateMoney();syncEditUI();
 app.ticker.maxFPS=60;
 app.ticker.add(ticker=>{
   if(!state.ready||state.speed===0) return;
@@ -92,4 +85,4 @@ window.addEventListener('keydown',event=>{
   else if(event.key==='Escape'){state.deleteMode=false;cancelPlacement();syncEditUI();}
 });
 
-await loadAssets();updateFurnitureIcons();state.ready=true;showCity();
+await loadAssets();renderCatalog();state.ready=true;showCity();

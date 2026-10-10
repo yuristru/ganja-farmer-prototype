@@ -1,9 +1,10 @@
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010i';
-import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,FIXED_DECOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010i';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010i';
+import {START_MONEY,itemPrice,product,money} from './pizza-catalog.js?v=20261010j';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,updateMoney,notify,hash} from './pizza-core.js?v=20261010j';
+import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,FIXED_DECOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010j';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010j';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
-const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze'};
+const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze',jukebox:'Musikautomat',arcade:'Spielautomat'};
 let roomLayer,roomMask,objects,preview,hoverCell=null,dragPointer=null;
 const view={zoom:1,x:0,y:0},pointers=new Map();
 let panMode=false,pinching=false,blockTap=false;
@@ -28,7 +29,7 @@ export function zoomRestaurant(factor,anchor){
 }
 
 function chosenItem(cell){
-  const item={type:state.selectedTool,...cell,r:state.rotation};
+  const item={type:state.selectedTool,...cell,r:state.rotation,variant:state.selectedVariant};
   if(item.type==='table')item.seats=state.selectedSeats;
   return item;
 }
@@ -37,7 +38,7 @@ function placed(item,interactive=true,ghost=false){
   const {w,h}=dimensions(item),point=project(item.x+(w-1)/2,item.y+(h-1)/2),group=new Container();
   group.label=interactive?'placed-furniture':'fixed-furniture';group.position.set(point.x,point.y);group.zIndex=point.y;
   // A table and all of its chairs are a single flat, cached pixel sprite.
-  const sprite=furnitureSprite(item.type,item.r,item.seats);group.addChild(sprite);
+  const sprite=furnitureSprite(item.type,item.r,item.seats,item.variant);group.addChild(sprite);
   if(ghost){group.alpha=.65;group.eventMode='none';}
   else if(interactive){
     group.eventMode=state.deleteMode&&!panMode?'static':'none';group.cursor='pointer';
@@ -138,21 +139,22 @@ function renderFurniture(){
 
 function finishEdit(message){
   state.pendingPlacement=null;hoverCell=null;dragPointer=null;
-  const saved=saveLayout();renderFurniture();updatePlacementPreview();
+  const saved=saveLayout();updateMoney();renderFurniture();updatePlacementPreview();
   if(saved)notify(message);
 }
 
 function removeAt(x,y){
   const index=state.restaurantState.findIndex(item=>occupiedCells(item).includes(`${x},${y}`));
   if(index<0){notify(kitchenCell(x,y)?'Die feste Küche bleibt erhalten.':'Hier steht kein Möbelstück.');return;}
-  rememberEdit();state.restaurantState.splice(index,1);finishEdit('Möbelstück entfernt.');
+  rememberEdit();const refund=Math.floor((state.restaurantState[index].paid||0)/2);state.restaurantState.splice(index,1);state.balance+=refund;finishEdit('Möbel verkauft: '+money(refund)+'.');
 }
 
 export function confirmPlacement(){
   if(state.scene!=='restaurant'||state.deleteMode||!state.pendingPlacement)return;
   const item=chosenItem(state.pendingPlacement),issue=placementIssue(item,state.restaurantState);
   if(issue){notify(issue);return;}
-  rememberEdit();state.restaurantState.push(item);finishEdit(item.type==='table'?`${item.seats}er-Tisch mit Stühlen platziert.`:`${TOOL_NAMES[item.type]} platziert.`);
+  const price=itemPrice(item);if(state.balance<price){notify('Nicht genügend Geld.');return;}
+  rememberEdit();state.balance-=price;item.paid=price;state.restaurantState.push(item);finishEdit(item.type==='table'?`${item.seats}er-Tisch mit Stühlen platziert.`:`${TOOL_NAMES[item.type]} platziert.`);
 }
 
 export function cancelPlacement(){
@@ -168,12 +170,13 @@ export function updatePlacementPreview(){
   if(state.scene!=='restaurant'||!preview||preview.destroyed)return;
   for(const child of objects.children)if(child.label==='placed-furniture')child.eventMode=state.deleteMode&&!panMode?'static':'none';
   preview.removeChildren().forEach(child=>child.destroy({children:true}));
-  const cell=state.pendingPlacement||hoverCell,item=cell?chosenItem(cell):null,issue=item?placementIssue(item,state.restaurantState):null;
-  const title=panMode?'Ansicht verschieben':state.deleteMode?'Möbel entfernen':`${state.selectedTool==='table'?state.selectedSeats+'er-Tisch mit Stühlen':TOOL_NAMES[state.selectedTool]} · ${state.rotation*90}°`;
+  const cell=state.pendingPlacement||hoverCell,item=cell?chosenItem(cell):null,issue=item?(placementIssue(item,state.restaurantState)||(state.balance<itemPrice(item)?'Nicht genügend Geld.':null)):null;
+  const title=panMode?'Ansicht verschieben':state.deleteMode?'Möbel verkaufen':`${state.selectedTool==='table'?state.selectedSeats+'er-Tisch mit Stühlen':TOOL_NAMES[state.selectedTool]} · ${state.rotation*90}°`;
   document.querySelector('#placementTitle').textContent=title;
-  document.querySelector('#placementStatus').textContent=panMode?'Zum Einrichten den Hand-Modus ausschalten.':state.deleteMode?'Ein Möbelstück antippen.':issue||(state.pendingPlacement?'Position gewählt. Mit Setzen bestätigen.':'Auf das Raster tippen oder ziehen.');
+  document.querySelector('#placementStatus').textContent=panMode?'Zum Einrichten den Hand-Modus ausschalten.':state.deleteMode?'Antippen: 50 % des Kaufpreises zurück.':issue||(state.pendingPlacement?'Position gewählt. Mit Setzen bestätigen.':'Auf das Raster tippen oder ziehen.');
   const button=document.querySelector('#placeBtn');button.hidden=state.deleteMode;button.disabled=!state.pendingPlacement||!!issue;
   document.querySelector('#cancelBtn').hidden=!state.pendingPlacement;
+  if(!state.deleteMode&&!panMode)document.querySelector('#placementStatus').textContent=money(itemPrice(chosenItem({x:0,y:0})))+' · '+document.querySelector('#placementStatus').textContent;
   if(!cell||panMode)return;
   let target=item;
   if(state.deleteMode){target=state.restaurantState.find(value=>occupiedCells(value).includes(`${cell.x},${cell.y}`));if(!target)return;}
@@ -360,12 +363,12 @@ export function tickRestaurant(dt){
 
 export function undoRestaurant(){
   if(!state.history.length)return;
-  state.restaurantState=state.history.pop();finishEdit('Letzte Änderung rückgängig gemacht.');
+  const edit=state.history.pop();state.restaurantState=edit.items;state.balance=edit.balance;finishEdit('Letzte Änderung rückgängig gemacht.');
 }
 
 export function resetRestaurant(){
   const initial=copyLayout();
-  if(JSON.stringify(initial)!==JSON.stringify(state.restaurantState)){rememberEdit();state.restaurantState=initial;}
-  state.rotation=0;state.selectedTool='table';state.selectedSeats=4;state.deleteMode=false;
+  if(JSON.stringify(initial)!==JSON.stringify(state.restaurantState)||state.balance!==START_MONEY){rememberEdit();state.restaurantState=initial;state.balance=START_MONEY;}
+  state.rotation=0;state.selectedTool='table';state.selectedSeats=4;state.selectedVariant='wood';state.deleteMode=false;
   finishEdit('Start-Einrichtung wiederhergestellt.');
 }

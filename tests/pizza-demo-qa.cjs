@@ -20,7 +20,7 @@ const server=http.createServer((req,res)=>{
 async function snapshot(page){
   return page.evaluate(async modulePath=>{
     const {app,state,world,root}=await import(modulePath);
-    return {scene:state.scene,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,seats:state.selectedSeats,pending:state.pendingPlacement,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
+    return {scene:state.scene,balance:state.balance,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,seats:state.selectedSeats,pending:state.pendingPlacement,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
   },corePath);
 }
 
@@ -38,6 +38,15 @@ async function placeCell(page,x,y){await tapCell(page,x,y);assert.deepEqual((awa
 async function capture(page,name){
   await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.render();},corePath);
   await page.screenshot({path:path.join(out,name),style:'#toast { visibility: hidden; }'});
+}
+async function selectTool(page,type,seats){
+  const category=type==='table'?'table':type==='oven'?'oven':type==='bar'?'bar':'decor';
+  const selector=seats?`[data-seats="${seats}"]`:`[data-tool="${type}"]`;
+  if(!await page.locator(selector).first().isVisible()){
+    await page.click(`[data-category="${category}"]`);
+    if(type==='table')await page.click('[data-quality="wood"]');
+  }
+  await page.locator(selector).first().click();
 }
 async function loaded(page,url){await page.goto(url);await page.waitForSelector('#loading',{state:'hidden',timeout:15000});}
 
@@ -161,9 +170,18 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert.equal((await snapshot(page)).pending,null);assert.deepEqual((await snapshot(page)).items,itemsBeforePan);
     await page.click('#roomCenterBtn');
 
+    await page.click('[data-category="table"]');assert.equal(await page.locator('[data-quality]').count(),3);
+    await page.click('[data-quality="premium"]');assert.equal(await page.locator('[data-seats]').count(),4);
+    await page.click('[data-seats="2"]');const beforeBuy=await snapshot(page);await placeCell(page,5,0);
+    let purchased=await snapshot(page);assert.equal(purchased.balance,beforeBuy.balance-1040);assert(purchased.items.some(p=>p.variant==='premium'&&p.paid===1040));
+    await page.click('#deleteBtn');await tapCell(page,5,0);assert.equal((await snapshot(page)).balance,beforeBuy.balance-520);
+    await page.click('#undoBtn');assert.equal((await snapshot(page)).balance,beforeBuy.balance-1040);
+    await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).items,beforeBuy.items);assert.equal((await snapshot(page)).balance,beforeBuy.balance);
+    await selectTool(page,'arcade');await placeCell(page,5,0);assert((await snapshot(page)).items.some(p=>p.type==='arcade'&&p.paid===2800));await page.click('#undoBtn');
+    await page.click('#resetBtn');
     // Each capacity is one sprite and one placement, including its chairs.
     for(const [seats,x,y]of [[2,0,2],[4,5,2],[6,5,0],[8,0,5]]){
-      await page.click(`[data-seats="${seats}"]`);const before=await snapshot(page);await tapCell(page,x,y);
+      await selectTool(page,'table',seats);const before=await snapshot(page);await tapCell(page,x,y);
       assert.equal((await snapshot(page)).items.length,before.items.length);assert.equal((await snapshot(page)).history,before.history);
       await capture(page,`table-${seats}-preview.png`);await page.click('#placeBtn');
       assert((await snapshot(page)).items.some(item=>item.type==='table'&&item.seats===seats&&item.x===x&&item.y===y));
@@ -171,9 +189,9 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       assert(groups.every(g=>g.children===1&&g.isSprite&&g.label==='furniture-sprite'),'Furniture must consist of one flat sprite.');
       await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).items,before.items);
     }
-    await page.click('[data-seats="8"]');await page.click('#rotateBtn');await placeCell(page,6,2);
+    await selectTool(page,'table',8);await page.click('#rotateBtn');await placeCell(page,6,2);
     assert((await snapshot(page)).items.some(item=>item.seats===8&&item.r===1&&item.x===6&&item.y===2));await capture(page,'table-8-rotated.png');await page.click('#undoBtn');
-    await page.click('#resetBtn');await page.click('[data-tool="plant"]');await tapCell(page,0,3);
+    await page.click('#resetBtn');await selectTool(page,'plant');await tapCell(page,0,3);
     assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);await page.click('#cancelBtn');assert.equal((await snapshot(page)).pending,null);
     await tapCell(page,0,3);await page.keyboard.press('Escape');assert.equal((await snapshot(page)).pending,null);assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);
     await tapCell(page,0,3);await page.keyboard.press('Enter');assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===0&&item.y===3));await page.click('#undoBtn');
@@ -185,9 +203,9 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert.deepEqual((await snapshot(page)).pending,{x:0,y:3});assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);await page.click('#placeBtn');
     let current=await snapshot(page);assert(current.items.some(item=>item.type==='plant'&&item.x===0&&item.y===3));
     const count=current.items.length;await tapCell(page,8,1);assert.equal((await snapshot(page)).items.length,count);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/Küche/);
-    await page.click('[data-seats="4"]');await placeCell(page,5,2);current=await snapshot(page);assert.equal(current.items.length,count+1);
+    await selectTool(page,'table',4);await placeCell(page,5,2);current=await snapshot(page);assert.equal(current.items.length,count+1);
     await tapCell(page,6,2);assert.equal((await snapshot(page)).items.length,count+1);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/bereits/);
-    await page.click('[data-tool="bar"]');await page.click('#rotateBtn');assert.equal((await snapshot(page)).rotation,1);
+    await selectTool(page,'bar');await page.click('#rotateBtn');assert.equal((await snapshot(page)).rotation,1);
     await tapCell(page,11,8);assert.equal((await snapshot(page)).items.length,count+1);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/Eingang/);
     await placeCell(page,7,4);assert((await snapshot(page)).items.some(item=>item.type==='bar'&&item.x===7&&item.y===4&&item.r===1));
     await capture(page,'custom-furniture.png');
@@ -231,7 +249,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       assert.equal(geometry.screen.width,geometry.base.width);assert.equal(geometry.screen.height,geometry.base.height);
       assert(geometry.room.left>=geometry.area.left-2&&geometry.room.right<=geometry.area.right+2&&geometry.room.top>=geometry.area.top-2&&geometry.room.bottom<=geometry.area.bottom+2,JSON.stringify({width,height,...geometry}));
       await capture(page,`restaurant-${width}x${height}.png`);
-      await page.click('[data-tool="plant"]');await placeCell(page,7,3);assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===7&&item.y===3));await page.click('#undoBtn');
+      await selectTool(page,'plant');await placeCell(page,7,3);assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===7&&item.y===3));await page.click('#undoBtn');
       await page.click('#cityBtn');await capture(page,`city-${width}x${height}.png`);
     }
     console.log('Responsive views passed: 320, 393, 430, tablet, desktop and landscape, including real placement after resize.');
@@ -244,7 +262,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await loaded(page,url);assert.deepEqual((await snapshot(page)).items,[{type:'table',seats:4,x:2,y:3,r:0}]);
     const storagePage=await context.newPage();storagePage.on('pageerror',error=>errors.push(error.message));
     await storagePage.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Unavailable','SecurityError');}}));
-    await loaded(storagePage,url);await storagePage.click('#restaurantBtn');await storagePage.click('[data-tool="plant"]');await placeCell(storagePage,0,3);assert.equal((await snapshot(storagePage)).items.length,model.DEFAULT_LAYOUT.length+1);await storagePage.close();
+    await loaded(storagePage,url);await storagePage.click('#restaurantBtn');await selectTool(storagePage,'plant');await placeCell(storagePage,0,3);assert.equal((await snapshot(storagePage)).items.length,model.DEFAULT_LAYOUT.length+1);await storagePage.close();
     for(const asset of ['buildings','landmarks','props']){
       const pattern='**/assets/pizza/city/italian-'+asset+'-v2.png';
       await page.route(pattern,route=>route.fulfill({status:404,body:'missing'}));
@@ -253,11 +271,11 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       await page.unroute(pattern);
     }
     await page.route('**/assets/pizza/restaurant/*.png',route=>route.fulfill({status:404,body:'missing'}));
-    await loaded(page,url);await page.click('#restaurantBtn');await page.click('[data-tool="oven"]');await placeCell(page,0,3);
-    await capture(page,'restaurant-art-fallback.png');await page.unroute('**/assets/pizza/restaurant/*.png');
+    await loaded(page,url);await page.click('#restaurantBtn');await selectTool(page,'oven');await placeCell(page,0,3);
+    await capture(page,'restaurant-art-fallback.png');await page.click('#undoBtn');await page.unroute('**/assets/pizza/restaurant/*.png');
     await page.route('**/assets/pizza/city/*.png',route=>route.fulfill({status:404,body:'missing'}));
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,4);
-    await page.click('#restaurantBtn');await page.click('[data-tool="plant"]');await placeCell(page,0,3);
+    await page.click('#restaurantBtn');await selectTool(page,'plant');await placeCell(page,0,3);
     await page.unroute('**/assets/pizza/city/*.png');
     await page.route('**/assets/pizza/vendor/pixi-8.22.0.mjs',route=>route.abort());
     await page.goto(url);await page.getByRole('button',{name:'Erneut laden',exact:true}).waitFor();
