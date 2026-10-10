@@ -25,7 +25,7 @@ function tree(index=0,scale=1){const g=citySprite('props',index)||fallbackTree()
 function lamp(){const g=new Graphics();g.ellipse(1,1,4,2).fill({color:0,alpha:.17});g.rect(-2,-2,5,3).fill(0x35372f);g.rect(0,-29,2,28).fill(0x383c32);g.poly([-4,-32,1,-35,6,-32,5,-25,-3,-25]).fill(0x343a31);g.rect(-2,-31,6,4).fill(0xe9cc7e);g.rect(-3,-24,8,2).fill(0x32372f);return g;}
 function bench(){return citySprite('props',5)||new Graphics().poly([-14,-8,4,-17,16,-11,-2,-2]).fill(0x795534);}
 function planter(){return citySprite('props',6)||new Graphics().rect(-5,-9,10,9).fill(0x996842).ellipse(0,-12,8,6).fill(0x557549);}
-function patioTable(){return citySprite('props',7)||new Graphics().poly([-13,-16,0,-23,13,-16,0,-10]).fill(0xb94832).rect(-1,-10,2,10).fill(0x78593a);}
+function patioTable(){const g=citySprite('props',7)||new Graphics().poly([-13,-16,0,-23,13,-16,0,-10]).fill(0xb94832).rect(-1,-10,2,10).fill(0x78593a);g.label='city-terrace';return g;}
 function fountain(){return citySprite('props',4)||new Graphics().ellipse(0,-5,36,18).fill(0xb4b096).ellipse(0,-6,30,13).fill(0x598d9e).rect(-3,-25,6,21).fill(0xcac2a8);}
 
 function paving(g,x,y){
@@ -81,13 +81,13 @@ function building(objects,labels,x,y,index=0,name=null,player=false){
   const p=iso(x,y);place(objects,object,x,y);object.label=player?'player-restaurant':'city-building';
   if(player){object.eventMode='static';object.cursor='pointer';object.on('pointertap',openRestaurant);}
   if(name){
-    const tablePositions=player?[[-.3,.85],[.85,.65]]:[[-.3,.75],[.75,.65]];
+    const tablePositions=[[-.55,.4],[.65,.2]];
     for(const [dx,dy]of tablePositions)place(objects,patioTable(),x+dx,y+dy);
     place(objects,planter(),x-1.6,y+.15);place(objects,planter(),x+1.25,y-.7);
-    const tag=new Container(),width=name.length*7+31;tag.position.set(p.x,p.y-object.height-11);tag.zIndex=p.y;
+    const tag=new Container(),text=label(name,12,'#3a2b1f'),width=Math.ceil(text.width)+36;tag.position.set(p.x,p.y-object.height-11);tag.zIndex=p.y;
     const bg=new Graphics();bg.roundRect(-width/2,-13,width,26,4).fill(0xf0dfbf).stroke({color:0x745238,width:2});
     bg.poly([-width/2+4,-10,width/2-4,-10]).stroke({color:0xfff1d4,width:1});pizzaBadge(bg,-width/2+13);
-    const text=label(name,12,'#3a2b1f');text.anchor.set(.5);text.x=10;tag.addChild(bg,text);
+    text.anchor.set(0,.5);text.x=-width/2+28;tag.addChild(bg,text);
     if(player){tag.label='restaurant-sign';tag.eventMode='static';tag.cursor='pointer';tag.hitArea=new Rectangle(-width/2,-14,width,28);tag.on('pointertap',openRestaurant);}
     labels.addChild(tag);
   }
@@ -114,22 +114,24 @@ function block(objects,labels,bx,by){
   }
   if(bx===2&&by===2){
     place(objects,fountain(),ox+4.0,oy+4.0);
-    building(objects,labels,ox+1.8,oy+5.4,6,'Donatello');
+    building(objects,labels,ox+2.2,oy+4.6,6,'Donatello');
     [[.2,.8],[2.4,.4],[5.3,1.3],[5.2,5.2]].forEach(([x,y],i)=>place(objects,tree(i===1?3:i%3,.86),ox+x,oy+y));
     [[3.0,5.3],[5.4,3.0],[1.0,2.7]].forEach(([x,y])=>place(objects,bench(),ox+x,oy+y));
     decorateCorners(objects,ox,oy);return;
   }
   const variant=Math.floor(hash(bx,by)*4);
-  building(objects,labels,ox+2.1,oy+2.1,variant);
-  building(objects,labels,ox+5.2,oy+2.2,(variant+1)%4);
-  if(bx===1&&by===1)building(objects,labels,ox+2.5,oy+5.3,4,'Mamma Mia',true);
-  else if(bx===2&&by===1)building(objects,labels,ox+1.8,oy+5.3,5,"Luigi's");
-  else{building(objects,labels,ox+2.3,oy+5.2,(variant+2)%4);if((bx+by)%2===0)building(objects,labels,ox+5.2,oy+5.2,7);}
+  building(objects,labels,ox+2.35,oy+2.35,variant);
+  building(objects,labels,ox+5.2,oy+2.35,(variant+1)%4);
+  if(bx===1&&by===1)building(objects,labels,ox+2.5,oy+4.6,4,'Mamma Mia',true);
+  else if(bx===2&&by===1)building(objects,labels,ox+2.2,oy+4.6,5,"Luigi's");
+  else{building(objects,labels,ox+2.35,oy+5.2,(variant+2)%4);if((bx+by)%2===0)building(objects,labels,ox+5.2,oy+5.2,7);}
   if(bx!==1||by!==1)place(objects,tree((bx+by+6)%4,.8),ox+5.25,oy+5.25);
   else place(objects,tree(3,.86),ox+5.2,oy+5.1);
   decorateCorners(objects,ox,oy);
 }
 
+let viewOffset=0;
+function orientationOffset(){return matchMedia('(max-height:540px) and (min-width:500px)').matches?-72:0;}
 function viewCenter(){const area=sceneViewport();return {x:(area.left+area.right)/2,y:(area.top+area.bottom)/2};}
 function captureView(){
   const center=viewCenter(),camera=state.camera;
@@ -144,11 +146,12 @@ function clampCamera(){
 }
 export function resizeCity(){
   if(state.scene!=='city') return;
-  const view=state.cityView||DEFAULT_VIEW,center=viewCenter();
+  const offset=orientationOffset(),view=state.cityView?{...state.cityView,y:state.cityView.y+offset-viewOffset}:{...DEFAULT_VIEW,y:DEFAULT_VIEW.y+offset},center=viewCenter();
+  viewOffset=offset;
   state.camera.scale.set(view.zoom);state.camera.position.set(center.x-view.x*view.zoom,center.y-view.y*view.zoom);
   app.stage.hitArea=new Rectangle(0,0,app.screen.width,app.screen.height);captureView();
 }
-export function centerCity(){state.cityView={...DEFAULT_VIEW};if(state.scene==='city') resizeCity();}
+export function centerCity(){viewOffset=orientationOffset();state.cityView={...DEFAULT_VIEW,y:DEFAULT_VIEW.y+viewOffset};if(state.scene==='city') resizeCity();}
 export function zoomCity(factor,anchor=viewCenter()){
   if(state.scene!=='city') return;
   const camera=state.camera,oldZoom=camera.scale.x,zoom=Math.max(.65,Math.min(2.2,oldZoom*factor));

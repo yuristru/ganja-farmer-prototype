@@ -77,6 +77,20 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await context.route('**/*',route=>{if(route.request().url().startsWith(base+'/'))return route.continue();external.push(route.request().url());return route.abort();});
     const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,0);assert.equal((await snapshot(page)).worldChildren,1);
+    const cityArt=await page.evaluate(async modulePath=>{
+      const {state,Sprite}=await import(modulePath),objects=state.camera.children.find(c=>c.label==='city-objects');
+      return {atlases:Object.fromEntries(Object.entries(state.cityArt).map(([key,frames])=>[key,frames.length])),buildings:objects.children.filter(c=>c.label==='city-building').length,
+        landmarks:objects.children.filter(c=>['city-colosseum','city-cathedral'].includes(c.label)).map(c=>({label:c.label,sprite:c instanceof Sprite})),
+        traffic:state.movers.map(m=>({sprite:m.g instanceof Sprite,scaleX:m.g.scale.x,scaleY:m.g.scale.y})),
+        terraces:objects.children.filter(c=>c.label==='city-terrace').map(c=>({sprite:c instanceof Sprite,x:(c.x/32+c.y/16)/2,y:(c.y/16-c.x/32)/2}))};
+    },corePath);
+    assert.deepEqual(cityArt.atlases,{buildings:8,landmarks:2,props:8});assert(cityArt.buildings>=30);
+    assert.equal(cityArt.landmarks.length,2);assert(cityArt.landmarks.every(item=>item.sprite));
+    assert(cityArt.traffic.every(item=>item.sprite&&item.scaleX>0&&item.scaleY>0),'Directional traffic must remain upright flat sprites.');
+    assert.equal(cityArt.terraces.length,6);
+    const roadCell=value=>{const cell=Math.round(value),m=((cell%8)+8)%8;return m<2;};
+    assert(cityArt.terraces.every(item=>item.sprite&&!roadCell(item.x)&&!roadCell(item.y)),'Terraces must stay off the carriageway.');
+    console.log('City art passed: eight buildings, two landmarks, eight props, upright 2D traffic and six terrace sprites off the roads.');
     assert.match(await page.locator('#gameDate').innerText(),/Do\./);
     await page.click('[data-speed="0"]');
     await capture(page,'city-393.png');
@@ -94,11 +108,11 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await page.click('#centerBtn');assert.equal((await snapshot(page)).view.x,0);
 
     // Exercise a genuine two-finger gesture through Chromium's touch input.
-    const cdp=await context.newCDPSession(page);
+    const pinchStart=(await snapshot(page)).view.zoom,cdp=await context.newCDPSession(page);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:90,y:300,id:1},{x:240,y:300,id:2}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:55,y:300,id:1},{x:275,y:300,id:2}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-    assert((await snapshot(page)).view.zoom>1.4);assert.equal((await snapshot(page)).scene,'city');await page.click('#centerBtn');
+    assert((await snapshot(page)).view.zoom>pinchStart*1.4);assert.equal((await snapshot(page)).scene,'city');await page.click('#centerBtn');
     console.log('City interaction passed: drag versus tap, camera persistence, zoom buttons and two-finger zoom.');
 
     // Run the registered ticker at known frame intervals, independent of CPU speed.
@@ -107,9 +121,15 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     const paused=await snapshot(page);await advance();assert.equal((await snapshot(page)).minutes,paused.minutes);assert.deepEqual((await snapshot(page)).movers,paused.movers);
     await page.click('[data-speed="1"]');const normal=await snapshot(page);await advance();const normalDelta=(await snapshot(page)).minutes-normal.minutes;
     await page.click('[data-speed="3"]');const fast=await snapshot(page);await advance();const fastDelta=(await snapshot(page)).minutes-fast.minutes;
-    assert(normalDelta>0);assert(Math.abs(fastDelta/normalDelta-3)<.001);await page.click('[data-speed="0"]');
-    for(const mover of (await snapshot(page)).movers){const y=((mover.axis===0?mover.t:mover.lane)+(mover.axis===0?mover.lane:mover.t))*16;assert(Math.abs(mover.z-y)<1e-8,'Traffic depth must use its ground position.');}
-    console.log('Time and depth passed: real pause, normal/3x speed, live clock and traffic behind buildings.');
+    await page.click('[data-speed="6"]');const fastest=await snapshot(page);await advance();const fastestDelta=(await snapshot(page)).minutes-fastest.minutes;
+    assert(normalDelta>0);assert(Math.abs(fastDelta/normalDelta-3)<.001);assert(Math.abs(fastestDelta/normalDelta-6)<.001);await page.click('[data-speed="0"]');
+    for(const mover of (await snapshot(page)).movers){
+      const x=mover.axis===0?mover.t:mover.lane,y=mover.axis===0?mover.lane:mover.t;
+      assert(Math.abs(mover.z-(x+y)*16)<1e-8,'Traffic depth must use its ground position.');
+      const inCanal=x>=23.5&&x<25.5&&y>=11.5;
+      assert(!inCanal||(mover.kind==='car'&&roadCell(y)),'Traffic must cross the canal only on bridges.');
+    }
+    console.log('Time and depth passed: real pause, normal/3x/6x speed, live clock, traffic depth and safe canal crossings.');
     await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
 
     await page.click('#restaurantBtn');assert.equal(await page.locator('[data-tool="chair"]').count(),0);
@@ -197,8 +217,17 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     const storagePage=await context.newPage();storagePage.on('pageerror',error=>errors.push(error.message));
     await storagePage.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Unavailable','SecurityError');}}));
     await loaded(storagePage,url);await storagePage.click('#restaurantBtn');await storagePage.click('[data-tool="plant"]');await placeCell(storagePage,0,3);assert.equal((await snapshot(storagePage)).items.length,model.DEFAULT_LAYOUT.length+1);await storagePage.close();
-    await page.route('**/assets/pizza/city/pixel-city.png',route=>route.fulfill({status:404,body:'missing'}));
-    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,1);await page.click('#restaurantBtn');assert.equal(await page.locator('#placementTitle').innerText(),'4er-Tisch mit Stühlen · 0°');await page.unroute('**/assets/pizza/city/pixel-city.png');
+    for(const asset of ['buildings','landmarks','props']){
+      const pattern='**/assets/pizza/city/italian-'+asset+'-v2.png';
+      await page.route(pattern,route=>route.fulfill({status:404,body:'missing'}));
+      await loaded(page,url);assert.deepEqual((await snapshot(page)).assets,[asset]);
+      await page.click('#restaurantBtn');assert.equal(await page.locator('#placementTitle').innerText(),'4er-Tisch mit Stühlen · 0°');
+      await page.unroute(pattern);
+    }
+    await page.route('**/assets/pizza/city/*.png',route=>route.fulfill({status:404,body:'missing'}));
+    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,4);
+    await page.click('#restaurantBtn');await page.click('[data-tool="plant"]');await placeCell(page,0,3);
+    await page.unroute('**/assets/pizza/city/*.png');
     await page.route('**/assets/pizza/vendor/pixi-8.22.0.mjs',route=>route.abort());
     await page.goto(url);await page.getByRole('button',{name:'Erneut laden',exact:true}).waitFor();
     await page.unroute('**/assets/pizza/vendor/pixi-8.22.0.mjs');await page.getByRole('button',{name:'Erneut laden',exact:true}).click();await page.waitForSelector('#loading',{state:'hidden',timeout:15000});
