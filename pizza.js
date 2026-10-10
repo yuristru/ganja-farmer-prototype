@@ -1,0 +1,7 @@
+import {app,state,loadAssets} from './pizza-core.js';import {showCity,tickCity} from './pizza-city.js';import {showRestaurant,tickRestaurant,resetRestaurant} from './pizza-restaurant.js';
+const cityBtn=document.querySelector('#cityBtn'),restaurantBtn=document.querySelector('#restaurantBtn'),rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn'),resetBtn=document.querySelector('#resetBtn');
+state.navigate=where=>where==='restaurant'?showRestaurant():showCity();cityBtn.onclick=showCity;restaurantBtn.onclick=showRestaurant;
+rotateBtn.onclick=()=>{state.rotation=(state.rotation+1)%4;state.deleteMode=false;deleteBtn.classList.remove('active');rotateBtn.textContent=`Drehen ${state.rotation*90}°`;document.querySelectorAll('.toolbtn').forEach(b=>b.classList.toggle('active',b.dataset.tool===state.selectedTool))};
+deleteBtn.onclick=()=>{state.deleteMode=!state.deleteMode;deleteBtn.classList.toggle('active',state.deleteMode);if(state.deleteMode)document.querySelectorAll('.toolbtn').forEach(b=>b.classList.remove('active'))};resetBtn.onclick=resetRestaurant;
+document.querySelectorAll('.toolbtn').forEach(btn=>btn.onclick=()=>{state.selectedTool=btn.dataset.tool;state.deleteMode=false;deleteBtn.classList.remove('active');document.querySelectorAll('.toolbtn').forEach(b=>b.classList.toggle('active',b===btn))});
+app.ticker.add(t=>state.scene==='city'?tickCity(t.deltaTime):tickRestaurant(t.deltaTime));window.addEventListener('resize',()=>state.scene==='city'?showCity():showRestaurant());await loadAssets();showCity();
