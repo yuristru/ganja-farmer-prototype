@@ -118,7 +118,15 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert.match(await page.locator('#propertyInfo').innerText(),/Klein · 80 m²/);
     await page.click('#propertyBuy');assert.equal((await snapshot(page)).balance,215560);
     assert(await page.locator('#propertyBuy').isDisabled());
-    await page.click('#propertyClose');await loaded(page,url);
+    await page.click('#propertyClose');
+    const citySignature=()=>page.evaluate(async modulePath=>{const {state}=await import(modulePath);return {seed:state.citySeed,owned:state.ownedProperties,signature:state.camera.children.find(c=>c.label==='city-objects').children.filter(c=>['city-building','city-property','player-restaurant','city-colosseum','city-cathedral'].includes(c.label)).map(c=>[c.label,c.propertyId,c.buildingKind,c.buildingVariant,c.x,c.y])};},corePath);
+    const centerBounds=await page.locator('#centerBtn').boundingBox(),randomBounds=await page.locator('#randomCityBtn').boundingBox();assert(randomBounds.y>=centerBounds.y+centerBounds.height);
+    let previous=await citySignature();
+    for(let i=0;i<3;i++){
+      await page.click('#randomCityBtn');const current=await citySignature();assert.notEqual(current.seed,previous.seed);assert.notDeepEqual(current.signature,previous.signature);assert.deepEqual(current.owned,['san-marco']);assert.equal((await snapshot(page)).balance,215560);previous=current;
+    }
+    await loaded(page,url);assert.deepEqual(await citySignature(),previous,'A generated map must survive reload.');
+    console.log('Random city passed: button below center, distinct repeated generation, owned properties/account preservation and saved map.');
     const owned=await page.evaluate(async modulePath=>(await import(modulePath)).state.ownedProperties,corePath);assert.deepEqual(owned,['san-marco']);
     await page.click('#restaurantBtn');await page.click('#resetBtn');assert.equal((await snapshot(page)).balance,215560,'Restaurant reset must not refund a property.');
     await page.evaluate(()=>localStorage.removeItem('pizza-city-layout-v1'));await loaded(page,url);

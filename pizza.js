@@ -1,13 +1,13 @@
-import {mountProperties} from './pizza-properties-ui.js?v=20261010r';
-import {showPizza} from './pizza-editor.js?v=20261010r';
-import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010r';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010r';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010r';
+import {mountProperties} from './pizza-properties-ui.js?v=20261010s';
+import {showPizza} from './pizza-editor.js?v=20261010s';
+import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010s';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity,randomizeCity} from './pizza-city.js?v=20261010s';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010s';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010r';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010s';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
-import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010r';
+import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010s';
 mountProperties();
 mountCatalog(()=>{if(restaurantView().panMode)toggleRestaurantPan();cancelPlacement();syncEditUI();});
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
@@ -42,6 +42,7 @@ for(const button of document.querySelectorAll('[data-speed]')) button.onclick=()
 document.querySelector('#zoomInBtn').onclick=()=>zoomCity(1.2);
 document.querySelector('#zoomOutBtn').onclick=()=>zoomCity(1/1.2);
 document.querySelector('#centerBtn').onclick=centerCity;
+document.querySelector('#randomCityBtn').onclick=randomizeCity;
 document.querySelector('#roomZoomInBtn').onclick=()=>zoomRestaurant(1.25);
 document.querySelector('#roomZoomOutBtn').onclick=()=>zoomRestaurant(1/1.25);
 document.querySelector('#roomCenterBtn').onclick=centerRestaurant;

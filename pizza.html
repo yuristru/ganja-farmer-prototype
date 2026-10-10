@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dec9a5">
   <title>Pizza City · Mamma Mia</title>
-  <link rel="stylesheet" href="pizza.css?v=20261010r">
+  <link rel="stylesheet" href="pizza.css?v=20261010s">
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -35,6 +35,7 @@
     <button type="button" id="zoomInBtn" aria-label="Stadt vergrößern">+</button>
     <button type="button" id="zoomOutBtn" aria-label="Stadt verkleinern">−</button>
     <button type="button" id="centerBtn" aria-label="Zur Stadtmitte" title="Zur Stadtmitte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button>
+    <button type="button" id="randomCityBtn" aria-label="Zufällige Stadtkarte erzeugen" title="Neue zufällige Stadtkarte"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><g fill="currentColor"><circle cx="7" cy="7" r="1.6"/><circle cx="17" cy="7" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></g></svg><span>Random</span></button>
     <button type="button" id="propertiesBtn" aria-label="Immobilien in drei Größen anzeigen" title="Immobilien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 10 10-8 10 8M5 9v12h14V9M10 21v-7h4v7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </div>
   <dialog id="propertyDialog" aria-labelledby="propertyTitle">
@@ -111,7 +112,7 @@
 </div>
 <noscript>Bitte JavaScript aktivieren, um die Pizza-Demo zu starten.</noscript>
 <script type="module">
-  import('./pizza.js?v=20261010r').catch(error=>{
+  import('./pizza.js?v=20261010s').catch(error=>{
     console.error('Pizza demo could not start',error);
     const loading=document.querySelector('#loading');loading.hidden=false;loading.replaceChildren();
     const message=document.createElement('p');message.textContent='Die Demo konnte nicht starten. Bitte erneut laden.';
