@@ -1,4 +1,10 @@
-export const ROOM = {w:8,h:7};
+export const ROOM = {w:12,h:10};
+export const KITCHEN = {x:8,y:0,w:4,h:4};
+export const KITCHEN_DOOR = {x:9,y:4};
+export const ENTRANCE = {x:ROOM.w-1,y:ROOM.h-1};
+export function kitchenCell(x,y){return x>=KITCHEN.x&&x<KITCHEN.x+KITCHEN.w&&y>=KITCHEN.y&&y<KITCHEN.y+KITCHEN.h;}
+export function passageCell(x,y){return x===KITCHEN_DOOR.x&&y===KITCHEN_DOOR.y;}
+export function guestCell(x,y){return x>=0&&y>=0&&x<ROOM.w&&y<ROOM.h&&!kitchenCell(x,y);}
 export const GRID = {width:64,height:32};
 
 export function project(x,y){return {x:(x-y)*GRID.width/2,y:(x+y)*GRID.height/2};}
@@ -9,7 +15,10 @@ export const TABLE_SIZES = {2:{w:2,h:2},4:{w:2,h:2},6:{w:3,h:2},8:{w:4,h:2}};
 export const DEFAULT_LAYOUT = [
   {type:'table',seats:4,x:2,y:3,r:0},
   {type:'table',seats:4,x:4,y:5,r:0},
-  {type:'plant',x:0,y:4,r:0}
+  {type:'plant',x:0,y:4,r:0},
+  {type:'table',seats:4,x:0,y:7,r:0},
+  {type:'table',seats:6,x:5,y:7,r:0},
+  {type:'table',seats:2,x:9,y:6,r:0}
 ];
 
 export function dimensions(item){
@@ -34,7 +43,8 @@ export function placementIssue(item,layout=[]){
   for(const cell of cells){
     const [x,y]=cell.split(',').map(Number);
     if(x<0||y<0||x>=ROOM.w||y>=ROOM.h) return 'Das Möbelstück passt hier nicht in den Raum.';
-    if(y<2) return 'Die feste Küche bleibt frei.';
+    if(kitchenCell(x,y)) return 'Die separate Küche bleibt frei.';
+    if(passageCell(x,y)) return 'Bitte den Küchendurchgang frei lassen.';
     if(x===ROOM.w-1&&y===ROOM.h-1) return 'Bitte den Eingang frei lassen.';
   }
   const used=new Set(layout.flatMap(occupiedCells));

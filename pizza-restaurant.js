@@ -1,10 +1,31 @@
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010g';
-import {ROOM,GRID,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010g';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010g';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010h';
+import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010h';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010h';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
 const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze'};
-let roomLayer,objects,preview,hoverCell=null,dragPointer=null;
+let roomLayer,roomMask,objects,preview,hoverCell=null,dragPointer=null;
+const view={zoom:1,x:0,y:0},pointers=new Map();
+let panMode=false,pinching=false;
+export function restaurantView(){return {...view,panMode};}
+export function toggleRestaurantPan(){
+  panMode=!panMode;cancelPlacement();updateCameraUI();updatePlacementPreview();
+}
+function updateCameraUI(){
+  const button=document.querySelector('#roomPanBtn');button.classList.toggle('active',panMode);button.setAttribute('aria-pressed',String(panMode));
+  document.querySelector('#roomZoomOutBtn').disabled=view.zoom<=1;
+  document.querySelector('#roomZoomInBtn').disabled=view.zoom>=2.8;
+  document.querySelector('#roomPanBtn').title=panMode?'Ansicht ziehen. Erneut drücken zum Einrichten.':'Ansicht verschieben';
+}
+export function centerRestaurant(){view.zoom=1;view.x=0;view.y=0;panMode=false;resizeRestaurant();updateCameraUI();updatePlacementPreview();}
+export function zoomRestaurant(factor,anchor){
+  if(state.scene!=='restaurant')return;
+  const area=sceneViewport(true),center={x:(area.left+area.right)/2,y:(area.top+area.bottom)/2};
+  anchor=anchor||center;const old=view.zoom,next=Math.max(1,Math.min(2.8,old*factor));
+  view.x=(view.x+center.x-anchor.x)*next/old+anchor.x-center.x;
+  view.y=(view.y+center.y-anchor.y)*next/old+anchor.y-center.y;
+  view.zoom=next;resizeRestaurant();updateCameraUI();
+}
 
 function chosenItem(cell){
   const item={type:state.selectedTool,...cell,r:state.rotation};
@@ -19,16 +40,37 @@ function placed(item,interactive=true,ghost=false){
   const sprite=furnitureSprite(item.type,item.r,item.seats);group.addChild(sprite);
   if(ghost){group.alpha=.65;group.eventMode='none';}
   else if(interactive){
-    group.eventMode=state.deleteMode?'static':'none';group.cursor='pointer';
+    group.eventMode=state.deleteMode&&!panMode?'static':'none';group.cursor='pointer';
     group.on('pointertap',event=>{if(state.deleteMode){event.stopPropagation();removeAt(item.x,item.y);}});
   }else group.eventMode='none';
   objects.addChild(group);return group;
 }
 
 function fixedKitchen(){
-  [{type:'fridge',x:0,y:0,r:0},{type:'sink',x:1,y:0,r:0},{type:'oven',x:2,y:0,r:0},
-    {type:'bar',x:4,y:0,r:0},{type:'plant',x:7,y:0,r:0},{type:'bar',x:4,y:1,r:0},{type:'bar',x:6,y:1,r:0}]
-    .forEach(item=>placed(item,false));
+  [{type:'fridge',x:8,y:0,r:0},{type:'oven',x:9,y:0,r:0},{type:'sink',x:11,y:0,r:1},
+    {type:'prep',x:10,y:2,r:0},{type:'prep',x:8,y:2,r:1}].forEach(item=>placed(item,false));
+  const chef=person(0),p=project(10,1);chef.label='kitchen-chef';chef.position.set(p.x,p.y);chef.zIndex=p.y+.5;objects.addChild(chef);
+}
+
+function partition(x,y,right,length,height){
+  const start=project(x,y),end=project(x+(right?length:0),y+(right?0:length)),g=new Graphics();
+  g.label='kitchen-partition';g.eventMode='none';g.zIndex=Math.max(start.y,end.y)+.1;
+  g.poly([start.x,start.y,end.x,end.y,end.x,end.y-height,start.x,start.y-height]).fill(0xdbcaab).stroke({color:0x8b6845,width:1});
+  g.poly([start.x,start.y,end.x,end.y,end.x,end.y-24,start.x,start.y-24]).fill(0x865732);
+  for(let i=0;i<length;i++){
+    const p=project(x+(right?i:0),y+(right?0:i));
+    g.moveTo(p.x,p.y).lineTo(p.x,p.y-24).stroke({color:0xba8851,width:1});
+  }
+  g.moveTo(start.x,start.y-height).lineTo(end.x,end.y-height).stroke({color:0xb77b46,width:4});objects.addChild(g);
+}
+function kitchenWalls(){
+  partition(7.5,-.5,false,4,42);
+  partition(7.5,3.5,true,1,48);partition(9.5,3.5,true,2,48);
+  // The missing one-cell wall segment is the door, aligned with the reserved approach.
+  const a=project(8.5,3.5),b=project(9.5,3.5),g=new Graphics();
+  g.label='kitchen-door';g.eventMode='none';g.zIndex=b.y+.2;
+  for(const p of [a,b])g.moveTo(p.x,p.y).lineTo(p.x,p.y-60).stroke({color:0x875a35,width:3});
+  g.moveTo(a.x,a.y-60).lineTo(b.x,b.y-60).stroke({color:0xb17b46,width:4});objects.addChild(g);
 }
 
 function person(index){
@@ -43,7 +85,7 @@ function face(mover,dx,dy){
 
 function walkableCells(){
   const used=new Set(state.restaurantState.flatMap(occupiedCells)),cells=[];
-  for(let y=2;y<ROOM.h;y++)for(let x=0;x<ROOM.w;x++)if(!used.has(`${x},${y}`))cells.push({x,y});
+  for(let y=0;y<ROOM.h;y++)for(let x=0;x<ROOM.w;x++)if(guestCell(x,y)&&!used.has(`${x},${y}`))cells.push({x,y});
   return cells;
 }
 
@@ -101,7 +143,7 @@ function finishEdit(message){
 
 function removeAt(x,y){
   const index=state.restaurantState.findIndex(item=>occupiedCells(item).includes(`${x},${y}`));
-  if(index<0){notify(y<2?'Die feste Küche bleibt erhalten.':'Hier steht kein Möbelstück.');return;}
+  if(index<0){notify(kitchenCell(x,y)?'Die feste Küche bleibt erhalten.':'Hier steht kein Möbelstück.');return;}
   rememberEdit();state.restaurantState.splice(index,1);finishEdit('Möbelstück entfernt.');
 }
 
@@ -123,15 +165,15 @@ function tile(graphics,x,y,color,alpha=1,width=1){
 
 export function updatePlacementPreview(){
   if(state.scene!=='restaurant'||!preview||preview.destroyed)return;
-  for(const child of objects.children)if(child.label==='placed-furniture')child.eventMode=state.deleteMode?'static':'none';
+  for(const child of objects.children)if(child.label==='placed-furniture')child.eventMode=state.deleteMode&&!panMode?'static':'none';
   preview.removeChildren().forEach(child=>child.destroy({children:true}));
   const cell=state.pendingPlacement||hoverCell,item=cell?chosenItem(cell):null,issue=item?placementIssue(item,state.restaurantState):null;
-  const title=state.deleteMode?'Möbel entfernen':`${state.selectedTool==='table'?state.selectedSeats+'er-Tisch mit Stühlen':TOOL_NAMES[state.selectedTool]} · ${state.rotation*90}°`;
+  const title=panMode?'Ansicht verschieben':state.deleteMode?'Möbel entfernen':`${state.selectedTool==='table'?state.selectedSeats+'er-Tisch mit Stühlen':TOOL_NAMES[state.selectedTool]} · ${state.rotation*90}°`;
   document.querySelector('#placementTitle').textContent=title;
-  document.querySelector('#placementStatus').textContent=state.deleteMode?'Ein Möbelstück antippen.':issue||(state.pendingPlacement?'Position gewählt. Mit Setzen bestätigen.':'Auf das Raster tippen oder ziehen.');
+  document.querySelector('#placementStatus').textContent=panMode?'Zum Einrichten den Hand-Modus ausschalten.':state.deleteMode?'Ein Möbelstück antippen.':issue||(state.pendingPlacement?'Position gewählt. Mit Setzen bestätigen.':'Auf das Raster tippen oder ziehen.');
   const button=document.querySelector('#placeBtn');button.hidden=state.deleteMode;button.disabled=!state.pendingPlacement||!!issue;
   document.querySelector('#cancelBtn').hidden=!state.pendingPlacement;
-  if(!cell)return;
+  if(!cell||panMode)return;
   let target=item;
   if(state.deleteMode){target=state.restaurantState.find(value=>occupiedCells(value).includes(`${cell.x},${cell.y}`));if(!target)return;}
   const invalid=state.deleteMode||!!issue,color=invalid?0xd96549:0x90bd70,g=new Graphics();
@@ -143,6 +185,19 @@ export function updatePlacementPreview(){
 function cellAt(global){return gridCell(roomLayer.toLocal(global));}
 function inRoom(cell){return cell.x>=0&&cell.y>=0&&cell.x<ROOM.w&&cell.y<ROOM.h;}
 function movePointer(event){
+  const previous=pointers.get(event.pointerId);
+  if(previous){
+    pointers.set(event.pointerId,{x:event.global.x,y:event.global.y});
+    if(pointers.size>=2){
+      const [a,b]=[...pointers.values()],old=[...pointers.entries()].map(([id,p])=>id===event.pointerId?previous:p);
+      const distance=Math.hypot(a.x-b.x,a.y-b.y),before=Math.hypot(old[0].x-old[1].x,old[0].y-old[1].y);
+      const anchor={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+      if(before>0)zoomRestaurant(distance/before,anchor);
+      view.x+=(a.x+b.x-old[0].x-old[1].x)/2;view.y+=(a.y+b.y-old[0].y-old[1].y)/2;resizeRestaurant();return;
+    }
+    if(panMode){view.x+=event.global.x-previous.x;view.y+=event.global.y-previous.y;resizeRestaurant();return;}
+  }
+  if(pinching||panMode)return;
   const cell=cellAt(event.global);
   if(dragPointer!==null&&event.pointerId===dragPointer&&!state.deleteMode){
     if(cell.x< -1||cell.y< -1||cell.x>ROOM.w||cell.y>ROOM.h)return;
@@ -188,7 +243,7 @@ function wallDetails(layer){
       const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
       g.rect(p.x,p.y-90,2,1).fill({color:0xf2dec0,alpha:.4});layer.addChild(g);
     }
-    for(const i of [1,3.8,6]){
+    for(const i of [1,3.8,6,8.4,10.8]){
       if(i>length-.6)continue;
       const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
       g.circle(p.x,p.y-62,8).fill({color:0xf8c264,alpha:.12});
@@ -209,9 +264,12 @@ function wallDetails(layer){
 export function resizeRestaurant(){
   if(state.scene!=='restaurant'||!roomLayer||roomLayer.destroyed)return;
   const area=sceneViewport(true),minX=-ROOM.h*RTW/2,maxX=ROOM.w*RTW/2,minY=-RTH/2-WALL_HEIGHT,maxY=(ROOM.w+ROOM.h-1)*RTH/2;
-  const scale=Math.min(1.45,area.width/(maxX-minX),area.height/(maxY-minY));
+  const fit=Math.min(1.45,area.width/(maxX-minX),area.height/(maxY-minY)),scale=fit*view.zoom;
+  const limitX=Math.max(0,((maxX-minX)*scale-area.width)/2),limitY=Math.max(0,((maxY-minY)*scale-area.height)/2);
+  view.x=Math.max(-limitX,Math.min(limitX,view.x));view.y=Math.max(-limitY,Math.min(limitY,view.y));
+  roomMask.clear().rect(area.left,area.top,area.width,area.height).fill(0xffffff);
   roomLayer.scale.set(scale);
-  roomLayer.position.set((area.left+area.right)/2-(minX+maxX)/2*scale,(area.top+area.bottom)/2-(minY+maxY)/2*scale);
+  roomLayer.position.set((area.left+area.right)/2-(minX+maxX)/2*scale+view.x,(area.top+area.bottom)/2-(minY+maxY)/2*scale+view.y);
   app.stage.hitArea=new Rectangle(0,0,app.screen.width,app.screen.height);
 }
 
@@ -219,6 +277,8 @@ export function showRestaurant(){
   if(state.scene==='restaurant')return;
   clearWorld();state.scene='restaurant';sceneUI('restaurant');
   roomLayer=new Container();roomLayer.label='restaurant-room';world.addChild(roomLayer);
+  roomMask=new Graphics();roomMask.eventMode='none';world.addChild(roomMask);roomLayer.mask=roomMask;
+  view.zoom=1;view.x=0;view.y=0;panMode=false;pinching=false;pointers.clear();updateCameraUI();
   const wall=new Graphics(),floor=new Container();objects=new Container();preview=new Container();
   objects.label='restaurant-objects';objects.sortableChildren=true;preview.label='placement-preview';preview.eventMode='none';hoverCell=null;dragPointer=null;
   const a=project(-.5,-.5),b=project(ROOM.w-.5,-.5),c=project(-.5,ROOM.h-.5);
@@ -226,31 +286,48 @@ export function showRestaurant(){
   wall.poly([a.x,a.y,c.x,c.y,c.x,c.y-WALL_HEIGHT,a.x,a.y-WALL_HEIGHT]).fill(0xb59670).stroke({color:0x745038,width:2});
   wall.poly([a.x,a.y-32,b.x,b.y-32,b.x,b.y,a.x,a.y]).fill(0x8a5b3d);
   wall.poly([a.x,a.y-32,c.x,c.y-32,c.x,c.y,a.x,a.y]).fill(0x774b36);
-  roomLayer.addChild(wall);wallWindow(roomLayer,2,-.5);wallWindow(roomLayer,5,-.5);wallWindow(roomLayer,-.5,2,false);wallWindow(roomLayer,-.5,4.5,false);
+  roomLayer.addChild(wall);wallWindow(roomLayer,2,-.5);wallWindow(roomLayer,5,-.5);wallWindow(roomLayer,-.5,2,false);wallWindow(roomLayer,-.5,4.5,false);wallWindow(roomLayer,-.5,7.5,false);wallWindow(roomLayer,10,-.5);
   wallDetails(roomLayer);
+  for(const right of [true,false])for(let i=0;i<(right?ROOM.w:ROOM.h);i++){
+    const p=project(right?i-.5:-.5,right?-.5:i-.5),q=project(right?i+.5:-.5,right?-.5:i+.5),cap=new Graphics();
+    cap.moveTo(p.x,p.y-WALL_HEIGHT).lineTo(q.x,q.y-WALL_HEIGHT).stroke({color:i%2?0xa65735:0xbf7042,width:2});roomLayer.addChild(cap);
+  }
   roomLayer.addChild(floor,objects,preview);
   for(let y=0;y<ROOM.h;y++)for(let x=0;x<ROOM.w;x++){
-    const p=project(x,y),kitchen=y<2,entrance=x===ROOM.w-1&&y===ROOM.h-1,g=new Graphics();
-    const color=entrance?0xd1bc8a:kitchen?((x+y)%2?0x999c91:0xb6b5a5):((x+y)%2?0xb56d47:0xc77c50);
+    const p=project(x,y),kitchen=kitchenCell(x,y),entrance=x===ROOM.w-1&&y===ROOM.h-1,g=new Graphics();
+    const rug=(x===ROOM.w-2&&y===ROOM.h-1)||(x===ROOM.w-1&&y===ROOM.h-2);
+    const color=rug?0x934a36:entrance?0xd1bc8a:kitchen?((x+y)%2?0x999c91:0xb6b5a5):((x+y)%2?0xb56d47:0xc77c50);
     tile(g,x,y,color);
     // A light, continuous 2:1 grid stays readable underneath the preview.
     g.poly([p.x,p.y-RTH/2,p.x+RTW/2,p.y,p.x,p.y+RTH/2,p.x-RTW/2,p.y]).stroke({color:0xf2d8aa,alpha:.5,width:1});
+    if(!kitchen){
+      const shade=(x*7+y*13)%3===0?0xc48a60:0xad704a;
+      g.poly([p.x,p.y-12,p.x+25,p.y,p.x,p.y+12,p.x-25,p.y]).stroke({color:shade,alpha:.4,width:1});
+    }
+    if(passageCell(x,y))g.poly([p.x,p.y-9,p.x+20,p.y,p.x,p.y+9,p.x-20,p.y]).fill({color:0xd8bd86,alpha:.7});
     if(entrance)g.poly([p.x-9,p.y+1,p.x,p.y-4,p.x+9,p.y+1,p.x+3,p.y+1,p.x+3,p.y+6,p.x-3,p.y+6,p.x-3,p.y+1]).fill(0x776c42);
-    g.label=`floor-${x}-${y}`;g.eventMode='static';g.cursor='pointer';g.on('pointertap',()=>{if(state.deleteMode)removeAt(x,y);});floor.addChild(g);
+    g.label=`floor-${x}-${y}`;g.eventMode='static';g.cursor='pointer';g.on('pointertap',()=>{if(state.deleteMode&&!panMode&&!pinching)removeAt(x,y);});floor.addChild(g);
   }
-  fixedKitchen();
+  fixedKitchen();kitchenWalls();
+  // Low cutaway edges give the building a facade while leaving the floor visible.
+  partition(ROOM.w-.5,-.5,false,ROOM.h,9);
+  partition(-.5,ROOM.h-.5,true,ROOM.w-1,9);
   [{x:1,y:5},{x:5,y:3},{x:6,y:4},{x:0,y:6}].forEach((position,index)=>{
     const g=person(index);objects.addChild(g);state.movers.push({...position,index,g,kind:'restaurant',trip:0,path:[],wait:0,facing:0});
   });
   renderFurniture();resizeRestaurant();updatePlacementPreview();
   app.stage.on('globalpointermove',movePointer);
   app.stage.on('pointerdown',event=>{
+    const area=sceneViewport(true);if(event.global.x<area.left||event.global.x>area.right||event.global.y<area.top||event.global.y>area.bottom)return;
+    pointers.set(event.pointerId,{x:event.global.x,y:event.global.y});
+    if(pointers.size>=2){pinching=true;cancelPlacement();return;}
+    if(panMode)return;
     const cell=cellAt(event.global);if(!inRoom(cell))return;
     hoverCell=cell;
     if(!state.deleteMode){dragPointer=event.pointerId;state.pendingPlacement=cell;}
     updatePlacementPreview();
   });
-  const release=()=>{dragPointer=null;};
+  const release=event=>{pointers.delete(event.pointerId);dragPointer=null;if(!pointers.size)pinching=false;};
   app.stage.on('pointerup',release);app.stage.on('pointerupoutside',release);app.stage.on('pointercancel',release);
   app.stage.on('pointerleave',()=>{hoverCell=null;if(!state.pendingPlacement)updatePlacementPreview();});
 }

@@ -1,8 +1,8 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010g';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010g';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010g';
+import {app,root,state,loadAssets} from './pizza-core.js?v=20261010h';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010h';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan} from './pizza-restaurant.js?v=20261010h';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010g';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010h';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
 const toolButtons=[...document.querySelectorAll('.toolbtn')];
@@ -43,10 +43,14 @@ for(const button of document.querySelectorAll('[data-speed]')) button.onclick=()
 document.querySelector('#zoomInBtn').onclick=()=>zoomCity(1.2);
 document.querySelector('#zoomOutBtn').onclick=()=>zoomCity(1/1.2);
 document.querySelector('#centerBtn').onclick=centerCity;
+document.querySelector('#roomZoomInBtn').onclick=()=>zoomRestaurant(1.25);
+document.querySelector('#roomZoomOutBtn').onclick=()=>zoomRestaurant(1/1.25);
+document.querySelector('#roomCenterBtn').onclick=centerRestaurant;
+document.querySelector('#roomPanBtn').onclick=toggleRestaurantPan;
 app.canvas.addEventListener('wheel',event=>{
-  if(state.scene!=='city') return;
+  if(!['city','restaurant'].includes(state.scene)) return;
   event.preventDefault();const bounds=app.canvas.getBoundingClientRect();
-  zoomCity(Math.exp(-event.deltaY*.001),{x:(event.clientX-bounds.left)*app.screen.width/bounds.width,y:(event.clientY-bounds.top)*app.screen.height/bounds.height});
+  (state.scene==='city'?zoomCity:zoomRestaurant)(Math.exp(-event.deltaY*.001),{x:(event.clientX-bounds.left)*app.screen.width/bounds.width,y:(event.clientY-bounds.top)*app.screen.height/bounds.height});
 },{passive:false});
 
 const dateFormat=new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});

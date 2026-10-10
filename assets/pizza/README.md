@@ -20,3 +20,10 @@ Restaurant furniture is generated as cached flat Canvas pixel bitmaps in
 cushions, dark wood and the brick oven share the 64x32 floor projection.
 Each table bitmap contains all 2, 4, 6 or 8 chairs. Wall shutters, flower boxes,
 lamps and paneling use that same projection in `pizza-restaurant.js`.
+
+The restaurant now has a 12x10 grid with a separate 4x4 kitchen. Kitchen cells
+and the doorway approach are protected against placement, while old v1/v2
+layouts remain compatible. Guests only route through dining-room cells.
+Restaurant zoom, fit view, hand-mode panning and two-finger zoom use the same
+floor coordinates as placement. The kitchen's low cutaway walls preserve the
+view of the appliances and keep the one-cell doorway visible.

@@ -1,5 +1,5 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010g';
-import {project} from './pizza-layout.js?v=20261010g';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010h';
+import {project} from './pizza-layout.js?v=20261010h';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
@@ -151,6 +151,9 @@ function drawFurniture(type,a,seats){
       a.polygon([a.point(.45,-.17,31),a.point(.45,.17,31),a.point(.45,.11,40),a.point(.45,.03,36),a.point(.45,-.04,47),a.point(.45,-.1,37)],'#ed782b');
       a.front(.455,-.06,.06,32,39,'#ffd37b');
     }
+  }else if(type==='prep'){
+    a.shadow(1.85,.83);cabinet(a,-.5);cabinet(a,.5);
+    a.disc(-.5,0,.15,39,'#e8ddbd');a.disc(.5,0,.17,39,'#a44a30');
   }else if(type==='sink'){
     a.shadow(.86,.8);cabinet(a,0,type);
   }else if(type==='fridge'){

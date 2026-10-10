@@ -73,3 +73,9 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 
 .furnitureIcon{display:block;object-fit:contain;width:100%;height:24px;image-rendering:pixelated;margin:0 auto 1px}.extras .furnitureIcon{width:28px;height:28px;margin:0}
 @media(max-height:540px) and (min-width:500px){.furnitureIcon{height:22px}}
+
+.roomcontrols{top:calc(var(--top-gap) + var(--bar-height) + var(--head-height) + 82px);left:auto;right:12px;display:grid;gap:4px;pointer-events:auto}
+.roomcontrols button{width:32px;height:32px;font-size:21px}.roomcontrols svg{width:20px;height:20px;vertical-align:middle}
+#roomPanBtn.active{background:#a83829;color:#f8e4bd}
+@media(max-height:640px){.roomcontrols{top:calc(var(--top-gap) + var(--bar-height) + var(--head-height) + 74px)}}
+@media(max-height:540px) and (min-width:500px){.roomcontrols{top:120px;right:270px}}

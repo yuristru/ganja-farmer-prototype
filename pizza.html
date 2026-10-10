@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dec9a5">
   <title>Pizza City · Mamma Mia</title>
-  <link rel="stylesheet" href="pizza.css?v=20261010g">
+  <link rel="stylesheet" href="pizza.css?v=20261010h">
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -37,7 +37,13 @@
     <button type="button" id="centerBtn" aria-label="Zur Stadtmitte" title="Zur Stadtmitte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button>
   </div>
   <div id="restaurantHead" class="ui restaurantHead" hidden>
-    <svg class="restaurantBadge" aria-hidden="true"><use href="#icon-pizza"/></svg><div class="restaurantName"><strong>Mamma Mia</strong><span>Einrichtungsmodus</span></div><div class="stars" aria-label="Vier von fünf Sternen">★★★★☆</div>
+    <svg class="restaurantBadge" aria-hidden="true"><use href="#icon-pizza"/></svg><div class="restaurantName"><strong>Mamma Mia</strong><span>Gastraum + Küche</span></div><div class="stars" aria-label="Vier von fünf Sternen">★★★★☆</div>
+  </div>
+  <div id="roomControls" class="ui roomcontrols" hidden aria-label="Restaurantansicht">
+    <button type="button" id="roomZoomInBtn" aria-label="Restaurant vergrößern">+</button>
+    <button type="button" id="roomZoomOutBtn" aria-label="Restaurant verkleinern">−</button>
+    <button type="button" id="roomPanBtn" aria-label="Ansicht verschieben" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20m-13-7 3-3 3 3m-6 14 3 3 3-3M5 9l-3 3 3 3m14-6 3 3-3 3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+    <button type="button" id="roomCenterBtn" aria-label="Ganzes Restaurant anzeigen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </div>
   <div id="placementHint" class="ui placementhint" hidden>
     <div class="placementcopy"><strong id="placementTitle">4er-Tisch mit Stühlen · 0°</strong><span id="placementStatus" role="status">Auf das Raster tippen oder ziehen.</span></div>
@@ -76,7 +82,7 @@
 </div>
 <noscript>Bitte JavaScript aktivieren, um die Pizza-Demo zu starten.</noscript>
 <script type="module">
-  import('./pizza.js?v=20261010g').catch(error=>{
+  import('./pizza.js?v=20261010h').catch(error=>{
     console.error('Pizza demo could not start',error);
     const loading=document.querySelector('#loading');loading.hidden=false;loading.replaceChildren();
     const message=document.createElement('p');message.textContent='Die Demo konnte nicht starten. Bitte erneut laden.';

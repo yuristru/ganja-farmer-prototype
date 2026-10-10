@@ -1,5 +1,5 @@
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010g';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010h';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -39,6 +39,7 @@ export function sceneUI(scene){
   const restaurant=scene==='restaurant';
   root.dataset.scene=scene;
   document.querySelector('#tools').hidden=!restaurant;
+  document.querySelector('#roomControls').hidden=!restaurant;
   document.querySelector('#restaurantHead').hidden=!restaurant;
   document.querySelector('#placementHint').hidden=!restaurant;
   document.querySelector('#cityHint').hidden=restaurant;
@@ -115,7 +116,7 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010g');
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010h');
   await loadCityArt();
   if(!state.cityArt.buildings) await loadCityAtlas();
   loading.hidden=true;
