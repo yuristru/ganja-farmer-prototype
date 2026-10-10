@@ -1,6 +1,6 @@
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010c';
-import {ROOM,GRID,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010c';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010c';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010d';
+import {ROOM,GRID,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010d';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010d';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
 const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze'};

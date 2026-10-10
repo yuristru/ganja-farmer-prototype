@@ -1,5 +1,5 @@
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010c';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010d';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -23,7 +23,7 @@ function restore(){
   return copyLayout();
 }
 
-export const state={scene:null,camera:null,cityView:null,cityGesture:null,movers:[],selectedTool:'table',selectedSeats:4,rotation:0,deleteMode:false,pendingPlacement:null,navigate:null,onEditChange:null,cityTex:{},restaurantState:restore(),history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
+export const state={scene:null,camera:null,cityView:null,cityGesture:null,movers:[],selectedTool:'table',selectedSeats:4,rotation:0,deleteMode:false,pendingPlacement:null,navigate:null,onEditChange:null,cityTex:{},cityArt:{},restaurantState:restore(),history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
 
 export function iso(x,y,ox=0,oy=0){return{x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2};}
 export function hash(x,y,s=94117){let n=(x*374761393+y*668265263+s*69069)>>>0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967295;}
@@ -57,7 +57,7 @@ export function localRect(element){
 }
 
 export function sceneViewport(restaurant=false){
-  const topElement=restaurant?(root.dataset.compact==='landscape'?'#restaurantHead':'#placementHint'):'#cityHint';
+  const topElement=restaurant?(root.dataset.compact==='landscape'?'#restaurantHead':'#placementHint'):'.topbar';
   const top=localRect(document.querySelector(topElement)).bottom+12;
   const nav=localRect(document.querySelector('#cityBtn').closest('.bottomnav'));
   let right=app.screen.width-12,bottom=nav.top-12;
@@ -115,7 +115,10 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  await loadCityAtlas();loading.hidden=true;
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010d');
+  await loadCityArt();
+  if(!state.cityArt.buildings) await loadCityAtlas();
+  loading.hidden=true;
   if(state.assetFailures.length) notify('Einige Grafiken konnten nicht geladen werden.');
 }
 

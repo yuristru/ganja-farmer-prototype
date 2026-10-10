@@ -3,23 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#171416">
-  <title>Pizza City Prototype</title>
-  <link rel="stylesheet" href="pizza.css?v=20261010c">
+  <meta name="theme-color" content="#dec9a5">
+  <title>Pizza City · Mamma Mia</title>
+  <link rel="stylesheet" href="pizza.css?v=20261010d">
 </head>
 <body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="icon-calendar" viewBox="0 0 32 32"><path d="M4 6h24v23H4z" fill="#ead6b1" stroke="currentColor" stroke-width="2"/><path d="M4 6h24v7H4z" fill="#a73629"/><path d="M10 3v6m12-6v6" stroke="currentColor" stroke-width="3"/><path d="M9 17h3m4 0h3m4 0h2M9 22h3m4 0h3" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="icon-cash" viewBox="0 0 32 32"><path d="m2 19 13-8 15 6-13 9z" fill="#8b964e" stroke="currentColor" stroke-width="1.5"/><path d="m2 16 13-8 15 6-13 9z" fill="#b9b97b" stroke="currentColor" stroke-width="1.5"/><path d="m2 13 13-8 15 6-13 9z" fill="#829652" stroke="currentColor" stroke-width="1.5"/><path d="m2 10 13-8 15 6-13 9z" fill="#b7bc73" stroke="currentColor" stroke-width="1.5"/><path d="m12 4 5-3 15 6-5 3z" fill="#e4cea0"/><path d="m11 9 4-2 7 3-4 3z" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
+  <symbol id="icon-city" viewBox="0 0 32 32"><path d="M3 15h8v15H3zM12 7h8v23h-8zM21 12h8v18h-8zM14 3h4v4h-4z" fill="currentColor"/><path d="M6 18h2m-2 5h2m7-12h2m-2 5h2m-2 5h2m7-5h2m-2 5h2m-11 5h2" stroke="var(--icon-window,#ead6b1)" stroke-width="2"/></symbol>
+  <symbol id="icon-cutlery" viewBox="0 0 32 32"><path d="M5 3v9m4-9v9m4-9v9M5 10v5q4 5 8 0v-5M9 18v12M25 3q-8 7-5 15h5m0-15v27" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+  <symbol id="icon-pizza" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#caa161" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="10" fill="#af372b"/><path d="M16 6v20M6 16h20M9 9l14 14M9 23 23 9" stroke="#ead6a5" stroke-width="1.4"/><path d="m11 12 2-1m7 10 2-1m-1-8 1 2m-11 5 1 2" stroke="#f1d18a" stroke-width="2.5" stroke-linecap="round"/></symbol>
+  <symbol id="icon-people" viewBox="0 0 32 32"><circle cx="16" cy="8" r="5" fill="currentColor"/><circle cx="5" cy="12" r="3.5" fill="currentColor"/><circle cx="27" cy="12" r="3.5" fill="currentColor"/><path d="M8 29v-7q0-9 8-9t8 9v7zM1 28V20q0-5 6-5l2 1-3 12zM31 28V20q0-5-6-5l-2 1 3 12z" fill="currentColor"/></symbol>
+  <symbol id="icon-megaphone" viewBox="0 0 32 32"><path d="m5 12 21-8v21L5 20zM2 12h4v8H2zM10 21l3 9h6l-4-10z" fill="currentColor"/><path d="M29 9v11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-coins" viewBox="0 0 32 32"><path d="M3 18v10c0 5 14 5 14 0V18M15 7v21c0 5 14 5 14 0V7" fill="#c9a25d" stroke="currentColor" stroke-width="1.7"/><ellipse cx="10" cy="18" rx="7" ry="3" fill="#f0cc7b" stroke="currentColor" stroke-width="1.7"/><ellipse cx="22" cy="7" rx="7" ry="3" fill="#f0cc7b" stroke="currentColor" stroke-width="1.7"/><path d="M3 23q7 4 14 0m-2-11q7 4 14 0m-14 5q7 4 14 0m-14 5q7 4 14 0m-14 5q7 4 14 0" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>
+</svg>
 <div id="app">
   <div id="loading" class="loading" role="status"><span>PIXEL-ASSETS LADEN...</span></div>
   <div class="ui topbar">
-    <div class="topcell"><div id="gameDate" class="date">Do., 12. Apr. 2001</div><div id="gameTime" class="time">11:30</div></div>
-    <div class="topcell"><div class="money"><small>KONTO</small>243.560 DM</div></div>
+    <div class="topcell datecell"><svg class="calendar" aria-hidden="true"><use href="#icon-calendar"/></svg><div class="datecopy"><div id="gameDate" class="date">Do., 12. Apr. 2001</div><div id="gameTime" class="time">11:30</div></div></div>
+    <div class="topcell moneycell"><svg class="cash" aria-hidden="true"><use href="#icon-cash"/></svg><div class="money" aria-label="Kontostand: 243.560 Deutsche Mark">243.560 DM</div></div>
     <div class="topcell"><div class="speed" aria-label="Spieltempo">
-      <button type="button" data-speed="0" aria-label="Pause" aria-pressed="false">Ⅱ</button>
-      <button type="button" data-speed="1" class="active" aria-label="Normales Tempo" aria-pressed="true">▶</button>
-      <button type="button" data-speed="3" aria-label="Dreifaches Tempo" aria-pressed="false">▶▶</button>
+      <button type="button" data-speed="0" aria-label="Pause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button>
+      <button type="button" data-speed="1" class="active" aria-label="Normales Tempo" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 5 12 7-12 7z"/></svg></button>
+      <button type="button" data-speed="3" aria-label="Dreifaches Tempo" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 5 10 7-10 7zm10 0 10 7-10 7z"/></svg></button>
+      <button type="button" data-speed="6" aria-label="Sechsfaches Tempo" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m1 5 8 7-8 7zm7 0 8 7-8 7zm7 0 8 7-8 7z"/></svg></button>
     </div></div>
   </div>
-  <div id="cityHint" class="ui cityhint">Stadt ziehen · Mit zwei Fingern zoomen · Mamma Mia öffnen</div>
+  <div id="cityHint" class="ui cityhint">Mamma Mia antippen · Stadt ziehen und zoomen</div>
   <div id="cityControls" class="ui citycontrols">
     <button type="button" id="zoomInBtn" aria-label="Stadt vergrößern">+</button>
     <button type="button" id="zoomOutBtn" aria-label="Stadt verkleinern">−</button>
@@ -54,18 +65,18 @@
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <nav class="ui bottomnav" aria-label="Spielbereiche">
-    <button type="button" id="cityBtn" class="navbtn active" aria-pressed="true"><b aria-hidden="true">▥</b>Stadt</button>
-    <button type="button" id="restaurantBtn" class="navbtn" aria-pressed="false"><b aria-hidden="true">♜</b>Restaurant</button>
-    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><b aria-hidden="true">◉</b>Pizza</button>
-    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><b aria-hidden="true">♟</b>Personal</button>
-    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><b aria-hidden="true">◀</b>Werbung</button>
-    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><b aria-hidden="true">●</b>Finanzen</button>
+    <button type="button" id="cityBtn" class="navbtn active" aria-pressed="true"><svg aria-hidden="true"><use href="#icon-city"/></svg>Stadt</button>
+    <button type="button" id="restaurantBtn" class="navbtn" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-cutlery"/></svg>Restaurant</button>
+    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-pizza"/></svg>Pizza</button>
+    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-people"/></svg>Personal</button>
+    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-megaphone"/></svg>Werbung</button>
+    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-coins"/></svg>Finanzen</button>
   </nav>
-  <div id="credit" class="credit">CC0 City: pixel32 · Möbel: 2D-Pixel-Sprites</div>
+  <div id="credit" class="credit" aria-hidden="true">Pizza City</div>
 </div>
 <noscript>Bitte JavaScript aktivieren, um die Pizza-Demo zu starten.</noscript>
 <script type="module">
-  import('./pizza.js?v=20261010c').catch(error=>{
+  import('./pizza.js?v=20261010d').catch(error=>{
     console.error('Pizza demo could not start',error);
     const loading=document.querySelector('#loading');loading.hidden=false;loading.replaceChildren();
     const message=document.createElement('p');message.textContent='Die Demo konnte nicht starten. Bitte erneut laden.';
