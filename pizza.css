@@ -107,3 +107,10 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 
 
 @media(max-height:540px) and (min-width:500px){.pizzaSauces button{height:24px}.pizzaInstructions{height:12px;line-height:12px;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pizzaIngredient{height:44px}.pizzaIngredient canvas{width:18px;height:18px}.pizzaStats{line-height:12px;margin:2px 0;font-size:9px}.pizzaActions button{height:24px}}
+
+.pizzaWorkspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:6px}.pizzaWorkspace .pizzaBoardWrap{height:100%;min-width:0}
+.pizzaPrep{align-self:start;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:center;padding:5px 3px;background:#f0dfbb;border:1px solid #987046;border-radius:4px;text-align:center}.pizzaPrep strong{font:800 11px Georgia,serif}.pizzaPrep canvas{position:static;inset:auto;width:80px;height:66px;image-rendering:pixelated}.pizzaPrep>span{font-size:9px;line-height:12px;min-height:24px;display:block}.pizzaPrep button{width:100%;padding:1px;font-size:9px;text-transform:none}.pizzaShredder{height:47px;display:flex;flex-direction:column;align-items:center;justify-content:center}.pizzaShredder svg{width:32px;height:23px;flex:none}#pizzaWhole{height:25px;font-size:8px}
+@media(max-height:640px){.pizzaWorkspace{grid-template-columns:minmax(0,1fr) 82px}.pizzaPrep{padding:3px 2px;gap:2px}.pizzaPrep strong{font-size:10px}.pizzaPrep canvas{width:53px;height:44px}.pizzaPrep>span{font-size:8px;line-height:10px;min-height:20px}.pizzaShredder{height:35px}.pizzaShredder svg{height:16px;width:25px}#pizzaWhole{height:20px}}
+@media(max-height:540px) and (min-width:500px){.pizzaWorkspace{grid-column:1;grid-row:1/5;grid-template-columns:minmax(0,1fr) 84px}.pizzaWorkspace .pizzaBoardWrap{grid-column:auto;grid-row:auto}}
+
+@media(max-height:640px){.pizzaPrep canvas{width:44px;height:36px}}

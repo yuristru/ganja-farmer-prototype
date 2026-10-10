@@ -1,4 +1,4 @@
-import {Sprite,Texture,state} from './pizza-core.js?v=20261010m';
+import {Sprite,Texture,state} from './pizza-core.js?v=20261010o';
 
 // Atlas coordinates isolate complete flat drawings, including their ground contact.
 // Rasterize once at the city's pixel scale instead of scaling high-resolution art per frame.

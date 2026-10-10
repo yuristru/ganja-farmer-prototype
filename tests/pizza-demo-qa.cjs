@@ -321,9 +321,17 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     const editorModule=fs.readFileSync(path.join(root,'pizza.js'),'utf8').match(/from ['"](.\/pizza-editor\.js[^'"]*)['"]/)[1].replace('./','/');
     const pizza=()=>page.evaluate(async source=>(await import(source)).pizzaSnapshot(),editorModule);
     const boardPoint=async(x,y)=>{const b=await page.locator('#pizzaBoard').boundingBox();return {x:b.x+x*b.width/320,y:b.y+y*b.height/320};};
+    assert.equal((await pizza()).form,0);await page.click('[data-ingredient="parmesan"]');
+    assert.match(await page.locator('#pizzaFormName').innerText(),/Käsestück/);
+    const wholePreview=await page.locator('#pizzaFormPreview').evaluate(c=>c.toDataURL());
+    await page.click('#pizzaShredder');assert.equal((await pizza()).form,1);assert.match(await page.locator('#pizzaFormName').innerText(),/Hobel/);
+    await page.click('#pizzaShredder');assert.equal((await pizza()).form,2);assert.match(await page.locator('#pizzaFormName').innerText(),/Geriebener Parmesan/);assert(!await page.locator('#pizzaShredder').isEnabled());
+    assert.notEqual(await page.locator('#pizzaFormPreview').evaluate(c=>c.toDataURL()),wholePreview);
+    const shreddedPoint=await boardPoint(150,150);await page.mouse.click(shreddedPoint.x,shreddedPoint.y);assert.equal((await pizza()).recipe.toppings[0].form,2);await page.click('#pizzaUndo');
+    await page.click('#pizzaWhole');assert.equal((await pizza()).form,0);
     await page.click('[data-ingredient="salami"]');const center=await boardPoint(160,160);await page.mouse.click(center.x,center.y);assert.equal((await pizza()).recipe.toppings.length,1);
     const outside=await boardPoint(10,10);await page.mouse.click(outside.x,outside.y);assert.equal((await pizza()).recipe.toppings.length,1);
-    await page.click('[data-ingredient="mozzarella"]');const pizzaStart=await boardPoint(100,130),pizzaEnd=await boardPoint(220,130);
+    await page.click('[data-ingredient="mozzarella"]');await page.click('#pizzaShredder');const pizzaStart=await boardPoint(100,130),pizzaEnd=await boardPoint(220,130);
     await page.mouse.move(pizzaStart.x,pizzaStart.y);await page.mouse.down();await page.mouse.move(pizzaEnd.x,pizzaEnd.y,{steps:8});await page.mouse.up();assert((await pizza()).recipe.toppings.length>4);
     await page.click('#pizzaUndo');assert.equal((await pizza()).recipe.toppings.length,1,'A full paint stroke must undo together.');
     await page.click('#pizzaErase');await page.mouse.click(center.x,center.y);assert.equal((await pizza()).recipe.toppings.length,0);await page.click('#pizzaUndo');assert.equal((await pizza()).recipe.toppings.length,1);
@@ -337,12 +345,12 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       const bounds=await page.evaluate(()=>{const panel=document.querySelector('#pizzaEditor').getBoundingClientRect(),nav=document.querySelector('.bottomnav').getBoundingClientRect(),board=document.querySelector('#pizzaBoard').getBoundingClientRect();return {fits:panel.bottom<=nav.top&&panel.top>=document.querySelector('.topbar').getBoundingClientRect().bottom,board:board.width,square:Math.abs(board.width-board.height)<1,clipped:[...document.querySelectorAll('#pizzaEditor button,#pizzaEditor input,#pizzaEditor select')].some(e=>{if(e.closest('#pizzaIngredients'))return false;const r=e.getBoundingClientRect();return r.bottom>panel.bottom||r.top<panel.top||r.right>panel.right||r.left<panel.left;})};});
       assert(bounds.fits&&!bounds.clipped&&bounds.square&&bounds.board>90,'Pizza editor must fit '+width+'x'+height+': '+JSON.stringify(bounds));
       await page.click('#pizzaNew');assert.equal((await pizza()).recipe.toppings.length,0);await page.click('#pizzaUndo');
-      await page.click('[data-ingredient="basil"]');const p=await boardPoint(175,180),before=(await pizza()).recipe.toppings.length;await page.touchscreen.tap(p.x,p.y);assert.equal((await pizza()).recipe.toppings.length,before+1);await page.click('#pizzaUndo');
+      await page.click('[data-ingredient="basil"]');if(await page.locator('#pizzaWhole').isEnabled())await page.click('#pizzaWhole');assert.equal((await pizza()).form,0);await page.click('#pizzaShredder');await page.click('#pizzaShredder');assert.equal((await pizza()).form,2);const p=await boardPoint(175,180),before=(await pizza()).recipe.toppings.length;await page.touchscreen.tap(p.x,p.y);assert.equal((await pizza()).recipe.toppings.length,before+1);await page.click('#pizzaUndo');
       await capture(page,'pizza-editor-'+width+'.png');
     }
     await page.click('#restaurantBtn');assert.equal((await snapshot(page)).scene,'restaurant');await page.click('#pizzaBtn');assert.deepEqual((await pizza()).recipe,savedPizza);
     assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,external.join('\n'));
-    console.log('Pizza editor passed: circular placement, paint strokes, touch, erase/undo, sauces, named recipes, reload, navigation and responsive views.');
+    console.log('Pizza editor passed: ingredient forms, shredder, circular placement, paint strokes, touch, erase/undo, sauces, named recipes, reload, navigation and responsive views.');
     console.log('Recovery passed: invalid/empty saves, unavailable storage, missing asset fallback and startup retry. No external requests or runtime errors.');
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});
