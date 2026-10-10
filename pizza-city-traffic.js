@@ -1,4 +1,4 @@
-import {Sprite,Texture} from './pizza-core.js?v=20261010q';
+import {Sprite,Texture} from './pizza-core.js?v=20261010r';
 
 const cache=new Map(),COLORS=['#bb4c37','#456c8b','#c39b3f','#5d8061','#d7cdb5'];
 

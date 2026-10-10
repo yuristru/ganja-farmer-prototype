@@ -1,6 +1,6 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010q';
-import {restaurantSprite,restaurantIcon} from './pizza-restaurant-art.js?v=20261010q';
-import {project} from './pizza-layout.js?v=20261010q';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010r';
+import {restaurantSprite,restaurantIcon} from './pizza-restaurant-art.js?v=20261010r';
+import {project} from './pizza-layout.js?v=20261010r';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();

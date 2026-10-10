@@ -97,19 +97,32 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,0);assert.equal((await snapshot(page)).worldChildren,1);
     const cityArt=await page.evaluate(async modulePath=>{
       const {state,Sprite}=await import(modulePath),objects=state.camera.children.find(c=>c.label==='city-objects');
-      return {atlases:Object.fromEntries(Object.entries(state.cityArt).map(([key,frames])=>[key,frames.length])),variants:[...new Set(objects.children.filter(c=>c.label==='city-building').map(c=>c.buildingVariant))],buildings:objects.children.filter(c=>c.label==='city-building').length,
+      return {atlases:Object.fromEntries(Object.entries(state.cityArt).map(([key,frames])=>[key,frames.length])),properties:objects.children.filter(c=>c.label==='city-property').map(c=>c.propertyId),types:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildingTypes').map(c=>c.buildingVariant))],variants:[...new Set(objects.children.filter(c=>c.label==='city-building'&&c.buildingKind==='buildings').map(c=>c.buildingVariant))],buildings:objects.children.filter(c=>c.label==='city-building').length,
         landmarks:objects.children.filter(c=>['city-colosseum','city-cathedral'].includes(c.label)).map(c=>({label:c.label,sprite:c instanceof Sprite})),
         traffic:state.movers.map(m=>({sprite:m.g instanceof Sprite,scaleX:m.g.scale.x,scaleY:m.g.scale.y})),
         terraces:objects.children.filter(c=>c.label==='city-terrace').map(c=>({sprite:c instanceof Sprite,x:(c.x/32+c.y/16)/2,y:(c.y/16-c.x/32)/2}))};
     },corePath);
-    assert.deepEqual(cityArt.atlases,{buildings:16,landmarks:2,props:8});assert(cityArt.buildings>=30);
-    for(let i=8;i<16;i++)assert(cityArt.variants.includes(i),`New building ${i} must appear in the city.`);
+    assert.deepEqual(cityArt.atlases,{buildings:16,buildingTypes:8,landmarks:2,props:8});assert(cityArt.buildings>=30);
+    assert(cityArt.variants.filter(i=>i>=8).length>=6);
+    assert.equal(cityArt.properties.length,9);assert.equal(new Set(cityArt.properties).size,9);
+    assert(cityArt.types.length>=4);
     assert.equal(cityArt.landmarks.length,2);assert(cityArt.landmarks.every(item=>item.sprite));
     assert(cityArt.traffic.every(item=>item.sprite&&item.scaleX>0&&item.scaleY>0),'Directional traffic must remain upright flat sprites.');
     assert.equal(cityArt.terraces.length,6);
     const roadCell=value=>{const cell=Math.round(value),m=((cell%8)+8)%8;return m<2;};
     assert(cityArt.terraces.every(item=>item.sprite&&!roadCell(item.x)&&!roadCell(item.y)),'Terraces must stay off the carriageway.');
-    console.log('City art passed: sixteen buildings, two landmarks, eight props, upright 2D traffic and six terrace sprites off the roads.');
+    console.log('City art passed: sixteen house variants, eight building types, nine properties, two landmarks, eight props, upright 2D traffic and six terrace sprites off the roads.');
+    await page.click('#propertiesBtn');
+    assert.equal(await page.locator('[data-property]').count(),3);
+    await page.click('[data-property="san-marco"]');
+    assert.match(await page.locator('#propertyInfo').innerText(),/Klein · 80 m²/);
+    await page.click('#propertyBuy');assert.equal((await snapshot(page)).balance,215560);
+    assert(await page.locator('#propertyBuy').isDisabled());
+    await page.click('#propertyClose');await loaded(page,url);
+    const owned=await page.evaluate(async modulePath=>(await import(modulePath)).state.ownedProperties,corePath);assert.deepEqual(owned,['san-marco']);
+    await page.click('#restaurantBtn');await page.click('#resetBtn');assert.equal((await snapshot(page)).balance,215560,'Restaurant reset must not refund a property.');
+    await page.evaluate(()=>localStorage.removeItem('pizza-city-layout-v1'));await loaded(page,url);
+    console.log('Properties passed: nine map sites, three sizes, purchase debit, duplicate protection, reload and reset accounting.');
     assert.match(await page.locator('#gameDate').innerText(),/Do\./);
     await page.click('[data-speed="0"]');
     await capture(page,'city-393.png');
@@ -309,7 +322,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await loaded(page,url);await page.click('#restaurantBtn');await selectTool(page,'oven');await placeCell(page,0,3);
     await capture(page,'restaurant-art-fallback.png');await page.click('#undoBtn');await page.unroute('**/assets/pizza/restaurant/*.png');
     await page.route('**/assets/pizza/city/*.png',route=>route.fulfill({status:404,body:'missing'}));
-    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,5);
+    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,6);
     await page.click('#restaurantBtn');await selectTool(page,'plant');await placeCell(page,0,3);
     await page.unroute('**/assets/pizza/city/*.png');
     await page.route('**/assets/pizza/vendor/pixi-8.22.0.mjs',route=>route.abort());

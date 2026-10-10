@@ -1,7 +1,8 @@
-import {START_MONEY,itemPrice,product,money,ROOM_PRODUCTS,roomProduct,roomPurchaseIssue,defaultFinishes} from './pizza-catalog.js?v=20261010q';
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,updateMoney,notify,hash} from './pizza-core.js?v=20261010q';
-import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,FIXED_DECOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010q';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010q';
+import {propertySpend} from './pizza-properties.js?v=20261010r';
+import {START_MONEY,itemPrice,product,money,ROOM_PRODUCTS,roomProduct,roomPurchaseIssue,defaultFinishes} from './pizza-catalog.js?v=20261010r';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,updateMoney,notify,hash} from './pizza-core.js?v=20261010r';
+import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,FIXED_DECOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010r';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010r';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
 const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze',jukebox:'Musikautomat',arcade:'Spielautomat'};
@@ -395,8 +396,8 @@ export function undoRestaurant(){
 }
 
 export function resetRestaurant(){
-  const initial=copyLayout();
-  if(JSON.stringify(initial)!==JSON.stringify(state.restaurantState)||state.balance!==START_MONEY||JSON.stringify(state.finishes)!==JSON.stringify(defaultFinishes())){rememberEdit();state.restaurantState=initial;state.balance=START_MONEY;state.finishes=defaultFinishes();rebuildSurfaces();}
+  const initial=copyLayout(),initialBalance=START_MONEY-propertySpend(state.ownedProperties);
+  if(JSON.stringify(initial)!==JSON.stringify(state.restaurantState)||state.balance!==initialBalance||JSON.stringify(state.finishes)!==JSON.stringify(defaultFinishes())){rememberEdit();state.restaurantState=initial;state.balance=initialBalance;state.finishes=defaultFinishes();rebuildSurfaces();}
   state.rotation=0;state.selectedTool='table';state.selectedSeats=4;state.selectedVariant='wood';state.deleteMode=false;
   finishEdit('Start-Einrichtung wiederhergestellt.');
 }

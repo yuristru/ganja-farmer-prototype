@@ -1,6 +1,7 @@
+import {restoreProperties,propertySpend} from './pizza-properties.js?v=20261010r';
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010q';
-import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010q';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010r';
+import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010r';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -19,14 +20,15 @@ function restore(){
   try{
     const saved=JSON.parse(localStorage.getItem(SAVE_KEY));
     const items=upgradeLayout(saved?.items,saved?.version);
-    if(items) return {items,finishes:saved.version===4?restoreFinishes(saved.finishes):defaultFinishes(),balance:saved.version>=3&&Number.isInteger(saved.balance)&&saved.balance>=0&&saved.balance<=START_MONEY?saved.balance:START_MONEY};
+    const owned=restoreProperties(saved?.ownedProperties),ownedProperties=propertySpend(owned)<=START_MONEY?owned:[];
+    if(items) return {items,ownedProperties,finishes:saved.version===4?restoreFinishes(saved.finishes):defaultFinishes(),balance:saved.version>=3&&Number.isInteger(saved.balance)&&saved.balance>=0&&saved.balance<=START_MONEY?Math.min(saved.balance,START_MONEY-propertySpend(ownedProperties)):START_MONEY-propertySpend(ownedProperties)};
   }catch{}
-  return {items:copyLayout(),finishes:defaultFinishes(),balance:START_MONEY};
+  return {items:copyLayout(),ownedProperties:[],finishes:defaultFinishes(),balance:START_MONEY};
 }
 const restored=restore();
 export function updateMoney(){const el=document.querySelector('.money');el.textContent=money(state.balance);el.setAttribute('aria-label','Kontostand: '+money(state.balance));}
 
-export const state={scene:null,camera:null,cityView:null,cityGesture:null,movers:[],selectedTool:'table',selectedVariant:'wood',selectedSeats:4,balance:restored.balance,finishes:restored.finishes,rotation:0,deleteMode:false,pendingPlacement:null,navigate:null,onEditChange:null,cityTex:{},cityArt:{},restaurantState:restored.items,history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
+export const state={scene:null,camera:null,cityView:null,cityGesture:null,ownedProperties:restored.ownedProperties,onPropertyChange:null,movers:[],selectedTool:'table',selectedVariant:'wood',selectedSeats:4,balance:restored.balance,finishes:restored.finishes,rotation:0,deleteMode:false,pendingPlacement:null,navigate:null,onEditChange:null,cityTex:{},cityArt:{},restaurantState:restored.items,history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
 
 export function iso(x,y,ox=0,oy=0){return{x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2};}
 export function hash(x,y,s=94117){let n=(x*374761393+y*668265263+s*69069)>>>0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967295;}
@@ -40,6 +42,7 @@ export function clearWorld(){
 
 export function sceneUI(scene){
   const restaurant=scene==='restaurant';
+  const propertyDialog=document.querySelector('#propertyDialog');if(propertyDialog?.open)propertyDialog.close();
   root.dataset.scene=scene;
   document.querySelector('#pizzaEditor').hidden=scene!=='pizza';
   document.querySelector('#tools').hidden=!restaurant;
@@ -82,7 +85,7 @@ export function notify(message){
 }
 
 export function saveLayout(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:4,items:state.restaurantState,balance:state.balance,finishes:state.finishes}));return true;}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:4,items:state.restaurantState,balance:state.balance,finishes:state.finishes,ownedProperties:state.ownedProperties}));return true;}
   catch{notify('Einrichtung bleibt in dieser Sitzung erhalten.');return false;}
 }
 
@@ -120,9 +123,9 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010q');
-  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010q');
-  const {loadIngredientArt}=await import('./pizza-ingredient-art.js?v=20261010q');
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010r');
+  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010r');
+  const {loadIngredientArt}=await import('./pizza-ingredient-art.js?v=20261010r');
   await Promise.all([loadCityArt(),loadRestaurantArt(),loadIngredientArt()]);
   if(!state.cityArt.buildings) await loadCityAtlas();
   loading.hidden=true;

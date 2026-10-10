@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dec9a5">
   <title>Pizza City · Mamma Mia</title>
-  <link rel="stylesheet" href="pizza.css?v=20261010q">
+  <link rel="stylesheet" href="pizza.css?v=20261010r">
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -30,12 +30,27 @@
       <button type="button" data-speed="6" aria-label="Sechsfaches Tempo" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m1 5 8 7-8 7zm7 0 8 7-8 7zm7 0 8 7-8 7z"/></svg></button>
     </div></div>
   </div>
-  <div id="cityHint" class="ui cityhint">Mamma Mia antippen · Stadt ziehen und zoomen</div>
+  <div id="cityHint" class="ui cityhint">Kaufschilder antippen · Stadt ziehen und zoomen</div>
   <div id="cityControls" class="ui citycontrols">
     <button type="button" id="zoomInBtn" aria-label="Stadt vergrößern">+</button>
     <button type="button" id="zoomOutBtn" aria-label="Stadt verkleinern">−</button>
     <button type="button" id="centerBtn" aria-label="Zur Stadtmitte" title="Zur Stadtmitte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button>
+    <button type="button" id="propertiesBtn" aria-label="Immobilien in drei Größen anzeigen" title="Immobilien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 10 10-8 10 8M5 9v12h14V9M10 21v-7h4v7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </div>
+  <dialog id="propertyDialog" aria-labelledby="propertyTitle">
+    <header class="propertyHeader"><h2 id="propertyTitle">Immobilien</h2><button id="propertyClose" type="button" aria-label="Immobilien schließen">×</button></header>
+    <p id="propertySummary"></p>
+    <div id="propertyFilters" class="propertyFilters" aria-label="Größenklasse"></div>
+    <div id="propertyList" class="propertyList"></div>
+    <div id="propertyDetail" hidden>
+      <button id="propertyBack" type="button">‹ Alle Standorte</button>
+      <canvas id="propertyPreview" width="180" height="180" aria-label="Gebäudevorschau"></canvas>
+      <h3 id="propertyName"></h3><p id="propertyInfo"></p>
+      <p id="propertyDescription">Unmöblierte Restaurantimmobilie. Der Kauf sichert dir diesen Standort.</p>
+      <strong id="propertyPrice"></strong><p id="propertyStatus" role="status"></p>
+      <button id="propertyBuy" type="button">Standort kaufen</button>
+    </div>
+  </dialog>
   <div id="restaurantHead" class="ui restaurantHead" hidden>
     <svg class="restaurantBadge" aria-hidden="true"><use href="#icon-pizza"/></svg><div class="restaurantName"><strong>Mamma Mia</strong><span>Gastraum + Küche</span></div><div class="stars" aria-label="Vier von fünf Sternen">★★★★☆</div>
   </div>
@@ -96,7 +111,7 @@
 </div>
 <noscript>Bitte JavaScript aktivieren, um die Pizza-Demo zu starten.</noscript>
 <script type="module">
-  import('./pizza.js?v=20261010q').catch(error=>{
+  import('./pizza.js?v=20261010r').catch(error=>{
     console.error('Pizza demo could not start',error);
     const loading=document.querySelector('#loading');loading.hidden=false;loading.replaceChildren();
     const message=document.createElement('p');message.textContent='Die Demo konnte nicht starten. Bitte erneut laden.';

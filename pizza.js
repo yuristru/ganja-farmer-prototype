@@ -1,12 +1,14 @@
-import {showPizza} from './pizza-editor.js?v=20261010q';
-import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010q';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010q';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010q';
+import {mountProperties} from './pizza-properties-ui.js?v=20261010r';
+import {showPizza} from './pizza-editor.js?v=20261010r';
+import {app,root,state,loadAssets,updateMoney} from './pizza-core.js?v=20261010r';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010r';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan,restaurantView} from './pizza-restaurant.js?v=20261010r';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010q';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010r';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
-import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010q';
+import {mountCatalog,renderCatalog,showCatalogSizes} from './pizza-catalog-ui.js?v=20261010r';
+mountProperties();
 mountCatalog(()=>{if(restaurantView().panMode)toggleRestaurantPan();cancelPlacement();syncEditUI();});
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
 document.querySelector('#cityBtn').onclick=showCity;

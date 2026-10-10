@@ -1,7 +1,9 @@
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010q';
-import {citySprite} from './pizza-city-art.js?v=20261010q';
-import {personSprite} from './pizza-sprites.js?v=20261010q';
-import {carSprite} from './pizza-city-traffic.js?v=20261010q';
+import {PROPERTIES,PROPERTY_SIZES} from './pizza-properties.js?v=20261010r';
+import {openProperty} from './pizza-properties-ui.js?v=20261010r';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010r';
+import {citySprite} from './pizza-city-art.js?v=20261010r';
+import {personSprite} from './pizza-sprites.js?v=20261010r';
+import {carSprite} from './pizza-city-traffic.js?v=20261010r';
 
 const DEFAULT_VIEW={x:0,y:432,zoom:.88};
 function roadCell(value){const m=((value%8)+8)%8;return m<2;}
@@ -75,10 +77,10 @@ function pizzaBadge(g,x){
   g.circle(x,0,9).fill(0xcf9e52).stroke({color:0x75502f,width:1});g.circle(x,0,6.5).fill(0xaf3b2a);
   g.poly([x,0,x-5,-4,x-2,-6]).fill(0xf0cf82);g.poly([x,0,x+5,-4,x+6,1]).fill(0xf0cf82);g.poly([x,0,x-2,6,x-6,2]).fill(0xf0cf82);
 }
-function building(objects,labels,x,y,index=0,name=null,player=false){
-  let object=citySprite('buildings',index);
+function building(objects,labels,x,y,index=0,name=null,player=false,kind='buildings'){
+  let object=citySprite(kind,index)||citySprite('buildings',0);
   if(!object){const type=index>=4?'small':index%2?'medium':'big',textures=state.cityTex[type];object=new Sprite(textures[Math.floor(hash(x,y)*textures.length)]);object.anchor.set(.5,1);object.scale.set(2);}
-  const p=iso(x,y);place(objects,object,x,y);object.label=player?'player-restaurant':'city-building';object.buildingVariant=index;
+  const p=iso(x,y);place(objects,object,x,y);object.label=player?'player-restaurant':'city-building';object.buildingVariant=index;object.buildingKind=kind;
   if(player){object.eventMode='static';object.cursor='pointer';object.on('pointertap',openRestaurant);}
   if(name){
     const tablePositions=[[-.55,.4],[.65,.2]];
@@ -97,6 +99,28 @@ function landmark(objects,labels,x,y,index){
   const object=citySprite('landmarks',index)||building(objects,labels,x,y,7);
   place(objects,object,x,y);object.label=index?'city-cathedral':'city-colosseum';
 }
+function propertyBuilding(objects,labels,x,y,site){
+  const owned=state.ownedProperties.includes(site.id),size=PROPERTY_SIZES[site.size];
+  building(objects,labels,x,y,site.sprite,null,false,site.art);
+  const object=objects.children.at(-1);object.label='city-property';object.propertyId=site.id;
+  object.eventMode='static';object.cursor='pointer';object.on('pointertap',()=>{if(!state.cityGesture?.moved)openProperty(site.id);});
+  const marker=new Container(),p=iso(x,y),bg=new Graphics(),text=label('',9,'#fff1ce');
+  marker.label='city-property-marker';marker.propertyId=site.id;marker.position.set(p.x,p.y+9);marker.zIndex=p.y+30;
+  bg.roundRect(-43,-9,86,18,3).fill(owned?0x426440:size.color).stroke({color:0xead4a5,width:1});
+  text.anchor.set(.5);text.text=(owned?'DEIN':'KAUFEN')+' · '+size.badge;
+  marker.addChild(bg,text);marker.eventMode='static';marker.cursor='pointer';marker.hitArea=new Rectangle(-43,-12,86,28);
+  marker.on('pointertap',()=>{if(!state.cityGesture?.moved)openProperty(site.id);});labels.addChild(marker);
+}
+function refreshPropertyMarkers(){
+  if(state.scene!=='city')return;
+  const labels=state.camera.children.at(-1);
+  for(const marker of labels.children.filter(c=>c.label==='city-property-marker')){
+    const site=PROPERTIES.find(p=>p.id===marker.propertyId),owned=state.ownedProperties.includes(site.id),size=PROPERTY_SIZES[site.size];
+    marker.children[0].clear().roundRect(-43,-9,86,18,3).fill(owned?0x426440:size.color).stroke({color:0xead4a5,width:1});
+    marker.children[1].text=(owned?'DEIN':'KAUFEN')+' · '+size.badge;
+  }
+}
+
 function decorateCorners(objects,ox,oy){
   [[.1,.1],[5.3,.1],[.1,5.3],[5.3,5.3]].forEach(([x,y],i)=>place(objects,i%2?planter():lamp(),ox+x,oy+y));
 }
@@ -119,15 +143,19 @@ function block(objects,labels,bx,by){
     [[3.0,5.3],[5.4,3.0],[1.0,2.7]].forEach(([x,y])=>place(objects,bench(),ox+x,oy+y));
     decorateCorners(objects,ox,oy);return;
   }
-  const pool=[0,1,2,3,7];
-  for(let i=8;i<(state.cityArt.buildings?.length||8);i++)pool.push(i);
-  const variants=[0,1,2,3].map(slot=>pool[Math.floor(hash(bx*4+slot,by,94117)*pool.length)]);
-  const variant=variants[0];
-  building(objects,labels,ox+2.35,oy+2.35,variant);
-  building(objects,labels,ox+5.2,oy+2.35,variants[1]);
+  const pool=[0,1,2,3,7].map(index=>({kind:'buildings',index}));
+  for(let i=8;i<(state.cityArt.buildings?.length||8);i++)pool.push({kind:'buildings',index:i});
+  for(let i=0;i<(state.cityArt.buildingTypes?.length||0);i++)pool.push({kind:'buildingTypes',index:i});
+  function ordinary(slot,x,y){
+    const site=PROPERTIES.find(p=>p.bx===bx&&p.by===by&&p.slot===slot);
+    if(site){propertyBuilding(objects,labels,x,y,site);return;}
+    const {kind,index}=pool[Math.floor(hash(bx*4+slot,by,94117)*pool.length)];
+    building(objects,labels,x,y,index,null,false,kind);
+  }
+  ordinary(0,ox+2.35,oy+2.35);ordinary(1,ox+5.2,oy+2.35);
   if(bx===1&&by===1)building(objects,labels,ox+2.5,oy+4.6,4,'Mamma Mia',true);
   else if(bx===2&&by===1)building(objects,labels,ox+2.2,oy+4.6,5,"Luigi's");
-  else{building(objects,labels,ox+2.35,oy+5.2,variants[2]);if((bx+by)%2===0)building(objects,labels,ox+5.2,oy+5.2,variants[3]);}
+  else{ordinary(2,ox+2.35,oy+5.2);if((bx+by)%2===0)ordinary(3,ox+5.2,oy+5.2);}
   if(bx!==1||by!==1)place(objects,tree((bx+by+6)%4,.8),ox+5.25,oy+5.25);
   else place(objects,tree(3,.86),ox+5.2,oy+5.1);
   decorateCorners(objects,ox,oy);
@@ -217,6 +245,7 @@ export function showCity(){
     const limit=axis===0&&lane>=12?23.4:CITY_N-.2;
     state.movers.push({kind:'person',g,axis,lane,t:(i*1.03)%limit,dir,limit,speed:.095+(i%5)*.011});
   }
+  state.onPropertyChange=refreshPropertyMarkers;
   resizeCity();bindGestures();tickCity(0);
 }
 

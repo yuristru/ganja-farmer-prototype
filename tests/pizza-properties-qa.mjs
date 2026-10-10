@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {PROPERTIES,PROPERTY_SIZES,buyProperty,restoreProperties,propertySpend,propertyPurchaseIssue} from '../pizza-properties.js';
+assert.equal(PROPERTIES.length,9);
+assert.equal(new Set(PROPERTIES.map(p=>p.id)).size,9);
+assert.equal(new Set(PROPERTIES.map(p=>`${p.bx},${p.by},${p.slot}`)).size,9);
+for(const key of Object.keys(PROPERTY_SIZES))assert.equal(PROPERTIES.filter(p=>p.size===key).length,3);
+const result=buyProperty('san-marco',[],243560);
+assert.deepEqual(result,{owned:['san-marco'],balance:215560});
+assert.equal(buyProperty('san-marco',result.owned,result.balance),null);
+assert.equal(buyProperty('teatro',[],155999),null);
+assert.equal(buyProperty('missing',[],243560),null);
+assert.equal(buyProperty('teatro',[],156000).balance,0);
+assert.match(propertyPurchaseIssue('teatro',[],0),/Geld/);
+assert.deepEqual(restoreProperties(result.owned),['san-marco']);
+for(const invalid of [null,{},['missing'],['san-marco','san-marco']])assert.deepEqual(restoreProperties(invalid),[]);
+assert.equal(propertySpend(result.owned),28000);
+assert.equal(propertySpend([]),0);
+console.log('Properties model passed: nine distinct sites, three per size, exact prices, funds, duplicates and save validation.');
