@@ -1,6 +1,8 @@
-import {app,state,clearWorld,sceneUI,notify} from './pizza-core.js?v=20261010o';
-import {INGREDIENTS,ingredient,blankRecipe,onPizza,validRecipe,copyRecipe,recipeCost,toppingAt,formOf,nextForm,formName} from './pizza-recipe.js?v=20261010o';
-const el=id=>document.getElementById(id),board=el('pizzaBoard'),ctx=board.getContext('2d'),KEY='pizza-recipes-v1';
+import {drawIngredientArt} from './pizza-ingredient-art.js?v=20261010p';
+import {app,state,clearWorld,sceneUI,notify} from './pizza-core.js?v=20261010p';
+import {INGREDIENTS,ingredient,blankRecipe,onPizza,validRecipe,copyRecipe,recipeCost,toppingAt,formOf,nextForm,formName} from './pizza-recipe.js?v=20261010p';
+const el=id=>document.getElementById(id),board=el('pizzaBoard'),pixelBoard=document.createElement('canvas'),ctx=pixelBoard.getContext('2d'),KEY='pizza-recipes-v1';
+pixelBoard.width=160;pixelBoard.height=160;ctx.setTransform(.5,0,0,.5,0,0);ctx.imageSmoothingEnabled=false;
 let recipe=blankRecipe(),recipes=[],selected='mozzarella',erase=false,history=[],stroke=null,forms=Object.fromEntries(INGREDIENTS.map(i=>[i.id,0]));
 try{const saved=JSON.parse(localStorage.getItem(KEY));if(validRecipe(saved?.draft))recipe=copyRecipe(saved.draft);if(Array.isArray(saved?.recipes))recipes=saved.recipes.filter(validRecipe).slice(0,20).map(copyRecipe);}catch{}
 const price=cents=>(cents/100).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' DM';
@@ -10,6 +12,7 @@ function shape(points,color,paint=ctx){paint.fillStyle=color;paint.beginPath();p
 function disk(x,y,r,color,paint=ctx){paint.fillStyle=color;paint.beginPath();paint.arc(x,y,r,0,Math.PI*2);paint.fill();}
 const circle=disk;
 function drawTopping(t,paint=ctx){
+ if(drawIngredientArt(t,paint))return;
  const ctx=paint,circle=(...args)=>disk(...args,paint),polygon=(...args)=>shape(...args,paint);
  ctx.save();ctx.translate(Math.round(t.x),Math.round(t.y));ctx.rotate(t.angle);
  const form=formOf(t);
@@ -50,17 +53,19 @@ function drawTopping(t,paint=ctx){
  ctx.restore();
 }
 function draw(){
- ctx.clearRect(0,0,320,320);ctx.fillStyle='#987045';ctx.fillRect(4,4,312,312);ctx.fillStyle='#bc905b';ctx.fillRect(9,9,302,302);
+ const target=board.getContext('2d');ctx.clearRect(0,0,320,320);ctx.fillStyle='#987045';ctx.fillRect(4,4,312,312);ctx.fillStyle='#bc905b';ctx.fillRect(9,9,302,302);
  for(let y=25;y<310;y+=29){ctx.fillStyle='#a4794840';ctx.fillRect(9,y,302,2);for(let x=15;x<300;x+=67)ctx.fillRect(x,y+7,39,1);}
  circle(162,165,143,'#694a31');circle(160,160,143,'#d8bb83');circle(160,160,136,'#efd59b');circle(160,160,126,'#bd803e');circle(160,157,126,'#e8b864');circle(160,157,118,'#efc985');
  for(let i=0;i<44;i++){const a=i*2.399,r=122+i%3*3;circle(160+Math.cos(a)*r,157+Math.sin(a)*r,2+i%3,'#aa6e38');}
  circle(160,160,113,recipe.sauce==='tomato'?'#a83b28':'#ebd9ad');
  for(let i=0;i<70;i++){const a=i*2.399,r=12+Math.sqrt(i/70)*96;circle(160+Math.cos(a)*r,160+Math.sin(a)*r,1+i%3,recipe.sauce==='tomato'?'#ca5230':'#d1bc8e');}
  for(const t of recipe.toppings)drawTopping(t);
+ target.imageSmoothingEnabled=false;target.clearRect(0,0,320,320);target.drawImage(pixelBoard,0,0,320,320);
  board.setAttribute('aria-label',recipe.name+': '+recipe.toppings.length+' Zutatenstücke. Zutat wählen und Pizza antippen.');
 }
 function render(){
- draw();const form=forms[selected],pctx=el('pizzaFormPreview').getContext('2d');pctx.clearRect(0,0,96,80);pctx.save();pctx.translate(48,40);pctx.scale(1.25,1.25);drawTopping({id:selected,form,x:0,y:0,angle:0},pctx);pctx.restore();
+ draw();for(const b of document.querySelectorAll('[data-ingredient]')){const icon=b.querySelector('canvas'),p=icon.getContext('2d');p.setTransform(1,0,0,1,0,0);p.clearRect(0,0,64,64);p.translate(32,32);drawTopping({id:b.dataset.ingredient,form:0,x:0,y:0,angle:0},p);}
+ const form=forms[selected],pctx=el('pizzaFormPreview').getContext('2d');pctx.clearRect(0,0,96,80);pctx.save();pctx.translate(48,40);pctx.scale(1.25,1.25);drawTopping({id:selected,form,x:0,y:0,angle:0},pctx);pctx.restore();
  el('pizzaSelectedIngredient').textContent=ingredient(selected).name;
  el('pizzaFormName').textContent=formName(selected,form)+' · '+(form+1)+'/3';
  el('pizzaFormPreview').setAttribute('aria-label',ingredient(selected).name+': '+formName(selected,form));
@@ -77,7 +82,7 @@ function point(e){const r=board.getBoundingClientRect();return {x:(e.clientX-r.l
 function apply(p){
  if(!onPizza(p.x,p.y))return false;
  if(erase){const i=toppingAt(recipe,p.x,p.y);if(i<0)return false;if(!stroke.changed)remember();recipe.toppings.splice(i,1);}
- else{if(recipe.toppings.length>=150){notify('Maximal 150 Zutatenstücke pro Pizza.');return false;}if(!stroke.changed)remember();recipe.toppings.push({id:selected,form:forms[selected],x:Math.round(p.x*100)/100,y:Math.round(p.y*100)/100,angle:(recipe.toppings.length*2.399)%6.28});}
+ else{if(recipe.toppings.length>=150){notify('Maximal 150 Zutatenstücke pro Pizza.');return false;}if(!stroke.changed)remember();recipe.toppings.push({id:selected,form:forms[selected],x:Math.round(p.x*100)/100,y:Math.round(p.y*100)/100,angle:(recipe.toppings.length%8)*Math.PI/4});}
  stroke.changed=true;stroke.last=p;render();return true;
 }
 board.addEventListener('pointerdown',e=>{if(stroke)return;e.preventDefault();stroke={id:e.pointerId,changed:false,last:null};board.setPointerCapture(e.pointerId);apply(point(e));});
@@ -86,7 +91,7 @@ function endStroke(e){if(stroke?.id!==e.pointerId)return;if(stroke.changed)persi
 board.addEventListener('pointerup',endStroke);board.addEventListener('pointercancel',endStroke);
 for(const i of INGREDIENTS){
  const button=document.createElement('button');button.type='button';button.className='pizzaIngredient';button.dataset.ingredient=i.id;button.setAttribute('aria-label',i.name+', '+price(i.cost)+' pro Portion');
- const icon=document.createElement('canvas');icon.width=32;icon.height=32;const paint=icon.getContext('2d');paint.translate(16,16);paint.scale(.5,.5);drawTopping({id:i.id,form:0,x:0,y:0,angle:0},paint);
+ const icon=document.createElement('canvas');icon.width=64;icon.height=64;const paint=icon.getContext('2d');paint.translate(32,32);drawTopping({id:i.id,form:0,x:0,y:0,angle:0},paint);
  const name=document.createElement('span');name.textContent=i.name;const cost=document.createElement('small');cost.textContent=price(i.cost);button.append(icon,name,cost);
  button.onclick=()=>{selected=i.id;erase=false;render();};
  button.addEventListener('pointerdown',e=>{if(stroke)return;selected=i.id;erase=false;render();button.setPointerCapture(e.pointerId);});

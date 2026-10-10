@@ -114,3 +114,7 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 @media(max-height:540px) and (min-width:500px){.pizzaWorkspace{grid-column:1;grid-row:1/5;grid-template-columns:minmax(0,1fr) 84px}.pizzaWorkspace .pizzaBoardWrap{grid-column:auto;grid-row:auto}}
 
 @media(max-height:640px){.pizzaPrep canvas{width:44px;height:36px}}
+
+.pizzaIngredient canvas{width:36px;height:36px}
+@media(max-height:640px){.pizzaIngredient canvas{width:28px;height:28px}}
+@media(max-height:540px) and (min-width:500px){.pizzaIngredient canvas{width:18px;height:18px}}

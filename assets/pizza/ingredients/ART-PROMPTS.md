@@ -1,0 +1,7 @@
+# Italian food preparation sprites v1
+
+Created with the built-in Imagegen tool. Two transparent square atlases, each with five ingredient rows and three preparation columns. All 30 frames are sampled to a 64-pixel native grid with palette quantization and solid alpha outlines at load time and displayed with nearest-neighbor sampling after prefiltering at load time. The pizza board uses a 160-pixel native drawing grid.
+
+Atlas A rows: mozzarella, Parmesan, basil, salami, ham. Atlas B rows: mushroom, red pepper, olives, purple onion, tuna. Columns: whole, sliced, finely chopped or grated. Measured gutters and alpha bounds are defined in pizza-ingredient-art.js. The code-native sprites remain as a fallback.
+
+Prompt: Production transparent pixel-art game sprite atlas for an Italian pizzeria management game. Exactly 15 separate sprites, three equal columns and five rows, transparent gutters. Left: one whole ingredient. Middle: three slices or pieces. Right: a tidy scatter of chopped or grated ingredient. Genuine retro 16-bit pixel art, visibly square pixel clusters, stepped outlines, warm limited palette, hand-dithered shading, upper-left lighting, appetizing material details. Each sprite appears designed at 48x48 or 64x64 native pixels and enlarged with nearest-neighbor. Whole ingredients use a three-quarter view; toppings use a flatter overhead view. No UI, labels, text, backgrounds, plates, bowls, smooth gradients, vector art, photorealism or 3D renders. True transparent alpha.

@@ -321,6 +321,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     const editorModule=fs.readFileSync(path.join(root,'pizza.js'),'utf8').match(/from ['"](.\/pizza-editor\.js[^'"]*)['"]/)[1].replace('./','/');
     const pizza=()=>page.evaluate(async source=>(await import(source)).pizzaSnapshot(),editorModule);
     const boardPoint=async(x,y)=>{const b=await page.locator('#pizzaBoard').boundingBox();return {x:b.x+x*b.width/320,y:b.y+y*b.height/320};};
+    const artModule=editorModule.replace('pizza-editor.js','pizza-ingredient-art.js');assert.equal(await page.evaluate(async source=>(await import(source)).ingredientArtCount(),artModule),30);
     assert.equal((await pizza()).form,0);await page.click('[data-ingredient="parmesan"]');
     assert.match(await page.locator('#pizzaFormName').innerText(),/Käsestück/);
     const wholePreview=await page.locator('#pizzaFormPreview').evaluate(c=>c.toDataURL());
@@ -350,6 +351,11 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     }
     await page.click('#restaurantBtn');assert.equal((await snapshot(page)).scene,'restaurant');await page.click('#pizzaBtn');assert.deepEqual((await pizza()).recipe,savedPizza);
     assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,external.join('\n'));
+    await page.route('**/assets/pizza/ingredients/*.png',route=>route.fulfill({status:404,body:'missing'}));
+    await loaded(page,url);await page.click('#pizzaBtn');assert.equal(await page.evaluate(async source=>(await import(source)).ingredientArtCount(),artModule),0);
+    await page.click('[data-ingredient="parmesan"]');await page.click('#pizzaShredder');await page.click('#pizzaShredder');
+    const fallbackPoint=await boardPoint(120,140),fallbackCount=(await pizza()).recipe.toppings.length;await page.mouse.click(fallbackPoint.x,fallbackPoint.y);assert.equal((await pizza()).recipe.toppings.length,fallbackCount+1);assert.equal((await pizza()).recipe.toppings.at(-1).form,2);
+    await page.unroute('**/assets/pizza/ingredients/*.png');assert.equal(errors.length,0,errors.join('\n'));
     console.log('Pizza editor passed: ingredient forms, shredder, circular placement, paint strokes, touch, erase/undo, sauces, named recipes, reload, navigation and responsive views.');
     console.log('Recovery passed: invalid/empty saves, unavailable storage, missing asset fallback and startup retry. No external requests or runtime errors.');
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
