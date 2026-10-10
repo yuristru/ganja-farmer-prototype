@@ -70,3 +70,6 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 
 .restaurantBadge{width:32px;height:32px;flex:none;color:#65452b;margin-right:8px}.restaurantName{flex:1;min-width:0}.restaurantHead .stars{flex:none}.restaurantHead strong{white-space:nowrap}
 @media(max-height:640px){.restaurantBadge{width:23px;height:23px;margin-right:6px}}
+
+.furnitureIcon{display:block;object-fit:contain;width:100%;height:24px;image-rendering:pixelated;margin:0 auto 1px}.extras .furnitureIcon{width:28px;height:28px;margin:0}
+@media(max-height:540px) and (min-width:500px){.furnitureIcon{height:22px}}

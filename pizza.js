@@ -1,9 +1,15 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010f';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010f';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010f';
+import {app,root,state,loadAssets} from './pizza-core.js?v=20261010g';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010g';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010g';
+
+import {furnitureIcon} from './pizza-sprites.js?v=20261010g';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
 const toolButtons=[...document.querySelectorAll('.toolbtn')];
+for(const button of toolButtons){
+  const image=document.createElement('img');image.src=furnitureIcon(button.dataset.tool,Number(button.dataset.seats)||4);image.alt='';image.className='furnitureIcon';
+  button.querySelector('b').replaceWith(image);
+}
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
 document.querySelector('#cityBtn').onclick=showCity;
 document.querySelector('#restaurantBtn').onclick=showRestaurant;

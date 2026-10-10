@@ -1,5 +1,5 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010f';
-import {project} from './pizza-layout.js?v=20261010f';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010g';
+import {project} from './pizza-layout.js?v=20261010g';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
@@ -32,6 +32,8 @@ function bitmap(key,rotation,draw){
   const source=Texture.from(canvas).source;source.scaleMode='nearest';
   const texture=new Texture({source,frame:new Rectangle(minX,minY,maxX-minX+1,maxY-minY+1)});
   const art={texture,anchor:{x:(FOOT.x-minX)/texture.width,y:(FOOT.y-minY)/texture.height},hitArea:{contains(x,y){const px=Math.floor(x+FOOT.x),py=Math.floor(y+FOOT.y);return px>=0&&py>=0&&px<WIDTH&&py<HEIGHT&&pixels[(py*WIDTH+px)*4+3]>100;}}};
+  const icon=document.createElement('canvas');icon.width=texture.width;icon.height=texture.height;
+  icon.getContext('2d').drawImage(canvas,minX,minY,icon.width,icon.height,0,0,icon.width,icon.height);art.icon=icon.toDataURL();
   cache.set(id,art);return art;
 }
 
@@ -155,9 +157,14 @@ function drawFurniture(type,a,seats){
     a.shadow(.82,.82);a.box(-.4,-.41,.8,.82,0,80,COLORS.metal);
     if(a.rotation===0||a.rotation===1){a.front(.403,-.36,.36,4,76,'#e3ebdf');a.line([[.405,-.36,49],[.405,.36,49]],'#92aba2');a.front(.407,-.23,-.18,25,43,'#58736d');a.front(.407,-.23,-.18,57,69,'#58736d');}
   }else if(type==='plant'){
-    a.shadow(.56,.56);a.box(-.22,-.22,.44,.44,0,17,{top:'#c69a65',x:'#986b45',y:'#b78752'});a.disc(0,0,.2,18,'#4c4231');
-    for(const [x,y,h,color] of [[-.2,-.24,43,'#40735a'],[.23,-.14,53,'#57845a'],[.27,.2,39,'#548f67'],[-.24,.16,50,'#3d7760'],[0,0,58,'#76a279']]){
-      a.polygon([a.point(0,0,16),a.point(x-.07,y-.04,h-9),a.point(x,y,h),a.point(x+.07,y+.04,h-8)],color);
+    a.shadow(.56,.56);
+    a.box(-.21,-.21,.42,.42,0,17,{top:'#c69a65',x:'#986b45',y:'#b78752'});
+    a.disc(0,0,.24,17,'#d3a16a');a.disc(0,0,.2,18,'#4c4231');
+    a.line([[0,0,18],[0,0,48]],'#765337',2);
+    for(const [x,y,h] of [[-.17,0,30],[.16,.12,34],[-.12,-.12,39],[.18,-.09,43],[0,.12,47],[0,-.08,53]]){
+      a.line([[0,0,22],[x,y,h]],'#547142',2);
+      a.disc(x,y,.19,h,'#355e37');a.disc(x-.025,y-.04,.135,h+2,'#648744');
+      a.disc(x+.04,y+.02,.07,h+3,'#8d9c50');
     }
   }
 }
@@ -166,6 +173,8 @@ function sprite(art,label){const result=new Sprite(art.texture);result.anchor.se
 export function furnitureSprite(type,rotation=0,seats=4){
   const art=bitmap(type==='table'?'table-'+seats:type,rotation,a=>drawFurniture(type,a,seats)),result=sprite(art,'furniture-sprite');result.hitArea=art.hitArea;return result;
 }
+
+export function furnitureIcon(type,seats=4){return bitmap(type==='table'?'table-'+seats:type,0,a=>drawFurniture(type,a,seats)).icon;}
 
 export function personSprite(index,rotation=0){
   const shirt=[{top:'#efe6ce',x:'#b6b9a7',y:'#ded8bf'},{top:'#c56349',x:'#803b30',y:'#a94b39'},{top:'#5b93a4',x:'#315f73',y:'#427c94'},{top:'#729563',x:'#3d613c',y:'#58834f'}][index%4],art=bitmap('person-'+index,rotation,a=>{
