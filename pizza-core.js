@@ -1,6 +1,6 @@
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010l';
-import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010l';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010m';
+import {START_MONEY,money,defaultFinishes,restoreFinishes} from './pizza-catalog.js?v=20261010m';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -41,14 +41,15 @@ export function clearWorld(){
 export function sceneUI(scene){
   const restaurant=scene==='restaurant';
   root.dataset.scene=scene;
+  document.querySelector('#pizzaEditor').hidden=scene!=='pizza';
   document.querySelector('#tools').hidden=!restaurant;
   document.querySelector('#roomControls').hidden=!restaurant;
   document.querySelector('#restaurantHead').hidden=!restaurant;
   document.querySelector('#placementHint').hidden=!restaurant;
-  document.querySelector('#cityHint').hidden=restaurant;
-  document.querySelector('#cityControls').hidden=restaurant;
+  document.querySelector('#cityHint').hidden=scene!=='city';
+  document.querySelector('#cityControls').hidden=scene!=='city';
   document.querySelector('#credit').hidden=restaurant;
-  for(const id of ['city','restaurant']){
+  for(const id of ['city','restaurant','pizza']){
     const button=document.querySelector(`#${id}Btn`),active=id===scene;
     button.classList.toggle('active',active);
     button.setAttribute('aria-pressed',String(active));
@@ -119,8 +120,8 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010l');
-  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010l');
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010m');
+  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010m');
   await Promise.all([loadCityArt(),loadRestaurantArt()]);
   if(!state.cityArt.buildings) await loadCityAtlas();
   loading.hidden=true;

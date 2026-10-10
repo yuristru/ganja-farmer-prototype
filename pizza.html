@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dec9a5">
   <title>Pizza City · Mamma Mia</title>
-  <link rel="stylesheet" href="pizza.css?v=20261010l">
+  <link rel="stylesheet" href="pizza.css?v=20261010m">
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -61,11 +61,24 @@
       <button type="button" id="resetBtn">Zurücksetzen</button>
     </div>
   </div>
+  <section id="pizzaEditor" class="pizzaEditor" aria-label="Pizza belegen" hidden>
+    <header class="pizzaEditorHead"><strong>La tua Pizza</strong><span>Dein eigenes Rezept</span></header>
+    <div class="pizzaRecipeFields"><label for="pizzaName" class="sr-only">Name der Pizza</label><input id="pizzaName" maxlength="40" placeholder="Name der Pizza"><button id="pizzaSave" type="button">Speichern</button></div>
+    <div class="pizzaRecipeLoad"><label for="pizzaRecipes" class="sr-only">Gespeichertes Rezept laden</label><select id="pizzaRecipes"></select><button id="pizzaNew" type="button">Neue Pizza</button></div>
+    <div class="pizzaBoardWrap"><canvas id="pizzaBoard" width="320" height="320" aria-label="Pizza belegen"></canvas></div>
+    <div class="pizzaEditorTools">
+      <div class="pizzaSauces" aria-label="Pizzabasis"><button data-sauce="tomato" type="button">Tomatensauce</button><button data-sauce="white" type="button">Bianca</button></div>
+      <p id="pizzaInstructions" class="pizzaInstructions" role="status"></p>
+      <div id="pizzaIngredients" class="pizzaIngredients" aria-label="Zutaten"></div>
+      <div id="pizzaStats" class="pizzaStats" aria-live="polite"></div>
+      <div class="pizzaActions"><button id="pizzaErase" type="button" aria-pressed="false">Entfernen</button><button id="pizzaUndo" type="button">Rückgängig</button><button id="pizzaClear" type="button">Belag leeren</button></div>
+    </div>
+  </section>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <nav class="ui bottomnav" aria-label="Spielbereiche">
     <button type="button" id="cityBtn" class="navbtn active" aria-pressed="true"><svg aria-hidden="true"><use href="#icon-city"/></svg>Stadt</button>
     <button type="button" id="restaurantBtn" class="navbtn" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-cutlery"/></svg>Restaurant</button>
-    <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-pizza"/></svg>Pizza</button>
+    <button type="button" id="pizzaBtn" class="navbtn" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-pizza"/></svg>Pizza</button>
     <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-people"/></svg>Personal</button>
     <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-megaphone"/></svg>Werbung</button>
     <button type="button" class="navbtn" disabled title="In dieser Demo noch nicht verfügbar"><svg aria-hidden="true"><use href="#icon-coins"/></svg>Finanzen</button>
@@ -74,7 +87,7 @@
 </div>
 <noscript>Bitte JavaScript aktivieren, um die Pizza-Demo zu starten.</noscript>
 <script type="module">
-  import('./pizza.js?v=20261010l').catch(error=>{
+  import('./pizza.js?v=20261010m').catch(error=>{
     console.error('Pizza demo could not start',error);
     const loading=document.querySelector('#loading');loading.hidden=false;loading.replaceChildren();
     const message=document.createElement('p');message.textContent='Die Demo konnte nicht starten. Bitte erneut laden.';

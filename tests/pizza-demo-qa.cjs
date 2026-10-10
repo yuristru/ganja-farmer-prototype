@@ -315,6 +315,33 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await page.goto(url);await page.getByRole('button',{name:'Erneut laden',exact:true}).waitFor();
     await page.unroute('**/assets/pizza/vendor/pixi-8.22.0.mjs');await page.getByRole('button',{name:'Erneut laden',exact:true}).click();await page.waitForSelector('#loading',{state:'hidden',timeout:15000});
     assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,external.join('\n'));
+    // Pizza editor: real pointer/touch placement, grouped strokes and recipe persistence.
+    await loaded(page,url);await page.click('#pizzaBtn');assert.equal((await snapshot(page)).scene,'pizza');
+    await page.evaluate(async source=>{const {app}=await import(source);app.ticker.stop();},corePath);
+    const editorModule=fs.readFileSync(path.join(root,'pizza.js'),'utf8').match(/from ['"](.\/pizza-editor\.js[^'"]*)['"]/)[1].replace('./','/');
+    const pizza=()=>page.evaluate(async source=>(await import(source)).pizzaSnapshot(),editorModule);
+    const boardPoint=async(x,y)=>{const b=await page.locator('#pizzaBoard').boundingBox();return {x:b.x+x*b.width/320,y:b.y+y*b.height/320};};
+    await page.click('[data-ingredient="salami"]');const center=await boardPoint(160,160);await page.mouse.click(center.x,center.y);assert.equal((await pizza()).recipe.toppings.length,1);
+    const outside=await boardPoint(10,10);await page.mouse.click(outside.x,outside.y);assert.equal((await pizza()).recipe.toppings.length,1);
+    await page.click('[data-ingredient="mozzarella"]');const pizzaStart=await boardPoint(100,130),pizzaEnd=await boardPoint(220,130);
+    await page.mouse.move(pizzaStart.x,pizzaStart.y);await page.mouse.down();await page.mouse.move(pizzaEnd.x,pizzaEnd.y,{steps:8});await page.mouse.up();assert((await pizza()).recipe.toppings.length>4);
+    await page.click('#pizzaUndo');assert.equal((await pizza()).recipe.toppings.length,1,'A full paint stroke must undo together.');
+    await page.click('#pizzaErase');await page.mouse.click(center.x,center.y);assert.equal((await pizza()).recipe.toppings.length,0);await page.click('#pizzaUndo');assert.equal((await pizza()).recipe.toppings.length,1);
+    await page.click('[data-sauce="white"]');assert.equal((await pizza()).recipe.sauce,'white');
+    await page.fill('#pizzaName','Yuris Speciale');await page.click('#pizzaSave');assert((await pizza()).recipes.some(r=>r.name==='Yuris Speciale'));
+    const savedPizza=(await pizza()).recipe;await page.click('#pizzaNew');assert.equal((await pizza()).recipe.toppings.length,0);await page.selectOption('#pizzaRecipes','0');assert.deepEqual((await pizza()).recipe,savedPizza);
+    await page.reload();await page.waitForSelector('#loading',{state:'hidden',timeout:15000});await page.click('#pizzaBtn');assert.deepEqual((await pizza()).recipe,savedPizza);
+    await page.evaluate(async source=>{const {app}=await import(source);app.ticker.stop();},corePath);
+    for(const [width,height]of [[320,568],[393,852],[844,390]]){
+      await page.setViewportSize({width,height});await page.waitForTimeout(150);
+      const bounds=await page.evaluate(()=>{const panel=document.querySelector('#pizzaEditor').getBoundingClientRect(),nav=document.querySelector('.bottomnav').getBoundingClientRect(),board=document.querySelector('#pizzaBoard').getBoundingClientRect();return {fits:panel.bottom<=nav.top&&panel.top>=document.querySelector('.topbar').getBoundingClientRect().bottom,board:board.width,square:Math.abs(board.width-board.height)<1,clipped:[...document.querySelectorAll('#pizzaEditor button,#pizzaEditor input,#pizzaEditor select')].some(e=>{if(e.closest('#pizzaIngredients'))return false;const r=e.getBoundingClientRect();return r.bottom>panel.bottom||r.top<panel.top||r.right>panel.right||r.left<panel.left;})};});
+      assert(bounds.fits&&!bounds.clipped&&bounds.square&&bounds.board>90,'Pizza editor must fit '+width+'x'+height+': '+JSON.stringify(bounds));
+      await page.click('[data-ingredient="basil"]');const p=await boardPoint(175,180),before=(await pizza()).recipe.toppings.length;await page.touchscreen.tap(p.x,p.y);assert.equal((await pizza()).recipe.toppings.length,before+1);await page.click('#pizzaUndo');
+      await capture(page,'pizza-editor-'+width+'.png');
+    }
+    await page.click('#restaurantBtn');assert.equal((await snapshot(page)).scene,'restaurant');await page.click('#pizzaBtn');assert.deepEqual((await pizza()).recipe,savedPizza);
+    assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,external.join('\n'));
+    console.log('Pizza editor passed: circular placement, paint strokes, touch, erase/undo, sauces, named recipes, reload, navigation and responsive views.');
     console.log('Recovery passed: invalid/empty saves, unavailable storage, missing asset fallback and startup retry. No external requests or runtime errors.');
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});
