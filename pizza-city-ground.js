@@ -1,13 +1,13 @@
-import {Sprite,Texture,CITY_N,hash} from './pizza-core.js?v=20261011b';
+import {Sprite,Texture,CITY_N,hash} from './pizza-core.js?v=20261011c';
 
-// Paint opaque pixels at half world resolution; the road texture is baked once.
+// One texture pixel per world pixel matches the city sprites; bake once per map.
 export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
   const min=-8,max=CITY_N+7,left=(min-max)*32-32,top=min*32-16;
   const canvas=document.createElement('canvas');
-  canvas.width=((max-min)*64+64)/2;canvas.height=((max-min)*32+32)/2;
+  canvas.width=(max-min)*64+64;canvas.height=(max-min)*32+32;
   const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
   const random=(x,y,s=0)=>hash(x,y,(seed+s)>>>0);
-  const point=(x,y)=>[((x-y)*32-left)/2,((x+y)*16-top)/2];
+  const point=(x,y)=>[(x-y)*32-left,(x+y)*16-top];
   const mod=n=>((n%8)+8)%8;
   const stats={asphalt:0,crossings:0,manholes:0,curbs:0};
   function polygon(points,color,worn=0){
@@ -42,24 +42,29 @@ export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
       quad(px,py,.3,.3,color);
       line(point(px,py),point(px+.3,py),'#dfd1b5');
       line(point(px+.3,py),point(px+.3,py+.3),'#a79a81');
+      for(let n=0;n<5;n++){
+        const p=point(px+.035+random(x*9+a,y*9+b,n+310)*.23,py+.035+random(y*9+b,x*9+a,n+330)*.23);
+        pixel(p[0],p[1],n%2?'#c3b79d':'#b0a58f');
+      }
+      if(random(x*3+a,y*3+b,351)>.9)line(point(px+.09,py+.08),point(px+.21,py+.1),'#9e947f');
     }
   }
   function asphalt(x,y){
     stats.asphalt++;quad(x-.5,y-.5,1,1,'#484d4b');
-    const colors=['#555a55','#3d4441','#61645b','#414743'];
-    for(let n=0;n<23;n++){
+    const colors=['#505652','#424945','#575c55','#454b47'];
+    for(let n=0;n<72;n++){
       const p=point(x-.46+random(x,y,n*3+10)*.92,y-.46+random(x,y,n*3+11)*.92);
       pixel(p[0],p[1],colors[Math.floor(random(x,y,n*3+12)*colors.length)]);
     }
     if(random(x,y,90)>.87){
-      const p=point(x-.15,y-.1);line([p[0]-4,p[1]-2],[p[0]+1,p[1]],'#383f3c');line([p[0]+1,p[1]],[p[0]+4,p[1]-1],'#3e4541');
+      const p=point(x-.15,y-.1);line([p[0]-8,p[1]-4],[p[0]+2,p[1]],'#3b423f');line([p[0]+2,p[1]],[p[0]+8,p[1]-2],'#414844');
     }
   }
   function waterTile(x,y){
     quad(x-.5,y-.5,1,1,'#397b8d');
-    for(let n=0;n<8;n++){
+    for(let n=0;n<24;n++){
       const p=point(x-.45+random(x,y,n+120)*.9,y-.45+random(y,x,n+140)*.9);
-      pixel(p[0],p[1],n%3?'#518c99':'#256578',2+(n%2));
+      pixel(p[0],p[1],n%3?'#518c99':'#256578',3+(n%4));
     }
   }
   for(let y=min;y<=max;y++)for(let x=min;x<=max;x++){
@@ -68,7 +73,7 @@ export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
     else if(road(x,y))asphalt(x,y);
     else if(park(x,y)&&!fountainCell(x,y)&&!road(x-1,y)&&!road(x+1,y)&&!road(x,y-1)&&!road(x,y+1)){
       quad(x-.5,y-.5,1,1,'#788851');
-      for(let n=0;n<18;n++){const p=point(x-.45+random(x,y,n+170)*.9,y-.45+random(y,x,n+190)*.9);pixel(p[0],p[1],n%2?'#87995c':'#677a49');}
+      for(let n=0;n<60;n++){const p=point(x-.45+random(x,y,n+170)*.9,y-.45+random(y,x,n+190)*.9);pixel(p[0],p[1],n%2?'#87995c':'#677a49');}
     }else stone(x,y);
   }
   // Small stone blocks form a continuous curb around every city block.
@@ -79,6 +84,7 @@ export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
       for(let n=0;n<4;n++){
         const px=x+(dx<0?-.5:dx>0?.4:-.5+n*.25),py=y+(dy<0?-.5:dy>0?.4:-.5+n*.25);
         quad(px,py,dx?.1:.23,dy?.1:.23,n%2?'#d4c5a5':'#c5b695');
+        line(point(px,py+(dy?.1:.23)),point(px+(dx?.1:.23),py+(dy?.1:.23)),'#a4977c');
         line(point(px,py),point(px+(dx?.1:.23),py),'#ede0c3');
       }
     }
@@ -97,10 +103,10 @@ export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
     }
     if(random(x,y,240)>.985&&![2,7].includes(ix?mod(y):mod(x))){
       stats.manholes++;const p=point(x,y);
-      for(let dy=-3;dy<=3;dy++)for(let dx=-5;dx<=5;dx++){
-        const radius=dx*dx/25+dy*dy/6.25;if(radius<=1)pixel(p[0]+dx,p[1]+dy,radius>.6?'#777b6b':(dx+dy)%2?'#333c39':'#454f48');
+      for(let dy=-5;dy<=5;dy++)for(let dx=-10;dx<=10;dx++){
+        const radius=dx*dx/100+dy*dy/25;if(radius<=1)pixel(p[0]+dx,p[1]+dy,radius>.72?'#777b6b':dy%2?'#333c39':'#454f48');
       }
-      pixel(p[0]-2,p[1]-2,'#9b9c86',3);
+      pixel(p[0]-4,p[1]-4,'#9b9c86',6);pixel(p[0]-2,p[1]+4,'#303935',5);
     }
   }
   // The bridge deck shares the paving raster; raised railings stay in the object layer.
@@ -109,6 +115,7 @@ export function cityGround({road,roadCell,water,bridge,park,fountainCell},seed){
     for(let x=24;x<=26;x++)for(let gy=y;gy<=y+1;gy++)stone(x,gy);
   }
   const texture=Texture.from(canvas);texture.source.scaleMode='nearest';
-  const sprite=new Sprite(texture);sprite.position.set(left,top);sprite.scale.set(2);sprite.label='city-ground';sprite.pixelScale=2;sprite.groundDetails=stats;
+  const sprite=new Sprite(texture);sprite.position.set(left,top);sprite.scale.set(1);sprite.label='city-ground';sprite.pixelScale=1;sprite.groundDetails=stats;
+  sprite.once('destroyed',()=>texture.destroy(true));
   return sprite;
 }

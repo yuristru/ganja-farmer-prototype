@@ -1,4 +1,4 @@
-import {product,itemPrice} from './pizza-catalog.js?v=20261011b';
+import {product,itemPrice} from './pizza-catalog.js?v=20261011c';
 export const ROOM = {w:12,h:10};
 export const KITCHEN = {x:8,y:0,w:4,h:4};
 export const KITCHEN_DOOR = {x:9,y:4};

@@ -104,7 +104,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     },corePath);
     assert.deepEqual(cityArt.atlases,{buildings:16,buildingTypes:8,landmarks:2,props:8});assert(cityArt.buildings>=30);
     assert(cityArt.variants.filter(i=>i>=8).length>=6);
-    assert(cityArt.ground.sprite);assert.equal(cityArt.ground.pixelScale,2);assert.equal(cityArt.ground.sampling,'nearest');assert(cityArt.ground.details.asphalt>500&&cityArt.ground.details.crossings>0&&cityArt.ground.details.curbs>0&&cityArt.ground.details.manholes>0);
+    assert(cityArt.ground.sprite);assert.equal(cityArt.ground.pixelScale,1);assert.equal(cityArt.ground.sampling,'nearest');assert(cityArt.ground.details.asphalt>500&&cityArt.ground.details.crossings>0&&cityArt.ground.details.curbs>0&&cityArt.ground.details.manholes>0);
     assert.equal(cityArt.projected.length,16);assert(cityArt.projected.every(a=>a.projection&&a.anchor.x>0&&a.anchor.x<1&&a.anchor.y>0&&a.anchor.y<=1));
     assert.equal(cityArt.properties.length,9);assert.equal(new Set(cityArt.properties).size,9);
     assert(cityArt.types.length>=4);

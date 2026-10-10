@@ -1,11 +1,11 @@
-import {cityGround} from './pizza-city-ground.js?v=20261011b';
-import {districtOrder,nextCitySeed} from './pizza-city-layout.js?v=20261011b';
-import {PROPERTIES,PROPERTY_SIZES} from './pizza-properties.js?v=20261011b';
-import {openProperty} from './pizza-properties-ui.js?v=20261011b';
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport,saveLayout,notify} from './pizza-core.js?v=20261011b';
-import {citySprite} from './pizza-city-art.js?v=20261011b';
-import {personSprite} from './pizza-sprites.js?v=20261011b';
-import {carSprite} from './pizza-city-traffic.js?v=20261011b';
+import {cityGround} from './pizza-city-ground.js?v=20261011c';
+import {districtOrder,nextCitySeed} from './pizza-city-layout.js?v=20261011c';
+import {PROPERTIES,PROPERTY_SIZES} from './pizza-properties.js?v=20261011c';
+import {openProperty} from './pizza-properties-ui.js?v=20261011c';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport,saveLayout,notify} from './pizza-core.js?v=20261011c';
+import {citySprite} from './pizza-city-art.js?v=20261011c';
+import {personSprite} from './pizza-sprites.js?v=20261011c';
+import {carSprite} from './pizza-city-traffic.js?v=20261011c';
 
 let districts=districtOrder();
 function cityHash(x,y,s=0){return hash(x,y,(state.citySeed+s)>>>0);}
