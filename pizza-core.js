@@ -1,5 +1,5 @@
 import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010h';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010i';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -116,8 +116,9 @@ async function loadCityAtlas(){
 }
 
 export async function loadAssets(){
-  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010h');
-  await loadCityArt();
+  const {loadCityArt}=await import('./pizza-city-art.js?v=20261010i');
+  const {loadRestaurantArt}=await import('./pizza-restaurant-art.js?v=20261010i');
+  await Promise.all([loadCityArt(),loadRestaurantArt()]);
   if(!state.cityArt.buildings) await loadCityAtlas();
   loading.hidden=true;
   if(state.assetFailures.length) notify('Einige Grafiken konnten nicht geladen werden.');

@@ -1,7 +1,7 @@
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010h';
-import {citySprite} from './pizza-city-art.js?v=20261010h';
-import {personSprite} from './pizza-sprites.js?v=20261010h';
-import {carSprite} from './pizza-city-traffic.js?v=20261010h';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,sceneUI,sceneViewport} from './pizza-core.js?v=20261010i';
+import {citySprite} from './pizza-city-art.js?v=20261010i';
+import {personSprite} from './pizza-sprites.js?v=20261010i';
+import {carSprite} from './pizza-city-traffic.js?v=20261010i';
 
 const DEFAULT_VIEW={x:0,y:432,zoom:.88};
 function roadCell(value){const m=((value%8)+8)%8;return m<2;}

@@ -1,12 +1,12 @@
-import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010h';
-import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010h';
-import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010h';
+import {app,world,state,Container,Graphics,Rectangle,clearWorld,sceneUI,sceneViewport,rememberEdit,saveLayout,notify,hash} from './pizza-core.js?v=20261010i';
+import {ROOM,GRID,KITCHEN,KITCHEN_DOOR,FIXED_DECOR,kitchenCell,passageCell,guestCell,project,gridCell,dimensions,occupiedCells,placementIssue,copyLayout} from './pizza-layout.js?v=20261010i';
+import {furnitureSprite,personSprite} from './pizza-sprites.js?v=20261010i';
 
 const RTW=GRID.width,RTH=GRID.height,WALL_HEIGHT=96;
 const TOOL_NAMES={table:'Tisch',oven:'Ofen',bar:'Theke',plant:'Pflanze'};
 let roomLayer,roomMask,objects,preview,hoverCell=null,dragPointer=null;
 const view={zoom:1,x:0,y:0},pointers=new Map();
-let panMode=false,pinching=false;
+let panMode=false,pinching=false,blockTap=false;
 export function restaurantView(){return {...view,panMode};}
 export function toggleRestaurantPan(){
   panMode=!panMode;cancelPlacement();updateCameraUI();updatePlacementPreview();
@@ -41,7 +41,7 @@ function placed(item,interactive=true,ghost=false){
   if(ghost){group.alpha=.65;group.eventMode='none';}
   else if(interactive){
     group.eventMode=state.deleteMode&&!panMode?'static':'none';group.cursor='pointer';
-    group.on('pointertap',event=>{if(state.deleteMode){event.stopPropagation();removeAt(item.x,item.y);}});
+    group.on('pointertap',event=>{if(state.deleteMode&&!panMode&&!blockTap){event.stopPropagation();removeAt(item.x,item.y);}});
   }else group.eventMode='none';
   objects.addChild(group);return group;
 }
@@ -49,7 +49,8 @@ function placed(item,interactive=true,ghost=false){
 function fixedKitchen(){
   [{type:'fridge',x:8,y:0,r:0},{type:'oven',x:9,y:0,r:0},{type:'sink',x:11,y:0,r:1},
     {type:'prep',x:10,y:2,r:0},{type:'prep',x:8,y:2,r:1}].forEach(item=>placed(item,false));
-  const chef=person(0),p=project(10,1);chef.label='kitchen-chef';chef.position.set(p.x,p.y);chef.zIndex=p.y+.5;objects.addChild(chef);
+  FIXED_DECOR.forEach(item=>placed(item,false));
+  const chef=person(0),p=project(9,2);chef.label='kitchen-chef';chef.position.set(p.x,p.y);chef.zIndex=p.y+.5;objects.addChild(chef);
 }
 
 function partition(x,y,right,length,height){
@@ -187,6 +188,7 @@ function inRoom(cell){return cell.x>=0&&cell.y>=0&&cell.x<ROOM.w&&cell.y<ROOM.h;
 function movePointer(event){
   const previous=pointers.get(event.pointerId);
   if(previous){
+    if(!pointers.size)blockTap=panMode;
     pointers.set(event.pointerId,{x:event.global.x,y:event.global.y});
     if(pointers.size>=2){
       const [a,b]=[...pointers.values()],old=[...pointers.entries()].map(([id,p])=>id===event.pointerId?previous:p);
@@ -241,11 +243,21 @@ function wallDetails(layer){
       wallPanel(layer,right?i-.5:-.5,right?-.5:i-.5,right,.025,2,30,0xbd8950);
       wallPanel(layer,right?i-.5:-.5,right?-.5:i-.5,right,1,30,33,0xb88852);
       const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
+      for(let n=0;n<14;n++){
+        const t=.1+hash(i,n,right?41:73)*.8,z=37+hash(n,i,91)*48;
+        const v=project(right?i-.5+t:-.5,right?-.5:i-.5+t);
+        g.rect(Math.round(v.x),Math.round(v.y-z),n%3===0?2:1,1).fill({color:n%2?0xe9d2aa:0x997954,alpha:.25});
+      }
       g.rect(p.x,p.y-90,2,1).fill({color:0xf2dec0,alpha:.4});layer.addChild(g);
     }
     for(const i of [1,3.8,6,8.4,10.8]){
       if(i>length-.6)continue;
       const p=project(right?i:-.5,right?-.5:i),g=new Graphics();
+      for(let n=0;n<14;n++){
+        const t=.1+hash(i,n,right?41:73)*.8,z=37+hash(n,i,91)*48;
+        const v=project(right?i-.5+t:-.5,right?-.5:i-.5+t);
+        g.rect(Math.round(v.x),Math.round(v.y-z),n%3===0?2:1,1).fill({color:n%2?0xe9d2aa:0x997954,alpha:.25});
+      }
       g.circle(p.x,p.y-62,8).fill({color:0xf8c264,alpha:.12});
       g.rect(p.x-2,p.y-67,4,11).fill(0x644831);
       g.rect(p.x-2,p.y-65,4,6).fill(0xf4c264);layer.addChild(g);
@@ -278,7 +290,7 @@ export function showRestaurant(){
   clearWorld();state.scene='restaurant';sceneUI('restaurant');
   roomLayer=new Container();roomLayer.label='restaurant-room';world.addChild(roomLayer);
   roomMask=new Graphics();roomMask.eventMode='none';world.addChild(roomMask);roomLayer.mask=roomMask;
-  view.zoom=1;view.x=0;view.y=0;panMode=false;pinching=false;pointers.clear();updateCameraUI();
+  view.zoom=1;view.x=0;view.y=0;panMode=false;pinching=false;blockTap=false;pointers.clear();updateCameraUI();
   const wall=new Graphics(),floor=new Container();objects=new Container();preview=new Container();
   objects.label='restaurant-objects';objects.sortableChildren=true;preview.label='placement-preview';preview.eventMode='none';hoverCell=null;dragPointer=null;
   const a=project(-.5,-.5),b=project(ROOM.w-.5,-.5),c=project(-.5,ROOM.h-.5);
@@ -306,7 +318,7 @@ export function showRestaurant(){
     }
     if(passageCell(x,y))g.poly([p.x,p.y-9,p.x+20,p.y,p.x,p.y+9,p.x-20,p.y]).fill({color:0xd8bd86,alpha:.7});
     if(entrance)g.poly([p.x-9,p.y+1,p.x,p.y-4,p.x+9,p.y+1,p.x+3,p.y+1,p.x+3,p.y+6,p.x-3,p.y+6,p.x-3,p.y+1]).fill(0x776c42);
-    g.label=`floor-${x}-${y}`;g.eventMode='static';g.cursor='pointer';g.on('pointertap',()=>{if(state.deleteMode&&!panMode&&!pinching)removeAt(x,y);});floor.addChild(g);
+    g.label=`floor-${x}-${y}`;g.eventMode='static';g.cursor='pointer';g.on('pointertap',()=>{if(state.deleteMode&&!panMode&&!blockTap)removeAt(x,y);});floor.addChild(g);
   }
   fixedKitchen();kitchenWalls();
   // Low cutaway edges give the building a facade while leaving the floor visible.
@@ -319,8 +331,9 @@ export function showRestaurant(){
   app.stage.on('globalpointermove',movePointer);
   app.stage.on('pointerdown',event=>{
     const area=sceneViewport(true);if(event.global.x<area.left||event.global.x>area.right||event.global.y<area.top||event.global.y>area.bottom)return;
+    if(!pointers.size)blockTap=panMode;
     pointers.set(event.pointerId,{x:event.global.x,y:event.global.y});
-    if(pointers.size>=2){pinching=true;cancelPlacement();return;}
+    if(pointers.size>=2){pinching=true;blockTap=true;cancelPlacement();return;}
     if(panMode)return;
     const cell=cellAt(event.global);if(!inRoom(cell))return;
     hoverCell=cell;

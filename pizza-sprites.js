@@ -1,5 +1,6 @@
-import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010h';
-import {project} from './pizza-layout.js?v=20261010h';
+import {Sprite,Texture,Rectangle} from './pizza-core.js?v=20261010i';
+import {restaurantSprite,restaurantIcon} from './pizza-restaurant-art.js?v=20261010i';
+import {project} from './pizza-layout.js?v=20261010i';
 
 // Pixel bitmaps with four fixed views. The scene places only flat 2D sprites.
 const WIDTH=256,HEIGHT=192,FOOT={x:128,y:144},cache=new Map();
@@ -113,7 +114,7 @@ function drawTableGroup(a,seats){
 
 function drawFurniture(type,a,seats){
   if(type==='table')drawTableGroup(a,seats);
-  else if(type==='bar'){
+  else if(type==='bar'||type==='wine'){
     a.shadow(1.85,.83);
     a.box(-.94,-.4,1.88,.8,0,34,COLORS.wood);
     for(const x of [-.88,-.42,.04,.5]){
@@ -123,6 +124,10 @@ function drawFurniture(type,a,seats){
     a.box(-.98,-.44,1.96,.88,34,4,{top:'#b8814a',x:'#68412a',y:'#87532f'});
     for(const x of [-.55,.5]){a.disc(x,0,.14,39,'#ede3ca');a.disc(x,0,.1,40,'#c9bca0');}
     a.box(-.12,.04,.13,.13,38,9,{top:'#78834a',x:'#33452b',y:'#4b6237'});
+  }else if(type==='jukebox'){
+    a.shadow(.7,.7);a.box(-.32,-.32,.64,.64,0,53,{top:'#b34329',x:'#713523',y:'#952c22'});
+    a.box(-.22,-.22,.44,.44,53,6,{top:'#d8a44d',x:'#8b6033',y:'#b6853e'});
+    if(a.rotation===0||a.rotation===1){a.front(.325,-.25,.25,5,49,'#deaa46');a.front(.33,-.19,.19,9,45,'#573c28');a.front(.335,-.16,.16,28,39,'#f0d393');}
   }else if(type==='oven'){
     a.shadow(.95,.94);
     a.box(-.46,-.44,.92,.88,0,25,{top:'#a59680',x:'#6e6557',y:'#938775'});
@@ -174,10 +179,11 @@ function drawFurniture(type,a,seats){
 
 function sprite(art,label){const result=new Sprite(art.texture);result.anchor.set(art.anchor.x,art.anchor.y);result.label=label;return result;}
 export function furnitureSprite(type,rotation=0,seats=4){
+  const detailed=restaurantSprite(type,rotation);if(detailed)return detailed;
   const art=bitmap(type==='table'?'table-'+seats:type,rotation,a=>drawFurniture(type,a,seats)),result=sprite(art,'furniture-sprite');result.hitArea=art.hitArea;return result;
 }
 
-export function furnitureIcon(type,seats=4){return bitmap(type==='table'?'table-'+seats:type,0,a=>drawFurniture(type,a,seats)).icon;}
+export function furnitureIcon(type,seats=4){return restaurantIcon(type)||bitmap(type==='table'?'table-'+seats:type,0,a=>drawFurniture(type,a,seats)).icon;}
 
 export function personSprite(index,rotation=0){
   const shirt=[{top:'#efe6ce',x:'#b6b9a7',y:'#ded8bf'},{top:'#c56349',x:'#803b30',y:'#a94b39'},{top:'#5b93a4',x:'#315f73',y:'#427c94'},{top:'#729563',x:'#3d613c',y:'#58834f'}][index%4],art=bitmap('person-'+index,rotation,a=>{

@@ -4,7 +4,9 @@ export const KITCHEN_DOOR = {x:9,y:4};
 export const ENTRANCE = {x:ROOM.w-1,y:ROOM.h-1};
 export function kitchenCell(x,y){return x>=KITCHEN.x&&x<KITCHEN.x+KITCHEN.w&&y>=KITCHEN.y&&y<KITCHEN.y+KITCHEN.h;}
 export function passageCell(x,y){return x===KITCHEN_DOOR.x&&y===KITCHEN_DOOR.y;}
-export function guestCell(x,y){return x>=0&&y>=0&&x<ROOM.w&&y<ROOM.h&&!kitchenCell(x,y);}
+export const FIXED_DECOR = [{type:"wine",x:0,y:0,r:0},{type:"jukebox",x:0,y:1,r:0}];
+export function decorCell(x,y){return FIXED_DECOR.some(item=>occupiedCells(item).includes(`${x},${y}`));}
+export function guestCell(x,y){return x>=0&&y>=0&&x<ROOM.w&&y<ROOM.h&&!kitchenCell(x,y)&&!decorCell(x,y);}
 export const GRID = {width:64,height:32};
 
 export function project(x,y){return {x:(x-y)*GRID.width/2,y:(x+y)*GRID.height/2};}
@@ -26,7 +28,7 @@ export function dimensions(item){
     const {w,h}=TABLE_SIZES[item.seats]||TABLE_SIZES[4];
     return item.r%2?{w:h,h:w}:{w,h};
   }
-  if(item.type==='bar') return item.r%2?{w:1,h:2}:{w:2,h:1};
+  if(['bar','wine','prep'].includes(item.type)) return item.r%2?{w:1,h:2}:{w:2,h:1};
   return {w:1,h:1};
 }
 
@@ -43,6 +45,7 @@ export function placementIssue(item,layout=[]){
   for(const cell of cells){
     const [x,y]=cell.split(',').map(Number);
     if(x<0||y<0||x>=ROOM.w||y>=ROOM.h) return 'Das Möbelstück passt hier nicht in den Raum.';
+    if(decorCell(x,y)) return 'Die feste Wanddekoration bleibt frei.';
     if(kitchenCell(x,y)) return 'Die separate Küche bleibt frei.';
     if(passageCell(x,y)) return 'Bitte den Küchendurchgang frei lassen.';
     if(x===ROOM.w-1&&y===ROOM.h-1) return 'Bitte den Eingang frei lassen.';

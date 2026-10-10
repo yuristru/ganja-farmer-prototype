@@ -1,15 +1,16 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010h';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010h';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan} from './pizza-restaurant.js?v=20261010h';
+import {app,root,state,loadAssets} from './pizza-core.js?v=20261010i';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010i';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement,zoomRestaurant,centerRestaurant,toggleRestaurantPan} from './pizza-restaurant.js?v=20261010i';
 
-import {furnitureIcon} from './pizza-sprites.js?v=20261010h';
+import {furnitureIcon} from './pizza-sprites.js?v=20261010i';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
 const toolButtons=[...document.querySelectorAll('.toolbtn')];
-for(const button of toolButtons){
+function updateFurnitureIcons(){for(const button of toolButtons){
   const image=document.createElement('img');image.src=furnitureIcon(button.dataset.tool,Number(button.dataset.seats)||4);image.alt='';image.className='furnitureIcon';
-  button.querySelector('b').replaceWith(image);
-}
+  button.querySelector('b,img').replaceWith(image);
+}}
+updateFurnitureIcons();
 state.navigate=where=>where==='restaurant'?showRestaurant():showCity();
 document.querySelector('#cityBtn').onclick=showCity;
 document.querySelector('#restaurantBtn').onclick=showRestaurant;
@@ -91,4 +92,4 @@ window.addEventListener('keydown',event=>{
   else if(event.key==='Escape'){state.deleteMode=false;cancelPlacement();syncEditUI();}
 });
 
-await loadAssets();state.ready=true;showCity();
+await loadAssets();updateFurnitureIcons();state.ready=true;showCity();

@@ -66,6 +66,8 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
   assert.equal(model.upgradeLayout([{type:'table',seats:3,x:2,y:3,r:0}],2),null);
   const independent=model.copyLayout();independent[0].x=0;assert.equal(model.DEFAULT_LAYOUT[0].x,2);
   assert.equal(model.ROOM.w*model.ROOM.h,120);
+  assert.match(model.placementIssue({type:'plant',x:0,y:0,r:0},[]),/Wanddekoration/);
+  assert(!model.guestCell(0,0));
   assert.equal(model.KITCHEN.w*model.KITCHEN.h,16);
   assert.equal(model.placementIssue({type:'table',seats:4,x:6,y:0,r:0},[]),null,'The former kitchen strip must be available to guests.');
   assert.match(model.placementIssue({type:'plant',...model.KITCHEN_DOOR,r:0},[]),/Küchendurchgang/);
@@ -150,6 +152,15 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     assert(Math.abs((await getRoomView()).x)>1,'The enlarged restaurant must pan.');
     assert.deepEqual((await snapshot(page)).items,itemsBeforePan);assert.equal((await snapshot(page)).pending,null);
     await page.click('#roomCenterBtn');assert.equal((await getRoomView()).zoom,1);assert.equal((await getRoomView()).panMode,false);
+    const pinchArea=await page.evaluate(async source=>(await import(source)).sceneViewport(true),corePath);
+    const pinchX=(pinchArea.left+pinchArea.right)/2,pinchY=(pinchArea.top+pinchArea.bottom)/2;
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:pinchX-20,y:pinchY,id:1},{x:pinchX+20,y:pinchY,id:2}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:pinchX-40,y:pinchY,id:1},{x:pinchX+40,y:pinchY,id:2}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    assert((await getRoomView()).zoom>1.4,'Two-finger zoom must enlarge the restaurant.');
+    assert.equal((await snapshot(page)).pending,null);assert.deepEqual((await snapshot(page)).items,itemsBeforePan);
+    await page.click('#roomCenterBtn');
+
     // Each capacity is one sprite and one placement, including its chairs.
     for(const [seats,x,y]of [[2,0,2],[4,5,2],[6,5,0],[8,0,5]]){
       await page.click(`[data-seats="${seats}"]`);const before=await snapshot(page);await tapCell(page,x,y);
@@ -241,6 +252,9 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       await page.click('#restaurantBtn');assert.equal(await page.locator('#placementTitle').innerText(),'4er-Tisch mit Stühlen · 0°');
       await page.unroute(pattern);
     }
+    await page.route('**/assets/pizza/restaurant/*.png',route=>route.fulfill({status:404,body:'missing'}));
+    await loaded(page,url);await page.click('#restaurantBtn');await page.click('[data-tool="oven"]');await placeCell(page,0,3);
+    await capture(page,'restaurant-art-fallback.png');await page.unroute('**/assets/pizza/restaurant/*.png');
     await page.route('**/assets/pizza/city/*.png',route=>route.fulfill({status:404,body:'missing'}));
     await loaded(page,url);assert.equal((await snapshot(page)).assets.length,4);
     await page.click('#restaurantBtn');await page.click('[data-tool="plant"]');await placeCell(page,0,3);
