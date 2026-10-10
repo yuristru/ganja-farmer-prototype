@@ -106,3 +106,4 @@ noscript{position:fixed;inset:0;z-index:99;display:grid;place-items:center;backg
 @media(max-height:540px) and (min-width:500px){.pizzaEditor{display:grid;grid-template-columns:minmax(180px,1fr) minmax(240px,1fr);grid-template-rows:24px 28px 28px minmax(0,1fr);gap:5px 10px}.pizzaEditorHead{grid-column:2;grid-row:1}.pizzaRecipeFields{grid-column:2;grid-row:2}.pizzaRecipeLoad{grid-column:2;grid-row:3}.pizzaBoardWrap{grid-column:1;grid-row:1/5}.pizzaEditorTools{grid-column:2;grid-row:4;align-self:end}.pizzaInstructions{height:24px}.pizzaIngredient{height:54px}.pizzaActions button{height:28px}}
 
 
+@media(max-height:540px) and (min-width:500px){.pizzaSauces button{height:24px}.pizzaInstructions{height:12px;line-height:12px;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pizzaIngredient{height:44px}.pizzaIngredient canvas{width:18px;height:18px}.pizzaStats{line-height:12px;margin:2px 0;font-size:9px}.pizzaActions button{height:24px}}

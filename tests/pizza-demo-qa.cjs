@@ -336,6 +336,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       await page.setViewportSize({width,height});await page.waitForTimeout(150);
       const bounds=await page.evaluate(()=>{const panel=document.querySelector('#pizzaEditor').getBoundingClientRect(),nav=document.querySelector('.bottomnav').getBoundingClientRect(),board=document.querySelector('#pizzaBoard').getBoundingClientRect();return {fits:panel.bottom<=nav.top&&panel.top>=document.querySelector('.topbar').getBoundingClientRect().bottom,board:board.width,square:Math.abs(board.width-board.height)<1,clipped:[...document.querySelectorAll('#pizzaEditor button,#pizzaEditor input,#pizzaEditor select')].some(e=>{if(e.closest('#pizzaIngredients'))return false;const r=e.getBoundingClientRect();return r.bottom>panel.bottom||r.top<panel.top||r.right>panel.right||r.left<panel.left;})};});
       assert(bounds.fits&&!bounds.clipped&&bounds.square&&bounds.board>90,'Pizza editor must fit '+width+'x'+height+': '+JSON.stringify(bounds));
+      await page.click('#pizzaNew');assert.equal((await pizza()).recipe.toppings.length,0);await page.click('#pizzaUndo');
       await page.click('[data-ingredient="basil"]');const p=await boardPoint(175,180),before=(await pizza()).recipe.toppings.length;await page.touchscreen.tap(p.x,p.y);assert.equal((await pizza()).recipe.toppings.length,before+1);await page.click('#pizzaUndo');
       await capture(page,'pizza-editor-'+width+'.png');
     }
