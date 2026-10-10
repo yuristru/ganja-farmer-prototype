@@ -1,4 +1,4 @@
-import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,makePerson,sceneUI,sceneViewport} from './pizza-core.js?v=20261010b';
+import {app,world,state,TW,TH,CITY_N,Container,Graphics,Sprite,Rectangle,iso,hash,label,clearWorld,makePerson,sceneUI,sceneViewport} from './pizza-core.js?v=20261010c';
 
 const DEFAULT_VIEW={x:0,y:432,zoom:1.18};
 function roadCell(value){const m=((value%8)+8)%8;return m===0||m===1;}

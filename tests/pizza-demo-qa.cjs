@@ -20,7 +20,7 @@ const server=http.createServer((req,res)=>{
 async function snapshot(page){
   return page.evaluate(async modulePath=>{
     const {app,state,world,root}=await import(modulePath);
-    return {scene:state.scene,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
+    return {scene:state.scene,items:state.restaurantState,history:state.history.length,rotation:state.rotation,deleteMode:state.deleteMode,tool:state.selectedTool,seats:state.selectedSeats,pending:state.pendingPlacement,speed:state.speed,minutes:state.gameMinutes,view:state.cityView,assets:state.assetFailures,screen:{width:app.screen.width,height:app.screen.height},size:{width:root.clientWidth,height:root.clientHeight},movers:state.movers.map(m=>({x:m.x,y:m.y,t:m.t,lane:m.lane,axis:m.axis,z:m.g.zIndex,visible:m.g.visible,kind:m.kind})),worldChildren:world.children.length};
   },corePath);
 }
 
@@ -34,6 +34,7 @@ async function nodePoint(page,label){
   },{modulePath:corePath,label});
 }
 async function tapCell(page,x,y){await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.render();},corePath);const point=await nodePoint(page,`floor-${x}-${y}`);await page.mouse.click(point.x,point.y);}
+async function placeCell(page,x,y){await tapCell(page,x,y);assert.deepEqual((await snapshot(page)).pending,{x,y});assert.equal(await page.locator('#placeBtn').isEnabled(),true,await page.locator('#placementStatus').innerText());await page.click('#placeBtn');}
 async function capture(page,name){
   await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.render();},corePath);
   await page.screenshot({path:path.join(out,name),style:'#toast { visibility: hidden; }'});
@@ -44,15 +45,27 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
   const model=await import(pathToFileURL(modelPath));
   assert(model.validLayout(model.DEFAULT_LAYOUT));
   assert(model.validLayout([]));
-  assert.equal(model.placementIssue({type:'table',x:5,y:2,r:0},model.DEFAULT_LAYOUT),null);
-  assert.match(model.placementIssue({type:'chair',x:3,y:1,r:0},[]),/Küche/);
-  assert.match(model.placementIssue({type:'table',x:7,y:3,r:0},[]),/Raum/);
+  assert.equal(model.placementIssue({type:'table',seats:4,x:5,y:2,r:0},model.DEFAULT_LAYOUT),null);
+  assert.match(model.placementIssue({type:'plant',x:3,y:1,r:0},[]),/Küche/);
+  assert.match(model.placementIssue({type:'table',seats:4,x:7,y:3,r:0},[]),/Raum/);
   assert.match(model.placementIssue({type:'bar',x:7,y:5,r:1},[]),/Eingang/);
   assert.equal(model.placementIssue({type:'bar',x:7,y:4,r:1},model.DEFAULT_LAYOUT),null);
-  assert.match(model.placementIssue({type:'chair',x:3,y:4,r:0},model.DEFAULT_LAYOUT),/bereits/);
-  for(const invalid of [null,{},[{type:'unknown',x:0,y:3,r:0}],[{type:'chair',x:2.5,y:3,r:0}],[{type:'chair',x:2,y:3,r:5}],[{type:'chair',x:2,y:1,r:0}],[...model.DEFAULT_LAYOUT,model.DEFAULT_LAYOUT[0]]]) assert.equal(model.validLayout(invalid),false);
+  assert.match(model.placementIssue({type:'plant',x:3,y:4,r:0},model.DEFAULT_LAYOUT),/bereits/);
+  for(const invalid of [null,{},[{type:'unknown',x:0,y:3,r:0}],[{type:'plant',x:2.5,y:3,r:0}],[{type:'plant',x:2,y:3,r:5}],[{type:'plant',x:2,y:1,r:0}],[{type:'chair',x:0,y:3,r:0}],[{type:'table',seats:3,x:0,y:3,r:0}],[...model.DEFAULT_LAYOUT,model.DEFAULT_LAYOUT[0]]]) assert.equal(model.validLayout(invalid),false);
+  for(const seats of model.TABLE_SEATS){
+    const size=model.TABLE_SIZES[seats];
+    assert.deepEqual(model.dimensions({type:'table',seats,r:0}),size);
+    assert.deepEqual(model.dimensions({type:'table',seats,r:1}),{w:size.h,h:size.w});
+    assert.equal(model.occupiedCells({type:'table',seats,x:0,y:2,r:0}).length,size.w*size.h);
+  }
+  for(let y=0;y<model.ROOM.h;y++)for(let x=0;x<model.ROOM.w;x++){
+    assert.deepEqual(model.gridCell(model.project(x,y)),{x,y});
+    assert.deepEqual(model.gridCell(model.project(x+.49,y-.49)),{x,y});
+  }
+  assert.deepEqual(model.upgradeLayout([{type:'table',x:2,y:3,r:0},{type:'chair',x:1,y:3,r:0}],1),[{type:'table',seats:4,x:2,y:3,r:0}]);
+  assert.equal(model.upgradeLayout([{type:'table',seats:3,x:2,y:3,r:0}],2),null);
   const independent=model.copyLayout();independent[0].x=0;assert.equal(model.DEFAULT_LAYOUT[0].x,2);
-  console.log('Layout validation passed: footprint, rotation, kitchen, entrance, overlap and invalid saves.');
+  console.log('Layout validation passed: 2/4/6/8 seats, rotated footprints, 2:1 grid snapping, kitchen, entrance, overlap and save migration.');
 
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const base=`http://127.0.0.1:${server.address().port}`,url=base+'/pizza.html';
@@ -99,21 +112,41 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     console.log('Time and depth passed: real pause, normal/3x speed, live clock and traffic behind buildings.');
     await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
 
-    await page.click('#restaurantBtn');await page.click('[data-tool="chair"]');
-    await tapCell(page,0,3);let current=await snapshot(page);assert(current.items.some(item=>item.type==='chair'&&item.x===0&&item.y===3),JSON.stringify({current,toast:await page.locator('#toast').innerText()}));
-    const count=current.items.length;await tapCell(page,3,1);assert.equal((await snapshot(page)).items.length,count);assert.match(await page.locator('#toast').innerText(),/Küche/);
-    await page.click('[data-tool="table"]');await tapCell(page,5,2);current=await snapshot(page);assert.equal(current.items.length,count+1);
-    await tapCell(page,6,2);assert.equal((await snapshot(page)).items.length,count+1);assert.match(await page.locator('#toast').innerText(),/bereits/);
+    await page.click('#restaurantBtn');assert.equal(await page.locator('[data-tool="chair"]').count(),0);
+    // Each capacity is one sprite and one placement, including its chairs.
+    for(const [seats,x,y]of [[2,0,2],[4,5,2],[6,5,2],[8,0,5]]){
+      await page.click(`[data-seats="${seats}"]`);const before=await snapshot(page);await tapCell(page,x,y);
+      assert.equal((await snapshot(page)).items.length,before.items.length);assert.equal((await snapshot(page)).history,before.history);
+      await capture(page,`table-${seats}-preview.png`);await page.click('#placeBtn');
+      assert((await snapshot(page)).items.some(item=>item.type==='table'&&item.seats===seats&&item.x===x&&item.y===y));
+      const groups=await page.evaluate(async modulePath=>{const {world,Sprite}=await import(modulePath);return world.children[0].children.find(c=>c.label==='restaurant-objects').children.filter(c=>c.label==='placed-furniture').map(c=>({children:c.children.length,isSprite:c.children[0] instanceof Sprite,label:c.children[0].label}));},corePath);
+      assert(groups.every(g=>g.children===1&&g.isSprite&&g.label==='furniture-sprite'),'Furniture must consist of one flat sprite.');
+      await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).items,before.items);
+    }
+    await page.click('[data-seats="8"]');await page.click('#rotateBtn');await placeCell(page,6,2);
+    assert((await snapshot(page)).items.some(item=>item.seats===8&&item.r===1&&item.x===6&&item.y===2));await capture(page,'table-8-rotated.png');await page.click('#undoBtn');
+    await page.click('#resetBtn');await page.click('[data-tool="plant"]');await tapCell(page,0,3);
+    assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);await page.click('#cancelBtn');assert.equal((await snapshot(page)).pending,null);
+    // A touch drag moves only the snapped preview until Setzen is pressed.
+    const start=await nodePoint(page,'floor-0-2'),end=await nodePoint(page,'floor-0-3');
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start.x,y:start.y,id:1}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:end.x,y:end.y,id:1}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    assert.deepEqual((await snapshot(page)).pending,{x:0,y:3});assert.equal((await snapshot(page)).items.length,model.DEFAULT_LAYOUT.length);await page.click('#placeBtn');
+    let current=await snapshot(page);assert(current.items.some(item=>item.type==='plant'&&item.x===0&&item.y===3));
+    const count=current.items.length;await tapCell(page,3,1);assert.equal((await snapshot(page)).items.length,count);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/Küche/);
+    await page.click('[data-seats="4"]');await placeCell(page,5,2);current=await snapshot(page);assert.equal(current.items.length,count+1);
+    await tapCell(page,6,2);assert.equal((await snapshot(page)).items.length,count+1);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/bereits/);
     await page.click('[data-tool="bar"]');await page.click('#rotateBtn');assert.equal((await snapshot(page)).rotation,1);
-    await tapCell(page,7,5);assert.equal((await snapshot(page)).items.length,count+1);assert.match(await page.locator('#toast').innerText(),/Eingang/);
-    await tapCell(page,7,4);assert((await snapshot(page)).items.some(item=>item.type==='bar'&&item.x===7&&item.y===4&&item.r===1));
+    await tapCell(page,7,5);assert.equal((await snapshot(page)).items.length,count+1);assert.equal(await page.locator('#placeBtn').isEnabled(),false);assert.match(await page.locator('#placementStatus').innerText(),/Eingang/);
+    await placeCell(page,7,4);assert((await snapshot(page)).items.some(item=>item.type==='bar'&&item.x===7&&item.y===4&&item.r===1));
     await capture(page,'custom-furniture.png');
     await page.click('#deleteBtn');assert.equal(await page.locator('.toolbtn.active').count(),0);
     await tapCell(page,5,2);assert(!(await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
     await page.click('#undoBtn');assert((await snapshot(page)).items.some(item=>item.type==='table'&&item.x===5&&item.y===2));
     const custom=(await snapshot(page)).items;await page.click('#resetBtn');current=await snapshot(page);
     assert.deepEqual(current.items,model.DEFAULT_LAYOUT);assert.equal(current.rotation,0);assert.equal(current.deleteMode,false);assert.equal(current.tool,'table');
-    assert.equal(await page.locator('#deleteBtn').getAttribute('aria-pressed'),'false');assert.equal(await page.locator('[data-tool="table"]').getAttribute('aria-pressed'),'true');
+    assert.equal(current.seats,4);assert.equal(await page.locator('#deleteBtn').getAttribute('aria-pressed'),'false');assert.equal(await page.locator('[data-seats="4"]').getAttribute('aria-pressed'),'true');
     await page.click('#undoBtn');assert.deepEqual((await snapshot(page)).items,custom);
     await loaded(page,url);assert.deepEqual((await snapshot(page)).items,custom);
     await page.click('#restaurantBtn');await page.click('[data-speed="1"]');
@@ -122,7 +155,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     for(const actor of current.movers.filter(actor=>actor.visible)){assert(!occupied.has(`${Math.round(actor.x)},${Math.round(actor.y)}`),'Guest walked through furniture.');assert(actor.y>=2&&actor.x>=0&&actor.x<model.ROOM.w&&actor.y<model.ROOM.h);}
     await page.click('[data-speed="0"]');await page.click('#resetBtn');
     await page.evaluate(async modulePath=>{const {app}=await import(modulePath);app.ticker.maxFPS=60;app.ticker.start();},corePath);
-    console.log('Restaurant passed: placement, kitchen/entrance/overlap checks, rotated counter, deletion, undo/reset, reload and guest paths.');
+    console.log('Restaurant passed: combined 2D table sprites, all capacities, touch preview/confirm/cancel, kitchen/entrance/overlap checks, rotation, deletion, undo/reset, reload and guest paths.');
 
     for(const {width,height} of [{width:320,height:568},{width:393,height:852},{width:430,height:932},{width:768,height:1024},{width:1280,height:720},{width:844,height:390}]){
       await page.setViewportSize({width,height});await page.waitForTimeout(120);
@@ -138,7 +171,7 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
       assert.equal(geometry.screen.width,geometry.base.width);assert.equal(geometry.screen.height,geometry.base.height);
       assert(geometry.room.left>=geometry.area.left-2&&geometry.room.right<=geometry.area.right+2&&geometry.room.top>=geometry.area.top-2&&geometry.room.bottom<=geometry.area.bottom+2,JSON.stringify({width,height,...geometry}));
       await capture(page,`restaurant-${width}x${height}.png`);
-      await page.click('[data-tool="plant"]');await tapCell(page,7,3);assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===7&&item.y===3));await page.click('#undoBtn');
+      await page.click('[data-tool="plant"]');await placeCell(page,7,3);assert((await snapshot(page)).items.some(item=>item.type==='plant'&&item.x===7&&item.y===3));await page.click('#undoBtn');
       await page.click('#cityBtn');await capture(page,`city-${width}x${height}.png`);
     }
     console.log('Responsive views passed: 320, 393, 430, tablet, desktop and landscape, including real placement after resize.');
@@ -147,11 +180,13 @@ async function loaded(page,url){await page.goto(url);await page.waitForSelector(
     await loaded(page,url);assert.deepEqual((await snapshot(page)).items,model.DEFAULT_LAYOUT);
     await page.evaluate(()=>localStorage.setItem('pizza-city-layout-v1','{"version":1,"items":[]}'));
     await loaded(page,url);assert.equal((await snapshot(page)).items.length,0);
+    await page.evaluate(()=>localStorage.setItem('pizza-city-layout-v1',JSON.stringify({version:1,items:[{type:'table',x:2,y:3,r:0},{type:'chair',x:1,y:3,r:0}]})));
+    await loaded(page,url);assert.deepEqual((await snapshot(page)).items,[{type:'table',seats:4,x:2,y:3,r:0}]);
     const storagePage=await context.newPage();storagePage.on('pageerror',error=>errors.push(error.message));
     await storagePage.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Unavailable','SecurityError');}}));
-    await loaded(storagePage,url);await storagePage.click('#restaurantBtn');await storagePage.click('[data-tool="chair"]');await tapCell(storagePage,0,3);assert.equal((await snapshot(storagePage)).items.length,model.DEFAULT_LAYOUT.length+1);await storagePage.close();
-    await page.route('**/assets/pizza/furniture/chair_NE.png',route=>route.fulfill({status:404,body:'missing'}));
-    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,1);await page.unroute('**/assets/pizza/furniture/chair_NE.png');
+    await loaded(storagePage,url);await storagePage.click('#restaurantBtn');await storagePage.click('[data-tool="plant"]');await placeCell(storagePage,0,3);assert.equal((await snapshot(storagePage)).items.length,model.DEFAULT_LAYOUT.length+1);await storagePage.close();
+    await page.route('**/assets/pizza/city/pixel-city.png',route=>route.fulfill({status:404,body:'missing'}));
+    await loaded(page,url);assert.equal((await snapshot(page)).assets.length,1);await page.click('#restaurantBtn');assert.equal(await page.locator('#placementTitle').innerText(),'4er-Tisch mit Stühlen · 0°');await page.unroute('**/assets/pizza/city/pixel-city.png');
     await page.route('**/assets/pizza/vendor/pixi-8.22.0.mjs',route=>route.abort());
     await page.goto(url);await page.getByRole('button',{name:'Erneut laden',exact:true}).waitFor();
     await page.unroute('**/assets/pizza/vendor/pixi-8.22.0.mjs');await page.getByRole('button',{name:'Erneut laden',exact:true}).click();await page.waitForSelector('#loading',{state:'hidden',timeout:15000});

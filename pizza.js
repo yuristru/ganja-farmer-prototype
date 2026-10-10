@@ -1,6 +1,6 @@
-import {app,root,state,loadAssets} from './pizza-core.js?v=20261010b';
-import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010b';
-import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview} from './pizza-restaurant.js?v=20261010b';
+import {app,root,state,loadAssets} from './pizza-core.js?v=20261010c';
+import {showCity,tickCity,resizeCity,zoomCity,centerCity} from './pizza-city.js?v=20261010c';
+import {showRestaurant,tickRestaurant,resizeRestaurant,resetRestaurant,undoRestaurant,updatePlacementPreview,confirmPlacement,cancelPlacement} from './pizza-restaurant.js?v=20261010c';
 
 const rotateBtn=document.querySelector('#rotateBtn'),deleteBtn=document.querySelector('#deleteBtn');
 const toolButtons=[...document.querySelectorAll('.toolbtn')];
@@ -13,7 +13,7 @@ function syncEditUI(){
   rotateBtn.setAttribute('aria-label',`Möbelstück um 90 Grad drehen. Aktuell ${state.rotation*90} Grad.`);
   deleteBtn.classList.toggle('active',state.deleteMode);deleteBtn.setAttribute('aria-pressed',String(state.deleteMode));
   for(const button of toolButtons){
-    const active=!state.deleteMode&&button.dataset.tool===state.selectedTool;
+    const active=!state.deleteMode&&button.dataset.tool===state.selectedTool&&(state.selectedTool!=='table'||Number(button.dataset.seats)===state.selectedSeats);
     button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
   }
   document.querySelector('#undoBtn').disabled=!state.history.length;
@@ -21,10 +21,12 @@ function syncEditUI(){
 }
 state.onEditChange=syncEditUI;
 rotateBtn.onclick=()=>{state.rotation=(state.rotation+1)%4;state.deleteMode=false;syncEditUI();};
-deleteBtn.onclick=()=>{state.deleteMode=!state.deleteMode;syncEditUI();};
+deleteBtn.onclick=()=>{state.deleteMode=!state.deleteMode;cancelPlacement();syncEditUI();};
 document.querySelector('#resetBtn').onclick=resetRestaurant;
 document.querySelector('#undoBtn').onclick=undoRestaurant;
-for(const button of toolButtons) button.onclick=()=>{state.selectedTool=button.dataset.tool;state.deleteMode=false;syncEditUI();};
+document.querySelector('#placeBtn').onclick=confirmPlacement;
+document.querySelector('#cancelBtn').onclick=cancelPlacement;
+for(const button of toolButtons) button.onclick=()=>{state.selectedTool=button.dataset.tool;if(button.dataset.seats)state.selectedSeats=Number(button.dataset.seats);state.deleteMode=false;cancelPlacement();syncEditUI();};
 
 for(const button of document.querySelectorAll('[data-speed]')) button.onclick=()=>{
   state.speed=Number(button.dataset.speed);
@@ -75,7 +77,8 @@ window.addEventListener('keydown',event=>{
   if(state.scene!=='restaurant'||event.target.closest?.('input,textarea,select,[contenteditable]')) return;
   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();undoRestaurant();}
   else if(!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='r') rotateBtn.click();
-  else if(event.key==='Escape'){state.deleteMode=false;syncEditUI();}
+  else if(event.key==='Enter'&&state.pendingPlacement){event.preventDefault();confirmPlacement();}
+  else if(event.key==='Escape'){state.deleteMode=false;cancelPlacement();syncEditUI();}
 });
 
 await loadAssets();state.ready=true;showCity();

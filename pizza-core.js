@@ -1,5 +1,5 @@
-import {Application,Assets,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
-import {copyLayout,validLayout} from './pizza-layout.js?v=20261010b';
+import {Application,Container,Graphics,Sprite,Texture,Text,Rectangle} from './assets/pizza/vendor/pixi-8.22.0.mjs';
+import {copyLayout,upgradeLayout} from './pizza-layout.js?v=20261010c';
 export {Container,Graphics,Sprite,Texture,Text,Rectangle};
 
 export const root=document.querySelector('#app');
@@ -11,18 +11,19 @@ app.canvas.setAttribute('aria-label','Isometrische Stadt und Restaurant-Einricht
 app.stage.eventMode='static';
 export const world=new Container();
 app.stage.addChild(world);
-export const TW=64,TH=32,CITY_N=26,DIRS=['NE','SE','SW','NW'];
+export const TW=64,TH=32,CITY_N=26;
 const SAVE_KEY='pizza-city-layout-v1';
 
 function restore(){
   try{
     const saved=JSON.parse(localStorage.getItem(SAVE_KEY));
-    if(saved?.version===1&&validLayout(saved.items)) return copyLayout(saved.items);
+    const items=upgradeLayout(saved?.items,saved?.version);
+    if(items) return items;
   }catch{}
   return copyLayout();
 }
 
-export const state={scene:null,camera:null,cityView:null,cityGesture:null,movers:[],selectedTool:'table',rotation:0,deleteMode:false,navigate:null,onEditChange:null,cityTex:{},furnTex:{},restaurantState:restore(),history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
+export const state={scene:null,camera:null,cityView:null,cityGesture:null,movers:[],selectedTool:'table',selectedSeats:4,rotation:0,deleteMode:false,pendingPlacement:null,navigate:null,onEditChange:null,cityTex:{},restaurantState:restore(),history:[],speed:1,gameMinutes:11*60+30,ready:false,assetFailures:[]};
 
 export function iso(x,y,ox=0,oy=0){return{x:ox+(x-y)*TW/2,y:oy+(x+y)*TH/2};}
 export function hash(x,y,s=94117){let n=(x*374761393+y*668265263+s*69069)>>>0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967295;}
@@ -30,6 +31,7 @@ export function label(text,size=11,color='#fff1cf'){return new Text({text,style:
 export function clearWorld(){
   app.stage.removeAllListeners();
   state.movers=[];
+  state.pendingPlacement=null;
   world.removeChildren().forEach(child=>child.destroy({children:true}));
 }
 
@@ -74,7 +76,7 @@ export function notify(message){
 }
 
 export function saveLayout(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:1,items:state.restaurantState}));return true;}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:2,items:state.restaurantState}));return true;}
   catch{notify('Einrichtung bleibt in dieser Sitzung erhalten.');return false;}
 }
 
@@ -83,27 +85,15 @@ export function rememberEdit(){
   if(state.history.length>50) state.history.shift();
 }
 
-// A recognizable type-specific fallback, never a building in place of furniture.
+// The city remains usable even if its atlas cannot be loaded.
 const fallbackCache=new Map();
-function fallback(type='table'){
-  if(fallbackCache.has(type)) return fallbackCache.get(type);
+function fallback(){
+  if(fallbackCache.has('city')) return fallbackCache.get('city');
   const canvas=document.createElement('canvas');canvas.width=64;canvas.height=80;
   const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
   const polygon=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();};
-  if(type==='plant'){
-    ctx.fillStyle='#925d3b';ctx.fillRect(24,54,16,18);ctx.fillStyle='#52844b';ctx.fillRect(17,25,30,26);ctx.fillRect(24,16,16,43);
-  }else if(type==='chair'){
-    ctx.fillStyle='#754b30';ctx.fillRect(21,27,22,29);polygon([[16,55],[32,47],[48,55],[32,63]],'#a47046');ctx.fillRect(20,61,4,13);ctx.fillRect(40,61,4,13);
-  }else{
-    const h=['oven','fridge','sink','bar'].includes(type)?34:12;
-    polygon([[7,44],[32,57],[32,57+h],[7,44+h]],'#875c3c');polygon([[32,57],[57,44],[57,44+h],[32,57+h]],'#61472f');polygon([[7,44],[32,31],[57,44],[32,57]],type==='oven'?'#98928b':'#b68452');
-  }
-  const texture=Texture.from(canvas);texture.source.scaleMode='nearest';fallbackCache.set(type,texture);return texture;
-}
-
-async function safe(url,type){
-  try{const texture=await Assets.load(url);texture.source.scaleMode='nearest';return texture;}
-  catch(error){state.assetFailures.push(url);console.warn('Unable to load asset:',url,error);return fallback(type);}
+  polygon([[7,30],[32,43],[32,73],[7,60]],'#875c3c');polygon([[32,43],[57,30],[57,60],[32,73]],'#61472f');polygon([[7,30],[32,17],[57,30],[32,43]],'#b68452');
+  const texture=Texture.from(canvas);texture.source.scaleMode='nearest';fallbackCache.set('city',texture);return texture;
 }
 
 async function loadCityAtlas(){
@@ -119,26 +109,16 @@ async function loadCityAtlas(){
     for(const [type,rects] of Object.entries(frames)) state.cityTex[type]=rects.map(rect=>new Texture({source:atlas.source,frame:new Rectangle(...rect)}));
   }catch(error){
     console.warn('Unable to load city atlas',error);state.assetFailures.push('city');
-    for(const type of ['small','medium','big']) state.cityTex[type]=[fallback('oven')];
+    for(const type of ['small','medium','big']) state.cityTex[type]=[fallback()];
   }
 }
 
 export async function loadAssets(){
-  const jobs=[loadCityAtlas()],defs={table:'table',chair:'chair',oven:'kitchenStove',bar:'kitchenBar',plant:'pottedPlant',fridge:'kitchenFridge',sink:'kitchenSink'};
-  for(const [type,name] of Object.entries(defs)){
-    state.furnTex[type]={};
-    for(const direction of DIRS) jobs.push(safe(`./assets/pizza/furniture/${name}_${direction}.png`,type).then(texture=>{state.furnTex[type][direction]=texture;}));
-  }
-  await Promise.all(jobs);loading.hidden=true;
+  await loadCityAtlas();loading.hidden=true;
   if(state.assetFailures.length) notify('Einige Grafiken konnten nicht geladen werden.');
 }
 
 export function makePerson(i){
   const g=new Graphics(),colors=[0xb34536,0x416f98,0x56804b,0xca9a36,0x80567b];
   g.ellipse(0,1,4,2).fill({color:0,alpha:.22});g.rect(-2,-10,4,7).fill(colors[i%colors.length]);g.rect(-1,-13,3,3).fill(0xce9870);g.rect(-2,-3,1,4).fill(0x282630);g.rect(1,-3,1,4).fill(0x282630);return g;
-}
-
-export function spriteFor(type,r=0,width=58){
-  const set=state.furnTex[type]||{},texture=set[DIRS[((r%4)+4)%4]]||set.NE||fallback(type);
-  const sprite=new Sprite(texture);sprite.anchor.set(.5,.9);sprite.scale.set(width/Math.max(1,texture.width));return sprite;
 }
